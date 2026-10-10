@@ -14,7 +14,8 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 
 - **Fait** : cadrage (SPEC), comptes, squelette Next.js, dépôt GitHub public, site en ligne
   (https://agence-musiciens.vercel.app), région `fra1`, base Neon reliée à Vercel.
-- **En cours** : fonctionnalité « connexion », tranche 1 (table des utilisateurs) — plan validé, pas encore commencée.
+- **En cours** : fonctionnalité « connexion » sur la branche `connexion`. Tranche 1 (table des utilisateurs) validée ;
+  prochaine : tranche 2 (page `/installation`).
 - **Reste à faire (côté humain)** : créer `AUTH_SECRET` (avant la tranche 3) ; créer le compte UptimeRobot.
 - **Cassé** : rien.
 
@@ -29,7 +30,7 @@ Un produit se construit par couches. Chaque couche répond à une question et s'
 | 0. Cadrage | Que construit-on, pour qui, avec quelles règles ? | Avant tout | ✅ |
 | 1. Fondations | Où vit le produit ? (comptes, dépôt, hébergeur, base) | 1, jour 1 | ✅ |
 | 2. Squelette | Avec quoi le construit-on ? (framework, langage, interface) | 1, jour 1 | ✅ |
-| 3. Données | Que retient le produit, et sous quelle forme ? | 1 | 🔄 |
+| 3. Données | Que retient le produit, et sous quelle forme ? | 1 | 🔄 (table `utilisateurs` ✅) |
 | 4. Identité et droits | Qui est connecté, et qu'a-t-il le droit de faire ? | 1 | ⬜ |
 | 5. Métier | Que fait le produit ? (engagements, cycle de vie, règles, API externe, courriels, pièces jointes) | 1 | ⬜ |
 | 6. Fiabilité | Comment sait-on que ça marche et que c'est sûr ? (tests, journaux, revue de sécurité, README) | 1 | ⬜ |
@@ -72,17 +73,19 @@ Un produit se construit par couches. Chaque couche répond à une question et s'
 | Vérifier `npm run build` et `npm run lint` | ✅ | Preuve que le projet compile et respecte les règles de style |
 | Revue de simplicité du code généré | ✅ | Rien de superflu, hormis la page d'accueil par défaut, remplacée à la tranche 3 |
 
-### 3. Données 🔄 — fonctionnalité « connexion », tranche 1
+### 3. Données 🔄 — fonctionnalité « connexion », tranche 1 ✅
 
 | Tâche | État | À quoi ça sert |
 |---|---|---|
-| Créer la branche `connexion` | ⬜ | Travailler sans toucher à la production |
-| Installer Drizzle et le pilote Neon | ⬜ | Parler à la base en TypeScript, écrire et jouer les migrations |
-| Décrire la table `utilisateurs` | ⬜ | Stocker l'agent et les musiciens (rôle, instrument, mot de passe chiffré) |
-| Générer la migration | ⬜ | Le fichier SQL qui crée la table, conservé dans Git |
-| Jouer les migrations à chaque déploiement (`vercel-build`) | ⬜ | La base suit toujours le code, sans manipulation à la main |
+| Créer la branche `connexion` | ✅ | Travailler sans toucher à la production |
+| Installer Drizzle et le pilote Neon | ✅ | Parler à la base en TypeScript, écrire et jouer les migrations |
+| Décrire la table `utilisateurs` | ✅ | Stocker l'agent et les musiciens (rôle, instrument, mot de passe chiffré) |
+| Générer la migration | ✅ | Le fichier SQL qui crée la table, conservé dans Git |
+| Jouer les migrations à chaque déploiement (`vercel-build`) | ✅ | La base suit toujours le code, sans manipulation à la main |
 
-**Preuve attendue** : prévisualisation verte ; branche `preview/connexion` dans Neon avec la table `utilisateurs` ; aucune table en production.
+**Preuve constatée (11/10/2026)** : prévisualisation verte ; table `utilisateurs` présente dans la branche Neon `preview/connexion`, absente de `production`.
+
+À venir, hors de cette table : `invitations` et jetons de réinitialisation (tables séparées), colonne `actif` si besoin.
 
 ### 4. Identité et droits ⬜ — tranches 2 et 3
 
@@ -168,3 +171,4 @@ Un produit se construit par couches. Chaque couche répond à une question et s'
 | 11/10/2026 | Dépôt GitHub public | Partage simple avec le formateur et le repreneur ; aucun secret dans le code |
 | 11/10/2026 | Région Francfort (Neon et Vercel) | Neon n'a pas de région Paris ; serveur à côté des données |
 | 11/10/2026 | Drizzle, e-mail + mot de passe, page `/installation` | Plan de la fonctionnalité « connexion » validé |
+| 11/10/2026 | Table `utilisateurs` limitée à 7 colonnes | Invitations et réinitialisations iront dans des tables séparées ; ajouter une colonne plus tard est peu coûteux |
