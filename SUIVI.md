@@ -1,0 +1,171 @@
+# Suivi du travail — Agence-musiciens
+
+Ce document suit l'avancement du projet. Il dit **ce qui a été fait**, **à quoi sert chaque élément**,
+et **à quel stade conceptuel** appartient chaque ensemble de tâches.
+Il est mis à jour à la fin de chaque session (c'est l'« état de reprise » demandé par la fiche).
+
+Légende : ✅ fait · 🔄 en cours · ⬜ à faire
+
+---
+
+## État de reprise
+
+*Dernière mise à jour : 11 octobre 2026*
+
+- **Fait** : cadrage (SPEC), comptes, squelette Next.js, dépôt GitHub public, site en ligne
+  (https://agence-musiciens.vercel.app), base Neon reliée à Vercel.
+- **En cours** : fonctionnalité « connexion », tranche 1 (table des utilisateurs) — plan validé, pas encore commencée.
+- **Reste à faire (côté humain)** : redéployer pour appliquer la région `fra1` ; créer `AUTH_SECRET` (avant la tranche 3) ;
+  créer le compte UptimeRobot.
+- **Cassé** : rien.
+
+---
+
+## Les stades conceptuels
+
+Un produit se construit par couches. Chaque couche répond à une question et s'appuie sur la précédente.
+
+| Stade | Question à laquelle il répond | Semaine | État |
+|---|---|---|---|
+| 0. Cadrage | Que construit-on, pour qui, avec quelles règles ? | Avant tout | ✅ |
+| 1. Fondations | Où vit le produit ? (comptes, dépôt, hébergeur, base) | 1, jour 1 | ✅ |
+| 2. Squelette | Avec quoi le construit-on ? (framework, langage, interface) | 1, jour 1 | ✅ |
+| 3. Données | Que retient le produit, et sous quelle forme ? | 1 | 🔄 |
+| 4. Identité et droits | Qui est connecté, et qu'a-t-il le droit de faire ? | 1 | ⬜ |
+| 5. Métier | Que fait le produit ? (engagements, cycle de vie, règles, API externe, courriels, pièces jointes) | 1 | ⬜ |
+| 6. Fiabilité | Comment sait-on que ça marche et que c'est sûr ? (tests, journaux, revue de sécurité, README) | 1 | ⬜ |
+| 7. Automatisation | Que fait le produit tout seul, la nuit ? | 2 | ⬜ |
+| 8. Intelligence | Que comprend le produit ? (lecture de documents, recherche qui cite ses sources) | 3 | ⬜ |
+| 9. Action | Qu'est-ce que le produit fait à notre place, sous contrôle ? (agent, serveur MCP) | 4 | ⬜ |
+| 10. Transmission | Quelqu'un d'autre peut-il le reprendre ? (passation, API pour les autres systèmes) | 5 | ⬜ |
+
+---
+
+## Détail par stade
+
+### 0. Cadrage ✅
+
+| Tâche | État | À quoi ça sert |
+|---|---|---|
+| Lire la fiche « 5 exercices » | ✅ | Comprendre ce qui est exigé chaque semaine |
+| Choisir le sujet : agence de musiciens | ✅ | Un métier connu de l'intérieur, qui peut grandir sur 5 semaines |
+| Écrire `SPEC.md` | ✅ | La référence de ce qu'on construit : personnes, rôles, cycle de vie, règles métier. L'IA la relit à chaque session |
+| Choisir le sujet du flux de nuit : `reservations` | ✅ | Aucun sujet « concerts » n'existe ; c'est le plus proche |
+
+### 1. Fondations ✅
+
+| Tâche | État | À quoi ça sert |
+|---|---|---|
+| Créer les comptes GitHub, Vercel, Neon, Resend, Sentry | ✅ | Chaque service est une pièce du produit (voir le glossaire) |
+| Créer le compte UptimeRobot | ⬜ | La sonde de surveillance, branchée en semaine 2 |
+| Créer le projet Neon (région Francfort) | ✅ | La base de données du produit |
+| Publier le dépôt GitHub `ValentinWIA/agence-musiciens` (public) | ✅ | Le code est sauvegardé, versionné, partageable avec le formateur et le repreneur de la semaine 5 |
+| Importer le dépôt dans Vercel | ✅ | Chaque push déclenche un déploiement automatique |
+| Régler la région des fonctions Vercel sur `fra1` | 🔄 | Placer le serveur à côté de la base (Francfort) pour des échanges rapides — redéploiement à faire |
+| Relier Neon à Vercel (intégration) | ✅ | `DATABASE_URL` est fournie automatiquement ; chaque prévisualisation reçoit sa propre copie de la base |
+
+### 2. Squelette ✅
+
+| Tâche | État | À quoi ça sert |
+|---|---|---|
+| Générer le projet Next.js (`create-next-app`) | ✅ | La structure de base du site : pages, serveur, configuration |
+| Installer shadcn/ui | ✅ | Les composants d'interface (boutons, formulaires…) exigés par la fiche |
+| Vérifier `npm run build` et `npm run lint` | ✅ | Preuve que le projet compile et respecte les règles de style |
+| Revue de simplicité du code généré | ✅ | Rien de superflu, hormis la page d'accueil par défaut, remplacée à la tranche 3 |
+
+### 3. Données 🔄 — fonctionnalité « connexion », tranche 1
+
+| Tâche | État | À quoi ça sert |
+|---|---|---|
+| Créer la branche `connexion` | ⬜ | Travailler sans toucher à la production |
+| Installer Drizzle et le pilote Neon | ⬜ | Parler à la base en TypeScript, écrire et jouer les migrations |
+| Décrire la table `utilisateurs` | ⬜ | Stocker l'agent et les musiciens (rôle, instrument, mot de passe chiffré) |
+| Générer la migration | ⬜ | Le fichier SQL qui crée la table, conservé dans Git |
+| Jouer les migrations à chaque déploiement (`vercel-build`) | ⬜ | La base suit toujours le code, sans manipulation à la main |
+
+**Preuve attendue** : prévisualisation verte ; branche `preview/connexion` dans Neon avec la table `utilisateurs` ; aucune table en production.
+
+### 4. Identité et droits ⬜ — tranches 2 et 3
+
+| Tâche | État | À quoi ça sert |
+|---|---|---|
+| Page `/installation` (premier admin) | ⬜ | Créer le compte de l'agent ; la page se ferme dès qu'un compte existe |
+| Auth.js : connexion par e-mail et mot de passe | ⬜ | Savoir qui est connecté, sans écrire l'authentification à la main |
+| Page de connexion à la place de l'accueil Next.js | ⬜ | La porte d'entrée du produit |
+| Page protégée `/tableau-de-bord` + déconnexion | ⬜ | Vérifier que seuls les connectés y accèdent |
+| Fusion dans `main`, vérification en production | ⬜ | La fonctionnalité arrive sur le vrai site |
+| Puis : invitations, réinitialisation du mot de passe (Resend) | ⬜ | Fonctionnalité suivante |
+
+---
+
+## Glossaire : à quoi sert chaque chose
+
+### Outils de travail
+- **Node.js** — exécute du JavaScript hors du navigateur ; Next.js en a besoin.
+- **npm** — gestionnaire de paquets : télécharge les bibliothèques du projet.
+- **`npx`** — lance un outil une fois, sans l'installer durablement.
+- **Git** — enregistre l'historique des versions du code.
+- **commit** — une version enregistrée, avec un message qui dit pourquoi.
+- **branche** — une copie parallèle du code pour travailler sans toucher à `main`.
+- **`main`** — la branche principale ; ce qui y arrive part en production.
+- **push** — envoyer ses commits vers GitHub.
+- **fusion (merge)** — intégrer une branche terminée dans `main`.
+- **`gh`** — l'outil GitHub en ligne de commande.
+- **tranche** — un petit morceau de fonctionnalité, terminé et vérifié seul avant le suivant.
+
+### Services
+- **GitHub** — héberge le dépôt (le code et son historique).
+- **Vercel** — héberge le site ; déploie automatiquement à chaque push.
+- **production** — le vrai site (`agence-musiciens.vercel.app`) ; on n'y teste jamais rien.
+- **prévisualisation (preview)** — une copie complète du site pour chaque branche ; c'est là qu'on teste.
+- **région `fra1`** — l'endroit où tourne le serveur Vercel (Francfort), choisi pour être à côté de la base.
+- **Neon** — héberge la base de données Postgres.
+- **branche Neon** — une copie des **données** (à ne pas confondre avec une branche Git, qui est une copie du **code**).
+- **intégration Neon–Vercel** — relie les deux : variables fournies automatiquement, une branche de base par prévisualisation.
+- **Resend** — envoie les courriels (invitations, réinitialisation).
+- **Vercel Blob** — stocke les pièces jointes (contrats, fiches techniques).
+- **Sentry** — signale les erreurs du site (semaine 2).
+- **UptimeRobot** — vérifie toutes les 5 minutes que le site répond (semaine 2).
+
+### Fichiers et technologies du projet
+- **Next.js** — le framework : il organise les pages selon les dossiers et fait tourner le serveur dans le même projet.
+- **React** — la bibliothèque d'interface sur laquelle Next.js est construit (composants).
+- **TypeScript** — JavaScript avec des types ; refuse avant l'exécution les erreurs de forme (du texte à la place d'un nombre…).
+- **Tailwind CSS** — la mise en forme par petites classes.
+- **shadcn/ui** — des composants d'interface copiés dans le projet, qui nous appartiennent.
+- **ESLint** — vérifie le code (erreurs, mauvaises pratiques).
+- **`package.json`** — la carte d'identité du projet : bibliothèques et commandes.
+- **`package-lock.json`** — les versions exactes de chaque bibliothèque.
+- **`.gitignore`** — ce que Git ne doit jamais enregistrer (bibliothèques téléchargées, secrets locaux).
+- **`components.json`** — les réglages de l'outil shadcn (où ranger les composants, quel style).
+- **`next-env.d.ts`** — généré par Next.js, apprend à TypeScript ce qui est propre à Next.js ; jamais modifié, jamais enregistré.
+- **`AGENTS.md`** — les consignes que l'IA lit à chaque session (conventions du projet).
+- **Drizzle** — l'outil qui fait parler le code à la base et écrit les migrations.
+- **migration** — un fichier qui décrit une modification de la structure de la base ; rejoué sur chaque base.
+- **UUID** — identifiant aléatoire, impossible à deviner.
+- **Auth.js** — la bibliothèque d'authentification (sessions, connexion).
+
+### Sécurité
+- **variable d'environnement** — un réglage donné au programme de l'extérieur, rangé chez l'hébergeur ; c'est là que vivent les secrets.
+- **`DATABASE_URL`** — adresse de la base via le pooler (connexion mutualisée) ; utilisée par l'application.
+- **`DATABASE_URL_UNPOOLED`** — adresse directe de la base ; utilisée pour les migrations.
+- **`AUTH_SECRET`** — la clé avec laquelle Auth.js signe les sessions.
+- **rôle vérifié côté serveur** — le serveur contrôle les droits à chaque demande ; cacher un bouton n'est pas une protection.
+- **IDOR** — la faille qui consiste à ouvrir la donnée d'un autre en changeant l'identifiant dans l'adresse.
+
+---
+
+## Journal des décisions
+
+| Date | Décision | Pourquoi |
+|---|---|---|
+| 10/10/2026 | Sujet : agence de musiciens (1 agent, 2 pianistes, 2 violonistes, 5 programmateurs) | Métier connu ; 10 personnes comme demandé par la fiche |
+| 10/10/2026 | Deux rôles : `admin` et `musicien` ; programmateurs sans compte | Réaliste : un programmateur échange par courriel |
+| 10/10/2026 | Musiciens en consultation seule | Seul l'agent gère l'agenda |
+| 10/10/2026 | Identifiants aléatoires (UUID) | Gratuit maintenant, coûteux à changer plus tard |
+| 10/10/2026 | Règle de conflit : trajet (distance × 1,3 ÷ 80 km/h) + 4 h | Rendre la règle testable avec des chiffres |
+| 10/10/2026 | Flux de nuit : sujet `reservations` | Le plus proche des engagements de concert |
+| 10/10/2026 | Neon plutôt que Supabase | Une copie de base par prévisualisation, stack commune |
+| 11/10/2026 | Dépôt GitHub public | Partage simple avec le formateur et le repreneur ; aucun secret dans le code |
+| 11/10/2026 | Région Francfort (Neon et Vercel) | Neon n'a pas de région Paris ; serveur à côté des données |
+| 11/10/2026 | Drizzle, e-mail + mot de passe, page `/installation` | Plan de la fonctionnalité « connexion » validé |
