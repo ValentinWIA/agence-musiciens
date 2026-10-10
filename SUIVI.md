@@ -13,10 +13,9 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 *Dernière mise à jour : 11 octobre 2026*
 
 - **Fait** : cadrage (SPEC), comptes, squelette Next.js, dépôt GitHub public, site en ligne
-  (https://agence-musiciens.vercel.app), base Neon reliée à Vercel.
+  (https://agence-musiciens.vercel.app), région `fra1`, base Neon reliée à Vercel.
 - **En cours** : fonctionnalité « connexion », tranche 1 (table des utilisateurs) — plan validé, pas encore commencée.
-- **Reste à faire (côté humain)** : redéployer pour appliquer la région `fra1` ; créer `AUTH_SECRET` (avant la tranche 3) ;
-  créer le compte UptimeRobot.
+- **Reste à faire (côté humain)** : créer `AUTH_SECRET` (avant la tranche 3) ; créer le compte UptimeRobot.
 - **Cassé** : rien.
 
 ---
@@ -61,7 +60,7 @@ Un produit se construit par couches. Chaque couche répond à une question et s'
 | Créer le projet Neon (région Francfort) | ✅ | La base de données du produit |
 | Publier le dépôt GitHub `ValentinWIA/agence-musiciens` (public) | ✅ | Le code est sauvegardé, versionné, partageable avec le formateur et le repreneur de la semaine 5 |
 | Importer le dépôt dans Vercel | ✅ | Chaque push déclenche un déploiement automatique |
-| Régler la région des fonctions Vercel sur `fra1` | 🔄 | Placer le serveur à côté de la base (Francfort) pour des échanges rapides — redéploiement à faire |
+| Régler la région des fonctions Vercel sur `fra1` | ✅ | Placer le serveur à côté de la base (Francfort) pour des échanges rapides |
 | Relier Neon à Vercel (intégration) | ✅ | `DATABASE_URL` est fournie automatiquement ; chaque prévisualisation reçoit sa propre copie de la base |
 
 ### 2. Squelette ✅
