@@ -10,21 +10,19 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 
 ## État de reprise
 
-*Dernière mise à jour : 11 octobre 2026 (fin de session)*
+*Dernière mise à jour : 11 octobre 2026*
 
 - **Fait** : cadrage (SPEC), comptes, squelette Next.js, dépôt GitHub public, site en ligne
   (https://agence-musiciens.vercel.app), région `fra1`, base Neon reliée à Vercel.
   Fonctionnalité « connexion » fusionnée (pull request n° 1) et vérifiée en production ; compte de l'agent créé en production.
-- **En cours** : fonctionnalité « invitations » sur la branche `invitations` (pas encore fusionnée).
-  Tranches 1 (page `/invitations`) et 2 (acceptation, compte musicien, refus d'accès journalisé) validées.
-  Tranche 3 (courriel Resend) codée et déployée en prévisualisation, **à vérifier** :
-  1. créer une clé API chez Resend (resend.com → API Keys, droit « Sending access ») ;
-  2. la placer dans Vercel : `RESEND_API_KEY`, environnements Production, Preview et Development ;
-  3. redéployer la prévisualisation de `invitations` (Deployments → ⋯ → Redeploy) ;
-  4. inviter **l'adresse de votre compte Resend** → le courriel doit arriver ; inviter une autre adresse →
-     message « le courriel n'a pas pu partir », lien affiché, ligne « Courriel non envoyé » dans les journaux.
-  Ensuite : tranche 4 (réinitialisation du mot de passe), puis tests automatiques à chaque push.
-- **Reste à faire (côté humain)** : créer la clé Resend (voir ci-dessus) ; créer le compte UptimeRobot.
+- **En cours** : fonctionnalité « invitations » sur la branche `invitations`, **tranches 1 à 3 validées** en prévisualisation
+  (invitation, acceptation, compte musicien, refus d'accès journalisé, courriel Resend). Prête à fusionner.
+  Ensuite : réinitialisation du mot de passe (branche à part), puis tests automatiques à chaque push.
+- **Reste à faire (côté humain)** : créer le compte UptimeRobot.
+- **Points d'attention** :
+  - Vercel Hobby ne garde les journaux qu'environ une heure : refaire la tentative juste avant la démo,
+    ou ajouter plus tard une table `journal` consultable par l'agent.
+  - Amélioration possible : permettre à l'agent d'annuler une invitation (faute de frappe dans l'adresse).
 - **Vérifié par lecture seulement** : le refus d'un mot de passe trop court sur la page d'acceptation (règle désormais
   commune avec l'installation, `src/lib/mot-de-passe.ts`) — à couvrir par un test automatique.
 - **Cassé** : rien.
@@ -110,7 +108,7 @@ Un produit se construit par couches. Chaque couche répond à une question et s'
 | Fusion dans `main`, vérification en production | ✅ | La fonctionnalité arrive sur le vrai site |
 | Invitations : table `invitations` + page `/invitations` réservée à l'admin | ✅ | L'agent invite un musicien et obtient le lien à transmettre (tranche 1) |
 | Invitations : page d'acceptation, création du compte musicien | ✅ | Tranche 2 ; refus d'accès d'un musicien à `/invitations` constaté et journalisé |
-| Invitations : courriel par Resend | 🔄 | Tranche 3 : codée, attend la clé `RESEND_API_KEY` pour être vérifiée |
+| Invitations : courriel par Resend | ✅ | Tranche 3 : courriel reçu à l'adresse du compte Resend ; autre adresse refusée par Resend, lien affiché, échec journalisé |
 | Réinitialisation du mot de passe | ⬜ | Tranche 4 |
 | Journal des déconnexions | ✅ | Ajouté avec la tranche 1 des invitations |
 
@@ -184,6 +182,7 @@ déconnexion ; `/tableau-de-bord` sans session → renvoi vers la connexion.
 - **variable d'environnement** — un réglage donné au programme de l'extérieur, rangé chez l'hébergeur ; c'est là que vivent les secrets.
 - **`DATABASE_URL`** — adresse de la base via le pooler (connexion mutualisée) ; utilisée par l'application.
 - **`DATABASE_URL_UNPOOLED`** — adresse directe de la base ; utilisée pour les migrations.
+- **`RESEND_API_KEY`** — la clé qui autorise le produit à envoyer des courriels par Resend (droit « envoi » seulement).
 - **`AUTH_SECRET`** — la clé avec laquelle Auth.js signe les sessions.
 - **rôle vérifié côté serveur** — le serveur contrôle les droits à chaque demande ; cacher un bouton n'est pas une protection.
 - **empreinte (SHA-256)** — résumé irréversible d'un jeton ; seule l'empreinte est stockée, le lien reste secret.
