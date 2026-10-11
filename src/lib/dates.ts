@@ -28,3 +28,49 @@ export function formaterDebut(debut: Date, precision: "jour" | "mois" | "saison"
   const heure = new Intl.DateTimeFormat("fr-FR", { hour: "2-digit", minute: "2-digit", timeZone }).format(debut).replace(":", " h ");
   return `${jour}, ${heure}`;
 }
+
+// Écart (en millisecondes) entre l'heure affichée dans ce fuseau et l'heure universelle, à cet instant.
+function decalage(instant: number, timeZone: string) {
+  const p = Object.fromEntries(
+    new Intl.DateTimeFormat("en-US", { timeZone, hourCycle: "h23", year: "numeric", month: "numeric", day: "numeric", hour: "numeric", minute: "numeric" })
+      .formatToParts(instant)
+      .map(({ type, value }) => [type, Number(value)]),
+  );
+  return Date.UTC(p.year, p.month - 1, p.day, p.hour, p.minute) - instant;
+}
+
+// « 2026-11-16 » à « 11:00 », heure locale du lieu → l'instant correspondant.
+// On corrige deux fois : le décalage peut changer entre l'estimation et le résultat (changement d'heure).
+export function versInstant(jour: string, heure: string, pays: string): Date {
+  const timeZone = fuseauDuPays(pays);
+  const [a, m, j] = jour.split("-").map(Number);
+  const [h, min] = heure.split(":").map(Number);
+  const affiche = Date.UTC(a, m - 1, j, h, min);
+  let instant = affiche - decalage(affiche, timeZone);
+  instant = affiche - decalage(instant, timeZone);
+  return new Date(instant);
+}
+
+export const SAISONS_SAISIE = { printemps: 3, ete: 6, automne: 9, hiver: 12 } as const;
+export type Saison = keyof typeof SAISONS_SAISIE;
+
+export type SaisieDate =
+  | { precision: "jour"; jour: string; heure: string }
+  | { precision: "mois"; mois: string } // « 2027-05 »
+  | { precision: "saison"; saison: Saison; annee: number };
+
+// Début de l'engagement, et fin de la période qu'il désigne (pour savoir si elle est déjà passée).
+// Une date approximative commence le premier jour du mois ou de la saison, à minuit, heure du lieu.
+export function lireSaisieDate(saisie: SaisieDate, pays: string): { debut: Date; finPeriode: Date } {
+  if (saisie.precision === "jour") {
+    const debut = versInstant(saisie.jour, saisie.heure, pays);
+    return { debut, finPeriode: debut };
+  }
+  const [annee, mois, nbMois] =
+    saisie.precision === "mois"
+      ? [...saisie.mois.split("-").map(Number), 1]
+      : [saisie.annee, SAISONS_SAISIE[saisie.saison], 3];
+  const premierJour = (a: number, m: number) =>
+    versInstant(`${a + Math.floor((m - 1) / 12)}-${String(((m - 1) % 12) + 1).padStart(2, "0")}-01`, "00:00", pays);
+  return { debut: premierJour(annee, mois), finPeriode: premierJour(annee, mois + nbMois) };
+}

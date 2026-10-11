@@ -25,7 +25,6 @@ export default function PageEngagements({ searchParams }: PageProps<"/engagement
       <Link href="/tableau-de-bord" className="text-sm underline">
         ← Tableau de bord
       </Link>
-      <h1 className="text-2xl font-semibold">Engagements</h1>
       <Suspense fallback={<ChargementListe />}>
         <ContenuEngagements searchParams={searchParams} />
       </Suspense>
@@ -46,6 +45,14 @@ async function ContenuEngagements({ searchParams }: { searchParams: Promise<Reco
 
   return (
     <>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h1 className="text-2xl font-semibold">Engagements</h1>
+        {estAgent && (
+          <Button nativeButton={false} render={<Link href="/engagements/nouveau" />}>
+            + Nouvel engagement
+          </Button>
+        )}
+      </div>
       <form className="flex flex-wrap items-end gap-3" action="/engagements">
         <NativeSelect name="statut" defaultValue={filtres.statut ?? ""} aria-label="Statut">
           <NativeSelectOption value="">Tous les statuts</NativeSelectOption>

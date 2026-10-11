@@ -77,10 +77,21 @@ export async function listerEngagements(lecteur: Lecteur, filtres: Filtres) {
 
 export async function listerMusiciens() {
   return db
-    .select({ id: utilisateurs.id, nom: utilisateurs.nom })
+    .select({ id: utilisateurs.id, nom: utilisateurs.nom, instrument: utilisateurs.instrument })
     .from(utilisateurs)
     .where(eq(utilisateurs.role, "musicien"))
     .orderBy(asc(utilisateurs.nom));
+}
+
+export async function listerLieux() {
+  return db.select({ id: lieux.id, nom: lieux.nom, ville: lieux.ville }).from(lieux).orderBy(asc(lieux.ville), asc(lieux.nom));
+}
+
+export async function listerProgrammateurs() {
+  return db
+    .select({ id: programmateurs.id, nom: programmateurs.nom, structure: programmateurs.structure })
+    .from(programmateurs)
+    .orderBy(asc(programmateurs.nom));
 }
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;

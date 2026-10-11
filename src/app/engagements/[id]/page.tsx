@@ -10,23 +10,31 @@ import { lireEngagement } from "@/lib/engagements";
 import { verifierSession } from "@/lib/session";
 import { BoutonsStatut } from "./boutons-statut";
 
-export default function PageEngagement({ params }: PageProps<"/engagements/[id]">) {
+export default function PageEngagement({ params, searchParams }: PageProps<"/engagements/[id]">) {
   return (
     <main className="mx-auto grid w-full max-w-3xl gap-6 p-4">
       <Link href="/engagements" className="text-sm underline">
         ← Engagements
       </Link>
       <Suspense fallback={<div className="h-64 animate-pulse rounded-md bg-muted" aria-label="Chargement" />}>
-        <FicheEngagement params={params} />
+        <FicheEngagement params={params} searchParams={searchParams} />
       </Suspense>
     </main>
   );
 }
 
-async function FicheEngagement({ params }: { params: Promise<{ id: string }> }) {
+async function FicheEngagement({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ id: string }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
   const utilisateur = await verifierSession();
   const engagement = await lireEngagement(utilisateur, (await params).id);
   if (!engagement) notFound();
+  // Posé par la création, qui renvoie ici : ?cree=1
+  const vientDEtreCree = (await searchParams).cree === "1";
 
   const estAgent = utilisateur.role === "admin";
   const { lieu, programmateur } = engagement;
@@ -34,6 +42,11 @@ async function FicheEngagement({ params }: { params: Promise<{ id: string }> }) 
 
   return (
     <Card>
+      {vientDEtreCree && (
+        <p role="status" className="mx-4 rounded-md border px-3 py-2 text-sm">
+          Engagement créé.
+        </p>
+      )}
       <CardHeader>
         <CardTitle className="flex flex-wrap items-center justify-between gap-2">
           <span>
