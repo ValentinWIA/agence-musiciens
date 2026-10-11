@@ -1,7 +1,7 @@
 import { and, asc, desc, eq, gte, ilike, inArray, lt, or, type SQL } from "drizzle-orm";
 import { db } from "@/db";
 import { STATUTS_TENUS, type ConcertSitue } from "@/lib/conflit";
-import { engagementMusiciens, engagements, lieux, programmateurs, utilisateurs } from "@/db/schema";
+import { engagementMusiciens, engagements, lieux, piecesJointes, programmateurs, utilisateurs } from "@/db/schema";
 
 export const LIBELLES_STATUT = {
   demande: "demande",
@@ -192,4 +192,20 @@ export async function lireAgendaPourConfirmer(id: string) {
     autres: concerts.filter((c) => c.id !== id),
     noms: Object.fromEntries(sesMusiciens.map((m) => [m.id, m.nom])),
   };
+}
+
+// Pièces jointes d'un engagement, la plus récente en premier. À n'appeler qu'après lireEngagement, qui contrôle
+// l'accès. Le chemin dans le stockage n'est pas lu : il ne doit jamais atteindre le navigateur.
+export async function lirePiecesJointes(engagementId: string) {
+  return db
+    .select({
+      id: piecesJointes.id,
+      type: piecesJointes.type,
+      nomFichier: piecesJointes.nomFichier,
+      taille: piecesJointes.taille,
+      ajouteeLe: piecesJointes.ajouteeLe,
+    })
+    .from(piecesJointes)
+    .where(eq(piecesJointes.engagementId, engagementId))
+    .orderBy(desc(piecesJointes.ajouteeLe));
 }

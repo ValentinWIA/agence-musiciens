@@ -8,9 +8,11 @@ import { formaterMontant } from "@/lib/argent";
 import { avertissementConflits, trouverConflits } from "@/lib/conflit";
 import { TRANSITIONS, transitionsProposees } from "@/lib/cycle-de-vie";
 import { formaterDebut } from "@/lib/dates";
-import { lireAgendaPourConfirmer, lireEngagement } from "@/lib/engagements";
+import { lireAgendaPourConfirmer, lireEngagement, lirePiecesJointes } from "@/lib/engagements";
+import { formaterTaille, LIBELLES_TYPE_PIECE } from "@/lib/pieces-jointes";
 import { verifierSession } from "@/lib/session";
 import { BoutonsStatut } from "./boutons-statut";
+import { AjoutPiece } from "./pieces/ajout-piece";
 
 export default function PageEngagement({ params, searchParams }: PageProps<"/engagements/[id]">) {
   return (
@@ -47,6 +49,7 @@ async function FicheEngagement({
     estAgent && (engagement.statut === "option" || engagement.statut === "contrat_envoye")
       ? await avertissementAgenda(engagement.id)
       : null;
+  const pieces = await lirePiecesJointes(engagement.id);
 
   return (
     <Card>
@@ -103,6 +106,28 @@ async function FicheEngagement({
             {transitions.length > 0 && <BoutonsStatut id={engagement.id} transitions={transitions} />}
           </div>
         )}
+        <section className="mt-8 grid gap-3" aria-labelledby="titre-pieces">
+          <h2 id="titre-pieces" className="font-medium">
+            Pièces jointes
+          </h2>
+          {pieces.length === 0 ? (
+            <p className="text-sm text-muted-foreground">Aucune pièce jointe.</p>
+          ) : (
+            <ul className="grid gap-2 text-sm">
+              {pieces.map((p) => (
+                <li key={p.id} className="flex flex-wrap gap-x-3">
+                  <span className="font-medium">{LIBELLES_TYPE_PIECE[p.type]}</span>
+                  <span className="break-all">{p.nomFichier}</span>
+                  <span className="text-muted-foreground">
+                    {formaterTaille(p.taille)} · ajoutée le {formaterJour(p.ajouteeLe)}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          )}
+          {/* Ajout permis à tout statut (le contrat signé arrive après « confirmé ») ; agent seulement. */}
+          {estAgent && <AjoutPiece id={engagement.id} />}
+        </section>
       </CardContent>
     </Card>
   );
@@ -121,6 +146,10 @@ function Ligne({ titre, children }: { titre: string; children: React.ReactNode }
       <dd>{children}</dd>
     </>
   );
+}
+
+function formaterJour(date: Date) {
+  return new Intl.DateTimeFormat("fr-FR", { dateStyle: "long", timeZone: "Europe/Paris" }).format(date);
 }
 
 function formaterDuree(minutes: number) {
