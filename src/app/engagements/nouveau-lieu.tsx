@@ -118,7 +118,7 @@ function FormulaireLieu({ onCree, onAnnule }: { onCree: (lieu: LieuCree) => void
         />
       </Champ>
 
-      <Champ id="lieu-ville" titre="Ville" erreurs={err.ville}>
+      <Champ id="lieu-ville" titre="Ville (sans code postal)" erreurs={err.ville}>
         <Input
           id="lieu-ville"
           name="ville"

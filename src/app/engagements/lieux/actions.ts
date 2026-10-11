@@ -1,10 +1,9 @@
 "use server";
 
-import { and, sql } from "drizzle-orm";
 import { db } from "@/db";
 import { lieux } from "@/db/schema";
 import { chercherAdresse, type Proposition } from "@/lib/geocodage";
-import { lireLieu, type ErreursLieu } from "@/lib/lieux";
+import { lireLieu, trouverDoublon, type ErreursLieu } from "@/lib/lieux";
 import { verifierAdmin } from "@/lib/session";
 
 // Création d'un lieu depuis le formulaire d'engagement (étape E, section 7 de docs/engagements.md).
@@ -38,10 +37,11 @@ export async function creerLieu(_etat: EtatLieu, formData: FormData): Promise<Et
   }
   const d = lu.lieu;
 
-  // Même nom dans la même ville : sans tenir compte des majuscules ni des espaces autour.
-  const doublon = await db.query.lieux.findFirst({
-    where: and(sql`lower(${lieux.nom}) = lower(${d.nom})`, sql`lower(${lieux.ville}) = lower(${d.ville})`),
-  });
+  // Les lieux sont peu nombreux : on les relit tous et on compare ici (règle testée dans src/lib/lieux.ts).
+  const existants = await db
+    .select({ nom: lieux.nom, ville: lieux.ville, latitude: lieux.latitude, longitude: lieux.longitude })
+    .from(lieux);
+  const doublon = trouverDoublon(d, existants);
   if (doublon) {
     console.warn(`Création de lieu refusée (doublon « ${d.nom} », ${d.ville}) par ${agent.nom}`);
     return { erreurs: { nom: [`« ${doublon.nom} » existe déjà à ${doublon.ville}.`] } };

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { lireLieu } from "./lieux";
+import { distanceApprocheeMetres, lireLieu, trouverDoublon } from "./lieux";
 
 const valide = {
   nom: " Salle Cortot ",
@@ -38,5 +38,37 @@ describe("lireLieu", () => {
 
   it("refuse un nom vide", () => {
     expect(lireLieu({ ...valide, nom: "   " }).erreurs?.nom).toBeDefined();
+  });
+});
+
+describe("trouverDoublon", () => {
+  const colonne = { nom: "Salle Colonne", ville: "Paris 75013", latitude: 48.8322, longitude: 2.3755 };
+
+  it("refuse le cas constaté : même nom en minuscules, code postal placé avant la ville", () => {
+    expect(trouverDoublon({ ...colonne, nom: "salle colonne", ville: "75013 Paris" }, [colonne])).toBe(colonne);
+  });
+
+  it("ignore les espaces en trop dans le nom", () => {
+    expect(trouverDoublon({ ...colonne, nom: "  Salle   Colonne " }, [colonne])).toBe(colonne);
+  });
+
+  it("refuse le même nom à moins de 100 m, même si la ville est écrite autrement", () => {
+    // 0,0005° de latitude ≈ 56 m.
+    expect(trouverDoublon({ ...colonne, ville: "Paris 13e", latitude: 48.8327 }, [colonne])).toBe(colonne);
+  });
+
+  it("accepte une autre salle à la même adresse", () => {
+    expect(trouverDoublon({ ...colonne, nom: "Petite salle Colonne" }, [colonne])).toBeUndefined();
+  });
+
+  it("accepte le même nom dans une autre ville, loin", () => {
+    expect(trouverDoublon({ ...colonne, ville: "Lyon", latitude: 45.764, longitude: 4.8357 }, [colonne])).toBeUndefined();
+  });
+});
+
+describe("distanceApprocheeMetres", () => {
+  it("donne environ 111 km pour un degré de latitude", () => {
+    const a = { nom: "", ville: "", latitude: 48, longitude: 2 };
+    expect(distanceApprocheeMetres(a, { ...a, latitude: 49 })).toBeCloseTo(111_195, -1);
   });
 });
