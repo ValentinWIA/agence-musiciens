@@ -22,12 +22,16 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   (`docs/engagements.md`), B1 (4 tables), B2 (jeu de données), C1 (liste filtrable), C2 (fiche + « introuvable »,
   vérifiée le 11/10 : fiches de Louis sans coordonnées, fiche d'Anna → « introuvable » + « Accès refusé »,
   adresse inventée → « introuvable » sans journal).
+  D1 (règles du cycle de vie, `src/lib/cycle-de-vie.ts`, 10 tests) : vérifications GitHub vertes le 11/10.
+  Décidé : concert **bénévole** (cachet 0) → contrat possible, « joué » est final ; durée exigée pour poser une option.
 - **Bug corrigé (commit `7d220dd`)** : `scripts/jeu-de-donnees.ts` utilise des identifiants **fixes**, calculés par
   empreinte du nom (`idStable("musicien:louis")`, format UUID accepté par `z.uuid()`) : les sessions ouvertes et les
   adresses des fiches restent valables après un rechargement du jeu. Vérifié le 11/10 : même nom → même identifiant.
   Constaté en prévisualisation le 11/10 : Louis reste connecté après un nouveau déploiement.
 - **Reprise (nouvelle session)** : lire `SUIVI.md`, `AGENTS.md`, `docs/engagements.md` ;
-  puis étape D (formulaire, changements de statut), E (géocodage), F (règle de conflit + tests), G (pièces jointes),
+  puis étape D — plan validé en 4 tranches : D1 ✅ règles ; **D2** boutons de statut sur la fiche (action
+  `changerStatut`, refus expliqués) ; D3 création ; D4 modification (verrouillage après « confirmé ») ;
+  « + nouveau lieu » repoussé à E. Puis E (géocodage), F (règle de conflit + tests), G (pièces jointes),
   H (revue de sécurité, README, schéma, rendus, `npm run donnees` en production).
 - **Quota** : semaine à 79 % le 12/10 (réinitialisation le 14/10 à 11 h 59). Sessions courtes, `/clear` entre étapes,
   explications courtes.
