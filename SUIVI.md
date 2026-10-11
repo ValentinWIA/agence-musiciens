@@ -10,14 +10,19 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 
 ## État de reprise
 
-*Dernière mise à jour : 11 octobre 2026*
+*Dernière mise à jour : 11 octobre 2026 (fin de session)*
 
 - **Fait** : cadrage (SPEC), comptes, squelette Next.js, dépôt GitHub public, site en ligne
   (https://agence-musiciens.vercel.app), région `fra1`, base Neon reliée à Vercel.
   Fonctionnalité « connexion » fusionnée (pull request n° 1) et vérifiée en production ; compte de l'agent créé en production.
   Fonctionnalité « invitations » fusionnée (pull request n° 2) et vérifiée en production.
-- **En cours** : rien. Prochaine fonctionnalité : réinitialisation du mot de passe (branche à part),
-  puis tests automatiques à chaque push.
+- **En cours** : réinitialisation du mot de passe sur la branche `reinitialisation` (pas encore fusionnée).
+  Tranche 1 (parcours « mot de passe oublié » par courriel) codée et déployée en prévisualisation, **à vérifier** :
+  https://agence-musiciens-git-reinitialisation-valentin-4768.vercel.app — adresse sans compte (même message,
+  rien n'arrive) ; adresse de l'agent (courriel reçu) ; mot de passe trop court refusé ; lien consommé après usage ;
+  ancien mot de passe refusé, nouveau accepté ; journaux. L'adresse de l'agent doit être celle du compte Resend.
+  Ensuite : tranche 2 (lien de réinitialisation généré par l'agent pour un musicien), fusion, tests automatiques.
+- **Limite connue** : changer le mot de passe ne ferme pas les sessions déjà ouvertes (elles expirent seules).
 - **Reste à faire (côté humain)** : créer le compte UptimeRobot.
 - **Points d'attention** :
   - Vercel Hobby ne garde les journaux qu'environ une heure : refaire la tentative juste avant la démo,
@@ -109,7 +114,7 @@ Un produit se construit par couches. Chaque couche répond à une question et s'
 | Invitations : table `invitations` + page `/invitations` réservée à l'admin | ✅ | L'agent invite un musicien et obtient le lien à transmettre (tranche 1) |
 | Invitations : page d'acceptation, création du compte musicien | ✅ | Tranche 2 ; refus d'accès d'un musicien à `/invitations` constaté et journalisé |
 | Invitations : courriel par Resend | ✅ | Tranche 3 : courriel reçu à l'adresse du compte Resend ; autre adresse refusée par Resend, lien affiché, échec journalisé |
-| Réinitialisation du mot de passe | ⬜ | Tranche 4 |
+| Réinitialisation du mot de passe | 🔄 | Branche `reinitialisation` : tranche 1 codée, à vérifier |
 | Journal des déconnexions | ✅ | Ajouté avec la tranche 1 des invitations |
 
 **Preuve constatée pour la tranche 2 (11/10/2026)** : erreurs affichées (e-mail invalide, mot de passe trop court) ;
