@@ -125,6 +125,8 @@ annulation après confirmation, programme trop long, duo dont un musicien est in
 
 - Aucune ligne de code écrite à la main : Claude Code produit, je cadre et je vérifie.
 - Claude doit expliquer clairement ce qu'il fait, car le but d'exercice est aussi d'apprendre la programmation.
+- Claude doit demander l'accord et expliquer ce qu'il va faire avant de lancer des opérations.
+- Mets à jour SUIVI.md qui explique les grandes étapes du projet.
 - En ligne dès le premier soir ; une fonctionnalité par branche ; jamais de test sur la production.
 - Commit avant chaque génération ; l'IA raconte ensuite ce qu'elle a changé.
 - Aucun secret dans le dépôt, le navigateur ou le chat : variables d'environnement Vercel.
