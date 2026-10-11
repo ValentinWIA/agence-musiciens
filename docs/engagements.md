@@ -7,12 +7,14 @@ Il sert aussi de rendu du vendredi : spécification, cycle de vie, maquette des 
 
 ## 1. Ce qu'on veut, en dix lignes
 
-1. Un **engagement** est un concert proposé par un programmateur, à une date et dans un lieu, pour un ou deux musiciens de l'agence.
+1. Un **engagement** est un concert proposé par un programmateur, dans un lieu, pour un ou deux musiciens de l'agence,
+   à une date précise ou, au stade de la demande, approximative (« mai 2027 », « automne 2027 »).
 2. L'agent crée l'engagement dès la première demande, puis le fait avancer d'étape en étape jusqu'au paiement du cachet.
 3. Chaque étape est un **statut** ; seules certaines transitions sont permises, et seul l'agent les déclenche.
 4. L'agent voit tous les engagements ; un musicien ne voit **que les siens**, en lecture seule — vérifié côté serveur.
 5. La liste se filtre par statut, par musicien (agent seulement), par période (à venir / passés) et par texte (lieu, ville).
-6. La fiche d'un engagement montre tout ce qu'on sait : date, horaire, durée, lieu, programmateur, musiciens, cachet, programme, notes.
+6. La fiche d'un engagement montre tout ce qu'on sait : titre court, date, horaire, durée, lieu, programmateur, musiciens,
+   cachet, programme, notes.
 7. **Règle métier** : un engagement ne peut pas être **confirmé** si l'un de ses musiciens a déjà un engagement trop proche,
    compte tenu de la distance entre les lieux (règle détaillée dans `SPEC.md`).
 8. Un duo n'est confirmable que si **les deux** musiciens sont libres.
@@ -22,7 +24,9 @@ Il sert aussi de rendu du vendredi : spécification, cycle de vie, maquette des 
 **Cas limites retenus**
 - Concert qui finit tard (22 h) et suivant le lendemain matin loin (800 km) → conflit, confirmation refusée.
 - Engagement sans cachet (encore inconnu à l'étape « demande ») → autorisé jusqu'à « contrat envoyé », obligatoire ensuite.
-- Cachet en devise étrangère (CHF, USD) → enregistré tel quel, avec sa devise.
+- Cachet en devise étrangère (CHF, USD, GBP, JPY) → enregistré tel quel, avec sa devise. Le yen n'a pas de centimes.
+- Date approximative (« automne 2027 ») → permise au statut « demande » ; une date et une heure précises sont exigées
+  pour poser une option, car la règle de conflit a besoin d'horaires exacts.
 - Annulation après confirmation → possible tant que le concert n'est pas joué ; l'engagement reste visible, statut « annulé ».
 - Musicien sans aucun engagement → sa liste affiche l'état « vide ».
 - Musicien qui tape l'adresse de l'engagement d'un autre → page « introuvable » (on ne confirme pas qu'il existe), refus journalisé.
@@ -55,7 +59,7 @@ Il sert aussi de rendu du vendredi : spécification, cycle de vie, maquette des 
 
 | Transition | De → vers | Qui | Condition vérifiée par le serveur |
 |---|---|---|---|
-| Poser une option | demande → option | agent | date, lieu et au moins un musicien renseignés |
+| Poser une option | demande → option | agent | date **précise** et heure renseignées (plus de date approximative) |
 | Envoyer le contrat | option → contrat envoyé | agent | cachet renseigné |
 | Confirmer | contrat envoyé → confirmé | agent | **règle de conflit** : aucun musicien de l'engagement n'a de concert trop proche |
 | Marquer joué | confirmé → joué | agent | la date du concert est passée |
@@ -85,13 +89,20 @@ Il sert aussi de rendu du vendredi : spécification, cycle de vie, maquette des 
 |---|---|
 | `lieux` | nom, adresse, ville, pays, latitude, longitude (remplies par le géocodage, étape E) |
 | `programmateurs` | nom, structure (festival, salle…), e-mail, téléphone — fictifs |
-| `engagements` | date et heure de début, durée prévue (minutes), lieu, programmateur, statut, cachet (en **centimes**), devise, programme (texte), notes, dates de création et de modification |
+| `engagements` | titre court (facultatif), début, précision de la date (`jour`, `mois` ou `saison`), durée prévue (minutes), lieu, programmateur, statut, cachet (en **plus petite unité de la devise**), devise, programme (texte), notes, dates de création et de modification |
 | `engagement_musiciens` | engagement, musicien |
 
-- Le cachet est stocké en **centimes entiers** (2 000,00 € → `200000`) : les nombres à virgule de l'ordinateur font des
-  erreurs d'arrondi, inacceptables pour de l'argent.
-- Devises acceptées : EUR, CHF, USD, GBP.
-- Fin du concert = début + durée prévue : c'est ce qu'utilise la règle de conflit.
+- Le cachet est **rangé** en nombre entier, dans la plus petite unité de la devise : centimes pour EUR, CHF, USD et GBP
+  (1 250,10 € → `125010`), yen pour JPY, qui n'a pas de centimes (300 000 ¥ → `300000`). Les nombres à virgule de
+  l'ordinateur font des erreurs d'arrondi (1 250,10 + 3 200,20 = 4 450,29999…), inacceptables pour de l'argent.
+  **Invisible pour l'utilisateur** : il saisit et lit « 1 250,10 € », le code convertit à l'entrée et à la sortie.
+- Devises acceptées : EUR, CHF, USD, GBP, JPY.
+- **Date approximative** : `debut` contient le premier jour de la période et `precision_date` dit comment l'afficher :
+  `jour` → « samedi 16 novembre 2026, 11 h 00 » ; `mois` → « mai 2027 » ; `saison` → « automne 2027 »
+  (printemps = mars–mai, été = juin–août, automne = septembre–novembre, hiver = décembre–février).
+  Les listes trient sur `debut` : « automne 2027 » se range au 1er septembre 2027.
+- Fin du concert = début + durée prévue : c'est ce qu'utilise la règle de conflit, qui ignore les dates approximatives
+  (elles ne peuvent de toute façon pas atteindre l'étape « confirmé »).
 
 ---
 
@@ -155,11 +166,13 @@ Les filtres sont dans l'adresse (`/engagements?statut=option&periode=passes`) : 
 ```
 ┌──────────────────────────────────────────────────────────────────────────────┐
 │ Nouvel engagement                                                            │
-│ Date et heure    [ 16/11/2026 ] [ 11:00 ]     Durée prévue [ 90 ] min         │
+│ Titre court      [ Récital piano-violon ]                                     │
+│ Date             (● précise ○ mois ○ saison)                                  │
+│                  [ 16/11/2026 ] [ 11:00 ]     Durée prévue [ 90 ] min         │
 │ Lieu             [ Victoria Hall, Genève      ▾ ]  ( + nouveau lieu )         │
 │ Programmateur    [ Claire Fontaine            ▾ ]                             │
 │ Musiciens        [x] Anna Petit (piano)  [x] Louis Roy (violon)  [ ] …        │
-│ Cachet           [ 3500 ] [ CHF ▾ ]                                           │
+│ Cachet           [ 3500 ] [ CHF ▾ ]   (EUR, CHF, USD, GBP, JPY)               │
 │ Programme        [ ………………………………………… ]                                         │
 │ Notes            [ ………………………………………… ]                                         │
 │                                      [ Annuler ]  [ Enregistrer ]             │
@@ -170,7 +183,7 @@ Les filtres sont dans l'adresse (`/engagements?statut=option&periode=passes`) : 
 |---|---|
 | Saisie | Les champs ; en modification, pré-remplis |
 | Envoi en cours | Bouton « Enregistrement… » désactivé |
-| Erreurs | Message sous chaque champ fautif (date manquante, aucun musicien, plus de 2 musiciens, cachet négatif…) |
+| Erreurs | Message sous chaque champ fautif (date manquante, aucun musicien, plus de 2 musiciens, cachet négatif, centimes en yens…) |
 | Réussite | Retour à la fiche avec le message « Engagement créé. » / « Engagement modifié. » |
 
 Un nouvel engagement commence toujours au statut « demande ».
@@ -188,10 +201,10 @@ Un nouvel engagement commence toujours au statut « demande ».
 
 ---
 
-## 6. Questions à trancher avant de coder
+## 6. Décisions prises (12/10/2026)
 
-1. **Le musicien voit-il le cachet** de ses propres engagements ? *(Proposition : oui.)*
-2. **Devises** : EUR, CHF, USD, GBP suffisent-elles ?
-3. **Un engagement « demande » peut-il n'avoir ni date ni musicien** (simple prise de contact) ?
-   *(Proposition : date et lieu obligatoires dès la création, musiciens obligatoires pour poser une option.)*
-4. **Faut-il un titre** à l'engagement (« Récital piano-violon ») en plus du lieu ? *(Proposition : oui, court et facultatif.)*
+1. Le musicien **voit le cachet** de ses propres engagements *(proposition retenue, à confirmer)*.
+2. Devises : EUR, CHF, USD, GBP **et JPY**.
+3. **Au moins un musicien** dès la création. Date approximative (mois ou saison) permise au stade « demande »,
+   date précise exigée pour poser une option. Lieu obligatoire dès la création.
+4. **Titre court** facultatif.
