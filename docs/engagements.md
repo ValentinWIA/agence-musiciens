@@ -220,3 +220,37 @@ Un nouvel engagement commence toujours au statut « demande ».
    l'étape finale (ni facture ni encaissement). Défraiements : plus tard.
 7. **Rétablir** (décidé le 11/10/2026, étape D2b) : un engagement annulé par erreur peut être rétabli tant que sa date
    n'est pas passée ; s'il était confirmé, il revient à « contrat envoyé ». Remplace « annuler et recréer ».
+
+---
+
+## 7. Étape E — géocodage des lieux (cadrage validé le 11/10/2026)
+
+**Constats**
+- Le géocodage data.gouv (service de l'IGN, `https://data.geopf.fr/geocodage/search`) ne couvre que la **France** ;
+  4 lieux du jeu de données sont à l'étranger (Genève, Zurich, Londres, Tokyo).
+- On cherche par **adresse + ville**, jamais par nom de salle : « salle cortot paris » renvoie « Rue Cortot 75018 ».
+
+**Ce qu'on veut**
+1. Chaque lieu a une latitude et une longitude (nécessaires à la règle de conflit, étape F).
+2. Dans le formulaire d'engagement, « + nouveau lieu » ouvre une fenêtre ; la saisie en cours est conservée.
+3. Lieu en **France** : l'agent tape adresse et ville, « Chercher » ; le serveur interroge l'API et propose au plus
+   5 résultats ; l'agent en **choisit** un (jamais de prise automatique du premier).
+4. Lieu à **l'étranger** : l'agent saisit latitude et longitude (copiées d'une carte).
+5. **Pas de lieu sans coordonnées** (colonnes rendues obligatoires). API indisponible → « Service de géocodage
+   indisponible, réessayez », rien n'est créé.
+6. Même nom dans la même ville → refusé (« existe déjà »).
+7. Le lieu créé est sélectionné dans la liste déroulante.
+8. Appel **côté serveur**, délai limité à 5 s, chaque appel et chaque échec journalisés.
+9. Jeu de données : **coordonnées fixes**, obtenues une fois ; le chargement ne dépend d'aucun service extérieur.
+10. Créer un lieu : agent seulement (`verifierAdmin()`).
+
+**Hors périmètre** : page de gestion des lieux (modifier, supprimer) ; géocodage étranger par une autre API ;
+calcul de distance (étape F) ; jours fériés et Frankfurter (étape à part).
+
+**Tranches**
+
+| Tranche | Contenu | Preuve |
+|---|---|---|
+| E1 | `src/lib/geocodage.ts` : appel à l'API, réponse vérifiée par zod | Tests avec réponses simulées (normal, aucun résultat, mal formé, délai dépassé) |
+| E2 | Coordonnées fixes des 12 lieux ; migration `latitude`/`longitude` obligatoires | Prévisualisation verte, coordonnées présentes dans la base |
+| E3 | Action `creerLieu` + fenêtre « + nouveau lieu » | Gestes sur la prévisualisation : lieu français choisi, lieu étranger saisi, doublon refusé, Louis refusé |
