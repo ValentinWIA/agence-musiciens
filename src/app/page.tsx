@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
-import { auth } from "@/auth";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { lireSession } from "@/lib/session";
 import { FormulaireConnexion } from "./formulaire-connexion";
 
 export default function PageConnexion() {
@@ -24,6 +24,6 @@ export default function PageConnexion() {
 
 async function ContenuConnexion() {
   // Déjà connecté : inutile de revoir le formulaire.
-  if (await auth()) redirect("/tableau-de-bord");
+  if (await lireSession()) redirect("/tableau-de-bord");
   return <FormulaireConnexion />;
 }
