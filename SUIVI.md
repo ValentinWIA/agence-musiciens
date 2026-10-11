@@ -10,7 +10,7 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 
 ## État de reprise
 
-*Dernière mise à jour : 12 octobre 2026*
+*Dernière mise à jour : 12 octobre 2026 (fin de session)*
 
 - **Fait** : cadrage (SPEC), comptes, squelette Next.js, dépôt GitHub public, site en ligne
   (https://agence-musiciens.vercel.app), région `fra1`, base Neon reliée à Vercel.
@@ -18,10 +18,21 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   Fonctionnalité « invitations » fusionnée (pull request n° 2) et vérifiée en production.
   Réinitialisation du mot de passe fusionnée (pull request n° 3), vérifiée en production.
   Vérifications automatiques à chaque push (lint, 8 tests, construction) fusionnées (pull request n° 4).
-- **En cours** : engagements, branche `engagements` (pas encore fusionnée). Cadrage (`docs/engagements.md`) validé ;
-  B1 (4 tables) et B2 (jeu de données fictif rejouable : 4 musiciens, 5 programmateurs, 12 lieux, 50 engagements)
-  validés en prévisualisation. Prochaine : C (liste filtrable et fiche).
-  Le jeu de données se charge seul sur chaque prévisualisation ; en production, à lancer à la main (`npm run donnees`).
+- **En cours** : engagements, branche `engagements` (pas encore fusionnée). Validés en prévisualisation : cadrage
+  (`docs/engagements.md`), B1 (4 tables), B2 (jeu de données), C1 (liste filtrable). C2 (fiche + « introuvable »)
+  codée et déployée, **vérification interrompue** : points 3 à 6 à refaire (voir ci-dessous).
+- **Bug connu, à corriger en premier** : `scripts/jeu-de-donnees.ts` recrée les données avec des UUID **au hasard** à
+  chaque déploiement de prévisualisation → les sessions ouvertes pointent vers un ancien identifiant (Louis ne voit plus
+  rien) et les adresses de fiches changent. Correctif prévu : identifiants **fixes** calculés par empreinte du nom
+  (`idStable("musicien:louis")`, format UUID version 5 / variante 8 pour passer `z.uuid()`), à la place de `randomUUID()`.
+  Contournement : se déconnecter puis se reconnecter.
+- **Reprise (nouvelle session)** : lire `SUIVI.md`, `AGENTS.md`, `docs/engagements.md` ; corriger le bug ci-dessus ;
+  refaire la vérification C2 (Louis : ses fiches sans coordonnées du programmateur ; adresse d'une fiche d'Anna →
+  « Engagement introuvable » + journal « Accès refusé » ; adresse modifiée → « introuvable », sans journal) ;
+  puis étape D (formulaire, changements de statut), E (géocodage), F (règle de conflit + tests), G (pièces jointes),
+  H (revue de sécurité, README, schéma, rendus, `npm run donnees` en production).
+- **Quota** : semaine à 79 % le 12/10 (réinitialisation le 14/10 à 11 h 59). Sessions courtes, `/clear` entre étapes,
+  explications courtes.
 - **Limite connue** : changer le mot de passe ne ferme pas les sessions déjà ouvertes (elles expirent seules).
 - **Reste à faire (côté humain)** : créer le compte UptimeRobot.
 - **Points d'attention** :
