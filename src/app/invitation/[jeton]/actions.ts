@@ -2,12 +2,10 @@
 
 import bcrypt from "bcryptjs";
 import { eq } from "drizzle-orm";
-import { z } from "zod";
 import { db } from "@/db";
 import { invitations, utilisateurs } from "@/db/schema";
+import { regleMotDePasse } from "@/lib/mot-de-passe";
 import { trouverInvitation } from "./trouver-invitation";
-
-const schemaMotDePasse = z.string().min(12, { error: "Au moins 12 caractères." });
 
 export type EtatAcceptation = { erreur?: string; reussi?: boolean };
 
@@ -21,7 +19,7 @@ export async function accepterInvitation(
   if (resultat.etat !== "valide") return { erreur: "Ce lien d'invitation n'est plus valide." };
   const { invitation } = resultat;
 
-  const motDePasse = schemaMotDePasse.safeParse(formData.get("motDePasse"));
+  const motDePasse = regleMotDePasse.safeParse(formData.get("motDePasse"));
   if (!motDePasse.success) return { erreur: motDePasse.error.issues[0].message };
 
   const compteExistant = await db.query.utilisateurs.findFirst({
