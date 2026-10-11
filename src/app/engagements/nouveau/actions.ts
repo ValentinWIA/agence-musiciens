@@ -41,8 +41,6 @@ const schemaEngagement = z.object({
 type Champ = keyof z.infer<typeof schemaEngagement> | "date";
 export type EtatCreation = {
   erreurs?: Partial<Record<Champ, string[]>>;
-  // Ce qui a été saisi, pour le remettre dans le formulaire après un refus.
-  valeurs?: Record<string, string | string[]>;
 };
 
 // Les champs de date utiles selon la précision choisie ; null si la saisie est incomplète ou invalide.
@@ -61,14 +59,8 @@ function saisieDate(d: { precision: string; jour: string; heure: string; mois: s
 export async function creerEngagement(_etat: EtatCreation, formData: FormData): Promise<EtatCreation> {
   const agent = await verifierAdmin("/engagements/nouveau (création)");
 
-  const brut = { ...Object.fromEntries(formData), musiciens: formData.getAll("musiciens") };
-  const valeurs = Object.fromEntries(
-    Object.entries(brut).map(([cle, v]) => [cle, Array.isArray(v) ? v.map(String) : String(v)]),
-  );
-  const refuser = (erreurs: EtatCreation["erreurs"]): EtatCreation => ({ erreurs, valeurs });
-
-  const donnees = schemaEngagement.safeParse(valeurs);
-  if (!donnees.success) return refuser(z.flattenError(donnees.error).fieldErrors);
+  const donnees = schemaEngagement.safeParse({ ...Object.fromEntries(formData), musiciens: formData.getAll("musiciens") });
+  if (!donnees.success) return { erreurs: z.flattenError(donnees.error).fieldErrors };
   const d = donnees.data;
 
   const erreurs: EtatCreation["erreurs"] = {};
@@ -98,7 +90,7 @@ export async function creerEngagement(_etat: EtatCreation, formData: FormData): 
 
   if (Object.keys(erreurs).length || !periode) {
     console.warn(`Création d'engagement refusée (${Object.keys(erreurs).join(", ")}) par ${agent.nom}`);
-    return refuser(erreurs);
+    return { erreurs };
   }
 
   // L'identifiant est tiré ici pour écrire l'engagement et ses musiciens en une seule opération indivisible.

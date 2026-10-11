@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState, useState } from "react";
+import { startTransition, useActionState, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -21,15 +21,21 @@ const classeZoneTexte =
 
 export function FormulaireEngagement({ lieux, programmateurs, musiciens }: Props) {
   const [etat, action, enCours] = useActionState<EtatCreation, FormData>(creerEngagement, {});
-  const v = etat.valeurs ?? {};
-  const valeur = (cle: string) => (typeof v[cle] === "string" ? (v[cle] as string) : "");
-  const [precision, setPrecision] = useState(valeur("precision") || "jour");
+  const [precision, setPrecision] = useState("jour");
   const err = etat.erreurs ?? {};
 
   return (
-    <form action={action} className="grid gap-5">
+    <form
+      // Envoi sans la remise à zéro automatique de React : elle viderait les listes déroulantes après un refus.
+      onSubmit={(e) => {
+        e.preventDefault();
+        const donnees = new FormData(e.currentTarget);
+        startTransition(() => action(donnees));
+      }}
+      className="grid gap-5"
+    >
       <Champ id="titre" titre="Titre court (facultatif)" erreurs={err.titre}>
-        <Input id="titre" name="titre" defaultValue={valeur("titre")} maxLength={120} />
+        <Input id="titre" name="titre" maxLength={120} />
       </Champ>
 
       <fieldset className="grid gap-2">
@@ -41,7 +47,7 @@ export function FormulaireEngagement({ lieux, programmateurs, musiciens }: Props
                 type="radio"
                 name="precision"
                 value={cle}
-                defaultChecked={(valeur("precision") || "jour") === cle}
+                defaultChecked={cle === "jour"}
                 onChange={() => setPrecision(cle)}
               />
               {libelle}
@@ -50,31 +56,31 @@ export function FormulaireEngagement({ lieux, programmateurs, musiciens }: Props
         </div>
         {/* Les champs des autres précisions restent dans la page, vides : le serveur ne lit que ceux de la précision choisie. */}
         <div className={precision === "jour" ? "flex flex-wrap gap-2" : "hidden"}>
-          <Input type="date" name="jour" defaultValue={valeur("jour")} aria-label="Jour" className="w-44" />
-          <Input type="time" name="heure" defaultValue={valeur("heure")} aria-label="Heure (heure locale du lieu)" className="w-32" />
+          <Input type="date" name="jour" aria-label="Jour" className="w-44" />
+          <Input type="time" name="heure" aria-label="Heure (heure locale du lieu)" className="w-32" />
           <span className="self-center text-sm text-muted-foreground">heure locale du lieu</span>
         </div>
         <div className={precision === "mois" ? "" : "hidden"}>
-          <Input type="month" name="mois" defaultValue={valeur("mois")} aria-label="Mois" className="w-44" />
+          <Input type="month" name="mois" aria-label="Mois" className="w-44" />
         </div>
         <div className={precision === "saison" ? "flex gap-2" : "hidden"}>
-          <NativeSelect name="saison" defaultValue={valeur("saison") || "printemps"} aria-label="Saison">
+          <NativeSelect name="saison" defaultValue="printemps" aria-label="Saison">
             <NativeSelectOption value="printemps">printemps</NativeSelectOption>
             <NativeSelectOption value="ete">été</NativeSelectOption>
             <NativeSelectOption value="automne">automne</NativeSelectOption>
             <NativeSelectOption value="hiver">hiver (décembre à février)</NativeSelectOption>
           </NativeSelect>
-          <Input type="number" name="annee" defaultValue={valeur("annee")} placeholder="2027" aria-label="Année" className="w-24" />
+          <Input type="number" name="annee" placeholder="2027" aria-label="Année" className="w-24" />
         </div>
         <Erreurs liste={err.date ?? err.precision} />
       </fieldset>
 
       <Champ id="duree" titre="Durée prévue, en minutes (facultatif)" erreurs={err.duree}>
-        <Input id="duree" name="duree" inputMode="numeric" defaultValue={valeur("duree")} className="w-28" />
+        <Input id="duree" name="duree" inputMode="numeric" className="w-28" />
       </Champ>
 
       <Champ id="lieuId" titre="Lieu" erreurs={err.lieuId}>
-        <NativeSelect id="lieuId" name="lieuId" defaultValue={valeur("lieuId")} aria-invalid={!!err.lieuId}>
+        <NativeSelect id="lieuId" name="lieuId" aria-invalid={!!err.lieuId}>
           <NativeSelectOption value="">Choisir…</NativeSelectOption>
           {lieux.map((l) => (
             <NativeSelectOption key={l.id} value={l.id}>
@@ -88,7 +94,6 @@ export function FormulaireEngagement({ lieux, programmateurs, musiciens }: Props
         <NativeSelect
           id="programmateurId"
           name="programmateurId"
-          defaultValue={valeur("programmateurId")}
           aria-invalid={!!err.programmateurId}
         >
           <NativeSelectOption value="">Choisir…</NativeSelectOption>
@@ -109,7 +114,6 @@ export function FormulaireEngagement({ lieux, programmateurs, musiciens }: Props
                 type="checkbox"
                 name="musiciens"
                 value={m.id}
-                defaultChecked={Array.isArray(v.musiciens) && v.musiciens.includes(m.id)}
               />
               {m.nom} ({m.instrument})
             </label>
@@ -120,8 +124,8 @@ export function FormulaireEngagement({ lieux, programmateurs, musiciens }: Props
 
       <Champ id="cachet" titre="Cachet (facultatif ; 0 pour un concert bénévole)" erreurs={err.cachet ?? err.devise}>
         <div className="flex gap-2">
-          <Input id="cachet" name="cachet" inputMode="decimal" defaultValue={valeur("cachet")} className="w-36" />
-          <NativeSelect name="devise" defaultValue={valeur("devise") || "EUR"} aria-label="Devise">
+          <Input id="cachet" name="cachet" inputMode="decimal" className="w-36" />
+          <NativeSelect name="devise" defaultValue="EUR" aria-label="Devise">
             {DEVISES.map((d) => (
               <NativeSelectOption key={d} value={d}>
                 {d}
@@ -132,11 +136,11 @@ export function FormulaireEngagement({ lieux, programmateurs, musiciens }: Props
       </Champ>
 
       <Champ id="programme" titre="Programme (facultatif)" erreurs={err.programme}>
-        <textarea id="programme" name="programme" defaultValue={valeur("programme")} className={classeZoneTexte} />
+        <textarea id="programme" name="programme" className={classeZoneTexte} />
       </Champ>
 
       <Champ id="notes" titre="Notes (facultatif)" erreurs={err.notes}>
-        <textarea id="notes" name="notes" defaultValue={valeur("notes")} className={classeZoneTexte} />
+        <textarea id="notes" name="notes" className={classeZoneTexte} />
       </Champ>
 
       {etat.erreurs && (
