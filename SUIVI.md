@@ -18,6 +18,8 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   fusion dans `main` en cours, puis création du compte de l'agent en production.
 - **Reste à faire (côté humain)** : créer `AUTH_SECRET` (avant la tranche 3) ; créer le compte UptimeRobot.
 - **Cassé** : rien.
+- **À améliorer avant Sentry (semaine 2)** : Auth.js journalise chaque mauvais mot de passe comme une erreur
+  (`[auth][error] CredentialsSignin`) ; notre ligne « Connexion refusée » suffit, le message d'Auth.js est à faire taire.
 
 ---
 
@@ -101,6 +103,9 @@ Un produit se construit par couches. Chaque couche répond à une question et s'
 **Preuve constatée pour la tranche 2 (11/10/2026)** : erreurs affichées (e-mail invalide, mot de passe trop court) ;
 compte créé avec le rôle `admin` et un mot de passe chiffré (`$2…`) ; `/installation` fermée ensuite.
 À faire après la fusion : créer le compte de l'agent en production **immédiatement**, avec un nouveau mot de passe.
+
+Correctif avant fusion : erreur `crypto.getRandomValues()` repérée dans les journaux Vercel, reproduite en local,
+corrigée par `lireSession()` (appel de `connection()` avant Auth.js), contre-épreuve sans erreur.
 
 **Preuve constatée pour la tranche 3 (11/10/2026)** : mauvais mot de passe refusé (« Identifiants incorrects ») ;
 bon mot de passe → tableau de bord (nom, rôle `admin`) ; session conservée au rechargement ;
