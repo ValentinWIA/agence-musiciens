@@ -238,7 +238,10 @@ Un nouvel engagement commence toujours au statut « demande ».
 4. Lieu à **l'étranger** : l'agent saisit latitude et longitude (copiées d'une carte).
 5. **Pas de lieu sans coordonnées** (colonnes rendues obligatoires). API indisponible → « Service de géocodage
    indisponible, réessayez », rien n'est créé.
-6. Même nom dans la même ville → refusé (« existe déjà »).
+6. Même nom (majuscules et espaces en trop ignorés) **et** même ville comparée sans chiffres (« 75013 Paris » =
+   « Paris 75013 ») **ou** position à moins de 100 m d'un lieu existant → refusé (« existe déjà »). Deux salles
+   de noms différents à la même adresse restent permises (révisé le 12/10/2026 : la ville en texte exact laissait
+   passer « Salle Colonne, Paris 75013 » et « salle colonne, 75013 Paris »).
 7. Le lieu créé est sélectionné dans la liste déroulante.
 8. Appel **côté serveur**, délai limité à 5 s, chaque appel et chaque échec journalisés.
 9. Jeu de données : **coordonnées fixes**, obtenues une fois ; le chargement ne dépend d'aucun service extérieur.
