@@ -10,7 +10,7 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 
 ## État de reprise
 
-*Dernière mise à jour : 11 octobre 2026 (fin de session D3)*
+*Dernière mise à jour : 11 octobre 2026 (fin de session D4a)*
 
 - **Fait** : cadrage (SPEC), comptes, squelette Next.js, dépôt GitHub public, site en ligne
   (https://agence-musiciens.vercel.app), région `fra1`, base Neon reliée à Vercel.
@@ -32,12 +32,17 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   renvoyé). Date saisie à l'heure locale du lieu (`versInstant`) ; date passée refusée. Corrigé : React vidait les listes
   déroulantes après un refus → formulaire envoyé sans remise à zéro automatique (à reprendre pour D4).
   Décidé : concert **bénévole** (cachet 0) → contrat possible, « joué » est final ; durée exigée pour poser une option.
+  D4a (**règles de modification**, `estVerrouille` et `controlerModification` dans `src/lib/cycle-de-vie.ts`, 40 tests) :
+  commit `4a14206` poussé. Décidé : à partir de « confirmé » (et pour « annulé »), seuls titre, programme et notes
+  restent modifiables ; avant, une modification ne défait pas une étape franchie (date précise + durée dès l'option,
+  cachet non vide dès le contrat envoyé) ; une date passée n'est refusée que si on la change.
 - **Bug corrigé (commit `7d220dd`)** : `scripts/jeu-de-donnees.ts` utilise des identifiants **fixes**, calculés par
   empreinte du nom (`idStable("musicien:louis")`, format UUID accepté par `z.uuid()`) : les sessions ouvertes et les
   adresses des fiches restent valables après un rechargement du jeu. Vérifié le 11/10 : même nom → même identifiant.
   Constaté en prévisualisation le 11/10 : Louis reste connecté après un nouveau déploiement.
 - **Reprise (nouvelle session)** : lire `SUIVI.md`, `AGENTS.md`, `docs/engagements.md` ;
-  puis étape D — plan validé en 4 tranches : D1 ✅ règles ; D2 ✅ boutons de statut (+ D2b ✅ rétablir) ; D3 ✅ création ; **D4** modification (réutiliser le formulaire de D3, pré-rempli) (verrouillage après « confirmé ») ;
+  puis étape D — plan validé en 4 tranches : D1 ✅ règles ; D2 ✅ boutons de statut (+ D2b ✅ rétablir) ; D3 ✅ création ; D4 modification : D4a ✅ règles ; **D4b** à faire : formulaire de D3 partagé et pré-rempli,
+  page `/engagements/[id]/modifier`, action `modifierEngagement`, bouton « Modifier » sur la fiche, message « Engagement modifié. » ;
   « + nouveau lieu » repoussé à E. Puis E (géocodage), F (règle de conflit + tests), G (pièces jointes),
   H (revue de sécurité, README, schéma, rendus, `npm run donnees` en production).
 - **Quota** : semaine à 79 % le 12/10 (réinitialisation le 14/10 à 11 h 59). Sessions courtes, `/clear` entre étapes,
@@ -255,4 +260,5 @@ déconnexion ; `/tableau-de-bord` sans session → renvoi vers la connexion.
 | 12/10/2026 | Coordonnées des programmateurs réservées à l'agent | L'agent gère la relation ; le musicien voit nom et structure |
 | 11/10/2026 | Rétablir un engagement annulé (sauf date passée) ; « confirmé » revient à « contrat envoyé » | Une annulation par erreur obligeait à tout recréer ; reconfirmer rejoue la règle de conflit |
 | 11/10/2026 | Création : date passée refusée ; heure saisie = heure locale du lieu | Une demande pour un concert passé n'a pas de sens ; 11 h à Genève reste 11 h à Genève |
+| 11/10/2026 | Modification : après « confirmé » (et si annulé), seuls titre, programme et notes changent | Date, lieu, musiciens, durée et cachet sont au contrat ; les changer contournerait la règle de conflit |
 | 11/10/2026 | Table `utilisateurs` limitée à 7 colonnes | Invitations et réinitialisations iront dans des tables séparées ; ajouter une colonne plus tard est peu coûteux |
