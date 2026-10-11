@@ -19,19 +19,20 @@ export const PROGRAMMATEURS = {
   tanaka: { nom: "Yuki Tanaka", structure: "Tokyo Recital Series", email: "y.tanaka@exemple.test", telephone: null },
 } as const;
 
+// Coordonnées fixes : France par le géocodage de l'IGN (11/10/2026), étranger relevées sur une carte.
 export const LIEUX = {
-  cortot: { nom: "Salle Cortot", adresse: "78 rue Cardinet", ville: "Paris", pays: "France" },
-  gaveau: { nom: "Salle Gaveau", adresse: "45-47 rue La Boétie", ville: "Paris", pays: "France" },
-  tce: { nom: "Théâtre des Champs-Élysées", adresse: "15 avenue Montaigne", ville: "Paris", pays: "France" },
-  lyon: { nom: "Auditorium de Lyon", adresse: "149 rue Garibaldi", ville: "Lyon", pays: "France" },
-  metz: { nom: "Arsenal", adresse: "3 avenue Ney", ville: "Metz", pays: "France" },
-  bordeaux: { nom: "Grand-Théâtre", adresse: "Place de la Comédie", ville: "Bordeaux", pays: "France" },
-  menton: { nom: "Parvis de la basilique Saint-Michel", adresse: "Place de la Conception", ville: "Menton", pays: "France" },
-  roque: { nom: "Parc du château de Florans", adresse: "Route de Florans", ville: "La Roque-d'Anthéron", pays: "France" },
-  geneve: { nom: "Victoria Hall", adresse: "Rue du Général-Dufour 14", ville: "Genève", pays: "Suisse" },
-  zurich: { nom: "Tonhalle", adresse: "Claridenstrasse 7", ville: "Zurich", pays: "Suisse" },
-  wigmore: { nom: "Wigmore Hall", adresse: "36 Wigmore Street", ville: "Londres", pays: "Royaume-Uni" },
-  tokyo: { nom: "Tokyo Opera City Concert Hall", adresse: "3-20-2 Nishi-Shinjuku", ville: "Tokyo", pays: "Japon" },
+  cortot: { nom: "Salle Cortot", adresse: "78 rue Cardinet", ville: "Paris", pays: "France", latitude: 48.884204, longitude: 2.309259 },
+  gaveau: { nom: "Salle Gaveau", adresse: "45-47 rue La Boétie", ville: "Paris", pays: "France", latitude: 48.873528, longitude: 2.314195 },
+  tce: { nom: "Théâtre des Champs-Élysées", adresse: "15 avenue Montaigne", ville: "Paris", pays: "France", latitude: 48.865672, longitude: 2.303279 },
+  lyon: { nom: "Auditorium de Lyon", adresse: "149 rue Garibaldi", ville: "Lyon", pays: "France", latitude: 45.761355, longitude: 4.85292 },
+  metz: { nom: "Arsenal", adresse: "3 avenue Ney", ville: "Metz", pays: "France", latitude: 49.114513, longitude: 6.170881 },
+  bordeaux: { nom: "Grand-Théâtre", adresse: "Place de la Comédie", ville: "Bordeaux", pays: "France", latitude: 44.842395, longitude: -0.574745 },
+  menton: { nom: "Parvis de la basilique Saint-Michel", adresse: "Place de la Conception", ville: "Menton", pays: "France", latitude: 43.77697, longitude: 7.506751 },
+  roque: { nom: "Parc du château de Florans", adresse: "Route de Florans", ville: "La Roque-d'Anthéron", pays: "France", latitude: 43.716317, longitude: 5.310814 },
+  geneve: { nom: "Victoria Hall", adresse: "Rue du Général-Dufour 14", ville: "Genève", pays: "Suisse", latitude: 46.20145, longitude: 6.14169 },
+  zurich: { nom: "Tonhalle", adresse: "Claridenstrasse 7", ville: "Zurich", pays: "Suisse", latitude: 47.36528, longitude: 8.53833 },
+  wigmore: { nom: "Wigmore Hall", adresse: "36 Wigmore Street", ville: "Londres", pays: "Royaume-Uni", latitude: 51.51722, longitude: -0.14889 },
+  tokyo: { nom: "Tokyo Opera City Concert Hall", adresse: "3-20-2 Nishi-Shinjuku", ville: "Tokyo", pays: "Japon", latitude: 35.68306, longitude: 139.68667 },
 } as const;
 
 type Statut = "demande" | "option" | "contrat_envoye" | "confirme" | "joue" | "facture" | "paye" | "annule";
