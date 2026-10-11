@@ -15,9 +15,9 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 - **Fait** : cadrage (SPEC), comptes, squelette Next.js, dépôt GitHub public, site en ligne
   (https://agence-musiciens.vercel.app), région `fra1`, base Neon reliée à Vercel.
   Fonctionnalité « connexion » fusionnée (pull request n° 1) et vérifiée en production ; compte de l'agent créé en production.
-- **En cours** : rien. Prochaine fonctionnalité : invitations et réinitialisation du mot de passe (Resend).
+- **En cours** : fonctionnalité « invitations » sur la branche `invitations`. Tranche 1 (page `/invitations`) validée ;
+  prochaine : tranche 2 (acceptation de l'invitation).
 - **Reste à faire (côté humain)** : créer le compte UptimeRobot.
-- **Petite amélioration possible** : journaliser aussi les déconnexions (seules les connexions le sont).
 - **Cassé** : rien.
 - **À améliorer avant Sentry (semaine 2)** : Auth.js journalise chaque mauvais mot de passe comme une erreur
   (`[auth][error] CredentialsSignin`) ; notre ligne « Connexion refusée » suffit, le message d'Auth.js est à faire taire.
@@ -99,7 +99,11 @@ Un produit se construit par couches. Chaque couche répond à une question et s'
 | Page de connexion à la place de l'accueil Next.js | ✅ | La porte d'entrée du produit |
 | Page protégée `/tableau-de-bord` + déconnexion | ✅ | Vérifier que seuls les connectés y accèdent |
 | Fusion dans `main`, vérification en production | ✅ | La fonctionnalité arrive sur le vrai site |
-| Puis : invitations, réinitialisation du mot de passe (Resend) | ⬜ | Fonctionnalité suivante |
+| Invitations : table `invitations` + page `/invitations` réservée à l'admin | ✅ | L'agent invite un musicien et obtient le lien à transmettre (tranche 1) |
+| Invitations : page d'acceptation, création du compte musicien | ⬜ | Tranche 2 |
+| Invitations : courriel par Resend | ⬜ | Tranche 3 |
+| Réinitialisation du mot de passe | ⬜ | Tranche 4 |
+| Journal des déconnexions | ✅ | Ajouté avec la tranche 1 des invitations |
 
 **Preuve constatée pour la tranche 2 (11/10/2026)** : erreurs affichées (e-mail invalide, mot de passe trop court) ;
 compte créé avec le rôle `admin` et un mot de passe chiffré (`$2…`) ; `/installation` fermée ensuite.
@@ -173,6 +177,9 @@ déconnexion ; `/tableau-de-bord` sans session → renvoi vers la connexion.
 - **`DATABASE_URL_UNPOOLED`** — adresse directe de la base ; utilisée pour les migrations.
 - **`AUTH_SECRET`** — la clé avec laquelle Auth.js signe les sessions.
 - **rôle vérifié côté serveur** — le serveur contrôle les droits à chaque demande ; cacher un bouton n'est pas une protection.
+- **empreinte (SHA-256)** — résumé irréversible d'un jeton ; seule l'empreinte est stockée, le lien reste secret.
+- **`verifierAdmin()`** — contrôle de rôle côté serveur : un non-admin est renvoyé et la tentative journalisée.
+- **clé étrangère** — colonne qui pointe vers une ligne d'une autre table (`invitations.cree_par` → `utilisateurs.id`).
 - **IDOR** — la faille qui consiste à ouvrir la donnée d'un autre en changeant l'identifiant dans l'adresse.
 
 ---
