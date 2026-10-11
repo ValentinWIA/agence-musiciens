@@ -10,7 +10,7 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 
 ## État de reprise
 
-*Dernière mise à jour : 12 octobre 2026 (G3 poussée, gestes à faire)*
+*Dernière mise à jour : 12 octobre 2026 (G3 faite)*
 
 - **Fait** : cadrage (SPEC), comptes, squelette Next.js, dépôt GitHub public, site en ligne
   (https://agence-musiciens.vercel.app), région `fra1`, base Neon reliée à Vercel.
@@ -85,13 +85,14 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   prévisualisation le 12/10 (déploiement « Ready »). Stockage Blob `agence-musiciens-pieces` créé par l'humain,
   relié aux 3 environnements (`BLOB_READ_WRITE_TOKEN`, pris en compte au prochain déploiement).
   Limite : `npm run donnees` efface les lignes, pas les fichiers du stockage (orphelins en prévisualisation).
-  G3 🔄 (commit `1591fae`, poussé) : `@vercel/blob` installé ; action `ajouterPiece`
+  G3 ✅ (commit `1591fae`) : `@vercel/blob` installé ; action `ajouterPiece`
   (`src/app/engagements/[id]/pieces/actions.ts`, chemin aléatoire, fichier effacé du stockage si la base échoue),
   formulaire `ajout-piece.tsx` (trop lourd refusé dès le navigateur), liste « Pièces jointes » sur la fiche
   (`lirePiecesJointes`). Limite des actions serveur relevée à 4,5 Mo (`next.config.ts`, 1 Mo par défaut).
   **Gestes à faire sur la prévisualisation** : PDF ajouté (agent) ; faux PDF (fichier renommé en .pdf) refusé ;
   fichier de plus de 4 Mo refusé ; aucun fichier / aucun type refusés ; Louis voit la liste sans formulaire.
-  **Ensuite** : G4 (ouverture protégée, suppression), « confirmer quand même », puis
+  **G3 ✅** gestes validés par l'humain le 12/10.
+  **Prochaine tranche : G4** (ouverture protégée, suppression), « confirmer quand même », puis
   H (revue de sécurité, README, schéma, rendus, `npm run donnees` en production).
 - **Quota** : semaine à 79 % le 12/10 (réinitialisation le 14/10 à 11 h 59). Sessions courtes, `/clear` entre étapes,
   explications courtes.
