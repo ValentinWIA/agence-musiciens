@@ -16,9 +16,9 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   (https://agence-musiciens.vercel.app), région `fra1`, base Neon reliée à Vercel.
   Fonctionnalité « connexion » fusionnée (pull request n° 1) et vérifiée en production ; compte de l'agent créé en production.
   Fonctionnalité « invitations » fusionnée (pull request n° 2) et vérifiée en production.
-- **En cours** : réinitialisation du mot de passe sur la branche `reinitialisation`, tranche 1 **validée** en prévisualisation
-  (adresse sans compte : même message ; courriel reçu ; mot de passe trop court refusé ; lien consommé ; ancien mot de
-  passe refusé, nouveau accepté ; journaux). Prête à fusionner.
+  Réinitialisation du mot de passe fusionnée (pull request n° 3), vérifiée en production.
+  Vérifications automatiques à chaque push (lint, 8 tests, construction) fusionnées (pull request n° 4).
+- **En cours** : rien. Prochaine étape : cadrage des engagements (objet principal).
 - **Limite connue** : changer le mot de passe ne ferme pas les sessions déjà ouvertes (elles expirent seules).
 - **Reste à faire (côté humain)** : créer le compte UptimeRobot.
 - **Points d'attention** :
@@ -52,9 +52,9 @@ Un produit se construit par couches. Chaque couche répond à une question et s'
 | 1. Fondations | Où vit le produit ? (comptes, dépôt, hébergeur, base) | 1, jour 1 | ✅ |
 | 2. Squelette | Avec quoi le construit-on ? (framework, langage, interface) | 1, jour 1 | ✅ |
 | 3. Données | Que retient le produit, et sous quelle forme ? | 1 | 🔄 (tables `utilisateurs` et `invitations` ✅ ; engagements à venir) |
-| 4. Identité et droits | Qui est connecté, et qu'a-t-il le droit de faire ? | 1 | 🔄 (connexion, invitations, rôles ✅ ; réinitialisation à venir) |
+| 4. Identité et droits | Qui est connecté, et qu'a-t-il le droit de faire ? | 1 | ✅ (connexion, invitations, rôles, réinitialisation) |
 | 5. Métier | Que fait le produit ? (engagements, cycle de vie, règles, API externe, courriels, pièces jointes) | 1 | ⬜ |
-| 6. Fiabilité | Comment sait-on que ça marche et que c'est sûr ? (tests, journaux, revue de sécurité, README) | 1 | ⬜ |
+| 6. Fiabilité | Comment sait-on que ça marche et que c'est sûr ? (tests, journaux, revue de sécurité, README) | 1 | 🔄 (tests à chaque push et journaux ✅ ; revue de sécurité, README à venir) |
 | 7. Automatisation | Que fait le produit tout seul, la nuit ? | 2 | ⬜ |
 | 8. Intelligence | Que comprend le produit ? (lecture de documents, recherche qui cite ses sources) | 3 | ⬜ |
 | 9. Action | Qu'est-ce que le produit fait à notre place, sous contrôle ? (agent, serveur MCP) | 4 | ⬜ |
