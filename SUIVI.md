@@ -14,8 +14,8 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 
 - **Fait** : cadrage (SPEC), comptes, squelette Next.js, dépôt GitHub public, site en ligne
   (https://agence-musiciens.vercel.app), région `fra1`, base Neon reliée à Vercel.
-- **En cours** : fonctionnalité « connexion » sur la branche `connexion`. Tranches 1 (table des utilisateurs) et 2 (page `/installation`)
-  validées ; prochaine : tranche 3 (connexion avec Auth.js).
+- **En cours** : fonctionnalité « connexion » sur la branche `connexion`. Tranches 1, 2 et 3 validées en prévisualisation ;
+  fusion dans `main` en cours, puis création du compte de l'agent en production.
 - **Reste à faire (côté humain)** : créer `AUTH_SECRET` (avant la tranche 3) ; créer le compte UptimeRobot.
 - **Cassé** : rien.
 
@@ -87,20 +87,24 @@ Un produit se construit par couches. Chaque couche répond à une question et s'
 
 À venir, hors de cette table : `invitations` et jetons de réinitialisation (tables séparées), colonne `actif` si besoin.
 
-### 4. Identité et droits 🔄 — tranches 2 ✅ et 3
+### 4. Identité et droits 🔄 — tranches 2 ✅ et 3 ✅
 
 | Tâche | État | À quoi ça sert |
 |---|---|---|
 | Page `/installation` (premier admin) | ✅ | Créer le compte de l'agent ; la page se ferme dès qu'un compte existe |
-| Auth.js : connexion par e-mail et mot de passe | ⬜ | Savoir qui est connecté, sans écrire l'authentification à la main |
-| Page de connexion à la place de l'accueil Next.js | ⬜ | La porte d'entrée du produit |
-| Page protégée `/tableau-de-bord` + déconnexion | ⬜ | Vérifier que seuls les connectés y accèdent |
-| Fusion dans `main`, vérification en production | ⬜ | La fonctionnalité arrive sur le vrai site |
+| Auth.js : connexion par e-mail et mot de passe | ✅ | Savoir qui est connecté, sans écrire l'authentification à la main |
+| Page de connexion à la place de l'accueil Next.js | ✅ | La porte d'entrée du produit |
+| Page protégée `/tableau-de-bord` + déconnexion | ✅ | Vérifier que seuls les connectés y accèdent |
+| Fusion dans `main`, vérification en production | 🔄 | La fonctionnalité arrive sur le vrai site |
 | Puis : invitations, réinitialisation du mot de passe (Resend) | ⬜ | Fonctionnalité suivante |
 
 **Preuve constatée pour la tranche 2 (11/10/2026)** : erreurs affichées (e-mail invalide, mot de passe trop court) ;
 compte créé avec le rôle `admin` et un mot de passe chiffré (`$2…`) ; `/installation` fermée ensuite.
 À faire après la fusion : créer le compte de l'agent en production **immédiatement**, avec un nouveau mot de passe.
+
+**Preuve constatée pour la tranche 3 (11/10/2026)** : mauvais mot de passe refusé (« Identifiants incorrects ») ;
+bon mot de passe → tableau de bord (nom, rôle `admin`) ; session conservée au rechargement ;
+déconnexion ; `/tableau-de-bord` sans session → renvoi vers la connexion.
 
 ---
 
@@ -153,6 +157,9 @@ compte créé avec le rôle `admin` et un mot de passe chiffré (`$2…`) ; `/in
 - **migration** — un fichier qui décrit une modification de la structure de la base ; rejoué sur chaque base.
 - **UUID** — identifiant aléatoire, impossible à deviner.
 - **Auth.js** — la bibliothèque d'authentification (sessions, connexion).
+- **session (JWT)** — cookie signé avec `AUTH_SECRET` qui prouve, à chaque visite, qui est connecté et avec quel rôle.
+- **`verifierSession()`** — le point de contrôle unique côté serveur, appelé par chaque page protégée.
+- **pull request** — demande de fusion d'une branche dans `main` sur GitHub ; garde une trace de ce qui a été intégré.
 
 ### Sécurité
 - **variable d'environnement** — un réglage donné au programme de l'extérieur, rangé chez l'hébergeur ; c'est là que vivent les secrets.
