@@ -5,6 +5,7 @@ import { refresh } from "next/cache";
 import { headers } from "next/headers";
 import { z } from "zod";
 import { db } from "@/db";
+import { envoyerCourriel } from "@/lib/courriel";
 import { invitations, utilisateurs } from "@/db/schema";
 import { nouveauJeton } from "@/lib/jeton";
 import { verifierAdmin } from "@/lib/session";
@@ -21,6 +22,7 @@ export type EtatInvitation = {
   erreurs?: Partial<Record<"nom" | "email" | "instrument", string[]>>;
   message?: string;
   lien?: string;
+  courrielEnvoye?: boolean;
 };
 
 export async function creerInvitation(
@@ -58,5 +60,12 @@ export async function creerInvitation(
 
   const h = await headers();
   const origine = `${h.get("x-forwarded-proto") ?? "https"}://${h.get("host")}`;
-  return { lien: `${origine}/invitation/${jeton}` };
+  const lien = `${origine}/invitation/${jeton}`;
+
+  const courrielEnvoye = await envoyerCourriel({
+    a: email,
+    sujet: "Votre invitation à rejoindre l'agence",
+    texte: `Bonjour ${donnees.data.nom},\n\n${agent.nom} vous invite à rejoindre l'agence.\nCréez votre compte en ouvrant ce lien (valable ${DUREE_VALIDITE_JOURS} jours) :\n${lien}\n`,
+  });
+  return { lien, courrielEnvoye };
 }
