@@ -30,6 +30,8 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
     cliquer sur l'entrée pour les voir toutes.
 - **Vérifié par lecture seulement** : le refus d'un mot de passe trop court sur la page d'acceptation. La règle commune
   (`src/lib/mot-de-passe.ts`) a depuis été constatée sur la page de réinitialisation — à couvrir par un test automatique.
+- **Piste (fin de semaine 1 ou badge)** : tests passant par une vraie base (Postgres jetable dans GitHub Actions) pour
+  couvrir automatiquement les contrôles d'accès et les liens expirés, aujourd'hui vérifiés à la main.
 - **À faire à la fin du projet** : retirer la permission `workflow` de la connexion GitHub
   (`gh auth refresh -h github.com -r workflow`). Accordée le 12/10/2026 pour publier les vérifications automatiques.
   Risque jugé minime : aucun secret GitHub Actions dans les dépôts (`agence-musiciens`, `piano-website`, `studio_piano`) ;
