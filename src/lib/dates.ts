@@ -7,6 +7,9 @@ const FUSEAUX: Record<string, string> = {
   Japon: "Asia/Tokyo",
 };
 
+// Les seuls pays proposés pour un nouveau lieu : ceux dont on connaît le fuseau.
+export const PAYS = ["France", "Suisse", "Royaume-Uni", "Japon"] as const;
+
 export function fuseauDuPays(pays: string) {
   return FUSEAUX[pays] ?? "Europe/Paris";
 }
