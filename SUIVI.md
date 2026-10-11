@@ -10,7 +10,7 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 
 ## État de reprise
 
-*Dernière mise à jour : 11 octobre 2026 (fin de session D4a)*
+*Dernière mise à jour : 11 octobre 2026 (fin de session D4b)*
 
 - **Fait** : cadrage (SPEC), comptes, squelette Next.js, dépôt GitHub public, site en ligne
   (https://agence-musiciens.vercel.app), région `fra1`, base Neon reliée à Vercel.
@@ -36,14 +36,20 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   commit `4a14206` poussé. Décidé : à partir de « confirmé » (et pour « annulé »), seuls titre, programme et notes
   restent modifiables ; avant, une modification ne défait pas une étape franchie (date précise + durée dès l'option,
   cachet non vide dès le contrat envoyé) ; une date passée n'est refusée que si on la change.
+  D4b (**modification**, `/engagements/[id]/modifier`, action `modifierEngagement`, bouton « Modifier », 46 tests,
+  commit `89c9216`) : vérifiée le 11/10 en prévisualisation (option : heure et musicien changés → « Engagement modifié. » ;
+  passage au mois refusé sous Date ; confirmé : champs grisés, notes modifiables ; Louis sur `/modifier` → renvoyé).
+  Formulaire partagé (`src/app/engagements/formulaire-engagement.tsx`) et lecture partagée côté serveur
+  (`src/app/engagements/saisie.ts`) : création et modification vérifient les mêmes règles. Pré-remplissage par
+  `versChampsDate` (dates) et `versSaisie` (argent). Chaque écriture exige que le statut n'ait pas changé depuis la lecture.
 - **Bug corrigé (commit `7d220dd`)** : `scripts/jeu-de-donnees.ts` utilise des identifiants **fixes**, calculés par
   empreinte du nom (`idStable("musicien:louis")`, format UUID accepté par `z.uuid()`) : les sessions ouvertes et les
   adresses des fiches restent valables après un rechargement du jeu. Vérifié le 11/10 : même nom → même identifiant.
   Constaté en prévisualisation le 11/10 : Louis reste connecté après un nouveau déploiement.
 - **Reprise (nouvelle session)** : lire `SUIVI.md`, `AGENTS.md`, `docs/engagements.md` ;
-  puis étape D — plan validé en 4 tranches : D1 ✅ règles ; D2 ✅ boutons de statut (+ D2b ✅ rétablir) ; D3 ✅ création ; D4 modification : D4a ✅ règles ; **D4b** à faire : formulaire de D3 partagé et pré-rempli,
-  page `/engagements/[id]/modifier`, action `modifierEngagement`, bouton « Modifier » sur la fiche, message « Engagement modifié. » ;
-  « + nouveau lieu » repoussé à E. Puis E (géocodage), F (règle de conflit + tests), G (pièces jointes),
+  étape D terminée (D1 ✅ règles ; D2 ✅ statuts + D2b ✅ rétablir ; D3 ✅ création ; D4a ✅ + D4b ✅ modification).
+  **Prochaine étape : E** (géocodage des lieux, avec « + nouveau lieu » dans le formulaire) : cadrer et découper
+  en tranches avant tout code. Puis F (règle de conflit + tests), G (pièces jointes),
   H (revue de sécurité, README, schéma, rendus, `npm run donnees` en production).
 - **Quota** : semaine à 79 % le 12/10 (réinitialisation le 14/10 à 11 h 59). Sessions courtes, `/clear` entre étapes,
   explications courtes.
