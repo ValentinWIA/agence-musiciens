@@ -2,12 +2,12 @@
 
 import { and, eq, gt, isNull } from "drizzle-orm";
 import { refresh } from "next/cache";
-import { headers } from "next/headers";
 import { z } from "zod";
 import { db } from "@/db";
 import { envoyerCourriel } from "@/lib/courriel";
 import { invitations, utilisateurs } from "@/db/schema";
 import { nouveauJeton } from "@/lib/jeton";
+import { origineDuSite } from "@/lib/origine";
 import { verifierAdmin } from "@/lib/session";
 
 const DUREE_VALIDITE_JOURS = 7;
@@ -58,9 +58,7 @@ export async function creerInvitation(
   refresh(); // la liste des invitations en attente se met à jour
   console.log(`Invitation créée : ${email} (${donnees.data.instrument}) par ${agent.nom}`);
 
-  const h = await headers();
-  const origine = `${h.get("x-forwarded-proto") ?? "https"}://${h.get("host")}`;
-  const lien = `${origine}/invitation/${jeton}`;
+  const lien = `${await origineDuSite()}/invitation/${jeton}`;
 
   const courrielEnvoye = await envoyerCourriel({
     a: email,

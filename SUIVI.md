@@ -10,21 +10,26 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 
 ## État de reprise
 
-*Dernière mise à jour : 11 octobre 2026*
+*Dernière mise à jour : 12 octobre 2026*
 
 - **Fait** : cadrage (SPEC), comptes, squelette Next.js, dépôt GitHub public, site en ligne
   (https://agence-musiciens.vercel.app), région `fra1`, base Neon reliée à Vercel.
   Fonctionnalité « connexion » fusionnée (pull request n° 1) et vérifiée en production ; compte de l'agent créé en production.
-- **En cours** : fonctionnalité « invitations » sur la branche `invitations`, **tranches 1 à 3 validées** en prévisualisation
-  (invitation, acceptation, compte musicien, refus d'accès journalisé, courriel Resend). Prête à fusionner.
-  Ensuite : réinitialisation du mot de passe (branche à part), puis tests automatiques à chaque push.
+  Fonctionnalité « invitations » fusionnée (pull request n° 2) et vérifiée en production.
+- **En cours** : réinitialisation du mot de passe sur la branche `reinitialisation`, tranche 1 **validée** en prévisualisation
+  (adresse sans compte : même message ; courriel reçu ; mot de passe trop court refusé ; lien consommé ; ancien mot de
+  passe refusé, nouveau accepté ; journaux). Prête à fusionner.
+- **Limite connue** : changer le mot de passe ne ferme pas les sessions déjà ouvertes (elles expirent seules).
 - **Reste à faire (côté humain)** : créer le compte UptimeRobot.
 - **Points d'attention** :
   - Vercel Hobby ne garde les journaux qu'environ une heure : refaire la tentative juste avant la démo,
     ou ajouter plus tard une table `journal` consultable par l'agent.
-  - Amélioration possible : permettre à l'agent d'annuler une invitation (faute de frappe dans l'adresse).
-- **Vérifié par lecture seulement** : le refus d'un mot de passe trop court sur la page d'acceptation (règle désormais
-  commune avec l'installation, `src/lib/mot-de-passe.ts`) — à couvrir par un test automatique.
+  - Améliorations possibles : permettre à l'agent d'annuler une invitation (faute de frappe dans l'adresse) ;
+    lien de réinitialisation généré par l'agent pour un musicien (Resend ne lui écrit pas sans nom de domaine).
+  - Dans les journaux Vercel, une requête qui écrit plusieurs lignes n'en montre qu'une dans la liste :
+    cliquer sur l'entrée pour les voir toutes.
+- **Vérifié par lecture seulement** : le refus d'un mot de passe trop court sur la page d'acceptation. La règle commune
+  (`src/lib/mot-de-passe.ts`) a depuis été constatée sur la page de réinitialisation — à couvrir par un test automatique.
 - **Cassé** : rien.
 - **À améliorer avant Sentry (semaine 2)** : Auth.js journalise chaque mauvais mot de passe comme une erreur
   (`[auth][error] CredentialsSignin`) ; notre ligne « Connexion refusée » suffit, le message d'Auth.js est à faire taire.
@@ -40,8 +45,8 @@ Un produit se construit par couches. Chaque couche répond à une question et s'
 | 0. Cadrage | Que construit-on, pour qui, avec quelles règles ? | Avant tout | ✅ |
 | 1. Fondations | Où vit le produit ? (comptes, dépôt, hébergeur, base) | 1, jour 1 | ✅ |
 | 2. Squelette | Avec quoi le construit-on ? (framework, langage, interface) | 1, jour 1 | ✅ |
-| 3. Données | Que retient le produit, et sous quelle forme ? | 1 | 🔄 (table `utilisateurs` ✅ ; engagements à venir) |
-| 4. Identité et droits | Qui est connecté, et qu'a-t-il le droit de faire ? | 1 | 🔄 (connexion ✅, invitations et rôle musicien en prévisualisation ; réinitialisation à venir) |
+| 3. Données | Que retient le produit, et sous quelle forme ? | 1 | 🔄 (tables `utilisateurs` et `invitations` ✅ ; engagements à venir) |
+| 4. Identité et droits | Qui est connecté, et qu'a-t-il le droit de faire ? | 1 | 🔄 (connexion, invitations, rôles ✅ ; réinitialisation à venir) |
 | 5. Métier | Que fait le produit ? (engagements, cycle de vie, règles, API externe, courriels, pièces jointes) | 1 | ⬜ |
 | 6. Fiabilité | Comment sait-on que ça marche et que c'est sûr ? (tests, journaux, revue de sécurité, README) | 1 | ⬜ |
 | 7. Automatisation | Que fait le produit tout seul, la nuit ? | 2 | ⬜ |
@@ -109,7 +114,7 @@ Un produit se construit par couches. Chaque couche répond à une question et s'
 | Invitations : table `invitations` + page `/invitations` réservée à l'admin | ✅ | L'agent invite un musicien et obtient le lien à transmettre (tranche 1) |
 | Invitations : page d'acceptation, création du compte musicien | ✅ | Tranche 2 ; refus d'accès d'un musicien à `/invitations` constaté et journalisé |
 | Invitations : courriel par Resend | ✅ | Tranche 3 : courriel reçu à l'adresse du compte Resend ; autre adresse refusée par Resend, lien affiché, échec journalisé |
-| Réinitialisation du mot de passe | ⬜ | Tranche 4 |
+| Réinitialisation du mot de passe | ✅ | Tranche 1 validée en prévisualisation (par courriel, lien d'une heure à usage unique) |
 | Journal des déconnexions | ✅ | Ajouté avec la tranche 1 des invitations |
 
 **Preuve constatée pour la tranche 2 (11/10/2026)** : erreurs affichées (e-mail invalide, mot de passe trop court) ;
