@@ -10,7 +10,7 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 
 ## État de reprise
 
-*Dernière mise à jour : 12 octobre 2026 (F4 : gestes à faire)*
+*Dernière mise à jour : 12 octobre 2026 (étape F terminée)*
 
 - **Fait** : cadrage (SPEC), comptes, squelette Next.js, dépôt GitHub public, site en ligne
   (https://agence-musiciens.vercel.app), région `fra1`, base Neon reliée à Vercel.
@@ -65,17 +65,20 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   duo Genève 21/11 refusé (Louis, Londres) ; Menton 05/12 refusé (Inès, Paris) ; Lyon 12/12 (Anna) confirmé ;
   Louis sans bouton.
   Constaté : créer un engagement trop proche reste permis (voulu : seule la confirmation bloque).
-  F4 🔄 (cadrage validé le 12/10, `docs/engagements.md` section 9) : avertissement sur la fiche en option et contrat
-  envoyé (agent seulement), même calcul que le refus (`avertissementConflits`), 86 tests. **Gestes à faire** : duo Genève
+  F4 (cadrage validé le 12/10, `docs/engagements.md` section 9) : avertissement sur la fiche en option et contrat
+  envoyé (agent seulement), même calcul que le refus (`avertissementConflits`), 86 tests. Gestes : duo Genève
   21/11 et Menton 05/12 avertis ; Lyon 12/12 sans avertissement ; Louis ne voit rien ; option posée sur un engagement
   trop proche → averti. Plus tard : signaler aussi les autres options concurrentes aux dates proches.
+  **F4 ✅** gestes validés par l'humain le 12/10.
+  **À faire plus tard (décidé le 12/10)** : « confirmer quand même » avec une raison écrite, conservée et journalisée
+  (le trajet est estimé en voiture, trop pessimiste en train ou en avion). Après G si le temps le permet, sinon semaine 2.
 - **Bug corrigé (commit `7d220dd`)** : `scripts/jeu-de-donnees.ts` utilise des identifiants **fixes**, calculés par
   empreinte du nom (`idStable("musicien:louis")`, format UUID accepté par `z.uuid()`) : les sessions ouvertes et les
   adresses des fiches restent valables après un rechargement du jeu. Vérifié le 11/10 : même nom → même identifiant.
   Constaté en prévisualisation le 11/10 : Louis reste connecté après un nouveau déploiement.
 - **Reprise (nouvelle session)** : lire `SUIVI.md`, `AGENTS.md`, `docs/engagements.md` ;
   étapes D et E terminées.
-  **Prochaine étape : gestes F4** sur la prévisualisation, puis G (pièces jointes). Puis G (pièces jointes),
+  **Prochaine étape : G** (pièces jointes : cadrage d'abord), puis « confirmer quand même », puis H. Puis G (pièces jointes),
   H (revue de sécurité, README, schéma, rendus, `npm run donnees` en production).
 - **Quota** : semaine à 79 % le 12/10 (réinitialisation le 14/10 à 11 h 59). Sessions courtes, `/clear` entre étapes,
   explications courtes.
@@ -296,4 +299,5 @@ déconnexion ; `/tableau-de-bord` sans session → renvoi vers la connexion.
 | 12/10/2026 | Pays d'un lieu en liste fermée (4 pays dont on connaît le fuseau) | Un pays inconnu recevait l'heure de Paris sans avertissement |
 | 12/10/2026 | Doublon de lieu : même nom et (même ville sans chiffres ou moins de 100 m) | La ville en texte exact laissait créer deux fois la même salle |
 | 12/10/2026 | Règle de conflit : marge ramenée de 4 h à 1 h ; seuls les engagements tenus (confirmé et après) bloquent ; concerts passés comptés ; égalité permise | Choix de l’humain au cadrage F ; deux options sur une même date restent possibles, la première confirmée l’emporte |
+| 12/10/2026 | Trajet toujours estimé en voiture (× 1,3 ÷ 80 km/h) ; plus tard, « confirmer quand même » avec une raison | Trop pessimiste en train ou en avion, mais sûr ; la nuit (pas de transport) fait le cas piégé, une vitesse plus haute l'effacerait ; l'agent connaît les horaires |
 | 11/10/2026 | Table `utilisateurs` limitée à 7 colonnes | Invitations et réinitialisations iront dans des tables séparées ; ajouter une colonne plus tard est peu coûteux |
