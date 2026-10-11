@@ -78,7 +78,8 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   Constaté en prévisualisation le 11/10 : Louis reste connecté après un nouveau déploiement.
 - **Reprise (nouvelle session)** : lire `SUIVI.md`, `AGENTS.md`, `docs/engagements.md` ;
   étapes D et E terminées.
-  **Prochaine étape : G** (pièces jointes : cadrage d'abord), puis « confirmer quand même », puis H. Puis G (pièces jointes),
+  **Étape G (pièces jointes)** : cadrage validé le 12/10 (`docs/engagements.md`, section 10 ; commit `817c810`).
+  **Prochaine tranche : G1** (règle de vérification des PDF), puis G2–G4, « confirmer quand même », puis
   H (revue de sécurité, README, schéma, rendus, `npm run donnees` en production).
 - **Quota** : semaine à 79 % le 12/10 (réinitialisation le 14/10 à 11 h 59). Sessions courtes, `/clear` entre étapes,
   explications courtes.
