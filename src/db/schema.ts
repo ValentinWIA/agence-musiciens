@@ -79,6 +79,8 @@ export const engagements = pgTable("engagements", {
     .notNull()
     .references(() => programmateurs.id),
   statut: statut("statut").notNull().default("demande"),
+  // Retenu à l'annulation, pour pouvoir rétablir un engagement annulé par erreur.
+  statutAvantAnnulation: statut("statut_avant_annulation"),
   // Dans la plus petite unité de la devise (centimes, ou yens) : jamais de nombre à virgule pour de l'argent.
   cachet: integer("cachet"),
   devise: devise("devise").notNull().default("EUR"),

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { jugerTransition, transitionsProposees, type EtatEngagement } from "./cycle-de-vie";
+import { jugerTransition, statutApres, transitionsProposees, type EtatEngagement } from "./cycle-de-vie";
 
 const maintenant = new Date("2026-10-12T12:00:00Z");
 
@@ -11,6 +11,7 @@ function engagement(modif: Partial<EtatEngagement> = {}): EtatEngagement {
     precisionDate: "jour",
     dureeMinutes: 90,
     cachet: 350000,
+    statutAvantAnnulation: null,
     ...modif,
   };
 }
@@ -81,9 +82,28 @@ describe("cycle de vie : les interdits", () => {
     expect(jugerTransition(engagement({ statut: "joue" }), "annuler", maintenant).permis).toBe(false);
   });
 
-  it("ne change plus un statut final (payé, annulé)", () => {
+  it("ne change plus un statut final (payé) ; un annulé ne peut qu'être rétabli", () => {
     expect(transitionsProposees(engagement({ statut: "paye" }))).toEqual([]);
-    expect(transitionsProposees(engagement({ statut: "annule" }))).toEqual([]);
+    expect(transitionsProposees(engagement({ statut: "annule" }))).toEqual(["retablir"]);
     expect(jugerTransition(engagement({ statut: "annule" }), "poser_option", maintenant).permis).toBe(false);
+  });
+});
+
+describe("cycle de vie : rétablir un engagement annulé par erreur", () => {
+  it("ramène au statut d'avant l'annulation", () => {
+    const annule = engagement({ statut: "annule", statutAvantAnnulation: "option" });
+    expect(transitionsProposees(annule)).toEqual(["retablir"]);
+    expect(jugerTransition(annule, "retablir", maintenant)).toEqual({ permis: true });
+    expect(statutApres(annule, "retablir")).toBe("option");
+  });
+
+  it("ramène un engagement confirmé à « contrat envoyé », pour reconfirmer", () => {
+    expect(statutApres(engagement({ statut: "annule", statutAvantAnnulation: "confirme" }), "retablir")).toBe("contrat_envoye");
+  });
+
+  it("refuse une fois la date passée, ou si le statut d'avant est inconnu", () => {
+    const passe = new Date("2026-10-01T18:00:00Z");
+    expect(jugerTransition(engagement({ statut: "annule", statutAvantAnnulation: "option", debut: passe }), "retablir", maintenant).permis).toBe(false);
+    expect(jugerTransition(engagement({ statut: "annule" }), "retablir", maintenant).permis).toBe(false);
   });
 });

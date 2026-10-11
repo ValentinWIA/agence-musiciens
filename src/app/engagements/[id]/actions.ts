@@ -5,7 +5,7 @@ import { refresh } from "next/cache";
 import { z } from "zod";
 import { db } from "@/db";
 import { engagements } from "@/db/schema";
-import { jugerTransition, TRANSITIONS, type Transition } from "@/lib/cycle-de-vie";
+import { jugerTransition, statutApres, TRANSITIONS, type Transition } from "@/lib/cycle-de-vie";
 import { LIBELLES_STATUT } from "@/lib/engagements";
 import { verifierAdmin } from "@/lib/session";
 
@@ -33,11 +33,16 @@ export async function changerStatut(_etat: EtatChangement, formData: FormData): 
     return { erreur: verdict.raison };
   }
 
-  const vers = TRANSITIONS[transition].vers;
+  const vers = statutApres(engagement, transition);
   // La condition sur l'ancien statut évite qu'un double clic (ou deux onglets) applique deux fois la transition.
   const misAJour = await db
     .update(engagements)
-    .set({ statut: vers, modifieLe: new Date() })
+    .set({
+      statut: vers,
+      // On retient le statut quitté à l'annulation (pour rétablir), on l'oublie au rétablissement.
+      statutAvantAnnulation: transition === "annuler" ? engagement.statut : null,
+      modifieLe: new Date(),
+    })
     .where(and(eq(engagements.id, id), eq(engagements.statut, engagement.statut)))
     .returning({ id: engagements.id });
   if (!misAJour.length) return { erreur: "L'engagement a changé entre-temps : rechargez la page." };

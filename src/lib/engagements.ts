@@ -98,6 +98,7 @@ export async function lireEngagement(lecteur: Lecteur, id: string) {
       precisionDate: engagements.precisionDate,
       dureeMinutes: engagements.dureeMinutes,
       statut: engagements.statut,
+      statutAvantAnnulation: engagements.statutAvantAnnulation,
       cachet: engagements.cachet,
       devise: engagements.devise,
       programme: engagements.programme,

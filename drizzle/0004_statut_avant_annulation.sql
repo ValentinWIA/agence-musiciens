@@ -1,0 +1,1 @@
+ALTER TABLE "engagements" ADD COLUMN "statut_avant_annulation" "statut";

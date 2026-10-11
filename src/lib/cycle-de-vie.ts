@@ -16,7 +16,9 @@ export const TRANSITIONS = {
     depuis: ["demande", "option", "contrat_envoye", "confirme"],
     vers: "annule",
   },
-} as const satisfies Record<string, { libelle: string; depuis: readonly Statut[]; vers: Statut }>;
+  // Le statut d'arrivée dépend de l'engagement : voir statutApres().
+  retablir: { libelle: "Rétablir", depuis: ["annule"] },
+} as const satisfies Record<string, { libelle: string; depuis: readonly Statut[]; vers?: Statut }>;
 
 export type Transition = keyof typeof TRANSITIONS;
 
@@ -27,6 +29,7 @@ export type EtatEngagement = {
   precisionDate: "jour" | "mois" | "saison";
   dureeMinutes: number | null;
   cachet: number | null;
+  statutAvantAnnulation: Statut | null;
 };
 
 export type Verdict = { permis: true } | { permis: false; raison: string };
@@ -81,5 +84,18 @@ export function jugerTransition(e: EtatEngagement, transition: Transition, maint
     case "encaisser":
     case "annuler":
       return { permis: true };
+    case "retablir":
+      if (e.debut < maintenant) return refus("La date du concert est passée : l'annulation est définitive.");
+      if (!e.statutAvantAnnulation) return refus("Le statut d'avant l'annulation est inconnu : rétablissement impossible.");
+      return { permis: true };
   }
+}
+
+// Le statut après une transition permise. Rétablir un engagement qui était confirmé le ramène à « contrat envoyé » :
+// pendant l'annulation, la date a pu être prise ailleurs, la confirmation (et sa règle de conflit) est à refaire.
+export function statutApres(e: EtatEngagement, transition: Transition): Statut {
+  if (transition === "retablir") {
+    return e.statutAvantAnnulation === "confirme" ? "contrat_envoye" : e.statutAvantAnnulation!;
+  }
+  return TRANSITIONS[transition].vers;
 }

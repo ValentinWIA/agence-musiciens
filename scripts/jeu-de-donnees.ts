@@ -57,6 +57,7 @@ async function principal() {
       lieuId: idLieu[e.lieu],
       programmateurId: idProgrammateur[e.programmateur],
       statut: e.statut,
+      statutAvantAnnulation: e.avantAnnulation ?? null,
       cachet,
       devise,
       programme: e.programme ?? null,
