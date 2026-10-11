@@ -18,7 +18,10 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   Fonctionnalité « invitations » fusionnée (pull request n° 2) et vérifiée en production.
   Réinitialisation du mot de passe fusionnée (pull request n° 3), vérifiée en production.
   Vérifications automatiques à chaque push (lint, 8 tests, construction) fusionnées (pull request n° 4).
-- **En cours** : rien. Prochaine étape : cadrage des engagements (objet principal).
+- **En cours** : engagements, branche `engagements` (pas encore fusionnée). Cadrage (`docs/engagements.md`) validé ;
+  B1 (4 tables) et B2 (jeu de données fictif rejouable : 4 musiciens, 5 programmateurs, 12 lieux, 50 engagements)
+  validés en prévisualisation. Prochaine : C (liste filtrable et fiche).
+  Le jeu de données se charge seul sur chaque prévisualisation ; en production, à lancer à la main (`npm run donnees`).
 - **Limite connue** : changer le mot de passe ne ferme pas les sessions déjà ouvertes (elles expirent seules).
 - **Reste à faire (côté humain)** : créer le compte UptimeRobot.
 - **Points d'attention** :
