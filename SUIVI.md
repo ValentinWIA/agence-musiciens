@@ -230,4 +230,5 @@ déconnexion ; `/tableau-de-bord` sans session → renvoi vers la connexion.
 | 11/10/2026 | Dépôt GitHub public | Partage simple avec le formateur et le repreneur ; aucun secret dans le code |
 | 11/10/2026 | Région Francfort (Neon et Vercel) | Neon n'a pas de région Paris ; serveur à côté des données |
 | 11/10/2026 | Drizzle, e-mail + mot de passe, page `/installation` | Plan de la fonctionnalité « connexion » validé |
+| 12/10/2026 | Coordonnées des programmateurs réservées à l'agent | L'agent gère la relation ; le musicien voit nom et structure |
 | 11/10/2026 | Table `utilisateurs` limitée à 7 colonnes | Invitations et réinitialisations iront dans des tables séparées ; ajouter une colonne plus tard est peu coûteux |

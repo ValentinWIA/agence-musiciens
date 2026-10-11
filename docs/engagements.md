@@ -198,6 +198,7 @@ Un nouvel engagement commence toujours au statut « demande ».
 | Voir une fiche | toutes | les siennes ; sinon « introuvable » + journal |
 | Créer, modifier, changer le statut | oui | non (boutons absents **et** refus côté serveur) |
 | Filtrer par musicien | oui | non (filtre absent) |
+| Coordonnées du programmateur (e-mail, téléphone) | oui | non : nom et structure seulement (l'agent gère la relation) |
 
 ---
 
@@ -208,3 +209,5 @@ Un nouvel engagement commence toujours au statut « demande ».
 3. **Au moins un musicien** dès la création. Date approximative (mois ou saison) permise au stade « demande »,
    date précise exigée pour poser une option. Lieu obligatoire dès la création.
 4. **Titre court** facultatif.
+5. Le musicien voit le **nom et la structure** du programmateur, mais **pas ses coordonnées** : c'est l'agent qui gère
+   la relation avec les programmateurs.
