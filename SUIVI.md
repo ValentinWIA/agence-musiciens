@@ -10,26 +10,23 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 
 ## État de reprise
 
-*Dernière mise à jour : 11 octobre 2026 (fin de session)*
+*Dernière mise à jour : 12 octobre 2026*
 
 - **Fait** : cadrage (SPEC), comptes, squelette Next.js, dépôt GitHub public, site en ligne
   (https://agence-musiciens.vercel.app), région `fra1`, base Neon reliée à Vercel.
   Fonctionnalité « connexion » fusionnée (pull request n° 1) et vérifiée en production ; compte de l'agent créé en production.
   Fonctionnalité « invitations » fusionnée (pull request n° 2) et vérifiée en production.
-- **En cours** : réinitialisation du mot de passe sur la branche `reinitialisation` (pas encore fusionnée).
-  Tranche 1 (parcours « mot de passe oublié » par courriel) codée et déployée en prévisualisation, **à vérifier** :
-  https://agence-musiciens-git-reinitialisation-valentin-4768.vercel.app — adresse sans compte (même message,
-  rien n'arrive) ; adresse de l'agent (courriel reçu) ; mot de passe trop court refusé ; lien consommé après usage ;
-  ancien mot de passe refusé, nouveau accepté ; journaux. L'adresse de l'agent doit être celle du compte Resend.
-  Ensuite : tranche 2 (lien de réinitialisation généré par l'agent pour un musicien), fusion, tests automatiques.
+- **En cours** : réinitialisation du mot de passe sur la branche `reinitialisation`, tranche 1 **validée** en prévisualisation
+  (adresse sans compte : même message ; courriel reçu ; mot de passe trop court refusé ; lien consommé ; ancien mot de
+  passe refusé, nouveau accepté ; journaux). Prête à fusionner.
 - **Limite connue** : changer le mot de passe ne ferme pas les sessions déjà ouvertes (elles expirent seules).
 - **Reste à faire (côté humain)** : créer le compte UptimeRobot.
 - **Points d'attention** :
   - Vercel Hobby ne garde les journaux qu'environ une heure : refaire la tentative juste avant la démo,
     ou ajouter plus tard une table `journal` consultable par l'agent.
   - Amélioration possible : permettre à l'agent d'annuler une invitation (faute de frappe dans l'adresse).
-- **Vérifié par lecture seulement** : le refus d'un mot de passe trop court sur la page d'acceptation (règle désormais
-  commune avec l'installation, `src/lib/mot-de-passe.ts`) — à couvrir par un test automatique.
+- **Vérifié par lecture seulement** : le refus d'un mot de passe trop court sur la page d'acceptation. La règle commune
+  (`src/lib/mot-de-passe.ts`) a depuis été constatée sur la page de réinitialisation — à couvrir par un test automatique.
 - **Cassé** : rien.
 - **À améliorer avant Sentry (semaine 2)** : Auth.js journalise chaque mauvais mot de passe comme une erreur
   (`[auth][error] CredentialsSignin`) ; notre ligne « Connexion refusée » suffit, le message d'Auth.js est à faire taire.
@@ -114,7 +111,7 @@ Un produit se construit par couches. Chaque couche répond à une question et s'
 | Invitations : table `invitations` + page `/invitations` réservée à l'admin | ✅ | L'agent invite un musicien et obtient le lien à transmettre (tranche 1) |
 | Invitations : page d'acceptation, création du compte musicien | ✅ | Tranche 2 ; refus d'accès d'un musicien à `/invitations` constaté et journalisé |
 | Invitations : courriel par Resend | ✅ | Tranche 3 : courriel reçu à l'adresse du compte Resend ; autre adresse refusée par Resend, lien affiché, échec journalisé |
-| Réinitialisation du mot de passe | 🔄 | Branche `reinitialisation` : tranche 1 codée, à vérifier |
+| Réinitialisation du mot de passe | ✅ | Tranche 1 validée en prévisualisation (par courriel, lien d'une heure à usage unique) |
 | Journal des déconnexions | ✅ | Ajouté avec la tranche 1 des invitations |
 
 **Preuve constatée pour la tranche 2 (11/10/2026)** : erreurs affichées (e-mail invalide, mot de passe trop court) ;
