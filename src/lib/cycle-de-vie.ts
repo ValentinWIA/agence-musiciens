@@ -99,3 +99,31 @@ export function statutApres(e: EtatEngagement, transition: Transition): Statut {
   }
   return TRANSITIONS[transition].vers;
 }
+
+// --- Modification (étape D4) ---
+
+// Jusqu'à « contrat envoyé », tout se modifie. Ensuite, date, lieu, musiciens, programmateur, durée et cachet sont
+// au contrat ; les changer contournerait aussi la règle de conflit. Un engagement annulé se rétablit d'abord.
+const STATUTS_MODIFIABLES: readonly Statut[] = ["demande", "option", "contrat_envoye"];
+
+export function estVerrouille(statut: Statut) {
+  return !STATUTS_MODIFIABLES.includes(statut);
+}
+
+export type ErreursModification = Partial<Record<"date" | "duree" | "cachet", string>>;
+
+// Une modification ne doit pas défaire une étape déjà franchie : on rejoue les conditions des transitions passées.
+export function controlerModification(
+  statut: Statut,
+  nouveau: Pick<EtatEngagement, "precisionDate" | "dureeMinutes" | "cachet">,
+): ErreursModification {
+  const erreurs: ErreursModification = {};
+  if (statut === "option" || statut === "contrat_envoye") {
+    if (nouveau.precisionDate !== "jour") erreurs.date = "Une option est posée : la date doit rester précise (jour et heure).";
+    if (!nouveau.dureeMinutes) erreurs.duree = "Une option est posée : la durée prévue doit rester renseignée.";
+  }
+  if (statut === "contrat_envoye" && nouveau.cachet === null) {
+    erreurs.cachet = "Le contrat est envoyé : le cachet ne peut plus être vidé (0 pour un concert bénévole).";
+  }
+  return erreurs;
+}

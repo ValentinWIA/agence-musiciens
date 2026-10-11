@@ -1,5 +1,13 @@
 import { describe, expect, it } from "vitest";
-import { jugerTransition, statutApres, transitionsProposees, type EtatEngagement } from "./cycle-de-vie";
+import {
+  controlerModification,
+  estVerrouille,
+  jugerTransition,
+  statutApres,
+  transitionsProposees,
+  type EtatEngagement,
+} from "./cycle-de-vie";
+import type { Statut } from "./engagements";
 
 const maintenant = new Date("2026-10-12T12:00:00Z");
 
@@ -105,5 +113,31 @@ describe("cycle de vie : rétablir un engagement annulé par erreur", () => {
     const passe = new Date("2026-10-01T18:00:00Z");
     expect(jugerTransition(engagement({ statut: "annule", statutAvantAnnulation: "option", debut: passe }), "retablir", maintenant).permis).toBe(false);
     expect(jugerTransition(engagement({ statut: "annule" }), "retablir", maintenant).permis).toBe(false);
+  });
+});
+
+describe("modification : ce qui reste modifiable selon le statut", () => {
+  it("laisse tout modifier jusqu'à « contrat envoyé », verrouille ensuite (annulé compris)", () => {
+    expect(["demande", "option", "contrat_envoye"].map((s) => estVerrouille(s as Statut))).toEqual([false, false, false]);
+    expect(["confirme", "joue", "facture", "paye", "annule"].every((s) => estVerrouille(s as Statut))).toBe(true);
+  });
+
+  it("au stade « demande », accepte une date approximative, sans durée ni cachet", () => {
+    expect(controlerModification("demande", { precisionDate: "saison", dureeMinutes: null, cachet: null })).toEqual({});
+  });
+
+  it("une option posée exige de garder une date précise et une durée", () => {
+    expect(controlerModification("option", { precisionDate: "mois", dureeMinutes: null, cachet: null })).toEqual({
+      date: expect.stringContaining("précise"),
+      duree: expect.stringContaining("durée"),
+    });
+    expect(controlerModification("option", { precisionDate: "jour", dureeMinutes: 90, cachet: null })).toEqual({});
+  });
+
+  it("un contrat envoyé interdit de vider le cachet, mais accepte 0 (bénévole)", () => {
+    expect(controlerModification("contrat_envoye", { precisionDate: "jour", dureeMinutes: 90, cachet: null })).toEqual({
+      cachet: expect.stringContaining("cachet"),
+    });
+    expect(controlerModification("contrat_envoye", { precisionDate: "jour", dureeMinutes: 90, cachet: 0 })).toEqual({});
   });
 });
