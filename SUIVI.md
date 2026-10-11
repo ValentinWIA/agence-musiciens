@@ -25,7 +25,7 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 - **Bug corrigé (commit `7d220dd`)** : `scripts/jeu-de-donnees.ts` utilise des identifiants **fixes**, calculés par
   empreinte du nom (`idStable("musicien:louis")`, format UUID accepté par `z.uuid()`) : les sessions ouvertes et les
   adresses des fiches restent valables après un rechargement du jeu. Vérifié le 11/10 : même nom → même identifiant.
-  Reste à constater sur la prévisualisation (Louis reste connecté après un nouveau déploiement).
+  Constaté en prévisualisation le 11/10 : Louis reste connecté après un nouveau déploiement.
 - **Reprise (nouvelle session)** : lire `SUIVI.md`, `AGENTS.md`, `docs/engagements.md` ;
   puis étape D (formulaire, changements de statut), E (géocodage), F (règle de conflit + tests), G (pièces jointes),
   H (revue de sécurité, README, schéma, rendus, `npm run donnees` en production).
