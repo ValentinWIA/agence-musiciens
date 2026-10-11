@@ -4,7 +4,7 @@
 //   npm run donnees                       → sur la base indiquée par DATABASE_URL_UNPOOLED
 //   … --si-previsualisation               → seulement sur une prévisualisation Vercel (utilisé par vercel-build)
 
-import { randomUUID } from "node:crypto";
+import { createHash } from "node:crypto";
 import { neon } from "@neondatabase/serverless";
 import bcrypt from "bcryptjs";
 import { and, eq, inArray, like } from "drizzle-orm";
@@ -30,12 +30,13 @@ async function principal() {
   if (!url) throw new Error("DATABASE_URL_UNPOOLED absente : impossible de savoir quelle base remplir.");
   const db = drizzle(neon(url), { schema });
 
-  // Identifiants fixés ici pour relier les lignes entre elles dans une seule opération.
-  const ids = <K extends string>(cles: Record<K, unknown>) =>
-    Object.fromEntries(Object.keys(cles).map((cle) => [cle, randomUUID()])) as Record<K, string>;
-  const idMusicien = ids(MUSICIENS);
-  const idLieu = ids(LIEUX);
-  const idProgrammateur = ids(PROGRAMMATEURS);
+  // Identifiants fixes, calculés à partir du nom de chaque élément : identiques à chaque exécution, pour que les
+  // sessions ouvertes et les adresses des fiches restent valables après un rechargement du jeu.
+  const ids = <K extends string>(famille: string, cles: Record<K, unknown>) =>
+    Object.fromEntries(Object.keys(cles).map((cle) => [cle, idStable(`${famille}:${cle}`)])) as Record<K, string>;
+  const idMusicien = ids("musicien", MUSICIENS);
+  const idLieu = ids("lieu", LIEUX);
+  const idProgrammateur = ids("programmateur", PROGRAMMATEURS);
 
   const hash = await bcrypt.hash(motDePasse.data, 12);
   const anciensMusiciens = db
@@ -43,12 +44,12 @@ async function principal() {
     .from(utilisateurs)
     .where(and(like(utilisateurs.email, DOMAINE_FICTIF), eq(utilisateurs.role, "musicien")));
 
-  const lignesEngagements = ENGAGEMENTS.map((e) => {
+  const lignesEngagements = ENGAGEMENTS.map((e, i) => {
     const devise = e.devise ?? "EUR";
     const cachet = e.cachet === undefined ? null : versUniteMinimale(e.cachet, devise);
     if (cachet === null && e.cachet !== undefined) throw new Error(`Cachet invalide : ${e.cachet} ${devise}`);
     return {
-      id: randomUUID(),
+      id: idStable(`engagement:${i}`),
       titre: e.titre ?? null,
       debut: new Date(e.debut),
       precisionDate: e.precision ?? "jour",
@@ -93,6 +94,12 @@ async function principal() {
     `Jeu de données chargé : ${Object.keys(MUSICIENS).length} musiciens, ${Object.keys(PROGRAMMATEURS).length} programmateurs, ` +
       `${Object.keys(LIEUX).length} lieux, ${ENGAGEMENTS.length} engagements.`,
   );
+}
+
+// Empreinte du nom mise en forme d'UUID (version 5, variante RFC) : même nom → même identifiant.
+function idStable(nom: string) {
+  const h = createHash("sha256").update(`agence-musiciens:${nom}`).digest("hex");
+  return `${h.slice(0, 8)}-${h.slice(8, 12)}-5${h.slice(13, 16)}-8${h.slice(17, 20)}-${h.slice(20, 32)}`;
 }
 
 principal().catch((erreur) => {
