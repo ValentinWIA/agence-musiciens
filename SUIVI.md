@@ -10,7 +10,7 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 
 ## État de reprise
 
-*Dernière mise à jour : 11 octobre 2026 (E1 et E2 faites)*
+*Dernière mise à jour : 12 octobre 2026 (étape E terminée)*
 
 - **Fait** : cadrage (SPEC), comptes, squelette Next.js, dépôt GitHub public, site en ligne
   (https://agence-musiciens.vercel.app), région `fra1`, base Neon reliée à Vercel.
@@ -47,13 +47,20 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   E2a ✅ coordonnées fixes des 12 lieux (étranger relevé sur carte). E2b ✅ migration 0005 : coordonnées obligatoires,
   jouée sans erreur en prévisualisation le 11/10 (preuve que tous les lieux ont leurs coordonnées).
   Leçon : une migration passe **avant** le rechargement des données → données d'abord, contrainte ensuite.
+  E3 ✅ (commits `93645f9`, `c002acd`, `5b27b0c`) : actions `chercherLieu` / `creerLieu`
+  (`src/app/engagements/lieux/actions.ts`), fenêtre `<dialog>` « + nouveau lieu » (`nouveau-lieu.tsx`, à côté du
+  formulaire d'engagement, saisie conservée, lieu créé sélectionné). Vérification et règle de doublon dans
+  `src/lib/lieux.ts` (63 tests). Pays en liste fermée (`PAYS`, `src/lib/dates.ts`). Vérifiée le 12/10 en
+  prévisualisation : lieu français choisi, lieu suisse saisi (virgule refusée), création sans proposition refusée,
+  doublon refusé, Louis refusé. Bug trouvé au geste : « Paris 75013 » ≠ « 75013 Paris » laissait passer un doublon →
+  règle élargie (ville sans chiffres, ou moins de 100 m).
 - **Bug corrigé (commit `7d220dd`)** : `scripts/jeu-de-donnees.ts` utilise des identifiants **fixes**, calculés par
   empreinte du nom (`idStable("musicien:louis")`, format UUID accepté par `z.uuid()`) : les sessions ouvertes et les
   adresses des fiches restent valables après un rechargement du jeu. Vérifié le 11/10 : même nom → même identifiant.
   Constaté en prévisualisation le 11/10 : Louis reste connecté après un nouveau déploiement.
 - **Reprise (nouvelle session)** : lire `SUIVI.md`, `AGENTS.md`, `docs/engagements.md` ;
-  étape D terminée (D1 ✅ règles ; D2 ✅ statuts + D2b ✅ rétablir ; D3 ✅ création ; D4a ✅ + D4b ✅ modification).
-  **Prochaine étape : E3** (action `creerLieu` + fenêtre « + nouveau lieu », voir section 7 de `docs/engagements.md`). Puis F (règle de conflit + tests), G (pièces jointes),
+  étapes D et E terminées.
+  **Prochaine étape : F** (règle de conflit + tests : cadrage d'abord, dans `docs/engagements.md`). Puis G (pièces jointes),
   H (revue de sécurité, README, schéma, rendus, `npm run donnees` en production).
 - **Quota** : semaine à 79 % le 12/10 (réinitialisation le 14/10 à 11 h 59). Sessions courtes, `/clear` entre étapes,
   explications courtes.
@@ -271,4 +278,6 @@ déconnexion ; `/tableau-de-bord` sans session → renvoi vers la connexion.
 | 11/10/2026 | Rétablir un engagement annulé (sauf date passée) ; « confirmé » revient à « contrat envoyé » | Une annulation par erreur obligeait à tout recréer ; reconfirmer rejoue la règle de conflit |
 | 11/10/2026 | Création : date passée refusée ; heure saisie = heure locale du lieu | Une demande pour un concert passé n'a pas de sens ; 11 h à Genève reste 11 h à Genève |
 | 11/10/2026 | Modification : après « confirmé » (et si annulé), seuls titre, programme et notes changent | Date, lieu, musiciens, durée et cachet sont au contrat ; les changer contournerait la règle de conflit |
+| 12/10/2026 | Pays d'un lieu en liste fermée (4 pays dont on connaît le fuseau) | Un pays inconnu recevait l'heure de Paris sans avertissement |
+| 12/10/2026 | Doublon de lieu : même nom et (même ville sans chiffres ou moins de 100 m) | La ville en texte exact laissait créer deux fois la même salle |
 | 11/10/2026 | Table `utilisateurs` limitée à 7 colonnes | Invitations et réinitialisations iront dans des tables séparées ; ajouter une colonne plus tard est peu coûteux |
