@@ -23,8 +23,9 @@ export function BoutonsStatut({ id, transitions }: Props) {
             disabled={enCours}
             variant={cle === "annuler" ? "destructive" : "default"}
             onClick={(e) => {
-              // L'annulation est définitive : on demande confirmation.
-              if (cle === "annuler" && !confirm("Annuler cet engagement ? Ce sera définitif.")) e.preventDefault();
+              // L'annulation retire l'engagement de l'agenda : on demande confirmation.
+              if (cle === "annuler" && !confirm("Annuler cet engagement ? Vous pourrez le rétablir tant que la date n'est pas passée."))
+                e.preventDefault();
             }}
           >
             {libelle}
