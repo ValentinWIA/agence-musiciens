@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useActionState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,7 +16,10 @@ export function FormulaireInstallation() {
   if (etat.reussi) {
     return (
       <p role="status">
-        Compte administrateur créé. Vous pourrez vous connecter dès que la page de connexion sera en place.
+        Compte administrateur créé.{" "}
+        <Link href="/" className="underline">
+          Se connecter
+        </Link>
       </p>
     );
   }
