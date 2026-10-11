@@ -13,6 +13,7 @@ import { formaterTaille, LIBELLES_TYPE_PIECE } from "@/lib/pieces-jointes";
 import { verifierSession } from "@/lib/session";
 import { BoutonsStatut } from "./boutons-statut";
 import { AjoutPiece } from "./pieces/ajout-piece";
+import { SupprimerPiece } from "./pieces/supprimer-piece";
 
 export default function PageEngagement({ params, searchParams }: PageProps<"/engagements/[id]">) {
   return (
@@ -115,12 +116,16 @@ async function FicheEngagement({
           ) : (
             <ul className="grid gap-2 text-sm">
               {pieces.map((p) => (
-                <li key={p.id} className="flex flex-wrap gap-x-3">
+                <li key={p.id} className="flex flex-wrap items-center gap-x-3 gap-y-1">
                   <span className="font-medium">{LIBELLES_TYPE_PIECE[p.type]}</span>
-                  <span className="break-all">{p.nomFichier}</span>
+                  {/* Lien simple (pas <Link>) : c'est un fichier servi par une route, pas une page. */}
+                  <a href={`/engagements/${engagement.id}/pieces/${p.id}`} target="_blank" rel="noopener" className="break-all underline">
+                    {p.nomFichier}
+                  </a>
                   <span className="text-muted-foreground">
                     {formaterTaille(p.taille)} · ajoutée le {formaterJour(p.ajouteeLe)}
                   </span>
+                  {estAgent && <SupprimerPiece id={engagement.id} pieceId={p.id} nom={p.nomFichier} />}
                 </li>
               ))}
             </ul>

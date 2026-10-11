@@ -2,7 +2,7 @@
 
 import { randomUUID } from "node:crypto";
 import { del, put } from "@vercel/blob";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { refresh } from "next/cache";
 import { z } from "zod";
 import { db } from "@/db";
@@ -60,4 +60,31 @@ export async function ajouterPiece(etat: EtatAjoutPiece, formData: FormData): Pr
   console.log(`Pièce jointe ajoutée : « ${nom} » (${LIBELLES_TYPE_PIECE[type]}, ${taille} o) sur ${engagementId} par ${agent.nom}`);
   // « envois » change à chaque réussite : le formulaire s'en sert pour se vider.
   return { message: `« ${nom} » ajouté.`, envois: (etat.envois ?? 0) + 1 };
+}
+
+export type EtatSuppressionPiece = { erreur?: string };
+
+// Suppression, à tout statut, par l'agent seulement. La ligne d'abord, le fichier ensuite : si l'effacement du
+// fichier échoue, il reste un fichier sans lien (inaccessible), jamais un lien vers un fichier disparu.
+export async function supprimerPiece(_etat: EtatSuppressionPiece, formData: FormData): Promise<EtatSuppressionPiece> {
+  const agent = await verifierAdmin("/engagements (suppression de pièce jointe)");
+
+  const ids = z.object({ id: z.uuid(), pieceId: z.uuid() }).safeParse({ id: formData.get("id"), pieceId: formData.get("pieceId") });
+  if (!ids.success) return { erreur: "Demande invalide." };
+  const { id: engagementId, pieceId } = ids.data;
+
+  const [piece] = await db
+    .delete(piecesJointes)
+    .where(and(eq(piecesJointes.id, pieceId), eq(piecesJointes.engagementId, engagementId)))
+    .returning({ nom: piecesJointes.nomFichier, chemin: piecesJointes.chemin });
+  // Déjà supprimée (autre onglet, double clic) : rien à faire, la liste se met à jour.
+  if (!piece) {
+    refresh();
+    return { erreur: "Cette pièce n'existe plus." };
+  }
+
+  await del(piece.chemin).catch((e) => console.error(`Fichier non effacé du stockage : ${piece.chemin} —`, e));
+  refresh();
+  console.log(`Pièce jointe supprimée : « ${piece.nom} » sur ${engagementId} par ${agent.nom}`);
+  return {};
 }

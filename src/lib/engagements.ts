@@ -209,3 +209,15 @@ export async function lirePiecesJointes(engagementId: string) {
     .where(eq(piecesJointes.engagementId, engagementId))
     .orderBy(desc(piecesJointes.ajouteeLe));
 }
+
+// Une pièce jointe, avec son chemin dans le stockage, pour l'ouvrir côté serveur. La pièce doit appartenir à cet
+// engagement : on ne peut pas ouvrir la pièce d'un autre engagement en passant par un engagement autorisé.
+// À n'appeler qu'après lireEngagement, qui contrôle l'accès.
+export async function lirePieceJointe(engagementId: string, pieceId: string) {
+  if (!UUID.test(pieceId)) return null;
+  const [piece] = await db
+    .select({ nomFichier: piecesJointes.nomFichier, chemin: piecesJointes.chemin })
+    .from(piecesJointes)
+    .where(and(eq(piecesJointes.id, pieceId), eq(piecesJointes.engagementId, engagementId)));
+  return piece ?? null;
+}
