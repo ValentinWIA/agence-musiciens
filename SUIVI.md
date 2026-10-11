@@ -10,7 +10,7 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 
 ## État de reprise
 
-*Dernière mise à jour : 12 octobre 2026 (G1 faite)*
+*Dernière mise à jour : 12 octobre 2026 (G2 faite)*
 
 - **Fait** : cadrage (SPEC), comptes, squelette Next.js, dépôt GitHub public, site en ligne
   (https://agence-musiciens.vercel.app), région `fra1`, base Neon reliée à Vercel.
@@ -81,7 +81,11 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   **Étape G (pièces jointes)** : cadrage validé le 12/10 (`docs/engagements.md`, section 10 ; commit `817c810`).
   G1 ✅ `src/lib/pieces-jointes.ts` : `verifierPiece` (type, aucun fichier / vide, 4 Mo au plus, signature `%PDF-`
   lue dans le contenu, pas l'extension), `formaterTaille` ; 94 tests.
-  **Prochaine tranche : G2** (stockage Vercel Blob privé créé par l'humain, table `pieces_jointes`), puis G3–G4, « confirmer quand même », puis
+  G2 ✅ (commit `6d7c084`) : table `pieces_jointes` (migration 0006, cascade avec l'engagement), jouée en
+  prévisualisation le 12/10 (déploiement « Ready »). Stockage Blob `agence-musiciens-pieces` créé par l'humain,
+  relié aux 3 environnements (`BLOB_READ_WRITE_TOKEN`, pris en compte au prochain déploiement).
+  Limite : `npm run donnees` efface les lignes, pas les fichiers du stockage (orphelins en prévisualisation).
+  **Prochaine tranche : G3** (ajout d'une pièce et liste sur la fiche ; installer `@vercel/blob`), puis G4, « confirmer quand même », puis
   H (revue de sécurité, README, schéma, rendus, `npm run donnees` en production).
 - **Quota** : semaine à 79 % le 12/10 (réinitialisation le 14/10 à 11 h 59). Sessions courtes, `/clear` entre étapes,
   explications courtes.
