@@ -44,15 +44,15 @@ export const reinitialisations = pgTable("reinitialisations", {
   creeLe: timestamp("cree_le", { withTimezone: true }).notNull().defaultNow(),
 });
 
-// Salles et festivals. Les coordonnées seront remplies par le géocodage (étape E).
+// Salles et festivals. Coordonnées obligatoires : la règle de conflit calcule les distances.
 export const lieux = pgTable("lieux", {
   id: uuid("id").primaryKey().defaultRandom(),
   nom: text("nom").notNull(),
   adresse: text("adresse").notNull(),
   ville: text("ville").notNull(),
   pays: text("pays").notNull(),
-  latitude: doublePrecision("latitude"),
-  longitude: doublePrecision("longitude"),
+  latitude: doublePrecision("latitude").notNull(),
+  longitude: doublePrecision("longitude").notNull(),
 });
 
 // Contacts des salles et festivals : ils n'ont pas de compte.
