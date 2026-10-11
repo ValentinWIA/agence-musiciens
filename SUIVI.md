@@ -14,8 +14,8 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 
 - **Fait** : cadrage (SPEC), comptes, squelette Next.js, dépôt GitHub public, site en ligne
   (https://agence-musiciens.vercel.app), région `fra1`, base Neon reliée à Vercel.
-- **En cours** : fonctionnalité « connexion » sur la branche `connexion`. Tranche 1 (table des utilisateurs) validée ;
-  prochaine : tranche 2 (page `/installation`).
+- **En cours** : fonctionnalité « connexion » sur la branche `connexion`. Tranches 1 (table des utilisateurs) et 2 (page `/installation`)
+  validées ; prochaine : tranche 3 (connexion avec Auth.js).
 - **Reste à faire (côté humain)** : créer `AUTH_SECRET` (avant la tranche 3) ; créer le compte UptimeRobot.
 - **Cassé** : rien.
 
@@ -31,7 +31,7 @@ Un produit se construit par couches. Chaque couche répond à une question et s'
 | 1. Fondations | Où vit le produit ? (comptes, dépôt, hébergeur, base) | 1, jour 1 | ✅ |
 | 2. Squelette | Avec quoi le construit-on ? (framework, langage, interface) | 1, jour 1 | ✅ |
 | 3. Données | Que retient le produit, et sous quelle forme ? | 1 | 🔄 (table `utilisateurs` ✅) |
-| 4. Identité et droits | Qui est connecté, et qu'a-t-il le droit de faire ? | 1 | ⬜ |
+| 4. Identité et droits | Qui est connecté, et qu'a-t-il le droit de faire ? | 1 | 🔄 |
 | 5. Métier | Que fait le produit ? (engagements, cycle de vie, règles, API externe, courriels, pièces jointes) | 1 | ⬜ |
 | 6. Fiabilité | Comment sait-on que ça marche et que c'est sûr ? (tests, journaux, revue de sécurité, README) | 1 | ⬜ |
 | 7. Automatisation | Que fait le produit tout seul, la nuit ? | 2 | ⬜ |
@@ -87,16 +87,20 @@ Un produit se construit par couches. Chaque couche répond à une question et s'
 
 À venir, hors de cette table : `invitations` et jetons de réinitialisation (tables séparées), colonne `actif` si besoin.
 
-### 4. Identité et droits ⬜ — tranches 2 et 3
+### 4. Identité et droits 🔄 — tranches 2 ✅ et 3
 
 | Tâche | État | À quoi ça sert |
 |---|---|---|
-| Page `/installation` (premier admin) | ⬜ | Créer le compte de l'agent ; la page se ferme dès qu'un compte existe |
+| Page `/installation` (premier admin) | ✅ | Créer le compte de l'agent ; la page se ferme dès qu'un compte existe |
 | Auth.js : connexion par e-mail et mot de passe | ⬜ | Savoir qui est connecté, sans écrire l'authentification à la main |
 | Page de connexion à la place de l'accueil Next.js | ⬜ | La porte d'entrée du produit |
 | Page protégée `/tableau-de-bord` + déconnexion | ⬜ | Vérifier que seuls les connectés y accèdent |
 | Fusion dans `main`, vérification en production | ⬜ | La fonctionnalité arrive sur le vrai site |
 | Puis : invitations, réinitialisation du mot de passe (Resend) | ⬜ | Fonctionnalité suivante |
+
+**Preuve constatée pour la tranche 2 (11/10/2026)** : erreurs affichées (e-mail invalide, mot de passe trop court) ;
+compte créé avec le rôle `admin` et un mot de passe chiffré (`$2…`) ; `/installation` fermée ensuite.
+À faire après la fusion : créer le compte de l'agent en production **immédiatement**, avec un nouveau mot de passe.
 
 ---
 
@@ -142,6 +146,9 @@ Un produit se construit par couches. Chaque couche répond à une question et s'
 - **`components.json`** — les réglages de l'outil shadcn (où ranger les composants, quel style).
 - **`next-env.d.ts`** — généré par Next.js, apprend à TypeScript ce qui est propre à Next.js ; jamais modifié, jamais enregistré.
 - **`AGENTS.md`** — les consignes que l'IA lit à chaque session (conventions du projet).
+- **bcrypt** — chiffre les mots de passe de façon irréversible ; seul le résultat (`$2…`) est stocké.
+- **zod** — vérifie côté serveur que les données d'un formulaire ont la bonne forme.
+- **action serveur (`"use server"`)** — fonction exécutée sur le serveur quand on envoie un formulaire ; appelable depuis l'extérieur, donc elle revérifie tout.
 - **Drizzle** — l'outil qui fait parler le code à la base et écrit les migrations.
 - **migration** — un fichier qui décrit une modification de la structure de la base ; rejoué sur chaque base.
 - **UUID** — identifiant aléatoire, impossible à deviner.
