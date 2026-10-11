@@ -203,7 +203,7 @@ Un nouvel engagement commence toujours au statut « demande ».
 
 ## 6. Décisions prises (12/10/2026)
 
-1. Le musicien **voit le cachet** de ses propres engagements *(proposition retenue, à confirmer)*.
+1. Le musicien **voit le cachet de ses propres engagements** seulement (jamais celui des autres, qu'il ne voit pas).
 2. Devises : EUR, CHF, USD, GBP **et JPY**.
 3. **Au moins un musicien** dès la création. Date approximative (mois ou saison) permise au stade « demande »,
    date précise exigée pour poser une option. Lieu obligatoire dès la création.
