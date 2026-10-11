@@ -10,7 +10,7 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 
 ## État de reprise
 
-*Dernière mise à jour : 12 octobre 2026 (Q1 et Q2 poussées, gestes à faire)*
+*Dernière mise à jour : 12 octobre 2026 (« confirmer quand même » validé ; prochaine étape H)*
 
 - **Fait** : cadrage (SPEC), comptes, squelette Next.js, dépôt GitHub public, site en ligne
   (https://agence-musiciens.vercel.app), région `fra1`, base Neon reliée à Vercel.
@@ -107,7 +107,8 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   **Gestes à faire sur la prévisualisation** : cas piégé → refus puis champ ; raison « ok » refusée (saisie gardée) ;
   raison valable → « confirmé », raison affichée ; Louis voit la raison sans bouton ; annuler puis rétablir → raison
   effacée.
-  **Ensuite** :
+  **Q1 + Q2 ✅** gestes validés par l'humain le 12/10.
+  **Prochaine étape : H** (à cadrer d'abord) :
   H (revue de sécurité, README, schéma, rendus, `npm run donnees` en production).
 - **Quota** : semaine à 79 % le 12/10 (réinitialisation le 14/10 à 11 h 59). Sessions courtes, `/clear` entre étapes,
   explications courtes.
