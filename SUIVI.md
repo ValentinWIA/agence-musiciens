@@ -36,6 +36,13 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   (`gh auth refresh -h github.com -r workflow`). Accordée le 12/10/2026 pour publier les vérifications automatiques.
   Risque jugé minime : aucun secret GitHub Actions dans les dépôts (`agence-musiciens`, `piano-website`, `studio_piano`) ;
   à reconsidérer si l'on en ajoute un.
+- **Compréhension (tour du 12/10/2026, 3 questions)** — à reposer sous une autre forme avant la démo :
+  - 🟡 Trajet d'une action : juste sur le résultat et le « pourquoi côté serveur » ; à revoir : le serveur reconnaît
+    l'utilisateur et son rôle grâce au **cookie de session signé** (`AUTH_SECRET`), sans consulter la base.
+  - 🟡 Méthode : confusion **commit** (version enregistrée sur le Mac) / **push** (envoi vers GitHub, qui déclenche
+    vérifications, prévisualisation et copie de base) ; la production n'arrive qu'à la **fusion** dans `main`.
+  - ❌ Empreinte du jeton : le serveur recalcule l'empreinte du jeton du lien et la compare ; on ne peut pas remonter
+    de l'empreinte au jeton ; protège contre une lecture de la base.
 - **Cassé** : rien.
 - **À améliorer avant Sentry (semaine 2)** : Auth.js journalise chaque mauvais mot de passe comme une erreur
   (`[auth][error] CredentialsSignin`) ; notre ligne « Connexion refusée » suffit, le message d'Auth.js est à faire taire.
