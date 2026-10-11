@@ -10,7 +10,7 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 
 ## État de reprise
 
-*Dernière mise à jour : 12 octobre 2026 (étape F terminée)*
+*Dernière mise à jour : 12 octobre 2026 (G1 faite)*
 
 - **Fait** : cadrage (SPEC), comptes, squelette Next.js, dépôt GitHub public, site en ligne
   (https://agence-musiciens.vercel.app), région `fra1`, base Neon reliée à Vercel.
@@ -79,7 +79,9 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 - **Reprise (nouvelle session)** : lire `SUIVI.md`, `AGENTS.md`, `docs/engagements.md` ;
   étapes D et E terminées.
   **Étape G (pièces jointes)** : cadrage validé le 12/10 (`docs/engagements.md`, section 10 ; commit `817c810`).
-  **Prochaine tranche : G1** (règle de vérification des PDF), puis G2–G4, « confirmer quand même », puis
+  G1 ✅ `src/lib/pieces-jointes.ts` : `verifierPiece` (type, aucun fichier / vide, 4 Mo au plus, signature `%PDF-`
+  lue dans le contenu, pas l'extension), `formaterTaille` ; 94 tests.
+  **Prochaine tranche : G2** (stockage Vercel Blob privé créé par l'humain, table `pieces_jointes`), puis G3–G4, « confirmer quand même », puis
   H (revue de sécurité, README, schéma, rendus, `npm run donnees` en production).
 - **Quota** : semaine à 79 % le 12/10 (réinitialisation le 14/10 à 11 h 59). Sessions courtes, `/clear` entre étapes,
   explications courtes.
