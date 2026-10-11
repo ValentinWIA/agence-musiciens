@@ -10,14 +10,23 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 
 ## État de reprise
 
-*Dernière mise à jour : 11 octobre 2026*
+*Dernière mise à jour : 11 octobre 2026 (fin de session)*
 
 - **Fait** : cadrage (SPEC), comptes, squelette Next.js, dépôt GitHub public, site en ligne
   (https://agence-musiciens.vercel.app), région `fra1`, base Neon reliée à Vercel.
   Fonctionnalité « connexion » fusionnée (pull request n° 1) et vérifiée en production ; compte de l'agent créé en production.
-- **En cours** : fonctionnalité « invitations » sur la branche `invitations`. Tranche 1 (page `/invitations`) validée ;
-  prochaine : tranche 2 (acceptation de l'invitation).
-- **Reste à faire (côté humain)** : créer le compte UptimeRobot.
+- **En cours** : fonctionnalité « invitations » sur la branche `invitations` (pas encore fusionnée).
+  Tranches 1 (page `/invitations`) et 2 (acceptation, compte musicien, refus d'accès journalisé) validées.
+  Tranche 3 (courriel Resend) codée et déployée en prévisualisation, **à vérifier** :
+  1. créer une clé API chez Resend (resend.com → API Keys, droit « Sending access ») ;
+  2. la placer dans Vercel : `RESEND_API_KEY`, environnements Production, Preview et Development ;
+  3. redéployer la prévisualisation de `invitations` (Deployments → ⋯ → Redeploy) ;
+  4. inviter **l'adresse de votre compte Resend** → le courriel doit arriver ; inviter une autre adresse →
+     message « le courriel n'a pas pu partir », lien affiché, ligne « Courriel non envoyé » dans les journaux.
+  Ensuite : tranche 4 (réinitialisation du mot de passe), puis tests automatiques à chaque push.
+- **Reste à faire (côté humain)** : créer la clé Resend (voir ci-dessus) ; créer le compte UptimeRobot.
+- **Vérifié par lecture seulement** : le refus d'un mot de passe trop court sur la page d'acceptation (règle désormais
+  commune avec l'installation, `src/lib/mot-de-passe.ts`) — à couvrir par un test automatique.
 - **Cassé** : rien.
 - **À améliorer avant Sentry (semaine 2)** : Auth.js journalise chaque mauvais mot de passe comme une erreur
   (`[auth][error] CredentialsSignin`) ; notre ligne « Connexion refusée » suffit, le message d'Auth.js est à faire taire.
@@ -34,7 +43,7 @@ Un produit se construit par couches. Chaque couche répond à une question et s'
 | 1. Fondations | Où vit le produit ? (comptes, dépôt, hébergeur, base) | 1, jour 1 | ✅ |
 | 2. Squelette | Avec quoi le construit-on ? (framework, langage, interface) | 1, jour 1 | ✅ |
 | 3. Données | Que retient le produit, et sous quelle forme ? | 1 | 🔄 (table `utilisateurs` ✅ ; engagements à venir) |
-| 4. Identité et droits | Qui est connecté, et qu'a-t-il le droit de faire ? | 1 | 🔄 (connexion ✅ ; invitations, réinitialisation, rôle musicien à venir) |
+| 4. Identité et droits | Qui est connecté, et qu'a-t-il le droit de faire ? | 1 | 🔄 (connexion ✅, invitations et rôle musicien en prévisualisation ; réinitialisation à venir) |
 | 5. Métier | Que fait le produit ? (engagements, cycle de vie, règles, API externe, courriels, pièces jointes) | 1 | ⬜ |
 | 6. Fiabilité | Comment sait-on que ça marche et que c'est sûr ? (tests, journaux, revue de sécurité, README) | 1 | ⬜ |
 | 7. Automatisation | Que fait le produit tout seul, la nuit ? | 2 | ⬜ |
@@ -100,8 +109,8 @@ Un produit se construit par couches. Chaque couche répond à une question et s'
 | Page protégée `/tableau-de-bord` + déconnexion | ✅ | Vérifier que seuls les connectés y accèdent |
 | Fusion dans `main`, vérification en production | ✅ | La fonctionnalité arrive sur le vrai site |
 | Invitations : table `invitations` + page `/invitations` réservée à l'admin | ✅ | L'agent invite un musicien et obtient le lien à transmettre (tranche 1) |
-| Invitations : page d'acceptation, création du compte musicien | ⬜ | Tranche 2 |
-| Invitations : courriel par Resend | ⬜ | Tranche 3 |
+| Invitations : page d'acceptation, création du compte musicien | ✅ | Tranche 2 ; refus d'accès d'un musicien à `/invitations` constaté et journalisé |
+| Invitations : courriel par Resend | 🔄 | Tranche 3 : codée, attend la clé `RESEND_API_KEY` pour être vérifiée |
 | Réinitialisation du mot de passe | ⬜ | Tranche 4 |
 | Journal des déconnexions | ✅ | Ajouté avec la tranche 1 des invitations |
 
