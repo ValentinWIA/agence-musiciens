@@ -28,3 +28,10 @@ export function formaterMontant(unites: number, devise: Devise): string {
     maximumFractionDigits: decimales,
   }).format(unites / 10 ** decimales);
 }
+
+// 125010, "EUR" → « 1250,10 » : le montant tel qu'on le retape dans le formulaire (sans espace ni symbole).
+export function versSaisie(unites: number, devise: Devise): string {
+  const decimales = DECIMALES[devise];
+  if (decimales === 0) return String(unites);
+  return `${Math.floor(unites / 10 ** decimales)},${String(unites % 10 ** decimales).padStart(decimales, "0")}`;
+}

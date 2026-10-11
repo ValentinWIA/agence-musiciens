@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { formaterMontant, versUniteMinimale } from "./argent";
+import { formaterMontant, versSaisie, versUniteMinimale } from "./argent";
 
 describe("conversion des montants saisis", () => {
   it("convertit des euros avec virgule ou point (cas normal)", () => {
@@ -30,5 +30,18 @@ describe("affichage des montants", () => {
   it("affiche à la française, avec la devise", () => {
     expect(formaterMontant(125010, "EUR").replace(/\s/g, " ")).toBe("1 250,10 €");
     expect(formaterMontant(300000, "JPY").replace(/\s/g, " ")).toBe("300 000 JPY");
+  });
+});
+
+describe("montant remis dans le formulaire de modification", () => {
+  it("rend les centimes avec une virgule, et se relit à l'identique", () => {
+    expect(versSaisie(125010, "EUR")).toBe("1250,10");
+    expect(versSaisie(500, "CHF")).toBe("5,00");
+    expect(versUniteMinimale(versSaisie(125010, "EUR"), "EUR")).toBe(125010);
+  });
+
+  it("rend un concert bénévole « 0,00 » (et pas vide) et les yens sans centimes", () => {
+    expect(versSaisie(0, "EUR")).toBe("0,00");
+    expect(versSaisie(300000, "JPY")).toBe("300000");
   });
 });

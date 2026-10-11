@@ -3,7 +3,8 @@ import { Suspense } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { listerLieux, listerMusiciens, listerProgrammateurs } from "@/lib/engagements";
 import { verifierAdmin } from "@/lib/session";
-import { FormulaireEngagement } from "./formulaire";
+import { FormulaireEngagement } from "../formulaire-engagement";
+import { creerEngagement } from "./actions";
 
 export default function PageNouvelEngagement() {
   return (
@@ -28,5 +29,5 @@ export default function PageNouvelEngagement() {
 async function ContenuFormulaire() {
   await verifierAdmin("/engagements/nouveau");
   const [lieux, programmateurs, musiciens] = await Promise.all([listerLieux(), listerProgrammateurs(), listerMusiciens()]);
-  return <FormulaireEngagement lieux={lieux} programmateurs={programmateurs} musiciens={musiciens} />;
+  return <FormulaireEngagement action={creerEngagement} lieux={lieux} programmateurs={programmateurs} musiciens={musiciens} />;
 }

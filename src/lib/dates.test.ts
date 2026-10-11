@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { formaterDebut, lireSaisieDate, versInstant } from "./dates";
+import { formaterDebut, lireSaisieDate, versChampsDate, versInstant } from "./dates";
 
 describe("affichage de la date d'un engagement", () => {
   it("affiche une date précise à l'heure de Paris (cas normal)", () => {
@@ -48,5 +48,26 @@ describe("saisie de la date d'un engagement", () => {
     expect(debut.toISOString()).toBe("2027-11-30T23:00:00.000Z");
     expect(finPeriode.toISOString()).toBe("2028-02-29T23:00:00.000Z");
     expect(formaterDebut(debut, "saison", "France")).toBe("hiver 2027");
+  });
+});
+
+describe("pré-remplissage du formulaire de modification", () => {
+  it("rend le jour et l'heure à l'heure du lieu : 19 h à Tokyo reste 19 h (cas piégé)", () => {
+    const champs = versChampsDate(versInstant("2027-02-13", "19:00", "Japon"), "jour", "Japon");
+    expect(champs).toMatchObject({ jour: "2027-02-13", heure: "19:00" });
+  });
+
+  it("rend minuit « 00:00 », pas « 24:00 »", () => {
+    expect(versChampsDate(versInstant("2026-12-31", "00:00", "France"), "jour", "France").heure).toBe("00:00");
+  });
+
+  it("rend « mai 2027 » au mois, sans jour ni heure", () => {
+    const { debut } = lireSaisieDate({ precision: "mois", mois: "2027-05" }, "Suisse");
+    expect(versChampsDate(debut, "mois", "Suisse")).toMatchObject({ mois: "2027-05", jour: "", heure: "" });
+  });
+
+  it("rend « hiver 2027 » avec l'année de décembre, pas celle d'après", () => {
+    const { debut } = lireSaisieDate({ precision: "saison", saison: "hiver", annee: 2027 }, "France");
+    expect(versChampsDate(debut, "saison", "France")).toMatchObject({ saison: "hiver", annee: "2027" });
   });
 });

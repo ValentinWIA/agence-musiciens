@@ -74,3 +74,19 @@ export function lireSaisieDate(saisie: SaisieDate, pays: string): { debut: Date;
     versInstant(`${a + Math.floor((m - 1) / 12)}-${String(((m - 1) % 12) + 1).padStart(2, "0")}-01`, "00:00", pays);
   return { debut: premierJour(annee, mois), finPeriode: premierJour(annee, mois + nbMois) };
 }
+
+export type ChampsDate = Record<"jour" | "heure" | "mois" | "saison" | "annee", string>;
+
+// L'inverse de lireSaisieDate : un début enregistré → les champs du formulaire, à l'heure du lieu (pré-remplissage).
+export function versChampsDate(debut: Date, precision: "jour" | "mois" | "saison", pays: string): ChampsDate {
+  const p = Object.fromEntries(
+    new Intl.DateTimeFormat("en-US", { timeZone: fuseauDuPays(pays), hourCycle: "h23", year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit" })
+      .formatToParts(debut)
+      .map(({ type, value }) => [type, value]),
+  );
+  const champs: ChampsDate = { jour: "", heure: "", mois: "", saison: "printemps", annee: "" };
+  if (precision === "jour") return { ...champs, jour: `${p.year}-${p.month}-${p.day}`, heure: `${p.hour}:${p.minute}` };
+  if (precision === "mois") return { ...champs, mois: `${p.year}-${p.month}` };
+  const saison = (Object.keys(SAISONS_SAISIE) as Saison[]).find((s) => SAISONS_SAISIE[s] === Number(p.month));
+  return { ...champs, saison: saison ?? "printemps", annee: p.year };
+}

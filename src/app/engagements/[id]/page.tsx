@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { BadgeStatut } from "@/components/badge-statut";
+import { buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formaterMontant } from "@/lib/argent";
 import { TRANSITIONS, transitionsProposees } from "@/lib/cycle-de-vie";
@@ -33,8 +34,9 @@ async function FicheEngagement({
   const utilisateur = await verifierSession();
   const engagement = await lireEngagement(utilisateur, (await params).id);
   if (!engagement) notFound();
-  // Posé par la création, qui renvoie ici : ?cree=1
-  const vientDEtreCree = (await searchParams).cree === "1";
+  // Posés par la création et la modification, qui renvoient ici : ?cree=1, ?modifie=1
+  const recherche = await searchParams;
+  const confirmation = recherche.cree === "1" ? "Engagement créé." : recherche.modifie === "1" ? "Engagement modifié." : null;
 
   const estAgent = utilisateur.role === "admin";
   const { lieu, programmateur } = engagement;
@@ -42,9 +44,9 @@ async function FicheEngagement({
 
   return (
     <Card>
-      {vientDEtreCree && (
+      {confirmation && (
         <p role="status" className="mx-4 rounded-md border px-3 py-2 text-sm">
-          Engagement créé.
+          {confirmation}
         </p>
       )}
       <CardHeader>
@@ -81,9 +83,13 @@ async function FicheEngagement({
           <Ligne titre="Programme">{engagement.programme ?? "à définir"}</Ligne>
           {engagement.notes && <Ligne titre="Notes">{engagement.notes}</Ligne>}
         </dl>
-        {estAgent && transitions.length > 0 && (
-          <div className="mt-6">
-            <BoutonsStatut id={engagement.id} transitions={transitions} />
+        {estAgent && (
+          <div className="mt-6 grid gap-3">
+            {/* Toujours proposé : même verrouillé, titre, programme et notes restent modifiables. */}
+            <Link href={`/engagements/${engagement.id}/modifier`} className={buttonVariants({ variant: "outline", className: "w-fit" })}>
+              Modifier
+            </Link>
+            {transitions.length > 0 && <BoutonsStatut id={engagement.id} transitions={transitions} />}
           </div>
         )}
       </CardContent>
