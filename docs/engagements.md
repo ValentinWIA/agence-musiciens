@@ -24,6 +24,8 @@ Il sert aussi de rendu du vendredi : spécification, cycle de vie, maquette des 
 **Cas limites retenus**
 - Concert qui finit tard (22 h) et suivant le lendemain matin loin (800 km) → conflit, confirmation refusée.
 - Engagement sans cachet (encore inconnu à l'étape « demande ») → autorisé jusqu'à « contrat envoyé », obligatoire ensuite.
+- Concert **bénévole** (cause, gala de soutien) → cachet de **0**, avec un contrat. « 0 » (décidé) n'est pas « vide »
+  (pas encore connu) : seul le vide bloque l'envoi du contrat. Affiché « Bénévole » ; « joué » est alors son étape finale.
 - Cachet en devise étrangère (CHF, USD, GBP, JPY) → enregistré tel quel, avec sa devise. Le yen n'a pas de centimes.
 - Date approximative (« automne 2027 ») → permise au statut « demande » ; une date et une heure précises sont exigées
   pour poser une option, car la règle de conflit a besoin d'horaires exacts.
@@ -39,6 +41,7 @@ Il sert aussi de rendu du vendredi : spécification, cycle de vie, maquette des 
 - Facturation réelle, paiement, déclarations sociales.
 - Règle 3 du SPEC (durée du programme) : plus tard, si le temps le permet.
 - Pièces jointes : étape G, après le reste.
+- Défraiements (transport, hôtel) d'un concert bénévole : à traiter plus tard.
 
 ---
 
@@ -60,16 +63,16 @@ Il sert aussi de rendu du vendredi : spécification, cycle de vie, maquette des 
 | Transition | De → vers | Qui | Condition vérifiée par le serveur |
 |---|---|---|---|
 | Poser une option | demande → option | agent | date **précise** et heure renseignées (plus de date approximative) |
-| Envoyer le contrat | option → contrat envoyé | agent | cachet renseigné |
+| Envoyer le contrat | option → contrat envoyé | agent | cachet renseigné (0 accepté : concert bénévole) |
 | Confirmer | contrat envoyé → confirmé | agent | **règle de conflit** : aucun musicien de l'engagement n'a de concert trop proche |
 | Marquer joué | confirmé → joué | agent | la date du concert est passée |
-| Facturer | joué → facturé | agent | — |
+| Facturer | joué → facturé | agent | cachet supérieur à 0 |
 | Encaisser | facturé → payé | agent | — |
 | Annuler | demande, option, contrat envoyé ou confirmé → annulé | agent | pas encore joué |
 
 - Aucun retour en arrière (sauf annulation) : une erreur de statut se corrige en annulant et en recréant.
 - Le musicien ne déclenche aucune transition (décision du SPEC : consultation seule).
-- Un statut final (payé, annulé) ne change plus.
+- Un statut final (payé, annulé, et joué pour un concert bénévole) ne change plus.
 
 ---
 
@@ -211,3 +214,5 @@ Un nouvel engagement commence toujours au statut « demande ».
 4. **Titre court** facultatif.
 5. Le musicien voit le **nom et la structure** du programmateur, mais **pas ses coordonnées** : c'est l'agent qui gère
    la relation avec les programmateurs.
+6. Concert **bénévole** (décidé le 12/10/2026, étape D) : cachet de 0 accepté pour envoyer le contrat ; « joué » est
+   l'étape finale (ni facture ni encaissement). Défraiements : plus tard.
