@@ -1,6 +1,6 @@
 import { and, asc, desc, eq, gte, ilike, inArray, lt, or, type SQL } from "drizzle-orm";
 import { db } from "@/db";
-import { engagementMusiciens, engagements, lieux, utilisateurs } from "@/db/schema";
+import { engagementMusiciens, engagements, lieux, programmateurs, utilisateurs } from "@/db/schema";
 
 export const LIBELLES_STATUT = {
   demande: "demande",
@@ -21,7 +21,7 @@ export type Filtres = {
   recherche?: string;
 };
 
-type Lecteur = { id: string; role: "admin" | "musicien" };
+type Lecteur = { id: string; nom: string; role: "admin" | "musicien" };
 
 // Lit les engagements visibles par ce lecteur : tous pour l'agent, les siens seulement pour un musicien.
 // C'est ici, côté serveur, que la règle de visibilité s'applique, quels que soient les filtres demandés.
@@ -81,4 +81,50 @@ export async function listerMusiciens() {
     .from(utilisateurs)
     .where(eq(utilisateurs.role, "musicien"))
     .orderBy(asc(utilisateurs.nom));
+}
+
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+// Lit un engagement pour ce lecteur. Renvoie null s'il n'existe pas OU si un musicien n'en fait pas partie :
+// dans les deux cas la page dit « introuvable », pour ne pas révéler qu'il existe. La tentative est journalisée.
+export async function lireEngagement(lecteur: Lecteur, id: string) {
+  if (!UUID.test(id)) return null;
+
+  const [engagement] = await db
+    .select({
+      id: engagements.id,
+      titre: engagements.titre,
+      debut: engagements.debut,
+      precisionDate: engagements.precisionDate,
+      dureeMinutes: engagements.dureeMinutes,
+      statut: engagements.statut,
+      cachet: engagements.cachet,
+      devise: engagements.devise,
+      programme: engagements.programme,
+      notes: engagements.notes,
+      lieu: { nom: lieux.nom, adresse: lieux.adresse, ville: lieux.ville, pays: lieux.pays },
+      programmateur: {
+        nom: programmateurs.nom,
+        structure: programmateurs.structure,
+        email: programmateurs.email,
+        telephone: programmateurs.telephone,
+      },
+    })
+    .from(engagements)
+    .innerJoin(lieux, eq(engagements.lieuId, lieux.id))
+    .innerJoin(programmateurs, eq(engagements.programmateurId, programmateurs.id))
+    .where(eq(engagements.id, id));
+  if (!engagement) return null;
+
+  const musiciens = await db
+    .select({ id: utilisateurs.id, nom: utilisateurs.nom, instrument: utilisateurs.instrument })
+    .from(engagementMusiciens)
+    .innerJoin(utilisateurs, eq(engagementMusiciens.musicienId, utilisateurs.id))
+    .where(eq(engagementMusiciens.engagementId, id));
+
+  if (lecteur.role === "musicien" && !musiciens.some((m) => m.id === lecteur.id)) {
+    console.warn(`Accès refusé : ${lecteur.nom} (musicien) sur l'engagement ${id}`);
+    return null;
+  }
+  return { ...engagement, musiciens };
 }
