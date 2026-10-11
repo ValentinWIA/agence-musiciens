@@ -24,7 +24,10 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 - **Points d'attention** :
   - Vercel Hobby ne garde les journaux qu'environ une heure : refaire la tentative juste avant la démo,
     ou ajouter plus tard une table `journal` consultable par l'agent.
-  - Amélioration possible : permettre à l'agent d'annuler une invitation (faute de frappe dans l'adresse).
+  - Améliorations possibles : permettre à l'agent d'annuler une invitation (faute de frappe dans l'adresse) ;
+    lien de réinitialisation généré par l'agent pour un musicien (Resend ne lui écrit pas sans nom de domaine).
+  - Dans les journaux Vercel, une requête qui écrit plusieurs lignes n'en montre qu'une dans la liste :
+    cliquer sur l'entrée pour les voir toutes.
 - **Vérifié par lecture seulement** : le refus d'un mot de passe trop court sur la page d'acceptation. La règle commune
   (`src/lib/mot-de-passe.ts`) a depuis été constatée sur la page de réinitialisation — à couvrir par un test automatique.
 - **Cassé** : rien.
