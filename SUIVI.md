@@ -10,7 +10,7 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 
 ## État de reprise
 
-*Dernière mise à jour : 11 octobre 2026 (fin de session D4b)*
+*Dernière mise à jour : 11 octobre 2026 (E1 et E2 faites)*
 
 - **Fait** : cadrage (SPEC), comptes, squelette Next.js, dépôt GitHub public, site en ligne
   (https://agence-musiciens.vercel.app), région `fra1`, base Neon reliée à Vercel.
@@ -42,14 +42,18 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   Formulaire partagé (`src/app/engagements/formulaire-engagement.tsx`) et lecture partagée côté serveur
   (`src/app/engagements/saisie.ts`) : création et modification vérifient les mêmes règles. Pré-remplissage par
   `versChampsDate` (dates) et `versSaisie` (argent). Chaque écriture exige que le statut n'ait pas changé depuis la lecture.
+  **Étape E (géocodage)** : cadrage validé (`docs/engagements.md`, section 7). E1 ✅ `src/lib/geocodage.ts`
+  (service IGN `data.geopf.fr/geocodage`, 5 propositions, délai 5 s, 51 tests, essai réel « 78 rue Cardinet » juste).
+  E2a ✅ coordonnées fixes des 12 lieux (étranger relevé sur carte). E2b ✅ migration 0005 : coordonnées obligatoires,
+  jouée sans erreur en prévisualisation le 11/10 (preuve que tous les lieux ont leurs coordonnées).
+  Leçon : une migration passe **avant** le rechargement des données → données d'abord, contrainte ensuite.
 - **Bug corrigé (commit `7d220dd`)** : `scripts/jeu-de-donnees.ts` utilise des identifiants **fixes**, calculés par
   empreinte du nom (`idStable("musicien:louis")`, format UUID accepté par `z.uuid()`) : les sessions ouvertes et les
   adresses des fiches restent valables après un rechargement du jeu. Vérifié le 11/10 : même nom → même identifiant.
   Constaté en prévisualisation le 11/10 : Louis reste connecté après un nouveau déploiement.
 - **Reprise (nouvelle session)** : lire `SUIVI.md`, `AGENTS.md`, `docs/engagements.md` ;
   étape D terminée (D1 ✅ règles ; D2 ✅ statuts + D2b ✅ rétablir ; D3 ✅ création ; D4a ✅ + D4b ✅ modification).
-  **Prochaine étape : E** (géocodage des lieux, avec « + nouveau lieu » dans le formulaire) : cadrer et découper
-  en tranches avant tout code. Puis F (règle de conflit + tests), G (pièces jointes),
+  **Prochaine étape : E3** (action `creerLieu` + fenêtre « + nouveau lieu », voir section 7 de `docs/engagements.md`). Puis F (règle de conflit + tests), G (pièces jointes),
   H (revue de sécurité, README, schéma, rendus, `npm run donnees` en production).
 - **Quota** : semaine à 79 % le 12/10 (réinitialisation le 14/10 à 11 h 59). Sessions courtes, `/clear` entre étapes,
   explications courtes.
