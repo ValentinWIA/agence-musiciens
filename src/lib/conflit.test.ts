@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  avertissementConflits,
   distanceKm,
   formaterTrajet,
   messageConflits,
@@ -143,6 +144,14 @@ describe("messageConflits", () => {
     expect(messageConflits(geneveLe16, [{ musicien: "louis", autre, position: "avant", trajetMinutes: 412 }], noms)).toBe(
       "Confirmation impossible : Louis Roy joue à Paris le 15/11 à 22 h, trop peu de temps pour rejoindre Genève " +
         "(trajet estimé 7 h + 1 h de marge).",
+    );
+  });
+
+  it("l'avertissement de la fiche reprend le même constat", () => {
+    const autre = situe("b", "Paris", "France", "2026-11-15T21:00:00Z");
+    expect(avertissementConflits(geneveLe16, [{ musicien: "louis", autre, position: "avant", trajetMinutes: 412 }], noms)).toBe(
+      "Attention : Louis Roy joue à Paris le 15/11 à 22 h, trop peu de temps pour rejoindre Genève " +
+        "(trajet estimé 7 h + 1 h de marge). La confirmation sera refusée.",
     );
   });
 

@@ -10,7 +10,7 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 
 ## État de reprise
 
-*Dernière mise à jour : 12 octobre 2026 (F3 terminée, F4 en cadrage)*
+*Dernière mise à jour : 12 octobre 2026 (F4 : gestes à faire)*
 
 - **Fait** : cadrage (SPEC), comptes, squelette Next.js, dépôt GitHub public, site en ligne
   (https://agence-musiciens.vercel.app), région `fra1`, base Neon reliée à Vercel.
@@ -65,14 +65,17 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   duo Genève 21/11 refusé (Louis, Londres) ; Menton 05/12 refusé (Inès, Paris) ; Lyon 12/12 (Anna) confirmé ;
   Louis sans bouton.
   Constaté : créer un engagement trop proche reste permis (voulu : seule la confirmation bloque).
-  F4 ⬜ (demandé le 12/10) : **avertir** dès l'option, sans bloquer — cadrage dans `docs/engagements.md`, section 9.
+  F4 🔄 (cadrage validé le 12/10, `docs/engagements.md` section 9) : avertissement sur la fiche en option et contrat
+  envoyé (agent seulement), même calcul que le refus (`avertissementConflits`), 86 tests. **Gestes à faire** : duo Genève
+  21/11 et Menton 05/12 avertis ; Lyon 12/12 sans avertissement ; Louis ne voit rien ; option posée sur un engagement
+  trop proche → averti. Plus tard : signaler aussi les autres options concurrentes aux dates proches.
 - **Bug corrigé (commit `7d220dd`)** : `scripts/jeu-de-donnees.ts` utilise des identifiants **fixes**, calculés par
   empreinte du nom (`idStable("musicien:louis")`, format UUID accepté par `z.uuid()`) : les sessions ouvertes et les
   adresses des fiches restent valables après un rechargement du jeu. Vérifié le 11/10 : même nom → même identifiant.
   Constaté en prévisualisation le 11/10 : Louis reste connecté après un nouveau déploiement.
 - **Reprise (nouvelle session)** : lire `SUIVI.md`, `AGENTS.md`, `docs/engagements.md` ;
   étapes D et E terminées.
-  **Prochaine étape : F4** (avertissement dès l'option), puis G (pièces jointes). Puis G (pièces jointes),
+  **Prochaine étape : gestes F4** sur la prévisualisation, puis G (pièces jointes). Puis G (pièces jointes),
   H (revue de sécurité, README, schéma, rendus, `npm run donnees` en production).
 - **Quota** : semaine à 79 % le 12/10 (réinitialisation le 14/10 à 11 h 59). Sessions courtes, `/clear` entre étapes,
   explications courtes.

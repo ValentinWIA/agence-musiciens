@@ -98,9 +98,9 @@ function quand(c: ConcertSitue) {
   return `${jour} à ${Number(h)} h${min === "00" ? "" : ` ${min}`}`;
 }
 
-// Le refus expliqué à l'agent (maquette 4.2), qui cite tous les conflits trouvés.
-export function messageConflits(aConfirmer: ConcertSitue, conflits: Conflit<ConcertSitue>[], noms: Record<string, string>) {
-  const phrases = conflits.map(({ musicien, autre, position, trajetMinutes }) => {
+// Une phrase par conflit, partagée par le refus et l'avertissement : ils ne peuvent pas se contredire.
+function phrasesConflits(aConfirmer: ConcertSitue, conflits: Conflit<ConcertSitue>[], noms: Record<string, string>) {
+  return conflits.map(({ musicien, autre, position, trajetMinutes }) => {
     const debut = `${noms[musicien] ?? "un musicien"} joue à ${autre.lieu.ville} le ${quand(autre)}`;
     if (position === "chevauchement") return `${debut}, au même moment`;
     const marge = `${MARGE_MINUTES / 60} h de marge`;
@@ -109,5 +109,14 @@ export function messageConflits(aConfirmer: ConcertSitue, conflits: Conflit<Conc
       ? `${debut}, trop peu de temps pour rejoindre ${aConfirmer.lieu.ville} (${delai})`
       : `${debut}, trop peu de temps pour s'y rendre depuis ${aConfirmer.lieu.ville} (${delai})`;
   });
-  return `Confirmation impossible : ${phrases.join(" ; ")}.`;
+}
+
+// Le refus expliqué à l'agent (maquette 4.2), qui cite tous les conflits trouvés.
+export function messageConflits(aConfirmer: ConcertSitue, conflits: Conflit<ConcertSitue>[], noms: Record<string, string>) {
+  return `Confirmation impossible : ${phrasesConflits(aConfirmer, conflits, noms).join(" ; ")}.`;
+}
+
+// L'avertissement de la fiche, dès l'option : le même constat, annoncé avant de confirmer (docs/engagements.md, section 9).
+export function avertissementConflits(aConfirmer: ConcertSitue, conflits: Conflit<ConcertSitue>[], noms: Record<string, string>) {
+  return `Attention : ${phrasesConflits(aConfirmer, conflits, noms).join(" ; ")}. La confirmation sera refusée.`;
 }

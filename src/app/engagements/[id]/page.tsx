@@ -5,9 +5,10 @@ import { BadgeStatut } from "@/components/badge-statut";
 import { buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formaterMontant } from "@/lib/argent";
+import { avertissementConflits, trouverConflits } from "@/lib/conflit";
 import { TRANSITIONS, transitionsProposees } from "@/lib/cycle-de-vie";
 import { formaterDebut } from "@/lib/dates";
-import { lireEngagement } from "@/lib/engagements";
+import { lireAgendaPourConfirmer, lireEngagement } from "@/lib/engagements";
 import { verifierSession } from "@/lib/session";
 import { BoutonsStatut } from "./boutons-statut";
 
@@ -41,12 +42,22 @@ async function FicheEngagement({
   const estAgent = utilisateur.role === "admin";
   const { lieu, programmateur } = engagement;
   const transitions = transitionsProposees(engagement).map((cle) => ({ cle, libelle: TRANSITIONS[cle].libelle }));
+  // Dès l'option, l'agent est prévenu d'un conflit qui ferait refuser la confirmation (rien n'est bloqué ici).
+  const avertissement =
+    estAgent && (engagement.statut === "option" || engagement.statut === "contrat_envoye")
+      ? await avertissementAgenda(engagement.id)
+      : null;
 
   return (
     <Card>
       {confirmation && (
         <p role="status" className="mx-4 rounded-md border px-3 py-2 text-sm">
           {confirmation}
+        </p>
+      )}
+      {avertissement && (
+        <p role="alert" className="mx-4 rounded-md border border-amber-500 bg-amber-50 px-3 py-2 text-sm text-amber-900 dark:bg-amber-950 dark:text-amber-100">
+          {avertissement}
         </p>
       )}
       <CardHeader>
@@ -95,6 +106,12 @@ async function FicheEngagement({
       </CardContent>
     </Card>
   );
+}
+
+async function avertissementAgenda(id: string) {
+  const { aConfirmer, autres, noms } = await lireAgendaPourConfirmer(id);
+  const conflits = aConfirmer ? trouverConflits(aConfirmer, autres) : [];
+  return aConfirmer && conflits.length ? avertissementConflits(aConfirmer, conflits, noms) : null;
 }
 
 function Ligne({ titre, children }: { titre: string; children: React.ReactNode }) {
