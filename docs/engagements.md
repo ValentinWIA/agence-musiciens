@@ -300,3 +300,25 @@ calcul de distance (étape F) ; jours fériés et Frankfurter (étape à part).
 | F1 | `src/lib/conflit.ts` : distance, trajet, recherche des conflits (fonction pure, sans base) | Tests : cas normal (une semaine), vide, piégé (13 h + 1 h > 13 h), même lieu, chevauchement, égalité exacte, concert d'après, annulé et option ignorés, duo |
 | F2 | Branchement dans `changerStatut` (lecture des engagements tenus des musiciens) et message de refus | Build, lint, tests verts |
 | F3 | Cas de conflit ajoutés au jeu de données | Gestes sur la prévisualisation : cas piégé refusé avec le bon message, duo refusé, cas normal confirmé, Louis toujours sans bouton |
+
+---
+
+## 9. Étape F4 — avertir dès l'option (cadrage validé le 12/10/2026)
+
+**Ce qu'on veut**
+1. Sur la fiche d'un engagement en **option** ou **contrat envoyé**, l'agent voit un **avertissement** si la confirmation
+   serait refusée aujourd'hui : « Attention : Louis Roy joue à Londres le 20/11 à 19 h 30, trop peu de temps pour
+   rejoindre Genève (trajet estimé 12 h 15 + 1 h de marge). La confirmation sera refusée. »
+2. Même calcul que la confirmation (`trouverConflits`, engagements tenus seulement) : l'avertissement et le refus ne
+   peuvent pas se contredire.
+3. Rien n'est bloqué : poser l'option et envoyer le contrat restent permis.
+4. Calculé à chaque affichage de la fiche : si l'autre concert est annulé, l'avertissement disparaît.
+5. Agent seulement : le musicien ne le voit pas (il ne gère pas l'agenda).
+6. Pas d'avertissement en « demande » (la date peut être approximative) ni à partir de « confirmé ».
+
+**Hors périmètre** : avertissement dans la liste ; signaler les **autres options** concurrentes (non tenues) du
+musicien (à revoir plus tard, décidé le 12/10/2026) ; avertir dans le formulaire de création ou de modification.
+
+**Tranche unique** : lecture de l'agenda (déjà écrite pour F2) appelée par la fiche ; texte d'avertissement tiré du
+message de refus. Preuve : tests du texte ; gestes sur la prévisualisation (duo Genève 21/11 et Menton 05/12 avertis,
+Lyon 12/12 sans avertissement, Louis ne voit rien, option posée sur un engagement trop proche → averti).

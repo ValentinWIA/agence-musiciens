@@ -10,7 +10,7 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 
 ## État de reprise
 
-*Dernière mise à jour : 12 octobre 2026 (F3 : gestes à faire)*
+*Dernière mise à jour : 12 octobre 2026 (F3 terminée, F4 en cadrage)*
 
 - **Fait** : cadrage (SPEC), comptes, squelette Next.js, dépôt GitHub public, site en ligne
   (https://agence-musiciens.vercel.app), région `fra1`, base Neon reliée à Vercel.
@@ -59,18 +59,20 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   F2 ✅ branchement dans `changerStatut` : à « confirmer », `lireAgendaPourConfirmer` (`src/lib/engagements.ts`) relit
   en base les engagements tenus des musiciens ; refus expliqué (`messageConflits`, heure locale du lieu, trajet arrondi
   au quart d'heure) et journalisé. 81 tests, build et lint verts.
-  F3 🔄 jeu de données : les cas existaient déjà, mais celui de Menton ne bloquait plus avec 1 h de marge (13 h
+  F3 ✅ jeu de données : les cas existaient déjà, mais celui de Menton ne bloquait plus avec 1 h de marge (13 h
   disponibles, 12 h 16 exigées) → concert avancé à 10 h. Nouveau test `src/lib/jeu-de-donnees.test.ts` (85 tests) :
   les cas de démonstration restent justes si l'on change un réglage. **Gestes à faire sur la prévisualisation** :
   duo Genève 21/11 refusé (Louis, Londres) ; Menton 05/12 refusé (Inès, Paris) ; Lyon 12/12 (Anna) confirmé ;
   Louis sans bouton.
+  Constaté : créer un engagement trop proche reste permis (voulu : seule la confirmation bloque).
+  F4 ⬜ (demandé le 12/10) : **avertir** dès l'option, sans bloquer — cadrage dans `docs/engagements.md`, section 9.
 - **Bug corrigé (commit `7d220dd`)** : `scripts/jeu-de-donnees.ts` utilise des identifiants **fixes**, calculés par
   empreinte du nom (`idStable("musicien:louis")`, format UUID accepté par `z.uuid()`) : les sessions ouvertes et les
   adresses des fiches restent valables après un rechargement du jeu. Vérifié le 11/10 : même nom → même identifiant.
   Constaté en prévisualisation le 11/10 : Louis reste connecté après un nouveau déploiement.
 - **Reprise (nouvelle session)** : lire `SUIVI.md`, `AGENTS.md`, `docs/engagements.md` ;
   étapes D et E terminées.
-  **Prochaine étape : gestes F3** sur la prévisualisation, puis pull request de la branche `engagements`. Puis G (pièces jointes),
+  **Prochaine étape : F4** (avertissement dès l'option), puis G (pièces jointes). Puis G (pièces jointes),
   H (revue de sécurité, README, schéma, rendus, `npm run donnees` en production).
 - **Quota** : semaine à 79 % le 12/10 (réinitialisation le 14/10 à 11 h 59). Sessions courtes, `/clear` entre étapes,
   explications courtes.
