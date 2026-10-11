@@ -10,7 +10,7 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 
 ## État de reprise
 
-*Dernière mise à jour : 12 octobre 2026 (G3 faite)*
+*Dernière mise à jour : 12 octobre 2026 (G4 poussée, gestes à faire)*
 
 - **Fait** : cadrage (SPEC), comptes, squelette Next.js, dépôt GitHub public, site en ligne
   (https://agence-musiciens.vercel.app), région `fra1`, base Neon reliée à Vercel.
@@ -92,7 +92,13 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   **Gestes à faire sur la prévisualisation** : PDF ajouté (agent) ; faux PDF (fichier renommé en .pdf) refusé ;
   fichier de plus de 4 Mo refusé ; aucun fichier / aucun type refusés ; Louis voit la liste sans formulaire.
   **G3 ✅** gestes validés par l'humain le 12/10.
-  **Prochaine tranche : G4** (ouverture protégée, suppression), « confirmer quand même », puis
+  G4 (commit `af0492e`, poussée) : route `src/app/engagements/[id]/pieces/[pieceId]/route.ts` (droits revérifiés,
+  pièce rattachée à cet engagement exigée via `lirePieceJointe`, sinon « Pièce introuvable. » en 404 ; PDF servi sans
+  cache partagé) ; action `supprimerPiece` (ligne puis fichier) et bouton `supprimer-piece.tsx` avec confirmation.
+  **Gestes à faire sur la prévisualisation** : agent ouvre un PDF ; Louis ouvre une pièce de son engagement ; Louis
+  colle l'adresse d'une pièce d'un engagement d'Anna → « Pièce introuvable. » (+ « Accès refusé » dans les journaux) ;
+  agent supprime (Annuler dans la fenêtre → rien ; OK → la ligne disparaît, l'ancienne adresse → introuvable).
+  **Ensuite** : « confirmer quand même », puis
   H (revue de sécurité, README, schéma, rendus, `npm run donnees` en production).
 - **Quota** : semaine à 79 % le 12/10 (réinitialisation le 14/10 à 11 h 59). Sessions courtes, `/clear` entre étapes,
   explications courtes.
