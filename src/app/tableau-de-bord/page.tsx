@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Suspense } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -28,6 +29,11 @@ async function ContenuTableauDeBord() {
       <p>
         Bonjour {utilisateur.nom} — rôle : <strong>{utilisateur.role}</strong>
       </p>
+      {utilisateur.role === "admin" && (
+        <Link href="/invitations" className="underline">
+          Inviter un musicien
+        </Link>
+      )}
       <form action={seDeconnecter}>
         <Button type="submit" variant="outline">
           Se déconnecter

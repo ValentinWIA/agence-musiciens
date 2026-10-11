@@ -15,9 +15,16 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 - **Fait** : cadrage (SPEC), comptes, squelette Next.js, dépôt GitHub public, site en ligne
   (https://agence-musiciens.vercel.app), région `fra1`, base Neon reliée à Vercel.
   Fonctionnalité « connexion » fusionnée (pull request n° 1) et vérifiée en production ; compte de l'agent créé en production.
-- **En cours** : rien. Prochaine fonctionnalité : invitations et réinitialisation du mot de passe (Resend).
+- **En cours** : fonctionnalité « invitations » sur la branche `invitations`, **tranches 1 à 3 validées** en prévisualisation
+  (invitation, acceptation, compte musicien, refus d'accès journalisé, courriel Resend). Prête à fusionner.
+  Ensuite : réinitialisation du mot de passe (branche à part), puis tests automatiques à chaque push.
 - **Reste à faire (côté humain)** : créer le compte UptimeRobot.
-- **Petite amélioration possible** : journaliser aussi les déconnexions (seules les connexions le sont).
+- **Points d'attention** :
+  - Vercel Hobby ne garde les journaux qu'environ une heure : refaire la tentative juste avant la démo,
+    ou ajouter plus tard une table `journal` consultable par l'agent.
+  - Amélioration possible : permettre à l'agent d'annuler une invitation (faute de frappe dans l'adresse).
+- **Vérifié par lecture seulement** : le refus d'un mot de passe trop court sur la page d'acceptation (règle désormais
+  commune avec l'installation, `src/lib/mot-de-passe.ts`) — à couvrir par un test automatique.
 - **Cassé** : rien.
 - **À améliorer avant Sentry (semaine 2)** : Auth.js journalise chaque mauvais mot de passe comme une erreur
   (`[auth][error] CredentialsSignin`) ; notre ligne « Connexion refusée » suffit, le message d'Auth.js est à faire taire.
@@ -34,7 +41,7 @@ Un produit se construit par couches. Chaque couche répond à une question et s'
 | 1. Fondations | Où vit le produit ? (comptes, dépôt, hébergeur, base) | 1, jour 1 | ✅ |
 | 2. Squelette | Avec quoi le construit-on ? (framework, langage, interface) | 1, jour 1 | ✅ |
 | 3. Données | Que retient le produit, et sous quelle forme ? | 1 | 🔄 (table `utilisateurs` ✅ ; engagements à venir) |
-| 4. Identité et droits | Qui est connecté, et qu'a-t-il le droit de faire ? | 1 | 🔄 (connexion ✅ ; invitations, réinitialisation, rôle musicien à venir) |
+| 4. Identité et droits | Qui est connecté, et qu'a-t-il le droit de faire ? | 1 | 🔄 (connexion ✅, invitations et rôle musicien en prévisualisation ; réinitialisation à venir) |
 | 5. Métier | Que fait le produit ? (engagements, cycle de vie, règles, API externe, courriels, pièces jointes) | 1 | ⬜ |
 | 6. Fiabilité | Comment sait-on que ça marche et que c'est sûr ? (tests, journaux, revue de sécurité, README) | 1 | ⬜ |
 | 7. Automatisation | Que fait le produit tout seul, la nuit ? | 2 | ⬜ |
@@ -99,7 +106,11 @@ Un produit se construit par couches. Chaque couche répond à une question et s'
 | Page de connexion à la place de l'accueil Next.js | ✅ | La porte d'entrée du produit |
 | Page protégée `/tableau-de-bord` + déconnexion | ✅ | Vérifier que seuls les connectés y accèdent |
 | Fusion dans `main`, vérification en production | ✅ | La fonctionnalité arrive sur le vrai site |
-| Puis : invitations, réinitialisation du mot de passe (Resend) | ⬜ | Fonctionnalité suivante |
+| Invitations : table `invitations` + page `/invitations` réservée à l'admin | ✅ | L'agent invite un musicien et obtient le lien à transmettre (tranche 1) |
+| Invitations : page d'acceptation, création du compte musicien | ✅ | Tranche 2 ; refus d'accès d'un musicien à `/invitations` constaté et journalisé |
+| Invitations : courriel par Resend | ✅ | Tranche 3 : courriel reçu à l'adresse du compte Resend ; autre adresse refusée par Resend, lien affiché, échec journalisé |
+| Réinitialisation du mot de passe | ⬜ | Tranche 4 |
+| Journal des déconnexions | ✅ | Ajouté avec la tranche 1 des invitations |
 
 **Preuve constatée pour la tranche 2 (11/10/2026)** : erreurs affichées (e-mail invalide, mot de passe trop court) ;
 compte créé avec le rôle `admin` et un mot de passe chiffré (`$2…`) ; `/installation` fermée ensuite.
@@ -171,8 +182,12 @@ déconnexion ; `/tableau-de-bord` sans session → renvoi vers la connexion.
 - **variable d'environnement** — un réglage donné au programme de l'extérieur, rangé chez l'hébergeur ; c'est là que vivent les secrets.
 - **`DATABASE_URL`** — adresse de la base via le pooler (connexion mutualisée) ; utilisée par l'application.
 - **`DATABASE_URL_UNPOOLED`** — adresse directe de la base ; utilisée pour les migrations.
+- **`RESEND_API_KEY`** — la clé qui autorise le produit à envoyer des courriels par Resend (droit « envoi » seulement).
 - **`AUTH_SECRET`** — la clé avec laquelle Auth.js signe les sessions.
 - **rôle vérifié côté serveur** — le serveur contrôle les droits à chaque demande ; cacher un bouton n'est pas une protection.
+- **empreinte (SHA-256)** — résumé irréversible d'un jeton ; seule l'empreinte est stockée, le lien reste secret.
+- **`verifierAdmin()`** — contrôle de rôle côté serveur : un non-admin est renvoyé et la tentative journalisée.
+- **clé étrangère** — colonne qui pointe vers une ligne d'une autre table (`invitations.cree_par` → `utilisateurs.id`).
 - **IDOR** — la faille qui consiste à ouvrir la donnée d'un autre en changeant l'identifiant dans l'adresse.
 
 ---

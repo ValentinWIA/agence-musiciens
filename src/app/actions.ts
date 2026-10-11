@@ -2,6 +2,7 @@
 
 import { AuthError } from "next-auth";
 import { signIn, signOut } from "@/auth";
+import { lireSession } from "@/lib/session";
 
 export type EtatConnexion = { message?: string };
 
@@ -21,5 +22,7 @@ export async function seConnecter(_etat: EtatConnexion, formData: FormData): Pro
 }
 
 export async function seDeconnecter() {
+  const session = await lireSession();
+  if (session?.user) console.log(`Déconnexion : ${session.user.nom} (${session.user.role})`);
   await signOut({ redirectTo: "/" });
 }

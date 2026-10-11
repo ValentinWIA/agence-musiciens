@@ -4,12 +4,13 @@ import bcrypt from "bcryptjs";
 import { z } from "zod";
 import { db } from "@/db";
 import { utilisateurs } from "@/db/schema";
+import { regleMotDePasse } from "@/lib/mot-de-passe";
 import { aucunCompte } from "./aucun-compte";
 
 const schemaFormulaire = z.object({
   nom: z.string().trim().min(1, { error: "Le nom est obligatoire." }),
   email: z.email({ error: "Adresse e-mail invalide." }),
-  motDePasse: z.string().min(12, { error: "Au moins 12 caractères." }),
+  motDePasse: regleMotDePasse,
 });
 
 export type EtatInstallation = {
