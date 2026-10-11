@@ -62,7 +62,7 @@ Il sert aussi de rendu du vendredi : spécification, cycle de vie, maquette des 
 
 | Transition | De → vers | Qui | Condition vérifiée par le serveur |
 |---|---|---|---|
-| Poser une option | demande → option | agent | date **précise** et heure renseignées (plus de date approximative) |
+| Poser une option | demande → option | agent | date **précise** et heure renseignées (plus de date approximative), durée prévue renseignée (la règle de conflit calcule la fin du concert) |
 | Envoyer le contrat | option → contrat envoyé | agent | cachet renseigné (0 accepté : concert bénévole) |
 | Confirmer | contrat envoyé → confirmé | agent | **règle de conflit** : aucun musicien de l'engagement n'a de concert trop proche |
 | Marquer joué | confirmé → joué | agent | la date du concert est passée |
