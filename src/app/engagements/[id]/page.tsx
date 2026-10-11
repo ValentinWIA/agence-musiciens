@@ -97,6 +97,10 @@ async function FicheEngagement({
           </Ligne>
           <Ligne titre="Programme">{engagement.programme ?? "à définir"}</Ligne>
           {engagement.notes && <Ligne titre="Notes">{engagement.notes}</Ligne>}
+          {/* Visible aussi du musicien : c'est lui qui voyage (docs/engagements.md, section 11). */}
+          {engagement.raisonConflit && (
+            <Ligne titre="Conflit d'agenda">{`Confirmé malgré un conflit d'agenda : ${engagement.raisonConflit}`}</Ligne>
+          )}
         </dl>
         {estAgent && (
           <div className="mt-6 grid gap-3">

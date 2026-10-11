@@ -5,7 +5,7 @@ import { refresh } from "next/cache";
 import { z } from "zod";
 import { db } from "@/db";
 import { engagements } from "@/db/schema";
-import { messageConflits, trouverConflits } from "@/lib/conflit";
+import { messageConflits, trouverConflits, verifierRaisonConflit } from "@/lib/conflit";
 import { jugerTransition, statutApres, TRANSITIONS, type Transition } from "@/lib/cycle-de-vie";
 import { LIBELLES_STATUT, lireAgendaPourConfirmer } from "@/lib/engagements";
 import { verifierAdmin } from "@/lib/session";
@@ -13,16 +13,19 @@ import { verifierAdmin } from "@/lib/session";
 const schemaChangement = z.object({
   id: z.uuid(),
   transition: z.enum(Object.keys(TRANSITIONS) as [Transition, ...Transition[]]),
+  // Présente seulement quand l'agent confirme quand même (docs/engagements.md, section 11).
+  raisonConflit: z.string().optional(),
 });
 
-export type EtatChangement = { message?: string; erreur?: string };
+// conflit : le refus vient de la règle de conflit, que l'agent peut passer outre avec une raison.
+export type EtatChangement = { message?: string; erreur?: string; conflit?: boolean; erreurRaison?: string };
 
 export async function changerStatut(_etat: EtatChangement, formData: FormData): Promise<EtatChangement> {
   const agent = await verifierAdmin("/engagements (changement de statut)");
 
   const donnees = schemaChangement.safeParse(Object.fromEntries(formData));
   if (!donnees.success) return { erreur: "Demande invalide." };
-  const { id, transition } = donnees.data;
+  const { id, transition, raisonConflit } = donnees.data;
 
   // On relit l'engagement en base : on ne fait jamais confiance au statut affiché dans le navigateur.
   const engagement = await db.query.engagements.findFirst({ where: eq(engagements.id, id) });
@@ -35,13 +38,22 @@ export async function changerStatut(_etat: EtatChangement, formData: FormData): 
   }
 
   // Règle de conflit d'agenda : relue en base au moment de confirmer (docs/engagements.md, section 8).
+  // L'agent peut passer outre avec une raison écrite ; les conflits sont recalculés à chaque clic : s'il n'y en a
+  // plus, la confirmation est normale et la raison n'est pas gardée.
+  let raisonGardee: string | null = null;
   if (transition === "confirmer") {
     const { aConfirmer, autres, noms } = await lireAgendaPourConfirmer(id);
     const conflits = aConfirmer ? trouverConflits(aConfirmer, autres) : [];
     if (aConfirmer && conflits.length) {
-      const raison = messageConflits(aConfirmer, conflits, noms);
-      console.warn(`Confirmation refusée (conflit d'agenda) : ${id} par ${agent.nom} — ${raison}`);
-      return { erreur: raison };
+      const constat = messageConflits(aConfirmer, conflits, noms);
+      if (raisonConflit === undefined) {
+        console.warn(`Confirmation refusée (conflit d'agenda) : ${id} par ${agent.nom} — ${constat}`);
+        return { erreur: constat, conflit: true };
+      }
+      const verdictRaison = verifierRaisonConflit(raisonConflit);
+      if ("erreur" in verdictRaison) return { erreur: constat, conflit: true, erreurRaison: verdictRaison.erreur };
+      raisonGardee = verdictRaison.raison;
+      console.warn(`Confirmé malgré un conflit d'agenda : ${id} par ${agent.nom} — ${constat} Raison : « ${raisonGardee} »`);
     }
   }
 
@@ -53,6 +65,8 @@ export async function changerStatut(_etat: EtatChangement, formData: FormData): 
       statut: vers,
       // On retient le statut quitté à l'annulation (pour rétablir), on l'oublie au rétablissement.
       statutAvantAnnulation: transition === "annuler" ? engagement.statut : null,
+      // Posée en confirmant ; oubliée au rétablissement (la règle sera rejouée à la prochaine confirmation).
+      ...(transition === "confirmer" || transition === "retablir" ? { raisonConflit: raisonGardee } : {}),
       modifieLe: new Date(),
     })
     .where(and(eq(engagements.id, id), eq(engagements.statut, engagement.statut)))

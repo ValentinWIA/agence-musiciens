@@ -1,7 +1,9 @@
 "use client";
 
-import { useActionState } from "react";
+import { startTransition, useActionState } from "react";
 import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { RAISON_MAX } from "@/lib/conflit";
 import { changerStatut, type EtatChangement } from "./actions";
 
 type Props = { id: string; transitions: { cle: string; libelle: string }[] };
@@ -42,6 +44,34 @@ export function BoutonsStatut({ id, transitions }: Props) {
         <p role="alert" className="text-sm text-destructive">
           {etat.erreur}
         </p>
+      )}
+      {/* Refus pour conflit d'agenda : l'agent peut passer outre en écrivant une raison (docs/engagements.md, section 11). */}
+      {etat.conflit && (
+        <form
+          // Envoi sans remise à zéro automatique : après un refus, la raison saisie reste dans le champ.
+          onSubmit={(e) => {
+            e.preventDefault();
+            const donnees = new FormData(e.currentTarget);
+            startTransition(() => action(donnees));
+          }}
+          className="grid gap-2 rounded-md border p-3"
+        >
+          <input type="hidden" name="id" value={id} />
+          <input type="hidden" name="transition" value="confirmer" />
+          <Label htmlFor="raison-conflit">Raison pour confirmer quand même</Label>
+          <textarea
+            id="raison-conflit"
+            name="raisonConflit"
+            maxLength={RAISON_MAX}
+            placeholder="Ex. : TGV de 7 h 04, arrivée à Genève à 10 h 15"
+            aria-invalid={!!etat.erreurRaison}
+            className="min-h-20 w-full rounded-lg border border-input bg-transparent px-2.5 py-1.5 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 aria-invalid:border-destructive"
+          />
+          {etat.erreurRaison && <p className="text-sm text-destructive">{etat.erreurRaison}</p>}
+          <Button type="submit" variant="outline" disabled={enCours} className="w-fit">
+            Confirmer quand même
+          </Button>
+        </form>
       )}
     </div>
   );
