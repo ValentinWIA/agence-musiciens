@@ -10,7 +10,7 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 
 ## État de reprise
 
-*Dernière mise à jour : 12 octobre 2026 (G4 poussée, gestes à faire)*
+*Dernière mise à jour : 12 octobre 2026 (Q1 et Q2 poussées, gestes à faire)*
 
 - **Fait** : cadrage (SPEC), comptes, squelette Next.js, dépôt GitHub public, site en ligne
   (https://agence-musiciens.vercel.app), région `fra1`, base Neon reliée à Vercel.
@@ -98,7 +98,16 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   **Gestes à faire sur la prévisualisation** : agent ouvre un PDF ; Louis ouvre une pièce de son engagement ; Louis
   colle l'adresse d'une pièce d'un engagement d'Anna → « Pièce introuvable. » (+ « Accès refusé » dans les journaux) ;
   agent supprime (Annuler dans la fenêtre → rien ; OK → la ligne disparaît, l'ancienne adresse → introuvable).
-  **Ensuite** : « confirmer quand même », puis
+  **G4 ✅** gestes validés par l'humain le 12/10 (et bouton « Choisir un fichier » remplacé par le nom choisi).
+  **Confirmer quand même** : cadrage validé le 12/10 (`docs/engagements.md`, section 11).
+  Q1 (commit `a340e4a`) : `verifierRaisonConflit` (10 à 300 caractères, `src/lib/conflit.ts`, 99 tests),
+  colonne `raison_conflit` (migration 0007). Q2 : `changerStatut` accepte `raisonConflit` (conflits recalculés,
+  raison gardée seulement s'il y a conflit, effacée au rétablissement) ; champ sous le refus (`boutons-statut.tsx`) ;
+  ligne « Conflit d'agenda » sur la fiche, visible du musicien.
+  **Gestes à faire sur la prévisualisation** : cas piégé → refus puis champ ; raison « ok » refusée (saisie gardée) ;
+  raison valable → « confirmé », raison affichée ; Louis voit la raison sans bouton ; annuler puis rétablir → raison
+  effacée.
+  **Ensuite** :
   H (revue de sécurité, README, schéma, rendus, `npm run donnees` en production).
 - **Quota** : semaine à 79 % le 12/10 (réinitialisation le 14/10 à 11 h 59). Sessions courtes, `/clear` entre étapes,
   explications courtes.
