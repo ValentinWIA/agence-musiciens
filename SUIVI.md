@@ -10,7 +10,7 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 
 ## État de reprise
 
-*Dernière mise à jour : 12 octobre 2026 (fin de session)*
+*Dernière mise à jour : 11 octobre 2026 (fin de session D2)*
 
 - **Fait** : cadrage (SPEC), comptes, squelette Next.js, dépôt GitHub public, site en ligne
   (https://agence-musiciens.vercel.app), région `fra1`, base Neon reliée à Vercel.
@@ -23,14 +23,17 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   vérifiée le 11/10 : fiches de Louis sans coordonnées, fiche d'Anna → « introuvable » + « Accès refusé »,
   adresse inventée → « introuvable » sans journal).
   D1 (règles du cycle de vie, `src/lib/cycle-de-vie.ts`, 10 tests) : vérifications GitHub vertes le 11/10.
+  D2 (boutons de statut sur la fiche, action `changerStatut`) : vérifiée le 11/10 en prévisualisation (refus expliqué,
+  « contrat envoyé », annulation abandonnée sans effet, aucun bouton pour Louis).
+  D2b (**rétablir** un engagement annulé, colonne `statut_avant_annulation`, migration 0004, 30 tests) : vérifiée le 11/10
+  (retour au statut d'avant ; « confirmé » revient à « contrat envoyé »). Message d'annulation corrigé (plus « définitif »).
   Décidé : concert **bénévole** (cachet 0) → contrat possible, « joué » est final ; durée exigée pour poser une option.
 - **Bug corrigé (commit `7d220dd`)** : `scripts/jeu-de-donnees.ts` utilise des identifiants **fixes**, calculés par
   empreinte du nom (`idStable("musicien:louis")`, format UUID accepté par `z.uuid()`) : les sessions ouvertes et les
   adresses des fiches restent valables après un rechargement du jeu. Vérifié le 11/10 : même nom → même identifiant.
   Constaté en prévisualisation le 11/10 : Louis reste connecté après un nouveau déploiement.
 - **Reprise (nouvelle session)** : lire `SUIVI.md`, `AGENTS.md`, `docs/engagements.md` ;
-  puis étape D — plan validé en 4 tranches : D1 ✅ règles ; **D2** boutons de statut sur la fiche (action
-  `changerStatut`, refus expliqués) ; D3 création ; D4 modification (verrouillage après « confirmé ») ;
+  puis étape D — plan validé en 4 tranches : D1 ✅ règles ; D2 ✅ boutons de statut (+ D2b ✅ rétablir) ; **D3** création ; D4 modification (verrouillage après « confirmé ») ;
   « + nouveau lieu » repoussé à E. Puis E (géocodage), F (règle de conflit + tests), G (pièces jointes),
   H (revue de sécurité, README, schéma, rendus, `npm run donnees` en production).
 - **Quota** : semaine à 79 % le 12/10 (réinitialisation le 14/10 à 11 h 59). Sessions courtes, `/clear` entre étapes,
@@ -42,6 +45,8 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
     ou ajouter plus tard une table `journal` consultable par l'agent.
   - Améliorations possibles : permettre à l'agent d'annuler une invitation (faute de frappe dans l'adresse) ;
     lien de réinitialisation généré par l'agent pour un musicien (Resend ne lui écrit pas sans nom de domaine).
+  - **Chaque déploiement de prévisualisation recharge le jeu de données** (`vercel-build`) : les essais faits à la main
+    sont effacés au push suivant.
   - Dans les journaux Vercel, une requête qui écrit plusieurs lignes n'en montre qu'une dans la liste :
     cliquer sur l'entrée pour les voir toutes.
 - **Vérifié par lecture seulement** : le refus d'un mot de passe trop court sur la page d'acceptation. La règle commune
@@ -244,4 +249,5 @@ déconnexion ; `/tableau-de-bord` sans session → renvoi vers la connexion.
 | 11/10/2026 | Région Francfort (Neon et Vercel) | Neon n'a pas de région Paris ; serveur à côté des données |
 | 11/10/2026 | Drizzle, e-mail + mot de passe, page `/installation` | Plan de la fonctionnalité « connexion » validé |
 | 12/10/2026 | Coordonnées des programmateurs réservées à l'agent | L'agent gère la relation ; le musicien voit nom et structure |
+| 11/10/2026 | Rétablir un engagement annulé (sauf date passée) ; « confirmé » revient à « contrat envoyé » | Une annulation par erreur obligeait à tout recréer ; reconfirmer rejoue la règle de conflit |
 | 11/10/2026 | Table `utilisateurs` limitée à 7 colonnes | Invitations et réinitialisations iront dans des tables séparées ; ajouter une colonne plus tard est peu coûteux |
