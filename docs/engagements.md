@@ -329,3 +329,38 @@ musicien (à revoir plus tard, décidé le 12/10/2026) ; avertir dans le formula
 **Tranche unique** : lecture de l'agenda (déjà écrite pour F2) appelée par la fiche ; texte d'avertissement tiré du
 message de refus. Preuve : tests du texte ; gestes sur la prévisualisation (duo Genève 21/11 et Menton 05/12 avertis,
 Lyon 12/12 sans avertissement, Louis ne voit rien, option posée sur un engagement trop proche → averti).
+
+---
+
+## 10. Étape G — pièces jointes (cadrage validé le 12/10/2026)
+
+**Ce qu'on veut**
+1. L'agent joint un fichier à un **engagement**, avec un type : contrat, fiche technique ou autre. Les fiches
+   techniques des salles sont jointes à l'engagement, pas au lieu (décidé : une seule règle de droits).
+2. **PDF seulement**, **4 Mo** au plus (une requête vers le serveur Vercel ne dépasse pas 4,5 Mo). Le PDF est aussi
+   le format que la recherche de la semaine 3 saura citer à la page.
+3. Fichiers rangés dans un stockage **Vercel Blob privé** (`access: 'private'`) : aucune adresse publique. On les
+   ouvre par `/engagements/[id]/pieces/[pieceId]`, qui revérifie les droits à chaque ouverture : l'agent, ou un
+   musicien de l'engagement. Sinon page « introuvable » et refus journalisé (comme la fiche).
+4. Ajout permis **à tout statut** (le contrat signé arrive après « confirmé »).
+5. Table `pieces_jointes` : engagement, type, nom du fichier, taille, chemin dans le stockage, ajoutée par, date.
+6. Le musicien voit et télécharge les pièces de ses engagements ; il n'ajoute ni ne supprime rien.
+7. L'agent peut **supprimer** une pièce, à tout statut, après confirmation ; le fichier est effacé du stockage ;
+   journalisé.
+8. Refus expliqués sous le champ : pas un PDF (contenu vérifié, pas seulement l'extension), trop lourd, vide,
+   type absent.
+9. États : vide (« Aucune pièce jointe »), chargement (« Envoi en cours… »), données (type, nom, taille, date),
+   erreur (message).
+10. Chaque ajout, suppression et refus laisse une ligne dans les journaux.
+
+**Hors périmètre** : glisser-déposer, aperçu dans la page, plusieurs fichiers d'un coup, versions successives d'un
+contrat, fiches techniques rattachées au lieu.
+
+**Tranches**
+
+| Tranche | Contenu | Preuve |
+|---|---|---|
+| G1 | Règle de vérification (type, taille, signature PDF `%PDF-`, fichier vide), fonction pure | Tests |
+| G2 | Stockage privé créé par l'humain dans Vercel (guidé) ; table `pieces_jointes` et migration | Migration jouée en prévisualisation |
+| G3 | Ajout d'une pièce et liste sur la fiche | Gestes : PDF ajouté, faux PDF et fichier trop lourd refusés, Louis voit sans bouton |
+| G4 | Ouverture protégée et suppression | Gestes : Louis ouvre sa pièce, pas celle d'Anna (« introuvable ») ; suppression confirmée |
