@@ -43,6 +43,13 @@
       "when": 1791755773195,
       "tag": "0005_coordonnees_obligatoires",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1791759895575,
+      "tag": "0006_pieces_jointes",
+      "breakpoints": true
     }
   ]
 }

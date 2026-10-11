@@ -5,6 +5,7 @@ export const instrument = pgEnum("instrument", ["piano", "violon"]);
 export const statut = pgEnum("statut", ["demande", "option", "contrat_envoye", "confirme", "joue", "facture", "paye", "annule"]);
 export const devise = pgEnum("devise", ["EUR", "CHF", "USD", "GBP", "JPY"]);
 export const precisionDate = pgEnum("precision_date", ["jour", "mois", "saison"]);
+export const typePiece = pgEnum("type_piece", ["contrat", "fiche_technique", "autre"]); // = TYPES_PIECE
 
 // L'agent (admin) et les musiciens. Les programmateurs n'ont pas de compte.
 export const utilisateurs = pgTable("utilisateurs", {
@@ -103,3 +104,19 @@ export const engagementMusiciens = pgTable(
   },
   (t) => [primaryKey({ columns: [t.engagementId, t.musicienId] })],
 );
+
+// Fichiers joints à un engagement (PDF). Le fichier vit dans le stockage Vercel Blob privé ; ici, sa trace.
+export const piecesJointes = pgTable("pieces_jointes", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  engagementId: uuid("engagement_id")
+    .notNull()
+    .references(() => engagements.id, { onDelete: "cascade" }),
+  type: typePiece("type").notNull(),
+  nomFichier: text("nom_fichier").notNull(),
+  taille: integer("taille").notNull(), // en octets
+  chemin: text("chemin").notNull().unique(), // chemin dans le stockage : jamais envoyé au navigateur
+  ajouteePar: uuid("ajoutee_par")
+    .notNull()
+    .references(() => utilisateurs.id),
+  ajouteeLe: timestamp("ajoutee_le", { withTimezone: true }).notNull().defaultNow(),
+});

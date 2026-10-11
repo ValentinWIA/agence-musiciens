@@ -67,7 +67,7 @@ async function principal() {
 
   // Tout est effacé puis recréé en une seule opération : en cas d'erreur, rien n'a changé.
   await db.batch([
-    db.delete(engagements), // les musiciens des engagements partent avec eux (cascade)
+    db.delete(engagements), // leurs musiciens et leurs pièces jointes partent avec eux (cascade)
     db.delete(lieux),
     db.delete(programmateurs),
     db.delete(reinitialisations).where(inArray(reinitialisations.utilisateurId, anciensMusiciens)),
