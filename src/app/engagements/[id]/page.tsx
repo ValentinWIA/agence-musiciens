@@ -4,9 +4,11 @@ import { Suspense } from "react";
 import { BadgeStatut } from "@/components/badge-statut";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formaterMontant } from "@/lib/argent";
+import { TRANSITIONS, transitionsProposees } from "@/lib/cycle-de-vie";
 import { formaterDebut } from "@/lib/dates";
 import { lireEngagement } from "@/lib/engagements";
 import { verifierSession } from "@/lib/session";
+import { BoutonsStatut } from "./boutons-statut";
 
 export default function PageEngagement({ params }: PageProps<"/engagements/[id]">) {
   return (
@@ -28,6 +30,7 @@ async function FicheEngagement({ params }: { params: Promise<{ id: string }> }) 
 
   const estAgent = utilisateur.role === "admin";
   const { lieu, programmateur } = engagement;
+  const transitions = transitionsProposees(engagement).map((cle) => ({ cle, libelle: TRANSITIONS[cle].libelle }));
 
   return (
     <Card>
@@ -65,6 +68,11 @@ async function FicheEngagement({ params }: { params: Promise<{ id: string }> }) 
           <Ligne titre="Programme">{engagement.programme ?? "à définir"}</Ligne>
           {engagement.notes && <Ligne titre="Notes">{engagement.notes}</Ligne>}
         </dl>
+        {estAgent && transitions.length > 0 && (
+          <div className="mt-6">
+            <BoutonsStatut id={engagement.id} transitions={transitions} />
+          </div>
+        )}
       </CardContent>
     </Card>
   );
