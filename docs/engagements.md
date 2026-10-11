@@ -284,6 +284,13 @@ calcul de distance (étape F) ; jours fériés et Frankfurter (étape à part).
 10. Le jeu de données reçoit les cas du SPEC : le cas piégé (22 h, puis 11 h le lendemain à 800 km) et un duo dont un
     musicien est pris, tous deux au statut « contrat envoyé », prêts à être confirmés en démonstration.
 
+**Limite connue (constatée le 12/10/2026)** : la formule (× 1,3 ÷ 80 km/h) suppose la voiture. Juste en dessous
+de 150 km environ, elle est trop pessimiste au-delà : Paris–Lyon estimé 6 h 20 contre environ 3 h 30 en TGV ;
+Londres–Genève 12 h 10 contre environ 5 h en avion. Gardée volontairement : elle se trompe dans le sens sûr, et le
+vrai obstacle du cas piégé est la nuit (aucun train ni avion entre 23 h et 6 h), qu'une vitesse plus haute ferait
+disparaître. **Décidé** : plus tard, « confirmer quand même » — l'agent passe outre un refus en écrivant une raison
+(ex. « TGV de 7 h 04 »), conservée sur l'engagement et journalisée. Après G si le temps le permet, sinon semaine 2.
+
 **Pas de contournement** : la modification est verrouillée dès « confirmé » (D4a) et rétablir ramène à
 « contrat envoyé » (D2b) ; la seule porte vers « confirmé » est donc la transition « confirmer ».
 
