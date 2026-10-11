@@ -10,7 +10,7 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 
 ## État de reprise
 
-*Dernière mise à jour : 12 octobre 2026 (étape E terminée)*
+*Dernière mise à jour : 12 octobre 2026 (étape F1 terminée)*
 
 - **Fait** : cadrage (SPEC), comptes, squelette Next.js, dépôt GitHub public, site en ligne
   (https://agence-musiciens.vercel.app), région `fra1`, base Neon reliée à Vercel.
@@ -54,13 +54,16 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   prévisualisation : lieu français choisi, lieu suisse saisi (virgule refusée), création sans proposition refusée,
   doublon refusé, Louis refusé. Bug trouvé au geste : « Paris 75013 » ≠ « 75013 Paris » laissait passer un doublon →
   règle élargie (ville sans chiffres, ou moins de 100 m).
+  **Étape F (règle de conflit)** : cadrage validé (`docs/engagements.md`, section 8). F1 ✅ `src/lib/conflit.ts`
+  (distance par haversine, trajet × 1,3 ÷ 80 km/h, marge 1 h, `trouverConflits`, fonction pure ; 15 tests, 78 au total).
+  Reste F2 (branchement dans `changerStatut`, message de refus) et F3 (cas ajoutés au jeu de données).
 - **Bug corrigé (commit `7d220dd`)** : `scripts/jeu-de-donnees.ts` utilise des identifiants **fixes**, calculés par
   empreinte du nom (`idStable("musicien:louis")`, format UUID accepté par `z.uuid()`) : les sessions ouvertes et les
   adresses des fiches restent valables après un rechargement du jeu. Vérifié le 11/10 : même nom → même identifiant.
   Constaté en prévisualisation le 11/10 : Louis reste connecté après un nouveau déploiement.
 - **Reprise (nouvelle session)** : lire `SUIVI.md`, `AGENTS.md`, `docs/engagements.md` ;
   étapes D et E terminées.
-  **Prochaine étape : F** (règle de conflit + tests : cadrage d'abord, dans `docs/engagements.md`). Puis G (pièces jointes),
+  **Prochaine étape : F2** (branchement de la règle de conflit dans `changerStatut`), puis F3. Puis G (pièces jointes),
   H (revue de sécurité, README, schéma, rendus, `npm run donnees` en production).
 - **Quota** : semaine à 79 % le 12/10 (réinitialisation le 14/10 à 11 h 59). Sessions courtes, `/clear` entre étapes,
   explications courtes.
