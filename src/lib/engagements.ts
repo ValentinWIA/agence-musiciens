@@ -1,5 +1,6 @@
 import { and, asc, desc, eq, gte, ilike, inArray, lt, or, type SQL } from "drizzle-orm";
 import { db } from "@/db";
+import { STATUTS_TENUS, type ConcertSitue } from "@/lib/conflit";
 import { engagementMusiciens, engagements, lieux, programmateurs, utilisateurs } from "@/db/schema";
 
 export const LIBELLES_STATUT = {
@@ -141,4 +142,54 @@ export async function lireEngagement(lecteur: Lecteur, id: string) {
     return null;
   }
   return { ...engagement, musiciens };
+}
+
+// Ce dont la règle de conflit a besoin pour confirmer un engagement : l'engagement lui-même, les engagements tenus
+// de ses musiciens (avec lieu et coordonnées) et le nom de chaque musicien, pour le message de refus.
+export async function lireAgendaPourConfirmer(id: string) {
+  const sesMusiciens = await db
+    .select({ id: utilisateurs.id, nom: utilisateurs.nom })
+    .from(engagementMusiciens)
+    .innerJoin(utilisateurs, eq(engagementMusiciens.musicienId, utilisateurs.id))
+    .where(eq(engagementMusiciens.engagementId, id));
+  const ids = sesMusiciens.map((m) => m.id);
+
+  const lignes = await db
+    .select({
+      id: engagements.id,
+      statut: engagements.statut,
+      debut: engagements.debut,
+      dureeMinutes: engagements.dureeMinutes,
+      lieu: { ville: lieux.ville, pays: lieux.pays, latitude: lieux.latitude, longitude: lieux.longitude },
+    })
+    .from(engagements)
+    .innerJoin(lieux, eq(engagements.lieuId, lieux.id))
+    .where(
+      and(
+        inArray(
+          engagements.id,
+          db.select({ id: engagementMusiciens.engagementId }).from(engagementMusiciens).where(inArray(engagementMusiciens.musicienId, ids)),
+        ),
+        or(eq(engagements.id, id), inArray(engagements.statut, STATUTS_TENUS)),
+      ),
+    );
+
+  const liens = lignes.length
+    ? await db
+        .select({ engagementId: engagementMusiciens.engagementId, musicienId: engagementMusiciens.musicienId })
+        .from(engagementMusiciens)
+        .where(inArray(engagementMusiciens.engagementId, lignes.map((l) => l.id)))
+    : [];
+
+  // La durée est exigée dès l'option : un engagement tenu (ou à confirmer) l'a toujours.
+  const concerts: ConcertSitue[] = lignes.map((l) => ({
+    ...l,
+    dureeMinutes: l.dureeMinutes ?? 0,
+    musiciens: liens.filter((x) => x.engagementId === l.id).map((x) => x.musicienId),
+  }));
+  return {
+    aConfirmer: concerts.find((c) => c.id === id),
+    autres: concerts.filter((c) => c.id !== id),
+    noms: Object.fromEntries(sesMusiciens.map((m) => [m.id, m.nom])),
+  };
 }

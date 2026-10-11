@@ -5,8 +5,9 @@ import { refresh } from "next/cache";
 import { z } from "zod";
 import { db } from "@/db";
 import { engagements } from "@/db/schema";
+import { messageConflits, trouverConflits } from "@/lib/conflit";
 import { jugerTransition, statutApres, TRANSITIONS, type Transition } from "@/lib/cycle-de-vie";
-import { LIBELLES_STATUT } from "@/lib/engagements";
+import { LIBELLES_STATUT, lireAgendaPourConfirmer } from "@/lib/engagements";
 import { verifierAdmin } from "@/lib/session";
 
 const schemaChangement = z.object({
@@ -31,6 +32,17 @@ export async function changerStatut(_etat: EtatChangement, formData: FormData): 
   if (!verdict.permis) {
     console.warn(`Changement de statut refusé : ${transition} sur ${id} par ${agent.nom} — ${verdict.raison}`);
     return { erreur: verdict.raison };
+  }
+
+  // Règle de conflit d'agenda : relue en base au moment de confirmer (docs/engagements.md, section 8).
+  if (transition === "confirmer") {
+    const { aConfirmer, autres, noms } = await lireAgendaPourConfirmer(id);
+    const conflits = aConfirmer ? trouverConflits(aConfirmer, autres) : [];
+    if (aConfirmer && conflits.length) {
+      const raison = messageConflits(aConfirmer, conflits, noms);
+      console.warn(`Confirmation refusée (conflit d'agenda) : ${id} par ${agent.nom} — ${raison}`);
+      return { erreur: raison };
+    }
   }
 
   const vers = statutApres(engagement, transition);

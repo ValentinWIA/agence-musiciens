@@ -1,5 +1,13 @@
 import { describe, expect, it } from "vitest";
-import { distanceKm, trajetMinutes, trouverConflits, type Concert } from "./conflit";
+import {
+  distanceKm,
+  formaterTrajet,
+  messageConflits,
+  trajetMinutes,
+  trouverConflits,
+  type Concert,
+  type ConcertSitue,
+} from "./conflit";
 import type { Statut } from "./engagements";
 
 const paris = { latitude: 48.8846, longitude: 2.3089 };
@@ -111,5 +119,50 @@ describe("trouverConflits", () => {
       ["anna", "a", "avant"],
       ["louis", "b", "chevauchement"],
     ]);
+  });
+});
+
+describe("formaterTrajet", () => {
+  it("arrondit au quart d'heure supérieur", () => {
+    expect(formaterTrajet(412)).toBe("7 h");
+    expect(formaterTrajet(405)).toBe("6 h 45");
+    expect(formaterTrajet(20)).toBe("30 min");
+    expect(formaterTrajet(780)).toBe("13 h");
+  });
+});
+
+describe("messageConflits", () => {
+  const situe = (id: string, ville: string, pays: string, debut: string): ConcertSitue =>
+    ({ ...concert({ id, debut: new Date(debut) }), lieu: { ...paris, ville, pays } });
+  const geneveLe16 = situe("a-confirmer", "Genève", "Suisse", "2026-11-16T10:00:00Z");
+  const noms = { anna: "Anna Petit", louis: "Louis Roy" };
+
+  it("reprend la maquette : heure locale du lieu de l'autre concert, trajet arrondi, marge", () => {
+    // 21 h en heure universelle = 22 h à Paris en novembre.
+    const autre = situe("b", "Paris", "France", "2026-11-15T21:00:00Z");
+    expect(messageConflits(geneveLe16, [{ musicien: "louis", autre, position: "avant", trajetMinutes: 412 }], noms)).toBe(
+      "Confirmation impossible : Louis Roy joue à Paris le 15/11 à 22 h, trop peu de temps pour rejoindre Genève " +
+        "(trajet estimé 7 h + 1 h de marge).",
+    );
+  });
+
+  it("cite tous les conflits : concert d'après (heure de Tokyo), chevauchement, même lieu", () => {
+    const tokyo = situe("c", "Tokyo", "Japon", "2026-11-16T11:30:00Z"); // 20 h 30 à Tokyo
+    const memeLieu = situe("d", "Genève", "Suisse", "2026-11-16T08:00:00Z");
+    expect(
+      messageConflits(
+        geneveLe16,
+        [
+          { musicien: "anna", autre: tokyo, position: "apres", trajetMinutes: 900 },
+          { musicien: "louis", autre: tokyo, position: "chevauchement", trajetMinutes: 900 },
+          { musicien: "louis", autre: memeLieu, position: "avant", trajetMinutes: 0 },
+        ],
+        noms,
+      ),
+    ).toBe(
+      "Confirmation impossible : Anna Petit joue à Tokyo le 16/11 à 20 h 30, trop peu de temps pour s'y rendre " +
+        "depuis Genève (trajet estimé 15 h + 1 h de marge) ; Louis Roy joue à Tokyo le 16/11 à 20 h 30, au même moment ; " +
+        "Louis Roy joue à Genève le 16/11 à 9 h, trop peu de temps pour rejoindre Genève (même lieu, 1 h de marge).",
+    );
   });
 });

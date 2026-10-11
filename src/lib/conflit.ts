@@ -1,3 +1,4 @@
+import { fuseauDuPays } from "./dates";
 import type { Statut } from "./engagements";
 
 // La règle de conflit d'agenda (voir docs/engagements.md, section 8, et SPEC.md, règle 1).
@@ -11,7 +12,7 @@ export const MARGE_MINUTES = 60; // repos, installation, raccord
 const RAYON_TERRE_KM = 6371;
 
 // Seuls les engagements tenus bloquent : deux options sur une même date restent possibles.
-const STATUTS_TENUS: readonly Statut[] = ["confirme", "joue", "facture", "paye"];
+export const STATUTS_TENUS: Statut[] = ["confirme", "joue", "facture", "paye"];
 
 type Position = { latitude: number; longitude: number };
 
@@ -40,9 +41,9 @@ export type Concert = {
   musiciens: string[];
 };
 
-export type Conflit = {
+export type Conflit<T extends Concert = Concert> = {
   musicien: string;
-  autre: Concert;
+  autre: T;
   // L'autre concert a lieu avant ou après celui qu'on veut confirmer ; « chevauchement » s'ils se recouvrent.
   position: "avant" | "apres" | "chevauchement";
   trajetMinutes: number;
@@ -52,8 +53,8 @@ const finDe = (c: Concert) => c.debut.getTime() + c.dureeMinutes * 60_000;
 
 // Tous les conflits qui empêchent de confirmer `aConfirmer` (liste vide : confirmation permise).
 // Un duo est refusé dès qu'un de ses musiciens a un conflit ; chaque conflit est rendu pour être cité.
-export function trouverConflits(aConfirmer: Concert, autres: Concert[]): Conflit[] {
-  const conflits: Conflit[] = [];
+export function trouverConflits<T extends Concert>(aConfirmer: Concert, autres: T[]): Conflit<T>[] {
+  const conflits: Conflit<T>[] = [];
   for (const autre of autres) {
     if (autre.id === aConfirmer.id || !STATUTS_TENUS.includes(autre.statut)) continue;
     const communs = aConfirmer.musiciens.filter((m) => autre.musiciens.includes(m));
@@ -75,4 +76,38 @@ export function trouverConflits(aConfirmer: Concert, autres: Concert[]): Conflit
     for (const musicien of communs) conflits.push({ musicien, autre, position, trajetMinutes: trajet });
   }
   return conflits;
+}
+
+// Pour le message de refus : la ville du lieu, et son pays (l'heure est affichée à l'heure locale du lieu).
+export type ConcertSitue = Concert & { lieu: { ville: string; pays: string } };
+
+// Trajet arrondi au quart d'heure supérieur : 412 min → « 7 h », 405 min → « 6 h 45 », 20 min → « 30 min ».
+export function formaterTrajet(minutes: number) {
+  const arrondi = Math.ceil(minutes / 15) * 15;
+  const h = Math.floor(arrondi / 60);
+  const min = arrondi % 60;
+  if (h === 0) return `${min} min`;
+  return min ? `${h} h ${min}` : `${h} h`;
+}
+
+// « 15/11 à 22 h » ou « 15/11 à 20 h 30 », à l'heure locale du lieu de l'autre concert.
+function quand(c: ConcertSitue) {
+  const timeZone = fuseauDuPays(c.lieu.pays);
+  const jour = new Intl.DateTimeFormat("fr-FR", { day: "2-digit", month: "2-digit", timeZone }).format(c.debut);
+  const [h, min] = new Intl.DateTimeFormat("fr-FR", { hour: "2-digit", minute: "2-digit", timeZone }).format(c.debut).split(":");
+  return `${jour} à ${Number(h)} h${min === "00" ? "" : ` ${min}`}`;
+}
+
+// Le refus expliqué à l'agent (maquette 4.2), qui cite tous les conflits trouvés.
+export function messageConflits(aConfirmer: ConcertSitue, conflits: Conflit<ConcertSitue>[], noms: Record<string, string>) {
+  const phrases = conflits.map(({ musicien, autre, position, trajetMinutes }) => {
+    const debut = `${noms[musicien] ?? "un musicien"} joue à ${autre.lieu.ville} le ${quand(autre)}`;
+    if (position === "chevauchement") return `${debut}, au même moment`;
+    const marge = `${MARGE_MINUTES / 60} h de marge`;
+    const delai = trajetMinutes === 0 ? `même lieu, ${marge}` : `trajet estimé ${formaterTrajet(trajetMinutes)} + ${marge}`;
+    return position === "avant"
+      ? `${debut}, trop peu de temps pour rejoindre ${aConfirmer.lieu.ville} (${delai})`
+      : `${debut}, trop peu de temps pour s'y rendre depuis ${aConfirmer.lieu.ville} (${delai})`;
+  });
+  return `Confirmation impossible : ${phrases.join(" ; ")}.`;
 }
