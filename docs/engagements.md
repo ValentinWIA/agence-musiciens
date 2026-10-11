@@ -364,3 +364,31 @@ contrat, fiches techniques rattachées au lieu.
 | G2 | Stockage privé créé par l'humain dans Vercel (guidé) ; table `pieces_jointes` et migration | Migration jouée en prévisualisation |
 | G3 | Ajout d'une pièce et liste sur la fiche | Gestes : PDF ajouté, faux PDF et fichier trop lourd refusés, Louis voit sans bouton |
 | G4 | Ouverture protégée et suppression | Gestes : Louis ouvre sa pièce, pas celle d'Anna (« introuvable ») ; suppression confirmée |
+
+---
+
+## 11. Confirmer quand même (cadrage validé le 12/10/2026)
+
+**Ce qu'on veut**
+1. Quand la confirmation est refusée pour **conflit d'agenda**, l'agent peut passer outre en écrivant une **raison**
+   (ex. « TGV de 7 h 04, arrivée 10 h 15 »). Seul ce refus-là se contourne : les autres conditions (date précise,
+   durée, cachet, date passée) restent bloquantes.
+2. Sous le message de refus apparaissent un champ « Raison » et un bouton « Confirmer quand même ».
+3. Raison obligatoire : 10 caractères au moins (pas « ok »), 300 au plus. Refus expliqué sous le champ.
+4. Le serveur **recalcule** les conflits au moment du clic : s'il n'y en a plus, confirmation normale, raison ignorée ;
+   s'il y en a, il confirme et conserve la raison.
+5. Raison conservée sur l'engagement (colonne `raison_conflit`), affichée sur la fiche : « Confirmé malgré un conflit
+   d'agenda : <raison> ». Visible aussi par le musicien (décidé : c'est lui qui voyage).
+6. Journalisé : qui, quel engagement, les conflits passés outre et la raison.
+7. La raison est effacée si l'engagement est rétabli après une annulation (il revient à « contrat envoyé » et la
+   règle sera rejouée à la prochaine confirmation).
+8. Agent seulement ; le serveur revérifie le rôle.
+
+**Hors périmètre** : historique de plusieurs raisons, dérogation sur une autre règle, avertissement F4 modifié.
+
+**Tranches**
+
+| Tranche | Contenu | Preuve |
+|---|---|---|
+| Q1 | Règle de la raison (fonction pure) ; colonne `raison_conflit` et migration | Tests ; migration jouée en prévisualisation |
+| Q2 | Champ et bouton sous le refus, action serveur, affichage sur la fiche, effacement au rétablissement | Gestes : cas piégé refusé puis confirmé avec raison (affichée) ; raison trop courte refusée ; Louis ne voit pas le bouton |
