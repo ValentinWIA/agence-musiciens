@@ -14,9 +14,10 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 
 - **Fait** : cadrage (SPEC), comptes, squelette Next.js, dépôt GitHub public, site en ligne
   (https://agence-musiciens.vercel.app), région `fra1`, base Neon reliée à Vercel.
-- **En cours** : fonctionnalité « connexion » sur la branche `connexion`. Tranches 1, 2 et 3 validées en prévisualisation ;
-  fusion dans `main` en cours, puis création du compte de l'agent en production.
-- **Reste à faire (côté humain)** : créer `AUTH_SECRET` (avant la tranche 3) ; créer le compte UptimeRobot.
+  Fonctionnalité « connexion » fusionnée (pull request n° 1) et vérifiée en production ; compte de l'agent créé en production.
+- **En cours** : rien. Prochaine fonctionnalité : invitations et réinitialisation du mot de passe (Resend).
+- **Reste à faire (côté humain)** : créer le compte UptimeRobot.
+- **Petite amélioration possible** : journaliser aussi les déconnexions (seules les connexions le sont).
 - **Cassé** : rien.
 - **À améliorer avant Sentry (semaine 2)** : Auth.js journalise chaque mauvais mot de passe comme une erreur
   (`[auth][error] CredentialsSignin`) ; notre ligne « Connexion refusée » suffit, le message d'Auth.js est à faire taire.
@@ -32,8 +33,8 @@ Un produit se construit par couches. Chaque couche répond à une question et s'
 | 0. Cadrage | Que construit-on, pour qui, avec quelles règles ? | Avant tout | ✅ |
 | 1. Fondations | Où vit le produit ? (comptes, dépôt, hébergeur, base) | 1, jour 1 | ✅ |
 | 2. Squelette | Avec quoi le construit-on ? (framework, langage, interface) | 1, jour 1 | ✅ |
-| 3. Données | Que retient le produit, et sous quelle forme ? | 1 | 🔄 (table `utilisateurs` ✅) |
-| 4. Identité et droits | Qui est connecté, et qu'a-t-il le droit de faire ? | 1 | 🔄 |
+| 3. Données | Que retient le produit, et sous quelle forme ? | 1 | 🔄 (table `utilisateurs` ✅ ; engagements à venir) |
+| 4. Identité et droits | Qui est connecté, et qu'a-t-il le droit de faire ? | 1 | 🔄 (connexion ✅ ; invitations, réinitialisation, rôle musicien à venir) |
 | 5. Métier | Que fait le produit ? (engagements, cycle de vie, règles, API externe, courriels, pièces jointes) | 1 | ⬜ |
 | 6. Fiabilité | Comment sait-on que ça marche et que c'est sûr ? (tests, journaux, revue de sécurité, README) | 1 | ⬜ |
 | 7. Automatisation | Que fait le produit tout seul, la nuit ? | 2 | ⬜ |
@@ -97,7 +98,7 @@ Un produit se construit par couches. Chaque couche répond à une question et s'
 | Auth.js : connexion par e-mail et mot de passe | ✅ | Savoir qui est connecté, sans écrire l'authentification à la main |
 | Page de connexion à la place de l'accueil Next.js | ✅ | La porte d'entrée du produit |
 | Page protégée `/tableau-de-bord` + déconnexion | ✅ | Vérifier que seuls les connectés y accèdent |
-| Fusion dans `main`, vérification en production | 🔄 | La fonctionnalité arrive sur le vrai site |
+| Fusion dans `main`, vérification en production | ✅ | La fonctionnalité arrive sur le vrai site |
 | Puis : invitations, réinitialisation du mot de passe (Resend) | ⬜ | Fonctionnalité suivante |
 
 **Preuve constatée pour la tranche 2 (11/10/2026)** : erreurs affichées (e-mail invalide, mot de passe trop court) ;
