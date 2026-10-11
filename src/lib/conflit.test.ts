@@ -6,6 +6,7 @@ import {
   messageConflits,
   trajetMinutes,
   trouverConflits,
+  verifierRaisonConflit,
   type Concert,
   type ConcertSitue,
 } from "./conflit";
@@ -173,5 +174,31 @@ describe("messageConflits", () => {
         "depuis Genève (trajet estimé 15 h + 1 h de marge) ; Louis Roy joue à Tokyo le 16/11 à 20 h 30, au même moment ; " +
         "Louis Roy joue à Genève le 16/11 à 9 h, trop peu de temps pour rejoindre Genève (même lieu, 1 h de marge).",
     );
+  });
+});
+
+describe("verifierRaisonConflit (confirmer quand même)", () => {
+  it("accepte une raison précise, sans les espaces autour", () => {
+    expect(verifierRaisonConflit("  TGV de 7 h 04, arrivée 10 h 15  ")).toEqual({ raison: "TGV de 7 h 04, arrivée 10 h 15" });
+  });
+
+  it("refuse une raison vide ou faite d'espaces", () => {
+    expect(verifierRaisonConflit("")).toHaveProperty("erreur");
+    expect(verifierRaisonConflit("    ")).toHaveProperty("erreur");
+  });
+
+  it("refuse une raison trop courte (« ok »), accepte 10 caractères tout juste", () => {
+    expect(verifierRaisonConflit("ok")).toHaveProperty("erreur");
+    expect(verifierRaisonConflit("123456789")).toHaveProperty("erreur");
+    expect(verifierRaisonConflit("1234567890")).toEqual({ raison: "1234567890" });
+  });
+
+  it("compte les lettres accentuées comme un seul caractère", () => {
+    expect(verifierRaisonConflit("éééééééééé")).toEqual({ raison: "éééééééééé" });
+  });
+
+  it("refuse plus de 300 caractères, accepte 300 tout juste", () => {
+    expect(verifierRaisonConflit("a".repeat(301))).toHaveProperty("erreur");
+    expect(verifierRaisonConflit("a".repeat(300))).toEqual({ raison: "a".repeat(300) });
   });
 });

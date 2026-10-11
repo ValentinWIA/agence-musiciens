@@ -87,6 +87,8 @@ export const engagements = pgTable("engagements", {
   devise: devise("devise").notNull().default("EUR"),
   programme: text("programme"),
   notes: text("notes"),
+  // Écrite par l'agent quand il confirme malgré un conflit d'agenda (docs/engagements.md, section 11).
+  raisonConflit: text("raison_conflit"),
   creeLe: timestamp("cree_le", { withTimezone: true }).notNull().defaultNow(),
   modifieLe: timestamp("modifie_le", { withTimezone: true }).notNull().defaultNow(),
 });

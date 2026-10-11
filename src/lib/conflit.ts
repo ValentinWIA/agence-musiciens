@@ -120,3 +120,16 @@ export function messageConflits(aConfirmer: ConcertSitue, conflits: Conflit<Conc
 export function avertissementConflits(aConfirmer: ConcertSitue, conflits: Conflit<ConcertSitue>[], noms: Record<string, string>) {
   return `Attention : ${phrasesConflits(aConfirmer, conflits, noms).join(" ; ")}. La confirmation sera refusée.`;
 }
+
+// « Confirmer quand même » (docs/engagements.md, section 11) : la raison écrite par l'agent pour passer outre un conflit.
+export const RAISON_MIN = 10; // assez pour dire comment le musicien voyage, pas « ok »
+export const RAISON_MAX = 300;
+
+export function verifierRaisonConflit(saisie: string): { raison: string } | { erreur: string } {
+  const raison = saisie.trim();
+  const longueur = [...raison].length;
+  if (longueur === 0) return { erreur: "Écrivez pourquoi le musicien pourra quand même être à l'heure." };
+  if (longueur < RAISON_MIN) return { erreur: `Raison trop courte (${RAISON_MIN} caractères au moins) : précisez le trajet prévu.` };
+  if (longueur > RAISON_MAX) return { erreur: `Raison trop longue (${RAISON_MAX} caractères au plus).` };
+  return { raison };
+}
