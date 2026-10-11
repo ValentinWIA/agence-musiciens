@@ -243,6 +243,8 @@ Un nouvel engagement commence toujours au statut « demande ».
 8. Appel **côté serveur**, délai limité à 5 s, chaque appel et chaque échec journalisés.
 9. Jeu de données : **coordonnées fixes**, obtenues une fois ; le chargement ne dépend d'aucun service extérieur.
 10. Créer un lieu : agent seulement (`verifierAdmin()`).
+11. Pays choisi dans une **liste fermée** (France, Suisse, Royaume-Uni, Japon) : ceux dont on connaît le fuseau
+    horaire. Un pays inconnu recevrait l'heure de Paris sans avertissement (décidé le 12/10/2026).
 
 **Hors périmètre** : page de gestion des lieux (modifier, supprimer) ; géocodage étranger par une autre API ;
 calcul de distance (étape F) ; jours fériés et Frankfurter (étape à part).
