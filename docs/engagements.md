@@ -32,7 +32,8 @@ Il sert aussi de rendu du vendredi : spécification, cycle de vie, maquette des 
 - Annulation après confirmation → possible tant que le concert n'est pas joué ; l'engagement reste visible, statut « annulé ».
 - Musicien sans aucun engagement → sa liste affiche l'état « vide ».
 - Musicien qui tape l'adresse de l'engagement d'un autre → page « introuvable » (on ne confirme pas qu'il existe), refus journalisé.
-- Engagement annulé ou passé → ignoré par la règle de conflit.
+- Engagement annulé, ou encore non tenu (demande, option, contrat envoyé) → ignoré par la règle de conflit. Un concert
+  passé compte : joué hier à 22 h, il peut gêner un concert ce matin (révisé le 12/10/2026, cadrage F).
 
 **Hors périmètre (pour l'instant)**
 - Séries de concerts (plusieurs dates dans un même engagement) : une date = un engagement.
@@ -164,7 +165,7 @@ Les filtres sont dans l'adresse (`/engagements?statut=option&periode=passes`) : 
 | Données | La fiche ; l'agent voit les seules actions permises par le statut actuel ; le musicien ne voit aucun bouton |
 | Introuvable | « Engagement introuvable. » — aussi pour un musicien qui n'en fait pas partie (refus journalisé) |
 | Erreur | « Impossible de charger cet engagement. » + « Réessayer » |
-| Après une action | Message visible : « Contrat envoyé. » ; ou refus expliqué : « Confirmation impossible : Louis Roy joue à Paris le 15/11 à 22 h, trop peu de temps pour rejoindre Genève (trajet estimé 7 h + 4 h de marge). » |
+| Après une action | Message visible : « Contrat envoyé. » ; ou refus expliqué : « Confirmation impossible : Louis Roy joue à Paris le 15/11 à 22 h, trop peu de temps pour rejoindre Genève (trajet estimé 7 h + 1 h de marge). » |
 
 ### 4.3 Formulaire — `/engagements/nouveau` et `/engagements/[id]/modifier` (agent seulement)
 
@@ -259,3 +260,43 @@ calcul de distance (étape F) ; jours fériés et Frankfurter (étape à part).
 | E1 | `src/lib/geocodage.ts` : appel à l'API, réponse vérifiée par zod | Tests avec réponses simulées (normal, aucun résultat, mal formé, délai dépassé) |
 | E2 | Coordonnées fixes des 12 lieux ; migration `latitude`/`longitude` obligatoires | Prévisualisation verte, coordonnées présentes dans la base |
 | E3 | Action `creerLieu` + fenêtre « + nouveau lieu » | Gestes sur la prévisualisation : lieu français choisi, lieu étranger saisi, doublon refusé, Louis refusé |
+
+---
+
+## 8. Étape F — règle de conflit d’agenda (cadrage validé le 12/10/2026 ; marge ramenée de 4 h à 1 h)
+
+**Ce qu'on veut**
+1. Au moment de **confirmer**, le serveur relit en base les autres engagements de chaque musicien concerné.
+2. Un autre engagement **compte** s'il est confirmé, joué, facturé ou payé (un engagement tenu). Demande, option et
+   contrat envoyé ne comptent **pas** : deux options sur la même date sont la vie normale d'une agence, la première
+   confirmée l'emporte. Annulé : ignoré.
+3. Les deux sens sont vérifiés : le concert **d'avant** doit laisser le temps de venir, et le concert **d'après**
+   le temps de repartir. Délai exigé = fin du premier → début du second ≥ trajet estimé + 1 h.
+4. Trajet estimé = distance à vol d'oiseau (formule de haversine, sur les coordonnées des lieux) × 1,3 ÷ 80 km/h.
+   Même lieu → trajet 0, mais 1 h exigée quand même. Concerts qui se chevauchent → conflit.
+5. Égalité exacte (délai disponible = délai exigé) → **permis**.
+6. Duo : chaque musicien est vérifié ; il suffit d'un conflit pour refuser. Le message cite **tous** les conflits trouvés.
+7. Message de refus (maquette 4.2) : « Confirmation impossible : Louis Roy joue à Paris le 15/11 à 22 h, trop peu de
+   temps pour rejoindre Genève (trajet estimé 7 h + 1 h de marge). » Heures affichées à l'heure locale du lieu,
+   trajet arrondi au quart d'heure supérieur.
+8. Les trois valeurs (1,3 ; 80 km/h ; 1 h) sont des constantes nommées dans un seul fichier, `src/lib/conflit.ts`.
+9. Chaque refus est journalisé (déjà fait par `changerStatut`).
+10. Le jeu de données reçoit les cas du SPEC : le cas piégé (22 h, puis 11 h le lendemain à 800 km) et un duo dont un
+    musicien est pris, tous deux au statut « contrat envoyé », prêts à être confirmés en démonstration.
+
+**Pas de contournement** : la modification est verrouillée dès « confirmé » (D4a) et rétablir ramène à
+« contrat envoyé » (D2b) ; la seule porte vers « confirmé » est donc la transition « confirmer ».
+
+**Hors périmètre**
+- Deux confirmations lancées **à la même seconde** pour le même musicien (une seule personne confirme : l'agent).
+- Avertir dès la pose d'une option (seule la confirmation est contrôlée).
+- Vrai temps de trajet par la route ou le train, fuseaux du voyage, décalage horaire du musicien.
+- Règle 3 du SPEC (durée du programme).
+
+**Tranches**
+
+| Tranche | Contenu | Preuve |
+|---|---|---|
+| F1 | `src/lib/conflit.ts` : distance, trajet, recherche des conflits (fonction pure, sans base) | Tests : cas normal (une semaine), vide, piégé (13 h + 1 h > 13 h), même lieu, chevauchement, égalité exacte, concert d'après, annulé et option ignorés, duo |
+| F2 | Branchement dans `changerStatut` (lecture des engagements tenus des musiciens) et message de refus | Build, lint, tests verts |
+| F3 | Cas de conflit ajoutés au jeu de données | Gestes sur la prévisualisation : cas piégé refusé avec le bon message, duo refusé, cas normal confirmé, Louis toujours sans bouton |

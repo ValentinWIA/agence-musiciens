@@ -91,11 +91,11 @@ Calcul du délai minimal (règle 1) :
   (les routes ne sont pas droites) ÷ 80 km/h. La distance vient des coordonnées
   fournies par le géocodage data.gouv.
 - Délai minimal entre la fin d'un concert et le début du suivant =
-  temps de trajet estimé + **4 h** de marge (repos, installation, raccord).
-- Exemple du cas piégé : 800 km × 1,3 ÷ 80 = 13 h, + 4 h = 17 h exigées ;
+  temps de trajet estimé + **1 h** de marge (repos, installation, raccord).
+- Exemple du cas piégé : 800 km × 1,3 ÷ 80 = 13 h, + 1 h = 14 h exigées ;
   or il n'y a que 13 h entre 22 h et 11 h le lendemain → conflit, confirmation refusée.
 
-Valeurs par défaut (1,3 ; 80 km/h ; 4 h) : réglables, à ajuster si besoin.
+Valeurs par défaut (1,3 ; 80 km/h ; 1 h) : réglables, à ajuster si besoin.
 
 ## Jeu de données
 
