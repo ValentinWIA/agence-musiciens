@@ -28,3 +28,15 @@ export const invitations = pgTable("invitations", {
     .references(() => utilisateurs.id),
   creeLe: timestamp("cree_le", { withTimezone: true }).notNull().defaultNow(),
 });
+
+// Demande de nouveau mot de passe : lien à usage unique, valable une heure.
+export const reinitialisations = pgTable("reinitialisations", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  utilisateurId: uuid("utilisateur_id")
+    .notNull()
+    .references(() => utilisateurs.id),
+  jetonHash: text("jeton_hash").notNull().unique(),
+  expireLe: timestamp("expire_le", { withTimezone: true }).notNull(),
+  utiliseeLe: timestamp("utilisee_le", { withTimezone: true }),
+  creeLe: timestamp("cree_le", { withTimezone: true }).notNull().defaultNow(),
+});

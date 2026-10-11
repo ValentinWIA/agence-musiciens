@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -25,5 +26,12 @@ export default function PageConnexion() {
 async function ContenuConnexion() {
   // Déjà connecté : inutile de revoir le formulaire.
   if (await lireSession()) redirect("/tableau-de-bord");
-  return <FormulaireConnexion />;
+  return (
+    <div className="grid gap-4">
+      <FormulaireConnexion />
+      <Link href="/mot-de-passe-oublie" className="text-sm underline">
+        Mot de passe oublié ?
+      </Link>
+    </div>
+  );
 }
