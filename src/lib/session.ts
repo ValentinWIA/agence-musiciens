@@ -16,3 +16,13 @@ export const verifierSession = cache(async () => {
   if (!session?.user) redirect("/");
   return session.user;
 });
+
+// Réservé à l'agent : un musicien qui tente d'entrer est renvoyé, et la tentative est journalisée.
+export const verifierAdmin = cache(async (page: string) => {
+  const utilisateur = await verifierSession();
+  if (utilisateur.role !== "admin") {
+    console.warn(`Accès refusé : ${utilisateur.nom} (${utilisateur.role}) sur ${page}`);
+    redirect("/tableau-de-bord");
+  }
+  return utilisateur;
+});
