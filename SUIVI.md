@@ -21,12 +21,11 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 - **En cours** : engagements, branche `engagements` (pas encore fusionnée). Validés en prévisualisation : cadrage
   (`docs/engagements.md`), B1 (4 tables), B2 (jeu de données), C1 (liste filtrable). C2 (fiche + « introuvable »)
   codée et déployée, **vérification interrompue** : points 3 à 6 à refaire (voir ci-dessous).
-- **Bug connu, à corriger en premier** : `scripts/jeu-de-donnees.ts` recrée les données avec des UUID **au hasard** à
-  chaque déploiement de prévisualisation → les sessions ouvertes pointent vers un ancien identifiant (Louis ne voit plus
-  rien) et les adresses de fiches changent. Correctif prévu : identifiants **fixes** calculés par empreinte du nom
-  (`idStable("musicien:louis")`, format UUID version 5 / variante 8 pour passer `z.uuid()`), à la place de `randomUUID()`.
-  Contournement : se déconnecter puis se reconnecter.
-- **Reprise (nouvelle session)** : lire `SUIVI.md`, `AGENTS.md`, `docs/engagements.md` ; corriger le bug ci-dessus ;
+- **Bug corrigé (commit `7d220dd`)** : `scripts/jeu-de-donnees.ts` utilise des identifiants **fixes**, calculés par
+  empreinte du nom (`idStable("musicien:louis")`, format UUID accepté par `z.uuid()`) : les sessions ouvertes et les
+  adresses des fiches restent valables après un rechargement du jeu. Vérifié le 11/10 : même nom → même identifiant.
+  Reste à constater sur la prévisualisation (Louis reste connecté après un nouveau déploiement).
+- **Reprise (nouvelle session)** : lire `SUIVI.md`, `AGENTS.md`, `docs/engagements.md` ;
   refaire la vérification C2 (Louis : ses fiches sans coordonnées du programmateur ; adresse d'une fiche d'Anna →
   « Engagement introuvable » + journal « Accès refusé » ; adresse modifiée → « introuvable », sans journal) ;
   puis étape D (formulaire, changements de statut), E (géocodage), F (règle de conflit + tests), G (pièces jointes),
