@@ -15,9 +15,9 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 - **Fait** : cadrage (SPEC), comptes, squelette Next.js, dépôt GitHub public, site en ligne
   (https://agence-musiciens.vercel.app), région `fra1`, base Neon reliée à Vercel.
   Fonctionnalité « connexion » fusionnée (pull request n° 1) et vérifiée en production ; compte de l'agent créé en production.
-- **En cours** : fonctionnalité « invitations » sur la branche `invitations`, **tranches 1 à 3 validées** en prévisualisation
-  (invitation, acceptation, compte musicien, refus d'accès journalisé, courriel Resend). Prête à fusionner.
-  Ensuite : réinitialisation du mot de passe (branche à part), puis tests automatiques à chaque push.
+  Fonctionnalité « invitations » fusionnée (pull request n° 2) et vérifiée en production.
+- **En cours** : rien. Prochaine fonctionnalité : réinitialisation du mot de passe (branche à part),
+  puis tests automatiques à chaque push.
 - **Reste à faire (côté humain)** : créer le compte UptimeRobot.
 - **Points d'attention** :
   - Vercel Hobby ne garde les journaux qu'environ une heure : refaire la tentative juste avant la démo,
@@ -40,8 +40,8 @@ Un produit se construit par couches. Chaque couche répond à une question et s'
 | 0. Cadrage | Que construit-on, pour qui, avec quelles règles ? | Avant tout | ✅ |
 | 1. Fondations | Où vit le produit ? (comptes, dépôt, hébergeur, base) | 1, jour 1 | ✅ |
 | 2. Squelette | Avec quoi le construit-on ? (framework, langage, interface) | 1, jour 1 | ✅ |
-| 3. Données | Que retient le produit, et sous quelle forme ? | 1 | 🔄 (table `utilisateurs` ✅ ; engagements à venir) |
-| 4. Identité et droits | Qui est connecté, et qu'a-t-il le droit de faire ? | 1 | 🔄 (connexion ✅, invitations et rôle musicien en prévisualisation ; réinitialisation à venir) |
+| 3. Données | Que retient le produit, et sous quelle forme ? | 1 | 🔄 (tables `utilisateurs` et `invitations` ✅ ; engagements à venir) |
+| 4. Identité et droits | Qui est connecté, et qu'a-t-il le droit de faire ? | 1 | 🔄 (connexion, invitations, rôles ✅ ; réinitialisation à venir) |
 | 5. Métier | Que fait le produit ? (engagements, cycle de vie, règles, API externe, courriels, pièces jointes) | 1 | ⬜ |
 | 6. Fiabilité | Comment sait-on que ça marche et que c'est sûr ? (tests, journaux, revue de sécurité, README) | 1 | ⬜ |
 | 7. Automatisation | Que fait le produit tout seul, la nuit ? | 2 | ⬜ |
