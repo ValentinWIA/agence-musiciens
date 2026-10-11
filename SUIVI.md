@@ -19,15 +19,14 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   Réinitialisation du mot de passe fusionnée (pull request n° 3), vérifiée en production.
   Vérifications automatiques à chaque push (lint, 8 tests, construction) fusionnées (pull request n° 4).
 - **En cours** : engagements, branche `engagements` (pas encore fusionnée). Validés en prévisualisation : cadrage
-  (`docs/engagements.md`), B1 (4 tables), B2 (jeu de données), C1 (liste filtrable). C2 (fiche + « introuvable »)
-  codée et déployée, **vérification interrompue** : points 3 à 6 à refaire (voir ci-dessous).
+  (`docs/engagements.md`), B1 (4 tables), B2 (jeu de données), C1 (liste filtrable), C2 (fiche + « introuvable »,
+  vérifiée le 11/10 : fiches de Louis sans coordonnées, fiche d'Anna → « introuvable » + « Accès refusé »,
+  adresse inventée → « introuvable » sans journal).
 - **Bug corrigé (commit `7d220dd`)** : `scripts/jeu-de-donnees.ts` utilise des identifiants **fixes**, calculés par
   empreinte du nom (`idStable("musicien:louis")`, format UUID accepté par `z.uuid()`) : les sessions ouvertes et les
   adresses des fiches restent valables après un rechargement du jeu. Vérifié le 11/10 : même nom → même identifiant.
   Reste à constater sur la prévisualisation (Louis reste connecté après un nouveau déploiement).
 - **Reprise (nouvelle session)** : lire `SUIVI.md`, `AGENTS.md`, `docs/engagements.md` ;
-  refaire la vérification C2 (Louis : ses fiches sans coordonnées du programmateur ; adresse d'une fiche d'Anna →
-  « Engagement introuvable » + journal « Accès refusé » ; adresse modifiée → « introuvable », sans journal) ;
   puis étape D (formulaire, changements de statut), E (géocodage), F (règle de conflit + tests), G (pièces jointes),
   H (revue de sécurité, README, schéma, rendus, `npm run donnees` en production).
 - **Quota** : semaine à 79 % le 12/10 (réinitialisation le 14/10 à 11 h 59). Sessions courtes, `/clear` entre étapes,
