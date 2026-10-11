@@ -69,10 +69,12 @@ Il sert aussi de rendu du vendredi : spécification, cycle de vie, maquette des 
 | Facturer | joué → facturé | agent | cachet supérieur à 0 |
 | Encaisser | facturé → payé | agent | — |
 | Annuler | demande, option, contrat envoyé ou confirmé → annulé | agent | pas encore joué |
+| Rétablir | annulé → statut d'avant l'annulation (« contrat envoyé » s'il était confirmé) | agent | la date du concert n'est pas passée |
 
-- Aucun retour en arrière (sauf annulation) : une erreur de statut se corrige en annulant et en recréant.
+- Aucun retour en arrière, sauf **rétablir** un engagement annulé par erreur. Un engagement qui était confirmé revient
+  à « contrat envoyé » : pendant l'annulation, la date a pu être prise, il faut reconfirmer (règle de conflit rejugée).
 - Le musicien ne déclenche aucune transition (décision du SPEC : consultation seule).
-- Un statut final (payé, annulé, et joué pour un concert bénévole) ne change plus.
+- Un statut final (payé, et joué pour un concert bénévole) ne change plus ; « annulé » aussi, une fois la date passée.
 
 ---
 
@@ -92,7 +94,7 @@ Il sert aussi de rendu du vendredi : spécification, cycle de vie, maquette des 
 |---|---|
 | `lieux` | nom, adresse, ville, pays, latitude, longitude (remplies par le géocodage, étape E) |
 | `programmateurs` | nom, structure (festival, salle…), e-mail, téléphone — fictifs |
-| `engagements` | titre court (facultatif), début, précision de la date (`jour`, `mois` ou `saison`), durée prévue (minutes), lieu, programmateur, statut, cachet (en **plus petite unité de la devise**), devise, programme (texte), notes, dates de création et de modification |
+| `engagements` | titre court (facultatif), début, précision de la date (`jour`, `mois` ou `saison`), durée prévue (minutes), lieu, programmateur, statut, statut avant annulation (pour rétablir), cachet (en **plus petite unité de la devise**), devise, programme (texte), notes, dates de création et de modification |
 | `engagement_musiciens` | engagement, musicien |
 
 - Le cachet est **rangé** en nombre entier, dans la plus petite unité de la devise : centimes pour EUR, CHF, USD et GBP
@@ -216,3 +218,5 @@ Un nouvel engagement commence toujours au statut « demande ».
    la relation avec les programmateurs.
 6. Concert **bénévole** (décidé le 12/10/2026, étape D) : cachet de 0 accepté pour envoyer le contrat ; « joué » est
    l'étape finale (ni facture ni encaissement). Défraiements : plus tard.
+7. **Rétablir** (décidé le 11/10/2026, étape D2b) : un engagement annulé par erreur peut être rétabli tant que sa date
+   n'est pas passée ; s'il était confirmé, il revient à « contrat envoyé ». Remplace « annuler et recréer ».
