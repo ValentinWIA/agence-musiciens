@@ -30,6 +30,10 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
     cliquer sur l'entrée pour les voir toutes.
 - **Vérifié par lecture seulement** : le refus d'un mot de passe trop court sur la page d'acceptation. La règle commune
   (`src/lib/mot-de-passe.ts`) a depuis été constatée sur la page de réinitialisation — à couvrir par un test automatique.
+- **À faire à la fin du projet** : retirer la permission `workflow` de la connexion GitHub
+  (`gh auth refresh -h github.com -r workflow`). Accordée le 12/10/2026 pour publier les vérifications automatiques.
+  Risque jugé minime : aucun secret GitHub Actions dans les dépôts (`agence-musiciens`, `piano-website`, `studio_piano`) ;
+  à reconsidérer si l'on en ajoute un.
 - **Cassé** : rien.
 - **À améliorer avant Sentry (semaine 2)** : Auth.js journalise chaque mauvais mot de passe comme une erreur
   (`[auth][error] CredentialsSignin`) ; notre ligne « Connexion refusée » suffit, le message d'Auth.js est à faire taire.
