@@ -46,6 +46,9 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
     vérifications, prévisualisation et copie de base) ; la production n'arrive qu'à la **fusion** dans `main`.
   - ❌ Empreinte du jeton : le serveur recalcule l'empreinte du jeton du lien et la compare ; on ne peut pas remonter
     de l'empreinte au jeton ; protège contre une lecture de la base.
+- **Compréhension (2ᵉ question, 12/10/2026)** : 🟡 « Hugo modifie son cookie » — juste : vérification serveur, tricherie
+  impossible. À consolider : distinction **hachage** (sans clé, à sens unique : mots de passe, jetons) / **chiffrement par
+  clé** (cookie de session, clé `AUTH_SECRET`) ; un cookie modifié est invalide → renvoi à la connexion, pas « Accès refusé ».
 - **Cassé** : rien.
 - **À améliorer avant Sentry (semaine 2)** : Auth.js journalise chaque mauvais mot de passe comme une erreur
   (`[auth][error] CredentialsSignin`) ; notre ligne « Connexion refusée » suffit, le message d'Auth.js est à faire taire.
