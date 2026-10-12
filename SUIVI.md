@@ -10,7 +10,7 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 
 ## État de reprise
 
-*Dernière mise à jour : 12 octobre 2026 (H3 validée ; prochaine tranche H4)*
+*Dernière mise à jour : 12 octobre 2026 (H5 faite ; passe de design, pull request n° 6)*
 
 - **Fait** : cadrage (SPEC), comptes, squelette Next.js, dépôt GitHub public, site en ligne
   (https://agence-musiciens.vercel.app), région `fra1`, base Neon reliée à Vercel.
@@ -130,8 +130,21 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   H3 : `docs/demo.md` écrit (préparatifs, 6 temps, ce qui manque). Fiche d'Anna pour l'essai de Louis :
   `/engagements/7f33cfdb-4527-5821-83d4-db54f20e4d24` (récital de Lyon, identifiant fixe). **Geste à faire** : répéter
   la démo de bout en bout en prévisualisation (sauf la rotation, temps 5).
-  **Ensuite :** H4 fusion, H5 `npm run donnees` en production et répétition de la rotation de `RESEND_API_KEY`.
-  Après H : jours fériés et Frankfurter (branche à part), sinon annoncés manquants à la démo.
+  **H4 ✅** pull request n° 5 fusionnée le 12/10 (vérifications vertes), déploiement de production réussi (migrations
+  0003 à 0007 jouées). Vérifié par l'humain en production : connexion agent, liste vide, formulaire, adresse inventée
+  → « introuvable », invitations. Aucune donnée écrite.
+  **H5 ✅** le 12/10 : jeu de données chargé en production par l'humain (`npx tsx --env-file=.env.production.local
+  scripts/jeu-de-donnees.ts`, base vérifiée par l'identifiant `ep-…` de la branche Default de Neon, fichier supprimé
+  ensuite) → 50 engagements visibles. Rotation de `RESEND_API_KEY` répétée (nouvelle clé, redéploiement, ancienne
+  révoquée, invitation reçue). Le garde-fou de Claude Code refuse lectures et écritures en production : c'est l'humain
+  qui lance ces commandes (préfixe `!`).
+  **Design ✅** (branche `design`, pull request n° 6, vérifications vertes) : police sans serif enfin branchée, fond
+  chaud à grain, boutons encre, tableaux encadrés, logo fictif « AM Management », tableau de bord en tuiles. Choix
+  consignés dans `docs/design.md`. Vérifié en prévisualisation par l'humain (agent et Louis). Fusion à faire par
+  l'humain (le garde-fou de Claude Code refuse la fusion), puis vérification en production.
+  Ce `SUIVI.md` arrive dans `main` par cette pull request : la branche `engagements` n'a plus rien à fusionner.
+  **Laissés de côté (décision de l'humain, 12/10)** : jours fériés et Frankfurter (taux de change, conversion des
+  cachets en EUR) ; à reprendre plus tard sur une branche à part, annoncés comme manquants à la démo.
   Proposition jours fériés (non cadrée) : avertissement, pas refus, si la date tombe un jour férié du pays du lieu ;
   source Nager.Date (gratuite, sans clé, FR/CH/GB/JP).
 - **Quota** : semaine à 79 % le 12/10 (réinitialisation le 14/10 à 11 h 59). Sessions courtes, `/clear` entre étapes,
