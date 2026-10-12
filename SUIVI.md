@@ -10,7 +10,7 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 
 ## État de reprise
 
-*Dernière mise à jour : 12 octobre 2026 (« confirmer quand même » validé ; prochaine étape H)*
+*Dernière mise à jour : 12 octobre 2026 (H1 sécurité validée ; prochaine tranche H2)*
 
 - **Fait** : cadrage (SPEC), comptes, squelette Next.js, dépôt GitHub public, site en ligne
   (https://agence-musiciens.vercel.app), région `fra1`, base Neon reliée à Vercel.
@@ -108,8 +108,14 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   raison valable → « confirmé », raison affichée ; Louis voit la raison sans bouton ; annuler puis rétablir → raison
   effacée.
   **Q1 + Q2 ✅** gestes validés par l'humain le 12/10.
-  **Prochaine étape : H** (à cadrer d'abord) :
-  H (revue de sécurité, README, schéma, rendus, `npm run donnees` en production).
+  **Étape H** : cadrage validé le 12/10 (`docs/engagements.md`, section 12 ; rendus et démo de la fiche recopiés).
+  H1 ✅ (commit `e58d33f`) : revue de sécurité, `docs/securite.md`. Corrigé : liens des courriels fabriqués depuis
+  l'en-tête `Host` (falsifiable) → adresse fournie par Vercel (`src/lib/origine.ts`). Reportés en semaine 2 : limite
+  d'essais de connexion, écart de temps à la connexion, sessions non fermées, clickjacking. Gestes validés le 12/10 :
+  lien d'invitation à la bonne adresse ; Louis sur une fiche d'Anna → « introuvable » + journal.
+  **Prochaine tranche : H2** (README en français + schéma du produit en Mermaid avec le trajet d'une création),
+  puis H3 `docs/demo.md`, H4 fusion, H5 `npm run donnees` en production et répétition de la rotation de `RESEND_API_KEY`.
+  Après H : jours fériés et Frankfurter (branche à part), sinon annoncés manquants à la démo.
 - **Quota** : semaine à 79 % le 12/10 (réinitialisation le 14/10 à 11 h 59). Sessions courtes, `/clear` entre étapes,
   explications courtes.
 - **Limite connue** : changer le mot de passe ne ferme pas les sessions déjà ouvertes (elles expirent seules).
