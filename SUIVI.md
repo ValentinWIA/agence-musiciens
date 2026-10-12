@@ -125,7 +125,8 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   connexion ratée ; ce sont des identifiants (pas des jetons) que le serveur relit ; écriture atomique = tout ou rien.
   **H3 ✅** démo répétée de bout en bout par l'humain le 12/10 en prévisualisation (tout fonctionne).
   Remarques de l'humain : « poser une option » peu clair face à « demande » ; « envoyer le contrat » laisse croire que
-  l'application envoie le contrat (elle note seulement que l'agent l'a envoyé) → libellés à revoir après la fusion.
+  l'application envoie le contrat (elle note seulement que l'agent l'a envoyé) → explications données, libellés **gardés** (décision de l'humain). Idée retenue : envoi automatique du contrat
+  au programmateur en semaine 2 ou 3.
   H3 : `docs/demo.md` écrit (préparatifs, 6 temps, ce qui manque). Fiche d'Anna pour l'essai de Louis :
   `/engagements/7f33cfdb-4527-5821-83d4-db54f20e4d24` (récital de Lyon, identifiant fixe). **Geste à faire** : répéter
   la démo de bout en bout en prévisualisation (sauf la rotation, temps 5).
