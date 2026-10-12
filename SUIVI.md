@@ -10,7 +10,7 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 
 ## État de reprise
 
-*Dernière mise à jour : 12 octobre 2026 (H3 écrite ; prochaine tranche H4)*
+*Dernière mise à jour : 12 octobre 2026 (H3 validée ; prochaine tranche H4)*
 
 - **Fait** : cadrage (SPEC), comptes, squelette Next.js, dépôt GitHub public, site en ligne
   (https://agence-musiciens.vercel.app), région `fra1`, base Neon reliée à Vercel.
@@ -123,6 +123,9 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   et cookie sont la même chose (session signée avec `AUTH_SECRET`, changer de navigateur ou modifier le cookie ne
   donne aucun droit) ; Louis *peut* appeler l'action, c'est la vérification serveur qui protège ; refus d'accès ≠
   connexion ratée ; ce sont des identifiants (pas des jetons) que le serveur relit ; écriture atomique = tout ou rien.
+  **H3 ✅** démo répétée de bout en bout par l'humain le 12/10 en prévisualisation (tout fonctionne).
+  Remarques de l'humain : « poser une option » peu clair face à « demande » ; « envoyer le contrat » laisse croire que
+  l'application envoie le contrat (elle note seulement que l'agent l'a envoyé) → libellés à revoir après la fusion.
   H3 : `docs/demo.md` écrit (préparatifs, 6 temps, ce qui manque). Fiche d'Anna pour l'essai de Louis :
   `/engagements/7f33cfdb-4527-5821-83d4-db54f20e4d24` (récital de Lyon, identifiant fixe). **Geste à faire** : répéter
   la démo de bout en bout en prévisualisation (sauf la rotation, temps 5).
