@@ -92,8 +92,24 @@ sequenceDiagram
   end
 ```
 
-Points à retenir : le navigateur n'est jamais cru sur parole (droits et données revérifiés côté serveur) ;
-l'engagement et ses musiciens sont écrits ensemble, ou pas du tout.
+Idée centrale : **le serveur ne croit jamais le navigateur sur parole**, ni sur qui il est, ni sur ce qu'il envoie.
+
+1. **Les droits.** Une action serveur est une adresse appelable depuis l'extérieur : un musicien sans bouton
+   « Créer » peut quand même l'appeler (avec `curl`, par exemple). Cacher le bouton ne protège rien ; c'est
+   `verifierAdmin` qui protège. Il lit le cookie de session, contrôle sa signature, puis exige le rôle `admin`.
+   Sinon, renvoi au tableau de bord et « Accès refusé : Louis (musicien) sur … » au journal : ce n'est pas une
+   connexion ratée (Louis est connecté) mais un refus d'accès, qui dit qui a tenté quoi.
+2. **La relecture.** Le formulaire envoie des **identifiants** (lieu, programmateur, musiciens). Le serveur les
+   relit en base, car le navigateur peut envoyer un identifiant inventé, celui d'une personne qui n'est pas
+   musicienne, ou d'un lieu supprimé entre-temps. La base refuserait un lieu inexistant, mais par une erreur brute ;
+   la relecture donne un message clair sous le bon champ, applique les règles que la base ignore (« être
+   musicien ») et fournit le pays du lieu, nécessaire pour lire la date à l'heure locale.
+3. **Le refus.** Toutes les erreurs s'affichent ensemble, chacune sous son champ ; la saisie est conservée ;
+   rien n'est écrit en base ; le refus est noté au journal. (Le refus pour conflit d'agenda est un autre trajet :
+   il arrive à la confirmation, sur la fiche, pas à la création.)
+4. **L'enregistrement.** L'engagement et la liste de ses musiciens sont écrits en **une seule opération**
+   (`db.batch`), dite **atomique** : tout ou rien. Écrits l'un après l'autre, une coupure entre les deux laisserait
+   un engagement sans musicien, invisible pour eux et ignoré par la règle de conflit.
 
 ## Organisation du code
 

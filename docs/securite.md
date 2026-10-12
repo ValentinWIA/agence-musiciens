@@ -8,6 +8,8 @@ Règle : corriger avant fusion ce qui peut exposer des données ; noter le reste
 | Sujet | Constat |
 |---|---|
 | Droits | Chaque page et action protégée commence par `verifierSession()` ou `verifierAdmin()` (`src/lib/session.ts`). Sans contrôle, et c'est voulu : installation, invitation, mot de passe oublié, réinitialisation. |
+| Session | Rangée dans un jeton signé avec `AUTH_SECRET`, stocké dans un cookie (Auth.js, réglages par défaut : illisible par le JavaScript des pages, envoyé seulement en HTTPS, durée limitée). Changer de navigateur ne donne rien (pas de cookie → non connecté) ; modifier le rôle dans le cookie casse la signature (cookie rejeté) ; en fabriquer un exige `AUTH_SECRET`, qui ne vit que dans Vercel. Risque restant : le **vol** du cookie de l'agent, valable jusqu'à expiration (voir point 4). |
+| Actions serveur | Appelables depuis l'extérieur, même sans bouton : chacune revérifie session, droits et données. |
 | IDOR — fiche | Un musicien qui n'est pas sur l'engagement voit « introuvable » ; la tentative est journalisée (`src/lib/engagements.ts`). |
 | IDOR — pièce jointe | La pièce doit être rattachée à cet engagement et le lecteur y avoir droit, sinon « Pièce introuvable. » en 404. |
 | IDOR — modification, création, lieux, statuts | Réservées à l'agent, revérifié côté serveur. |
