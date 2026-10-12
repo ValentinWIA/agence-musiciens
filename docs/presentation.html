@@ -1,0 +1,328 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AM Management</title>
+<meta name="description" content="Présentation pédagogique du projet Agence-musiciens : ce qu'il fait, comment il est construit, comment il est protégé.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Geist:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --fond: #f6f3ee;
+    --papier: #fffdf9;
+    --encre: #2b2622;
+    --texte: #3a342f;
+    --gris: #7a716a;
+    --trait: #e3ddd4;
+    --or: #b8925a;
+    --or-pale: #f1e7d6;
+    --vert: #4f7a5a;
+    --rouge: #a5483f;
+    --vert-pale: #e6efe7;
+    --rouge-pale: #f5e4e1;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --fond: #1c1916; --papier: #25211d; --encre: #f2ece4; --texte: #ddd5cb; --gris: #a39a90;
+      --trait: #3a342e; --or: #d1ad74; --or-pale: #3a3125; --vert: #8fbf98; --rouge: #e08c82;
+      --vert-pale: #23302a; --rouge-pale: #3a2624;
+    }
+  }
+  :root[data-theme="dark"] {
+    --fond: #1c1916; --papier: #25211d; --encre: #f2ece4; --texte: #ddd5cb; --gris: #a39a90;
+    --trait: #3a342e; --or: #d1ad74; --or-pale: #3a3125; --vert: #8fbf98; --rouge: #e08c82;
+    --vert-pale: #23302a; --rouge-pale: #3a2624;
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0; background: var(--fond); color: var(--texte);
+    font: 16px/1.6 "Geist", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+  }
+  .page { max-width: 860px; margin: 0 auto; padding: 40px 16px 80px; }
+  h1, h2, h3, .serif { font-family: "Cormorant Garamond", Georgia, serif; color: var(--encre); font-weight: 600; }
+  h1 { font-size: clamp(2.4rem, 7vw, 3.6rem); line-height: 1.05; margin: 0 0 12px; }
+  h2 { font-size: 2rem; margin: 0 0 6px; }
+  h3 { font-size: 1.35rem; margin: 0 0 6px; }
+  p { margin: 0 0 12px; }
+  code { font: 0.86em ui-monospace, Menlo, monospace; background: var(--or-pale); padding: 1px 5px; border-radius: 4px; }
+  .surtitre { font-size: 0.72rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--gris); margin-bottom: 6px; }
+
+  header.couverture { display: grid; gap: 24px; padding: 24px 0 40px; border-bottom: 1px solid var(--trait); }
+  .logo { display: flex; align-items: center; gap: 14px; }
+  .mono { width: 54px; height: 54px; display: grid; place-items: center; border: 1.5px solid var(--encre);
+          border-radius: 3px; font: 600 1.7rem "Cormorant Garamond", Georgia, serif; color: var(--encre); }
+  .chapo { font-size: 1.15rem; max-width: 640px; }
+  .chiffres { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; }
+  .chiffre { background: var(--papier); border: 1px solid var(--trait); border-radius: 8px; padding: 14px 16px; }
+  .chiffre b { display: block; font: 600 1.9rem "Cormorant Garamond", Georgia, serif; color: var(--encre); line-height: 1.1; }
+  .chiffre span { font-size: 0.85rem; color: var(--gris); }
+
+  section { padding: 44px 0 8px; border-bottom: 1px solid var(--trait); }
+  section > .intro { color: var(--gris); margin-bottom: 22px; max-width: 680px; }
+  .num { font: 600 1rem "Geist", sans-serif; color: var(--or); margin-right: 8px; }
+
+  .cartes { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; margin-bottom: 24px; }
+  .carte { background: var(--papier); border: 1px solid var(--trait); border-radius: 8px; padding: 18px; }
+  .carte p:last-child { margin-bottom: 0; }
+  .carte .etiquette { display: inline-block; font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase;
+                      padding: 2px 8px; border-radius: 99px; background: var(--or-pale); color: var(--encre); margin-bottom: 8px; }
+
+  /* Cycle de vie */
+  .cycle { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 8px 0 14px; }
+  .etat { padding: 8px 14px; border-radius: 99px; border: 1px solid var(--trait); background: var(--papier);
+          font-weight: 500; color: var(--encre); white-space: nowrap; }
+  .etat.final { background: var(--vert-pale); border-color: var(--vert); }
+  .etat.annule { background: var(--rouge-pale); border-color: var(--rouge); }
+  .fleche { color: var(--or); font-size: 1.2rem; }
+
+  /* Architecture */
+  .couches { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px; margin-bottom: 10px; }
+  .couche { background: var(--papier); border: 1px solid var(--trait); border-top: 4px solid var(--or); border-radius: 8px; padding: 14px; }
+  .couche h3 { font-size: 1.2rem; }
+  .couche ul { margin: 0; padding-left: 18px; font-size: 0.92rem; }
+  .legende { font-size: 0.88rem; color: var(--gris); }
+
+  /* Étapes numérotées */
+  ol.etapes { list-style: none; counter-reset: e; padding: 0; margin: 0 0 24px; display: grid; gap: 10px; }
+  ol.etapes li { counter-increment: e; display: grid; grid-template-columns: 34px 1fr; gap: 12px; align-items: start;
+                 background: var(--papier); border: 1px solid var(--trait); border-radius: 8px; padding: 12px 14px; }
+  ol.etapes li::before { content: counter(e); display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%;
+                         background: var(--encre); color: var(--papier); font-weight: 600; font-size: 0.9rem; }
+  ol.etapes b { color: var(--encre); }
+
+  .encadre { background: var(--or-pale); border-left: 4px solid var(--or); border-radius: 6px; padding: 14px 18px; margin: 0 0 24px; }
+  .encadre p:last-child { margin-bottom: 0; }
+
+  table { width: 100%; border-collapse: collapse; background: var(--papier); border: 1px solid var(--trait); border-radius: 8px;
+          overflow: hidden; font-size: 0.93rem; margin-bottom: 24px; }
+  th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--trait); vertical-align: top; }
+  th { font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gris); background: var(--or-pale); }
+  tr:last-child td { border-bottom: 0; }
+  .tableau { overflow-x: auto; }
+
+  dl.glossaire { display: grid; grid-template-columns: max-content 1fr; gap: 8px 18px; margin: 0 0 24px; }
+  dl.glossaire dt { font-weight: 600; color: var(--encre); }
+  dl.glossaire dd { margin: 0; }
+  @media (max-width: 560px) { dl.glossaire { grid-template-columns: 1fr; } dl.glossaire dd { margin-bottom: 8px; } }
+
+  footer { padding-top: 32px; color: var(--gris); font-size: 0.88rem; }
+
+  @media print {
+    body { background: #fff; font-size: 11pt; }
+    .page { padding: 0; max-width: none; }
+    section { break-inside: auto; }
+    .carte, .couche, ol.etapes li, .encadre, table { break-inside: avoid; }
+    h2 { break-after: avoid; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+<header class="couverture">
+  <div class="logo">
+    <div class="mono" aria-hidden="true">AM</div>
+    <div>
+      <div class="serif" style="font-size:1.5rem;line-height:1.1">AM Management</div>
+      <div class="surtitre" style="margin:0">Agence de musiciens · logo fictif</div>
+    </div>
+  </div>
+  <div>
+    <div class="surtitre">Projet fil rouge · formation « 5 exercices en 5 semaines » · semaine 1</div>
+    <h1>Une application pour gérer les concerts d'une agence de musiciens</h1>
+    <p class="chapo">Un agent artistique place des pianistes et des violonistes en concert. Cette application l'aide à
+      suivre chaque concert, de la première demande d'une salle jusqu'au soir où il est joué. Chaque musicien, lui,
+      consulte ses propres concerts.</p>
+    <p class="legende">En ligne : agence-musiciens.vercel.app · code : github.com/ValentinWIA/agence-musiciens · toutes les données sont fictives.</p>
+  </div>
+  <div class="chiffres">
+    <div class="chiffre"><b>2</b><span>rôles : agent et musicien</span></div>
+    <div class="chiffre"><b>50</b><span>concerts fictifs en démonstration</span></div>
+    <div class="chiffre"><b>99</b><span>tests automatiques</span></div>
+    <div class="chiffre"><b>6</b><span>étapes fusionnées en production</span></div>
+  </div>
+</header>
+
+<section>
+  <h2><span class="num">01</span>Qui utilise l'application ?</h2>
+  <p class="intro">Deux sortes de comptes, et une troisième catégorie de personnes qui n'en a pas.</p>
+  <div class="cartes">
+    <div class="carte">
+      <span class="etiquette">Agent</span>
+      <h3>L'administrateur</h3>
+      <p>Voit et modifie tout. Invite les musiciens, crée les concerts, fait avancer leur statut, ajoute les contrats en PDF.</p>
+    </div>
+    <div class="carte">
+      <span class="etiquette">Musicien</span>
+      <h3>Pianiste ou violoniste</h3>
+      <p>Ne voit <b>que ses propres</b> concerts, sans pouvoir les modifier ni voir les coordonnées des salles.</p>
+    </div>
+    <div class="carte">
+      <span class="etiquette">Sans compte</span>
+      <h3>Les programmateurs</h3>
+      <p>Salles et festivals qui demandent un concert. Ce sont des <b>données</b> (des contacts), pas des utilisateurs.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2><span class="num">02</span>La vie d'un concert</h2>
+  <p class="intro">Le cœur du produit : un concert passe par des étapes, toujours dans le même ordre. L'application refuse
+    les sauts illogiques et explique pourquoi.</p>
+  <div class="cycle" role="img" aria-label="Demande, puis option, puis contrat envoyé, puis confirmé, puis joué">
+    <span class="etat">Demande</span><span class="fleche">→</span>
+    <span class="etat">Option</span><span class="fleche">→</span>
+    <span class="etat">Contrat envoyé</span><span class="fleche">→</span>
+    <span class="etat">Confirmé</span><span class="fleche">→</span>
+    <span class="etat final">Joué</span>
+  </div>
+  <div class="cycle" role="img" aria-label="Annulé, que l'on peut rétablir vers le statut précédent">
+    <span class="etat annule">Annulé</span><span class="fleche">↺</span>
+    <span class="legende">peut être <b>rétabli</b> : le concert revient à l'étape où il était.</span>
+  </div>
+  <div class="cartes" style="margin-top:18px">
+    <div class="carte">
+      <h3>Une « option »</h3>
+      <p>La salle réserve une date sans s'engager encore. Il faut alors une date précise et une durée.</p>
+    </div>
+    <div class="carte">
+      <h3>Verrouillage</h3>
+      <p>À partir de « confirmé », on ne peut plus changer la date, le lieu ni le cachet : seulement le titre, le programme et les notes.</p>
+    </div>
+    <div class="carte">
+      <h3>Conflit d'agenda</h3>
+      <p>Un musicien ne peut pas être confirmé à deux concerts trop proches : l'application estime le trajet entre les deux villes.</p>
+    </div>
+  </div>
+  <div class="encadre">
+    <p><b>Pourquoi des « règles » à part ?</b> Toutes ces vérifications sont écrites comme de petites fonctions
+      indépendantes de l'écran et de la base de données. On peut donc les tester automatiquement, en quelques millisecondes,
+      à chaque modification du code.</p>
+  </div>
+</section>
+
+<section>
+  <h2><span class="num">03</span>Comment c'est construit</h2>
+  <p class="intro">Quatre couches, comme quatre pièces d'une maison. Chacune a un rôle, et elles se parlent dans un ordre précis.</p>
+  <div class="couches">
+    <div class="couche">
+      <h3>1 · Interface</h3>
+      <ul><li>Le navigateur</li><li>Pages et formulaires (React)</li><li>Ce que l'on voit</li></ul>
+    </div>
+    <div class="couche">
+      <h3>2 · Serveur</h3>
+      <ul><li>Next.js, hébergé sur Vercel (Francfort)</li><li>Vérifie les droits</li><li>Applique les règles</li></ul>
+    </div>
+    <div class="couche">
+      <h3>3 · Données</h3>
+      <ul><li>Base Postgres (Neon)</li><li>PDF privés (Vercel Blob)</li></ul>
+    </div>
+    <div class="couche">
+      <h3>4 · Services externes</h3>
+      <ul><li>IGN : adresses et coordonnées GPS</li><li>Resend : envoi des courriels</li></ul>
+    </div>
+  </div>
+  <p class="legende" style="margin-bottom:24px">L'interface ne parle jamais directement à la base : tout passe par le serveur, qui contrôle.</p>
+
+  <h3>Le trajet d'un clic : l'agent crée un concert</h3>
+  <ol class="etapes">
+    <li><div><b>L'agent clique sur « Créer ».</b> Le navigateur envoie les champs du formulaire au serveur.</div></li>
+    <li><div><b>Le serveur demande : qui es-tu ?</b> Il lit le cookie de session, signé avec une clé secrète. Pas d'agent ? Refus, noté dans le journal.</div></li>
+    <li><div><b>Il vérifie la saisie.</b> Montant valide, date complète et pas dans le passé, lieu et musiciens qui existent vraiment en base.</div></li>
+    <li><div><b>Il écrit en base, tout ou rien.</b> Le concert et ses musiciens sont enregistrés ensemble ; si une partie échoue, rien n'est écrit.</div></li>
+    <li><div><b>Il répond.</b> Succès : la fiche s'ouvre. Refus : chaque erreur s'affiche sous le bon champ, la saisie est conservée.</div></li>
+  </ol>
+
+  <div class="tableau">
+  <table>
+    <thead><tr><th>Outil</th><th>Rôle dans le projet</th></tr></thead>
+    <tbody>
+      <tr><td>Next.js</td><td>le cadre de l'application : pages et code serveur au même endroit</td></tr>
+      <tr><td>Vercel</td><td>héberge le site ; une version de test par branche, la vraie version sur <code>main</code></td></tr>
+      <tr><td>Neon (Postgres)</td><td>la base de données ; une copie par version de test, jamais de test sur la vraie</td></tr>
+      <tr><td>Drizzle</td><td>décrit les tables dans le code ; chaque changement de structure est une « migration »</td></tr>
+      <tr><td>Auth.js</td><td>la connexion et les sessions (on n'écrit jamais ça à la main)</td></tr>
+      <tr><td>GitHub Actions</td><td>à chaque envoi : lint, 99 tests, construction ; rouge = on ne fusionne pas</td></tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<section>
+  <h2><span class="num">04</span>La sécurité en quatre idées</h2>
+  <p class="intro">Pas besoin d'être expert pour comprendre l'essentiel : il s'agit surtout de ne jamais faire confiance au navigateur.</p>
+  <div class="cartes">
+    <div class="carte">
+      <h3>Cacher ≠ protéger</h3>
+      <p>Si Louis tape l'adresse d'un concert d'Anna, le serveur vérifie à chaque requête et répond « introuvable ». La tentative est notée dans le journal.</p>
+    </div>
+    <div class="carte">
+      <h3>Rien à deviner</h3>
+      <p>Chaque élément a un identifiant aléatoire (UUID) : on ne peut pas passer de <code>/engagements/7</code> à <code>/engagements/8</code>.</p>
+    </div>
+    <div class="carte">
+      <h3>Empreintes, pas secrets</h3>
+      <p>Les mots de passe et les liens d'invitation ne sont pas stockés tels quels, mais sous forme d'<b>empreinte</b> : impossible de remonter à l'original.</p>
+    </div>
+    <div class="carte">
+      <h3>Clés hors du code</h3>
+      <p>Les clés (courriels, session) vivent dans Vercel, pas sur GitHub. On peut les changer sans toucher au code : c'est la « rotation ».</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2><span class="num">05</span>La méthode de travail</h2>
+  <p class="intro">Le même cycle pour chaque fonctionnalité, de l'idée à la mise en ligne.</p>
+  <ol class="etapes">
+    <li><div><b>Cadrer par écrit.</b> Ce qu'on construit, les règles, ce qui est hors périmètre (<code>SPEC.md</code>, <code>docs/</code>).</div></li>
+    <li><div><b>Une branche par fonctionnalité.</b> On travaille à côté de la version en ligne, sans la toucher.</div></li>
+    <li><div><b>Commit puis push.</b> Le commit enregistre une version sur l'ordinateur ; le push l'envoie sur GitHub.</div></li>
+    <li><div><b>Vérifications et prévisualisation.</b> GitHub lance les tests ; Vercel crée un site de test avec sa propre base.</div></li>
+    <li><div><b>Vérifier « au geste ».</b> Un humain essaie vraiment, en agent puis en musicien. Plusieurs bugs ont été trouvés ainsi.</div></li>
+    <li><div><b>Pull request et fusion dans <code>main</code>.</b> C'est seulement là que la production change.</div></li>
+  </ol>
+  <div class="encadre">
+    <p><b>Travailler avec une IA.</b> Le code a été écrit avec Claude Code. L'humain cadre, décide, vérifie chaque étape
+      et garde la main sur tout ce qui touche la production : les garde-fous de l'outil refusent d'ailleurs à l'IA de lire
+      la base réelle ou de fusionner seule.</p>
+  </div>
+</section>
+
+<section>
+  <h2><span class="num">06</span>Ce que j'en retiens</h2>
+  <div class="cartes">
+    <div class="carte"><h3>L'ordre compte</h3><p>Une migration se joue avant le chargement des données : on remplit d'abord, on impose la contrainte ensuite.</p></div>
+    <div class="carte"><h3>Tester en vrai</h3><p>« Paris 75013 » et « 75013 Paris » laissaient passer un doublon de lieu : seul l'essai à la main l'a montré.</p></div>
+    <div class="carte"><h3>Un bug discret</h3><p>La police prévue n'était jamais utilisée, à cause d'une variable qui renvoyait à elle-même. Le site semblait juste « bâclé ».</p></div>
+  </div>
+  <h3>Et ensuite</h3>
+  <p>Jours fériés (avertissement si un concert tombe un jour férié du pays), conversion des cachets en euros (taux de la
+    Banque centrale européenne), limite d'essais de connexion, suivi des erreurs (Sentry), puis l'IA dans le produit en semaines 3 et 4.</p>
+</section>
+
+<section style="border-bottom:0">
+  <h2><span class="num">07</span>Petit glossaire</h2>
+  <dl class="glossaire">
+    <dt>Serveur</dt><dd>l'ordinateur distant qui exécute le code et décide ; le navigateur ne fait qu'afficher et envoyer.</dd>
+    <dt>Base de données</dt><dd>l'endroit où les informations sont rangées en tables (concerts, lieux, musiciens…).</dd>
+    <dt>Migration</dt><dd>un fichier qui modifie la structure de la base, rejoué dans le même ordre partout.</dd>
+    <dt>Branche</dt><dd>une copie de travail du code, pour développer sans toucher la version en ligne.</dd>
+    <dt>Prévisualisation</dt><dd>un site de test créé automatiquement pour chaque branche.</dd>
+    <dt>Production</dt><dd>la vraie version en ligne, celle de la branche <code>main</code>.</dd>
+    <dt>Cookie de session</dt><dd>une petite carte d'identité signée que le navigateur présente à chaque requête.</dd>
+    <dt>Empreinte (hachage)</dt><dd>un résumé à sens unique d'un secret : on peut comparer, jamais retrouver l'original.</dd>
+    <dt>Clé d'API</dt><dd>un mot de passe réservé aux programmes, pour utiliser un service extérieur.</dd>
+    <dt>IDOR</dt><dd>faille où l'on accède aux données d'un autre en changeant un identifiant dans l'adresse.</dd>
+  </dl>
+</section>
+
+<footer>AM Management est un nom et un logo fictifs, créés pour l'exercice. Valentin · octobre 2026.</footer>
+
+</div>
+</body>
+</html>

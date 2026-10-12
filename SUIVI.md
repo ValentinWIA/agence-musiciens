@@ -154,6 +154,16 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 - **Points d'attention** :
   - Vercel Hobby ne garde les journaux qu'environ une heure : refaire la tentative juste avant la démo,
     ou ajouter plus tard une table `journal` consultable par l'agent.
+  - **Améliorations futures (demandées par l'humain le 12/10)** :
+    1. **Fiches musiciens** : photo, biographie, répertoire, cachet moyen (divisé par 2 pour un duo, par le nombre
+       de musiciens en général).
+    2. **Indicateurs (KPI)** : nombre de contrats sur l'année ; frise du nombre d'engagements par stade
+       (demande → option → contrat envoyé → confirmé → joué, annulé).
+    3. **Design global** à poursuivre (pistes non faites dans `docs/design.md` : fiche, formulaire, téléphone, favicon).
+    4. **« Nouvel engagement »** : retirer la tuile du tableau de bord ; le bouton existe déjà sur la page des
+       engagements, il y reste seul.
+    5. **Calendrier** : vue mensuelle où les engagements apparaissent à leur date (couleur par statut, clic → fiche ;
+       un musicien n'y voit que les siens).
   - Améliorations possibles : permettre à l'agent d'annuler une invitation (faute de frappe dans l'adresse) ;
     lien de réinitialisation généré par l'agent pour un musicien (Resend ne lui écrit pas sans nom de domaine).
   - **Chaque déploiement de prévisualisation recharge le jeu de données** (`vercel-build`) : les essais faits à la main
