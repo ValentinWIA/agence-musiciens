@@ -10,7 +10,7 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 
 ## État de reprise
 
-*Dernière mise à jour : 12 octobre 2026 (H3 écrite ; répétition de la démo à faire)*
+*Dernière mise à jour : 12 octobre 2026 (H3 écrite ; prochaine tranche H4)*
 
 - **Fait** : cadrage (SPEC), comptes, squelette Next.js, dépôt GitHub public, site en ligne
   (https://agence-musiciens.vercel.app), région `fra1`, base Neon reliée à Vercel.
@@ -128,6 +128,8 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   la démo de bout en bout en prévisualisation (sauf la rotation, temps 5).
   **Ensuite :** H4 fusion, H5 `npm run donnees` en production et répétition de la rotation de `RESEND_API_KEY`.
   Après H : jours fériés et Frankfurter (branche à part), sinon annoncés manquants à la démo.
+  Proposition jours fériés (non cadrée) : avertissement, pas refus, si la date tombe un jour férié du pays du lieu ;
+  source Nager.Date (gratuite, sans clé, FR/CH/GB/JP).
 - **Quota** : semaine à 79 % le 12/10 (réinitialisation le 14/10 à 11 h 59). Sessions courtes, `/clear` entre étapes,
   explications courtes.
 - **Limite connue** : changer le mot de passe ne ferme pas les sessions déjà ouvertes (elles expirent seules).
