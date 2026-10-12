@@ -123,6 +123,11 @@
   }
   body {
     @apply bg-background text-foreground;
+    /* Fond : léger grain de papier et halo bleuté en haut de page, pour éviter l'aplat uni. */
+    background-image:
+      radial-gradient(ellipse 80% 50% at 50% -10%, oklch(0.36 0.1 262 / 7%), transparent 70%),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)' opacity='0.05'/%3E%3C/svg%3E");
+    background-attachment: fixed;
   }
   html {
     @apply font-sans;

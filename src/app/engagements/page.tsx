@@ -21,7 +21,7 @@ const schemaFiltres = z.object({
 
 export default function PageEngagements({ searchParams }: PageProps<"/engagements">) {
   return (
-    <main className="mx-auto grid w-full max-w-5xl gap-6 p-4">
+    <main className="mx-auto grid w-full max-w-6xl gap-6 p-4">
       <Link href="/tableau-de-bord" className="text-sm underline">
         ← Tableau de bord
       </Link>
@@ -108,11 +108,11 @@ async function ContenuEngagements({ searchParams }: { searchParams: Promise<Reco
                     {formaterDebut(e.debut, e.precisionDate, e.pays)}
                   </Link>
                 </TableCell>
-                <TableCell>
+                <TableCell className="min-w-48 whitespace-normal">
                   {e.titre && <div className="font-medium">{e.titre}</div>}
                   {e.lieu}, {e.ville}
                 </TableCell>
-                <TableCell>{e.musiciens.map((m) => `${m.nom} (${m.instrument})`).join(", ")}</TableCell>
+                <TableCell className="min-w-40 whitespace-normal">{e.musiciens.map((m) => `${m.nom} (${m.instrument})`).join(", ")}</TableCell>
                 <TableCell>
                   <BadgeStatut statut={e.statut} />
                 </TableCell>
