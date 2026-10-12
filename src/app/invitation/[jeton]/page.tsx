@@ -11,7 +11,7 @@ const MESSAGES = {
 
 export default function PageAcceptation({ params }: PageProps<"/invitation/[jeton]">) {
   return (
-    <main className="flex min-h-screen items-center justify-center p-4">
+    <main className="flex flex-1 items-center justify-center p-4">
       <Card className="w-full max-w-md">
         <Suspense fallback={<CardContent>Chargement…</CardContent>}>
           <ContenuAcceptation params={params} />
