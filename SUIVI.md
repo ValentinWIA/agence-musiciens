@@ -10,7 +10,7 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 
 ## État de reprise
 
-*Dernière mise à jour : 12 octobre 2026 (H4 faite ; prochaine tranche H5)*
+*Dernière mise à jour : 12 octobre 2026 (H5 faite ; étape H terminée)*
 
 - **Fait** : cadrage (SPEC), comptes, squelette Next.js, dépôt GitHub public, site en ligne
   (https://agence-musiciens.vercel.app), région `fra1`, base Neon reliée à Vercel.
@@ -133,8 +133,12 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   **H4 ✅** pull request n° 5 fusionnée le 12/10 (vérifications vertes), déploiement de production réussi (migrations
   0003 à 0007 jouées). Vérifié par l'humain en production : connexion agent, liste vide, formulaire, adresse inventée
   → « introuvable », invitations. Aucune donnée écrite.
-  **Ensuite :** H5 `npm run donnees` en production et répétition de la rotation de `RESEND_API_KEY`.
-  Après H : jours fériés et Frankfurter (branche à part), sinon annoncés manquants à la démo.
+  **H5 ✅** le 12/10 : jeu de données chargé en production par l'humain (`npx tsx --env-file=.env.production.local
+  scripts/jeu-de-donnees.ts`, base vérifiée par l'identifiant `ep-…` de la branche Default de Neon, fichier supprimé
+  ensuite) → 50 engagements visibles. Rotation de `RESEND_API_KEY` répétée (nouvelle clé, redéploiement, ancienne
+  révoquée, invitation reçue). Le garde-fou de Claude Code refuse lectures et écritures en production : c'est l'humain
+  qui lance ces commandes (préfixe `!`).
+  **Ensuite :** jours fériés et Frankfurter (branche à part), sinon annoncés manquants à la démo.
   Proposition jours fériés (non cadrée) : avertissement, pas refus, si la date tombe un jour férié du pays du lieu ;
   source Nager.Date (gratuite, sans clé, FR/CH/GB/JP).
 - **Quota** : semaine à 79 % le 12/10 (réinitialisation le 14/10 à 11 h 59). Sessions courtes, `/clear` entre étapes,
