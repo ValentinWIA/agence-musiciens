@@ -164,6 +164,11 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
        engagements, il y reste seul.
     5. **Calendrier** : vue mensuelle où les engagements apparaissent à leur date (couleur par statut, clic → fiche ;
        un musicien n'y voit que les siens).
+    6. **Plusieurs agents** : chaque agent a son portefeuille de musiciens et ne voit que leurs engagements ;
+       nouveau rôle **directeur** (vue d'ensemble de l'agence, tous agents confondus, et répartition des musiciens).
+       Gros chantier : 3ᵉ rôle dans Auth.js, lien agent ↔ musicien en base (migration), et tous les contrôles
+       d'accès côté serveur à revoir (un agent ne doit pas ouvrir l'engagement d'un autre : même risque d'IDOR).
+       À cadrer avant les KPI (point 2), qui devront être calculés par agent et pour l'agence.
   - Améliorations possibles : permettre à l'agent d'annuler une invitation (faute de frappe dans l'adresse) ;
     lien de réinitialisation généré par l'agent pour un musicien (Resend ne lui écrit pas sans nom de domaine).
   - **Chaque déploiement de prévisualisation recharge le jeu de données** (`vercel-build`) : les essais faits à la main
