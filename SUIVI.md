@@ -10,7 +10,7 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 
 ## État de reprise
 
-*Dernière mise à jour : 12 octobre 2026 (H2 poussée, gestes de l'humain à faire)*
+*Dernière mise à jour : 12 octobre 2026 (H2 validée ; prochaine tranche H3)*
 
 - **Fait** : cadrage (SPEC), comptes, squelette Next.js, dépôt GitHub public, site en ligne
   (https://agence-musiciens.vercel.app), région `fra1`, base Neon reliée à Vercel.
@@ -119,7 +119,11 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   `engagements`) ; l'humain raconte sans le schéma le trajet d'une création (droits par `verifierAdmin`, relecture
   en base de ce qu'envoie le navigateur, refus affiché sous le champ avec saisie gardée, écriture en une seule
   opération).
-  **Ensuite** : H3 `docs/demo.md`, H4 fusion, H5 `npm run donnees` en production et répétition de la rotation de `RESEND_API_KEY`.
+  **H2 ✅** validée par l'humain le 12/10 : schémas affichés par GitHub ; trajet raconté. Précisé en route : jeton
+  et cookie sont la même chose (session signée avec `AUTH_SECRET`, changer de navigateur ou modifier le cookie ne
+  donne aucun droit) ; Louis *peut* appeler l'action, c'est la vérification serveur qui protège ; refus d'accès ≠
+  connexion ratée ; ce sont des identifiants (pas des jetons) que le serveur relit ; écriture atomique = tout ou rien.
+  **Prochaine tranche : H3** `docs/demo.md`, H4 fusion, H5 `npm run donnees` en production et répétition de la rotation de `RESEND_API_KEY`.
   Après H : jours fériés et Frankfurter (branche à part), sinon annoncés manquants à la démo.
 - **Quota** : semaine à 79 % le 12/10 (réinitialisation le 14/10 à 11 h 59). Sessions courtes, `/clear` entre étapes,
   explications courtes.
