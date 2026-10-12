@@ -392,3 +392,39 @@ contrat, fiches techniques rattachées au lieu.
 |---|---|---|
 | Q1 | Règle de la raison (fonction pure) ; colonne `raison_conflit` et migration | Tests ; migration jouée en prévisualisation |
 | Q2 | Champ et bouton sous le refus, action serveur, affichage sur la fiche, effacement au rétablissement | Gestes : cas piégé refusé puis confirmé avec raison (affichée) ; raison trop courte refusée ; Louis ne voit pas le bouton |
+
+## 12. Étape H — sécurité, documentation, rendus, mise en production (cadrage validé le 12/10/2026)
+
+**Ce qu'on veut**
+1. **Revue de sécurité** de la branche avant fusion : chaque page et action protégée commence par `verifierSession()`
+   ou `verifierAdmin()` ; chaque action revérifie ses données (zod) ; pas d'IDOR (fiche, modification, pièce jointe) ;
+   aucun secret dans le dépôt ; aucun jeton ni mot de passe dans les journaux. Résultat : `docs/securite.md`
+   (vérifié, trouvé, corrigé, reste). Corrigé avant fusion : ce qui expose des données ; le reste noté pour la semaine 2.
+2. **README** en français à la place de celui de Next.js : rôle du produit, organisation, variables d'environnement
+   (noms seulement), commandes, rechargement des données.
+3. **Rendus de la fiche** :
+   - spécification d'une page, cycle de vie, maquette des écrans et états : déjà dans ce document (sections 2 et 4) ;
+   - **schéma du produit** (interface, serveur, données, services externes) en Mermaid, avec le **trajet d'une
+     création d'engagement** du clic à la base, que l'humain doit pouvoir raconter ;
+   - **déroulé de la démo** (`docs/demo.md`) : invitation → compte ; engagement créé avec un PDF ; lieu enrichi par le
+     géocodage IGN ; Louis tente d'ouvrir un engagement d'Anna → refusé, tentative dans les journaux Vercel ;
+     rotation de clé ; explication sur le schéma.
+4. **Rotation de clé** : le géocodage IGN n'a pas de clé ; la clé montrée est `RESEND_API_KEY` (nouvelle clé dans
+   Resend, remplacée dans Vercel, redéploiement, ancienne révoquée, invitation envoyée pour prouver que ça marche).
+   Répétée une fois avant vendredi.
+5. **Mise en production** : pull request `engagements` → `main` (migrations 0003 à 0007 jouées en production),
+   vérification en production, puis `npm run donnees` en production (accord de l'humain avant ; le compte de
+   l'agent n'est jamais touché ; adresse de la base jamais affichée dans le chat).
+
+**Hors périmètre** : nouvelle fonctionnalité ; tests sur une vraie base. Jours fériés et Frankfurter : après H, sur
+une branche à part, si le temps le permet (sinon annoncés comme manquants à la démo).
+
+**Tranches**
+
+| Tranche | Contenu | Preuve |
+|---|---|---|
+| H1 | Revue de sécurité, corrections graves, `docs/securite.md` | Tests, build, lint verts ; tentative IDOR refusée en prévisualisation |
+| H2 | README et schéma du produit (Mermaid) | Schéma affiché par GitHub ; l'humain raconte le trajet d'une création |
+| H3 | `docs/demo.md` | Démo répétée de bout en bout en prévisualisation (sauf rotation) |
+| H4 | Pull request, fusion, vérification en production | Gestes clés refaits en production (sans écrire de données de test) |
+| H5 | `npm run donnees` en production ; répétition de la rotation de clé | Liste de 50 engagements en production ; invitation envoyée avec la nouvelle clé |
