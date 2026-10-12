@@ -138,7 +138,8 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   ensuite) → 50 engagements visibles. Rotation de `RESEND_API_KEY` répétée (nouvelle clé, redéploiement, ancienne
   révoquée, invitation reçue). Le garde-fou de Claude Code refuse lectures et écritures en production : c'est l'humain
   qui lance ces commandes (préfixe `!`).
-  **Ensuite :** jours fériés et Frankfurter (branche à part), sinon annoncés manquants à la démo.
+  **Laissés de côté (décision de l'humain, 12/10)** : jours fériés et Frankfurter (taux de change, conversion des
+  cachets en EUR) ; à reprendre plus tard sur une branche à part, annoncés comme manquants à la démo.
   Proposition jours fériés (non cadrée) : avertissement, pas refus, si la date tombe un jour férié du pays du lieu ;
   source Nager.Date (gratuite, sans clé, FR/CH/GB/JP).
 - **Quota** : semaine à 79 % le 12/10 (réinitialisation le 14/10 à 11 h 59). Sessions courtes, `/clear` entre étapes,
