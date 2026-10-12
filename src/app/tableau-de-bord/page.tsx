@@ -29,6 +29,9 @@ async function ContenuTableauDeBord() {
       <p>
         Bonjour {utilisateur.nom} — rôle : <strong>{utilisateur.role}</strong>
       </p>
+      <Link href="/engagements" className="underline">
+        {utilisateur.role === "admin" ? "Engagements" : "Mes engagements"}
+      </Link>
       {utilisateur.role === "admin" && (
         <Link href="/invitations" className="underline">
           Inviter un musicien

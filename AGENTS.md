@@ -59,7 +59,8 @@ UptimeRobot et Sentry (semaine 2), API Anthropic (semaine 3), SDK d'agents (sema
 - **Simplicité** : le minimum qui répond à la demande. Pas de colonne, d'option ni d'abstraction « au cas où ».
 - **Base de données** : le schéma est dans `src/db/schema.ts`. Toute modification passe par
   `npx drizzle-kit generate --name <nom>` ; les migrations sont jouées par `vercel-build` à chaque déploiement.
-  Identifiants en UUID aléatoires.
+  Identifiants en UUID aléatoires, sauf le jeu de données fictif (identifiants fixes, pour rester valables d'un
+  chargement à l'autre).
 - **Droits** : vérifiés côté serveur à chaque requête. Toute page ou action protégée commence par
   `verifierSession()` ou `verifierAdmin()` (`src/lib/session.ts`). Cacher un bouton n'est pas une protection.
 - **Actions serveur** (`"use server"`) : appelables depuis l'extérieur, elles revérifient la session, les droits et

@@ -31,7 +31,7 @@ export async function demanderReinitialisation(_etat: EtatDemande, formData: For
   });
   console.log(`Réinitialisation demandée : ${adresse}`);
 
-  const lien = `${await origineDuSite()}/reinitialisation/${jeton}`;
+  const lien = `${origineDuSite()}/reinitialisation/${jeton}`;
   await envoyerCourriel({
     a: adresse,
     sujet: "Choisir un nouveau mot de passe",
