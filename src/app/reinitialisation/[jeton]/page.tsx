@@ -6,7 +6,7 @@ import { trouverReinitialisation } from "./trouver-reinitialisation";
 
 export default function PageReinitialisation({ params }: PageProps<"/reinitialisation/[jeton]">) {
   return (
-    <main className="flex min-h-screen items-center justify-center p-4">
+    <main className="flex flex-1 items-center justify-center p-4">
       <Card className="w-full max-w-md">
         <CardHeader>
           <CardTitle>Nouveau mot de passe</CardTitle>

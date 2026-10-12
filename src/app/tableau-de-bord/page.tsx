@@ -7,7 +7,7 @@ import { seDeconnecter } from "../actions";
 
 export default function PageTableauDeBord() {
   return (
-    <main className="flex min-h-screen items-center justify-center p-4">
+    <main className="flex flex-1 items-center justify-center p-4">
       <Card className="w-full max-w-md">
         <CardHeader>
           <CardTitle>Tableau de bord</CardTitle>

@@ -4,7 +4,7 @@ import { FormulaireDemande } from "./formulaire";
 
 export default function PageMotDePasseOublie() {
   return (
-    <main className="flex min-h-screen items-center justify-center p-4">
+    <main className="flex flex-1 items-center justify-center p-4">
       <Card className="w-full max-w-md">
         <CardHeader>
           <CardTitle>Mot de passe oublié</CardTitle>
