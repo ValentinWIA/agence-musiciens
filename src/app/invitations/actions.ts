@@ -58,7 +58,7 @@ export async function creerInvitation(
   refresh(); // la liste des invitations en attente se met à jour
   console.log(`Invitation créée : ${email} (${donnees.data.instrument}) par ${agent.nom}`);
 
-  const lien = `${await origineDuSite()}/invitation/${jeton}`;
+  const lien = `${origineDuSite()}/invitation/${jeton}`;
 
   const courrielEnvoye = await envoyerCourriel({
     a: email,
