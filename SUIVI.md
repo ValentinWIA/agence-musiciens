@@ -10,7 +10,7 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 
 ## État de reprise
 
-*Dernière mise à jour : 12 octobre 2026 (H1 sécurité validée ; prochaine tranche H2)*
+*Dernière mise à jour : 12 octobre 2026 (H2 poussée, gestes de l'humain à faire)*
 
 - **Fait** : cadrage (SPEC), comptes, squelette Next.js, dépôt GitHub public, site en ligne
   (https://agence-musiciens.vercel.app), région `fra1`, base Neon reliée à Vercel.
@@ -113,8 +113,13 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   l'en-tête `Host` (falsifiable) → adresse fournie par Vercel (`src/lib/origine.ts`). Reportés en semaine 2 : limite
   d'essais de connexion, écart de temps à la connexion, sessions non fermées, clickjacking. Gestes validés le 12/10 :
   lien d'invitation à la bonne adresse ; Louis sur une fiche d'Anna → « introuvable » + journal.
-  **Prochaine tranche : H2** (README en français + schéma du produit en Mermaid avec le trajet d'une création),
-  puis H3 `docs/demo.md`, H4 fusion, H5 `npm run donnees` en production et répétition de la rotation de `RESEND_API_KEY`.
+  H2 (commit `e67c2b5`, poussé, vérifications GitHub vertes) : `README.md` en français (rôle, organisation,
+  variables d'environnement par leur nom, commandes, rechargement des données) avec deux schémas Mermaid : couches
+  du produit et trajet d'une création d'engagement. **Gestes à faire** : schémas affichés par GitHub (branche
+  `engagements`) ; l'humain raconte sans le schéma le trajet d'une création (droits par `verifierAdmin`, relecture
+  en base de ce qu'envoie le navigateur, refus affiché sous le champ avec saisie gardée, écriture en une seule
+  opération).
+  **Ensuite** : H3 `docs/demo.md`, H4 fusion, H5 `npm run donnees` en production et répétition de la rotation de `RESEND_API_KEY`.
   Après H : jours fériés et Frankfurter (branche à part), sinon annoncés manquants à la démo.
 - **Quota** : semaine à 79 % le 12/10 (réinitialisation le 14/10 à 11 h 59). Sessions courtes, `/clear` entre étapes,
   explications courtes.
