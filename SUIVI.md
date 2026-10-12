@@ -10,7 +10,7 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 
 ## État de reprise
 
-*Dernière mise à jour : 12 octobre 2026 (H3 validée ; prochaine tranche H4)*
+*Dernière mise à jour : 12 octobre 2026 (H4 faite ; prochaine tranche H5)*
 
 - **Fait** : cadrage (SPEC), comptes, squelette Next.js, dépôt GitHub public, site en ligne
   (https://agence-musiciens.vercel.app), région `fra1`, base Neon reliée à Vercel.
@@ -130,7 +130,10 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   H3 : `docs/demo.md` écrit (préparatifs, 6 temps, ce qui manque). Fiche d'Anna pour l'essai de Louis :
   `/engagements/7f33cfdb-4527-5821-83d4-db54f20e4d24` (récital de Lyon, identifiant fixe). **Geste à faire** : répéter
   la démo de bout en bout en prévisualisation (sauf la rotation, temps 5).
-  **Ensuite :** H4 fusion, H5 `npm run donnees` en production et répétition de la rotation de `RESEND_API_KEY`.
+  **H4 ✅** pull request n° 5 fusionnée le 12/10 (vérifications vertes), déploiement de production réussi (migrations
+  0003 à 0007 jouées). Vérifié par l'humain en production : connexion agent, liste vide, formulaire, adresse inventée
+  → « introuvable », invitations. Aucune donnée écrite.
+  **Ensuite :** H5 `npm run donnees` en production et répétition de la rotation de `RESEND_API_KEY`.
   Après H : jours fériés et Frankfurter (branche à part), sinon annoncés manquants à la démo.
   Proposition jours fériés (non cadrée) : avertissement, pas refus, si la date tombe un jour férié du pays du lieu ;
   source Nager.Date (gratuite, sans clé, FR/CH/GB/JP).
