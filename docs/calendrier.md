@@ -41,3 +41,11 @@ musicien sur le mois.
 - **L3** bloc « 7 prochains jours » : tableau de bord (agent) et fiche (musicien).
 - **L4** liste sur téléphone ; test garantissant des engagements dans les semaines à venir dans le jeu de données
   (ses dates sont fixes : la vue des 7 jours pourrait être vide le jour de la démo).
+
+## 4. Écarts au plan, validés pendant la construction
+
+- **17/10, tableau de bord de l'agent** (demandé par l'humain après les gestes de L2) : il ne garde que la frise des
+  indicateurs, **le calendrier du mois** et la grille des musiciens. Les tuiles Engagements / Musiciens / Inviter
+  disparaissent (elles sont dans le menu). Le mois y change sur place (`/tableau-de-bord?mois=2026-12`), même bloc
+  que `/calendrier`. La liste des **7 prochains jours n'y est plus** (le mois montre la semaine, aujourd'hui entouré) ;
+  elle reste prévue en haut de la fiche du musicien (L3).
