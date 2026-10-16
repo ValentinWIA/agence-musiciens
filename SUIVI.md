@@ -190,7 +190,18 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
     **Samuel Vrignon supprimé de la production** le 16/10 par l'humain (éditeur SQL Neon, en une transaction : son
     engagement d'essai « Récital piano » du 05/11, puis ses réinitialisations, puis le compte, rôle musicien exigé).
     Leçon : la clé étrangère `engagement_musiciens → utilisateurs` refuse de supprimer un musicien encore engagé.
-  - **En cours : branche `engagements-en-cours`** (depuis `main`, 16/10) : plan en tranches à valider.
+  - **En cours : branche `engagements-en-cours`** (depuis `main`, 16/10). Cadrage plus bas (« En cours / Tous »).
+    **Précisions validées le 16/10** : (a) *joué* avec cachet « à définir » reste en cours (seul un cachet 0, bénévole,
+    sort) ; (b) « date passée » pour une date au mois ou à la saison seulement **après la fin de la période** ;
+    (c) « En cours » + statut payé ou annulé → liste vide, « Aucun engagement en cours avec ce statut » + lien
+    « Voir dans Tous ». États : vide « Aucun engagement en cours. » (ou « …ne correspond à ces filtres. ») ;
+    chargement inchangé ; mention discrète « date passée » à côté de la date (demande, option, contrat envoyé).
+    **Tranches validées** : **C1** règles pures `estEnCours` et `dateDepassee` dans `src/lib/cycle-de-vie.ts` + tests
+    (payé et annulé exclus, bénévole joué exclu, joué « à définir » gardé, facturé gardé, mois passé seulement à sa
+    fin) → **C2** page `/engagements` : sélecteur « En cours / Tous », requête et tris, mention, ancienne adresse
+    `?periode=passes` → « En cours », messages vides (gestes) → **C3** test garantissant dans le jeu de données un
+    impayé passé, une demande à date passée et un bénévole joué (puis gestes).
+    **Prochaine action : C1.**
     **Ancienne prochaine action (pour mémoire)** : M5 (photos ; 4 portraits générés avec Canva, choisis par l'humain, dans `scripts/portraits/`).
   - **Ordre décidé** (tout avant la semaine 2) : fiches musiciens (+ tuile « Nouvel engagement » retirée) →
     **engagements « En cours / Tous »** (branche `engagements-en-cours`, depuis `main`) → menu
