@@ -11,20 +11,27 @@ import { cachetMoyenEnEuros, PASSES_AFFICHES, recapEngagements } from "@/lib/mus
 import { verifierSession } from "@/lib/session";
 import { Portrait } from "../portrait";
 
-export default function PageMusicien({ params }: PageProps<"/musiciens/[id]">) {
+export default function PageMusicien({ params, searchParams }: PageProps<"/musiciens/[id]">) {
   return (
     <main className="mx-auto grid w-full max-w-6xl content-start gap-6 p-4 pt-10">
       <Suspense fallback={<p className="text-muted-foreground">Chargement…</p>}>
-        <FicheMusicien params={params} />
+        <FicheMusicien params={params} searchParams={searchParams} />
       </Suspense>
     </main>
   );
 }
 
-async function FicheMusicien({ params }: { params: Promise<{ id: string }> }) {
+async function FicheMusicien({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ id: string }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
   const utilisateur = await verifierSession();
   const musicien = await lireMusicien(utilisateur, (await params).id);
   if (!musicien) notFound();
+  const modifiee = (await searchParams).modifie === "1";
 
   const estAgent = utilisateur.role === "admin";
   const recap = recapEngagements(musicien.engagements);
@@ -38,6 +45,11 @@ async function FicheMusicien({ params }: { params: Promise<{ id: string }> }) {
       <Link href={estAgent ? "/musiciens" : "/tableau-de-bord"} className="text-sm underline">
         {estAgent ? "← Tous les musiciens" : "← Tableau de bord"}
       </Link>
+      {modifiee && (
+        <p role="status" className="rounded-md border px-3 py-2 text-sm">
+          Fiche modifiée.
+        </p>
+      )}
       <div className="grid items-start gap-10 md:grid-cols-[280px_1fr]">
         <div className="grid max-w-[280px] gap-4">
           <Portrait nom={musicien.nom} className="rounded-xl border" />
@@ -46,6 +58,9 @@ async function FicheMusicien({ params }: { params: Promise<{ id: string }> }) {
               Nouvel engagement
             </Button>
           )}
+          <Button variant="outline" nativeButton={false} render={<Link href={`/musiciens/${musicien.id}/modifier`} />}>
+            Modifier la fiche
+          </Button>
         </div>
         <div className="grid gap-6">
           <div className="grid gap-1">
@@ -72,6 +87,15 @@ async function FicheMusicien({ params }: { params: Promise<{ id: string }> }) {
               }
             />
           </div>
+
+          {estAgent && (
+            <Bloc titre="Notes de l'agent">
+              <p className="text-xs text-muted-foreground">Visibles par l&apos;agent seulement.</p>
+              <p className="mt-1 text-sm whitespace-pre-line">
+                {musicien.notesAgent ?? <span className="text-muted-foreground italic">Aucune note.</span>}
+              </p>
+            </Bloc>
+          )}
 
           {musicien.engagements.length === 0 ? (
             <Bloc titre="Engagements">

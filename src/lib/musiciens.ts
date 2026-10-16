@@ -11,6 +11,7 @@ export const LIGNE_REPERTOIRE_MAX = 200; // caractères : une œuvre, pas un tex
 export const NOTES_AGENT_MAX = 2000; // caractères
 
 export type ErreursFiche = { biographie?: string[]; repertoire?: string[]; notesAgent?: string[] };
+export type EtatFiche = { erreurs?: ErreursFiche; erreur?: string };
 
 // Texte vide → null (rien à afficher). Répertoire : une œuvre par ligne, lignes vides retirées.
 // Notes de l'agent : absentes de la saisie (musicien) → absentes du résultat, donc jamais écrites.

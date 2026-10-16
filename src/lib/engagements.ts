@@ -1,4 +1,4 @@
-import { and, asc, desc, eq, gte, ilike, inArray, lt, ne, or, type SQL } from "drizzle-orm";
+import { and, asc, desc, eq, gte, ilike, inArray, lt, ne, or, sql, type SQL } from "drizzle-orm";
 import { db } from "@/db";
 import { STATUTS_TENUS, type ConcertSitue } from "@/lib/conflit";
 import { engagementMusiciens, engagements, lieux, piecesJointes, programmateurs, utilisateurs } from "@/db/schema";
@@ -258,6 +258,8 @@ export async function lireMusicien(lecteur: Lecteur, id: string) {
       instrument: utilisateurs.instrument,
       biographie: utilisateurs.biographie,
       repertoire: utilisateurs.repertoire,
+      // Pour un musicien, la colonne n'est pas lue du tout : ses notes ne peuvent pas atteindre son navigateur.
+      notesAgent: lecteur.role === "admin" ? utilisateurs.notesAgent : sql<string | null>`null`,
     })
     .from(utilisateurs)
     .where(and(eq(utilisateurs.id, id), eq(utilisateurs.role, "musicien")));
