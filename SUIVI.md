@@ -327,6 +327,10 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   - **Renommer « AM Management » en « CM Management »** (demandé le 17/10, les initiales de Claire Morel) : logo
     (`src/components/logo.tsx`), titre et libellés des trois `layout.tsx`, puis `docs/` (design, présentation,
     maquettes). Fichiers partagés : sur une petite branche à part, entre deux fonctionnalités (après le calendrier).
+    🔄 Cadrage validé le 17/10, branche `cm-management` : monogramme « CM » ; aussi la carte de connexion et
+    l'expéditeur des courriels (« Agence-musiciens » → « CM Management ») ; les PDF de `docs/` gardent l'ancien nom
+    (exports figés). Hors périmètre : nouveau logo, domaine, noms du dépôt et du projet Vercel.
+    Tranches : **R1** application (+ test : plus d'« AM Management » dans `src/`) ; **R2** `docs/`.
   - Améliorations possibles : permettre à l'agent d'annuler une invitation (faute de frappe dans l'adresse) ;
     lien de réinitialisation généré par l'agent pour un musicien (Resend ne lui écrit pas sans nom de domaine).
   - **Chaque déploiement de prévisualisation recharge le jeu de données** (`vercel-build`) : les essais faits à la main
