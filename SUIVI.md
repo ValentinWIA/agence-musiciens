@@ -166,7 +166,8 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
     3. **Design global** à poursuivre (pistes non faites dans `docs/design.md` : fiche, formulaire, téléphone, favicon).
     4. **« Nouvel engagement »** : retirer la tuile du tableau de bord ; le bouton existe déjà sur la page des
        engagements, il y reste seul.
-    5. **Calendrier** : vue mensuelle où les engagements apparaissent à leur date (couleur par statut, clic → fiche ;
+    5. **Calendrier** (précisé le 16/10) : sur la **page d'accueil** (tableau de bord), les engagements des musiciens
+       des **7 jours à venir** ; en plus, vue mensuelle où les engagements apparaissent à leur date (couleur par statut, clic → fiche ;
        un musicien n'y voit que les siens).
     6. **Plusieurs agents** : chaque agent a son portefeuille de musiciens et ne voit que leurs engagements ;
        nouveau rôle **directeur** (vue d'ensemble de l'agence, tous agents confondus, et répartition des musiciens).
