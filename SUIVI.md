@@ -10,7 +10,7 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 
 ## État de reprise
 
-*Dernière mise à jour : 12 octobre 2026 (H5 faite ; passe de design, pull request n° 6)*
+*Dernière mise à jour : 16 octobre 2026 (fin de semaine 1 : jours fériés, devises)*
 
 - **Fait** : cadrage (SPEC), comptes, squelette Next.js, dépôt GitHub public, site en ligne
   (https://agence-musiciens.vercel.app), région `fra1`, base Neon reliée à Vercel.
@@ -143,10 +143,13 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   consignés dans `docs/design.md`. Vérifié en prévisualisation par l'humain (agent et Louis). Fusion à faire par
   l'humain (le garde-fou de Claude Code refuse la fusion), puis vérification en production.
   Ce `SUIVI.md` arrive dans `main` par cette pull request : la branche `engagements` n'a plus rien à fusionner.
-  **Laissés de côté (décision de l'humain, 12/10)** : jours fériés et Frankfurter (taux de change, conversion des
-  cachets en EUR) ; à reprendre plus tard sur une branche à part, annoncés comme manquants à la démo.
-  Proposition jours fériés (non cadrée) : avertissement, pas refus, si la date tombe un jour férié du pays du lieu ;
-  source Nager.Date (gratuite, sans clé, FR/CH/GB/JP).
+  **Fin de semaine 1 (branche `fin-semaine-1`, 16/10)** : jours fériés (`src/lib/feries.ts`, Nager.Date, jours
+  nationaux seulement, avertissement à côté de la date, jamais de refus) ; cachet en devise converti en euros à titre
+  indicatif (`src/lib/change.ts`, Frankfurter, taux BCE du jour, relus au plus 2 fois par jour, rien n'est rangé en base) ; service en panne → rien
+  d'affiché, une ligne dans les journaux. `CredentialsSignin` d'Auth.js filtré (`src/auth.ts`). 114 tests.
+  Cas ajouté au jeu : récital d'Inès à Gaveau le 8 mai 2027. **Gestes à faire en prévisualisation** : fiche du 8 mai
+  → « jour férié : Victoire 1945 » ; duo de Genève en CHF → « ≈ … € (taux BCE du …) » ; engagement en EUR → pas de
+  conversion ; mauvais mot de passe → plus de `[auth][error]` dans les journaux Vercel.
 - **Quota** : semaine à 79 % le 12/10 (réinitialisation le 14/10 à 11 h 59). Sessions courtes, `/clear` entre étapes,
   explications courtes.
 - **Limite connue** : changer le mot de passe ne ferme pas les sessions déjà ouvertes (elles expirent seules).
@@ -154,9 +157,10 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 - **Points d'attention** :
   - Vercel Hobby ne garde les journaux qu'environ une heure : refaire la tentative juste avant la démo,
     ou ajouter plus tard une table `journal` consultable par l'agent.
-  - **Améliorations futures (demandées par l'humain le 12/10)** :
+  - **Améliorations futures (demandées par l'humain le 12/10)** — **décidé le 16/10 : toutes faites avant la semaine 2**,
+    une à la fois, chacune avec la boucle d'`AGENTS.md` (ordre : fiches musiciens + point 4, puis KPI et calendrier) :
     1. **Fiches musiciens** : photo, biographie, répertoire, cachet moyen (divisé par 2 pour un duo, par le nombre
-       de musiciens en général).
+       de musiciens en général), **récap de ses engagements** (à venir, passés, par statut).
     2. **Indicateurs (KPI)** : nombre de contrats sur l'année ; frise du nombre d'engagements par stade
        (demande → option → contrat envoyé → confirmé → joué, annulé).
     3. **Design global** à poursuivre (pistes non faites dans `docs/design.md` : fiche, formulaire, téléphone, favicon).
@@ -175,8 +179,8 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
     sont effacés au push suivant.
   - Dans les journaux Vercel, une requête qui écrit plusieurs lignes n'en montre qu'une dans la liste :
     cliquer sur l'entrée pour les voir toutes.
-- **Vérifié par lecture seulement** : le refus d'un mot de passe trop court sur la page d'acceptation. La règle commune
-  (`src/lib/mot-de-passe.ts`) a depuis été constatée sur la page de réinitialisation — à couvrir par un test automatique.
+- ✅ Mot de passe trop court : les trois pages (installation, invitation, réinitialisation) appellent la même règle
+  `src/lib/mot-de-passe.ts`, couverte par 4 tests.
 - **Piste (fin de semaine 1 ou badge)** : tests passant par une vraie base (Postgres jetable dans GitHub Actions) pour
   couvrir automatiquement les contrôles d'accès et les liens expirés, aujourd'hui vérifiés à la main.
 - **À faire à la fin du projet** : retirer la permission `workflow` de la connexion GitHub
@@ -194,8 +198,12 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   impossible. À consolider : distinction **hachage** (sans clé, à sens unique : mots de passe, jetons) / **chiffrement par
   clé** (cookie de session, clé `AUTH_SECRET`) ; un cookie modifié est invalide → renvoi à la connexion, pas « Accès refusé ».
 - **Cassé** : rien.
-- **À améliorer avant Sentry (semaine 2)** : Auth.js journalise chaque mauvais mot de passe comme une erreur
-  (`[auth][error] CredentialsSignin`) ; notre ligne « Connexion refusée » suffit, le message d'Auth.js est à faire taire.
+- **Optionnel (noté le 12/10/2026)** : maquettage des écrans sur Figma (parcours agent et musicien). Pas prévu
+  d'office, mais on peut en avoir besoin si l'on retouche l'interface : travailler l'UX (parcours, étapes) et l'UI
+  (rendu visuel) sur maquette avant de coder.
+- ✅ **Fait (12/10/2026)** : fiche « Infrastructure » — langages, paquets et versions utilisés
+  par le code, expliqués de façon pédagogique. Source unique : `docs/infrastructure.html` (commande de régénération du
+  PDF en tête du fichier) → `docs/infrastructure.pdf`. Versions relevées dans `package-lock.json`, pas de mémoire.
 
 ---
 

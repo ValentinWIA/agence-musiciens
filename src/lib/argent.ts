@@ -4,7 +4,7 @@
 export const DEVISES = ["EUR", "CHF", "USD", "GBP", "JPY"] as const;
 export type Devise = (typeof DEVISES)[number];
 
-const DECIMALES: Record<Devise, number> = { EUR: 2, CHF: 2, USD: 2, GBP: 2, JPY: 0 };
+export const DECIMALES: Record<Devise, number> = { EUR: 2, CHF: 2, USD: 2, GBP: 2, JPY: 0 };
 
 // « 1250,10 » ou « 1 250.10 » (saisie de l'utilisateur) → 125010. Renvoie null si la saisie n'est pas un montant
 // valide pour cette devise (lettres, nombre négatif, trop de décimales, centimes en yens…).

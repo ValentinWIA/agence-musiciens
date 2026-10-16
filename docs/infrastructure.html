@@ -1,0 +1,252 @@
+<!doctype html>
+<!--
+  Source unique de la fiche « Infrastructure ». Après modification, régénérer le PDF depuis le dossier du projet :
+  "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" --headless --no-pdf-header-footer \
+    --print-to-pdf=docs/infrastructure.pdf "file://$PWD/docs/infrastructure.html"
+-->
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Agence-musiciens — Infrastructure</title>
+<style>
+  @page { size: A4; margin: 18mm 16mm; }
+  body { font-family: -apple-system, "Helvetica Neue", Arial, sans-serif; font-size: 10.5pt; line-height: 1.45; color: #1d1d1f; }
+  h1 { font-size: 22pt; margin: 0 0 4pt; }
+  .sous-titre { color: #666; margin: 0 0 14pt; }
+  h2 { font-size: 14pt; margin: 18pt 0 6pt; padding-bottom: 3pt; border-bottom: 2px solid #3b5bdb; color: #3b5bdb; break-after: avoid; }
+  .intro { background: #f3f5fb; border-left: 4px solid #3b5bdb; padding: 8pt 10pt; margin: 8pt 0; }
+  .fiche { border: 1px solid #ddd; border-radius: 6px; padding: 7pt 10pt; margin: 6pt 0; break-inside: avoid; }
+  .fiche h3 { margin: 0 0 3pt; font-size: 11pt; }
+  .version { font-family: Menlo, monospace; font-size: 9pt; background: #eef; padding: 1pt 5pt; border-radius: 3px; margin-left: 6pt; font-weight: normal; }
+  .fiche p { margin: 2pt 0; }
+  .label { font-weight: 600; color: #3b5bdb; }
+  .analogie { color: #555; font-style: italic; }
+  code { font-family: Menlo, monospace; font-size: 9pt; background: #f2f2f2; padding: 0 3pt; border-radius: 3px; }
+  pre { font-family: Menlo, monospace; font-size: 8.5pt; background: #f2f2f2; padding: 8pt; border-radius: 4px; white-space: pre-wrap; }
+  .schema { font-family: Menlo, monospace; font-size: 9pt; background: #fafafa; border: 1px dashed #bbb; padding: 8pt; white-space: pre; }
+  .attention { background: #fff6e5; border-left: 4px solid #e8a33d; padding: 6pt 10pt; margin: 8pt 0; }
+</style>
+</head>
+<body>
+
+<h1>Infrastructure du projet</h1>
+<p class="sous-titre">Agence-musiciens · langages, paquets et versions · relevé le 12 octobre 2026</p>
+
+<div class="intro">
+<p><strong>À quoi sert cette fiche ?</strong> Un site web n'est pas écrit « à partir de rien » : on assemble un langage,
+un moteur qui l'exécute, et des <strong>paquets</strong>, c'est-à-dire des morceaux de code écrits et
+maintenus par d'autres, qu'on installe plutôt que de tout réécrire. Cette fiche dit, pour chaque pièce, <em>ce que
+c'est</em>, <em>à quoi elle sert dans le projet</em> et <em>quelle version est installée</em>.</p>
+<p><strong>D'où viennent les versions ?</strong> <code>package.json</code> donne la liste des paquets demandés ;
+<code>package-lock.json</code> enregistre la version exacte réellement installée. Les versions ci-dessous viennent de ce
+second fichier.</p>
+</div>
+
+<div class="schema">  Navigateur du visiteur                 Serveur (Vercel)                       Services
+  ─────────────────────                  ─────────────────────                  ─────────────────
+  React + Tailwind (écrans)  ── requête ──▶  Node.js exécute Next.js   ──▶  Neon (base Postgres)
+  boutons, formulaires        ◀── page ───   Auth.js · zod · bcryptjs  ──▶  Vercel Blob (PDF)
+                                             Drizzle (accès base)      ──▶  Resend (e-mails)</div>
+
+<h2>1. Le moteur : faire tourner le code</h2>
+
+<div class="fiche">
+<h3>Node.js <span class="version">24.21.0 (sur le Mac)</span></h3>
+<p><span class="label">Ce que c'est :</span> le programme qui exécute du JavaScript <em>en dehors</em> du navigateur.
+Au départ, JavaScript ne fonctionnait que dans les pages web ; Node.js a sorti son moteur du navigateur et lui a donné
+accès aux fichiers et au réseau.</p>
+<p><span class="label">Dans le projet :</span> c'est lui qui fait tourner le serveur : il reçoit les demandes,
+vérifie les droits, parle à la base de données. Sans lui, Next.js ne démarre pas.</p>
+<p class="analogie">Analogie : le piano. Sans instrument, la partition reste muette.</p>
+</div>
+
+<div class="fiche">
+<h3>npm <span class="version">11.19.0</span></h3>
+<p><span class="label">Ce que c'est :</span> le gestionnaire de paquets livré avec Node.js.</p>
+<p><span class="label">Dans le projet :</span> <code>npm install</code> télécharge tous les paquets listés ;
+<code>npm run dev</code> lance le site en local ; <code>npm test</code> lance les tests.</p>
+<p class="analogie">Analogie : le bibliothécaire qui va chercher les partitions dont tu as besoin, dans la bonne édition.</p>
+</div>
+
+<h2>2. Les langages : dans quoi le code est écrit</h2>
+
+<div class="fiche">
+<h3>TypeScript <span class="version">5.9.3</span></h3>
+<p><span class="label">Ce que c'est :</span> du JavaScript auquel on ajoute des <strong>types</strong> : on précise
+qu'une valeur est un texte, un nombre, une date… TypeScript vérifie <em>avant l'exécution</em> qu'on ne mélange
+pas tout, puis il est traduit en JavaScript ordinaire.</p>
+<p><span class="label">Dans le projet :</span> tout le code (<code>.ts</code>). Exemple : si une fonction attend
+un identifiant d'engagement et qu'on lui passe une date, l'erreur est signalée dès l'écriture, pas devant l'agent.</p>
+<p class="analogie">Analogie : un correcteur qui relit la partition et signale une mesure à 5 temps dans un morceau à 4/4.</p>
+</div>
+
+<div class="fiche">
+<h3>TSX</h3>
+<p><span class="label">Ce que c'est :</span> du TypeScript dans lequel on peut écrire des balises qui ressemblent au
+HTML (<code>&lt;button&gt;</code>, <code>&lt;form&gt;</code>…).</p>
+<p><span class="label">Dans le projet :</span> les fichiers <code>.tsx</code> de <code>src/app/</code> et
+<code>src/components/</code> décrivent les écrans : à quoi ressemble la page et ce qu'elle affiche.</p>
+</div>
+
+<div class="fiche">
+<h3>CSS (écrit via Tailwind)</h3>
+<p><span class="label">Ce que c'est :</span> le langage de la mise en forme : couleurs, tailles, espacements, mise en page.</p>
+<p><span class="label">Dans le projet :</span> plutôt que d'écrire des fichiers CSS à part, on met de petites classes
+directement sur les éléments (<code>p-4</code> = marge intérieure, <code>text-sm</code> = petit texte). Fichier commun :
+<code>src/app/globals.css</code>.</p>
+</div>
+
+<div class="fiche">
+<h3>SQL</h3>
+<p><span class="label">Ce que c'est :</span> le langage des bases de données relationnelles (créer des tables, lire,
+écrire).</p>
+<p><span class="label">Dans le projet :</span> on ne l'écrit pas à la main. Drizzle le génère dans le dossier
+<code>drizzle/</code> à partir du schéma écrit en TypeScript : ce sont les <strong>migrations</strong>, les étapes
+successives de construction de la base.</p>
+</div>
+
+<h2>3. Les paquets de l'application</h2>
+<p>Ces paquets sont utilisés par le site en fonctionnement (<code>dependencies</code>).</p>
+
+<div class="fiche">
+<h3>Next.js — <code>next</code> <span class="version">16.4.0</span></h3>
+<p><span class="label">Ce que c'est :</span> un <strong>framework</strong> : un cadre qui impose une organisation et
+fournit les mécanismes de base d'un site.</p>
+<p><span class="label">Dans le projet :</span> chaque dossier de <code>src/app/</code> devient une adresse du site ;
+les <strong>Server Actions</strong> (<code>actions.ts</code>) exécutent sur le serveur ce que déclenche un formulaire.</p>
+<p class="analogie">Analogie : la forme sonate. Elle dit où placer chaque élément pour que l'ensemble tienne.</p>
+</div>
+
+<div class="fiche">
+<h3>React — <code>react</code>, <code>react-dom</code> <span class="version">19.3.0</span></h3>
+<p><span class="label">Ce que c'est :</span> une bibliothèque pour construire une interface à partir de
+<strong>composants</strong> réutilisables (un bouton, une carte, un tableau). <code>react-dom</code> les affiche dans
+la page.</p>
+<p><span class="label">Dans le projet :</span> tous les écrans sont des assemblages de composants React. Next.js est
+construit au-dessus de React.</p>
+</div>
+
+<div class="fiche">
+<h3>Auth.js — <code>next-auth</code> <span class="version">5.0.0-beta.32</span></h3>
+<p><span class="label">Ce que c'est :</span> la bibliothèque d'authentification : savoir <em>qui</em> est connecté.</p>
+<p><span class="label">Dans le projet :</span> gère la connexion par e-mail et mot de passe, puis range l'identité
+et le rôle dans un <strong>cookie chiffré</strong> avec <code>AUTH_SECRET</code>. Impossible à lire ou à modifier sans
+ce secret. Le contrôle des droits (« a-t-il le droit ? ») reste dans notre code.</p>
+<p class="analogie">Analogie : l'accueil de la salle, qui pose un bracelet infalsifiable ; chaque porte vérifie ensuite la couleur du bracelet.</p>
+</div>
+
+<div class="fiche">
+<h3>bcryptjs <span class="version">3.0.3</span></h3>
+<p><span class="label">Ce que c'est :</span> un outil de <strong>hachage</strong> des mots de passe : il transforme un
+mot de passe en une empreinte à sens unique, impossible à retransformer en mot de passe.</p>
+<p><span class="label">Dans le projet :</span> la base ne contient jamais les mots de passe, seulement leurs
+empreintes. À la connexion, bcrypt recalcule l'empreinte du mot de passe saisi et compare.</p>
+</div>
+
+<div class="fiche">
+<h3>zod <span class="version">4.6.5</span></h3>
+<p><span class="label">Ce que c'est :</span> un outil de <strong>validation</strong> : on décrit la forme attendue
+d'une donnée (« un e-mail », « un cachet positif », « une date »), et zod refuse ce qui ne correspond pas.</p>
+<p><span class="label">Dans le projet :</span> tout ce qui arrive d'un formulaire passe par zod côté serveur avant
+d'être enregistré. On ne fait jamais confiance au navigateur.</p>
+<p class="analogie">Analogie : le contrôle à l'entrée du conservatoire, qui vérifie que le dossier est complet avant de le transmettre au jury.</p>
+</div>
+
+<div class="fiche">
+<h3>Drizzle — <code>drizzle-orm</code> <span class="version">0.45.4</span></h3>
+<p><span class="label">Ce que c'est :</span> un <strong>ORM</strong> : un traducteur entre le code TypeScript et la
+base de données.</p>
+<p><span class="label">Dans le projet :</span> on écrit les tables et les requêtes en TypeScript ; Drizzle les
+traduit en SQL. Avantage : TypeScript vérifie aussi les requêtes.</p>
+</div>
+
+<div class="fiche">
+<h3>Neon — <code>@neondatabase/serverless</code> <span class="version">1.2.0</span></h3>
+<p><span class="label">Ce que c'est :</span> le « câble » qui relie le serveur à la base Postgres hébergée chez Neon.</p>
+<p><span class="label">Dans le projet :</span> Drizzle s'en sert pour envoyer ses requêtes à la base (utilisateurs,
+engagements…).</p>
+</div>
+
+<div class="fiche">
+<h3>Vercel Blob — <code>@vercel/blob</code> <span class="version">2.8.1</span></h3>
+<p><span class="label">Ce que c'est :</span> un espace de stockage de fichiers.</p>
+<p><span class="label">Dans le projet :</span> conserve les PDF joints aux engagements (contrats, programmes).
+La base ne stocke que la référence du fichier.</p>
+</div>
+
+<div class="fiche">
+<h3>Resend — <code>resend</code> <span class="version">6.32.1</span></h3>
+<p><span class="label">Ce que c'est :</span> un service d'envoi d'e-mails, piloté depuis le code.</p>
+<p><span class="label">Dans le projet :</span> envoie les invitations et les liens de réinitialisation du mot de passe.</p>
+</div>
+
+<div class="fiche">
+<h3>Les briques d'interface</h3>
+<p><code>shadcn</code> <span class="version">4.21.4</span> — une collection de composants prêts à l'emploi (boutons,
+champs, tableaux), <em>copiés</em> dans <code>src/components/ui/</code> : on peut donc les modifier librement.</p>
+<p><code>@base-ui/react</code> <span class="version">1.9.0</span> — les fondations de ces composants : clavier,
+lecteurs d'écran, accessibilité.</p>
+<p><code>class-variance-authority</code> <span class="version">0.7.1</span> — décrit les déclinaisons d'un composant
+(bouton principal, secondaire, « danger »…).</p>
+<p><code>cn</code> <span class="version">0.4.0</span> — assemble proprement les classes de style d'un composant.</p>
+<p><code>lucide-react</code> <span class="version">1.55.0</span> — la bibliothèque d'icônes.</p>
+<p><code>tw-animate-css</code> <span class="version">1.4.0</span> — de petites animations (apparition d'un menu…).</p>
+</div>
+
+<h2>4. Les outils de développement</h2>
+<p>Utilisés pour écrire, vérifier et construire le code (<code>devDependencies</code>). Ils ne sont pas
+utilisés par le site une fois en ligne.</p>
+
+<div class="fiche">
+<h3>typescript <span class="version">5.9.3</span> et les <code>@types/…</code></h3>
+<p>Le vérificateur de types. Les paquets <code>@types/node</code> <span class="version">24.19.2</span>,
+<code>@types/react</code> et <code>@types/react-dom</code> <span class="version">19.3.0</span> lui décrivent les types
+de Node et de React, qui sont écrits en JavaScript.</p>
+</div>
+
+<div class="fiche">
+<h3>tailwindcss et @tailwindcss/turbopack <span class="version">4.3.3</span></h3>
+<p>Lit les classes utilisées dans les composants et produit le fichier CSS final, en ne gardant que ce qui sert.</p>
+</div>
+
+<div class="fiche">
+<h3>drizzle-kit <span class="version">0.31.11</span></h3>
+<p>Compare le schéma TypeScript à la base, génère les migrations SQL et les applique. Il est lancé automatiquement
+à chaque déploiement sur Vercel.</p>
+</div>
+
+<div class="fiche">
+<h3>tsx <span class="version">4.23.15</span></h3>
+<p>Exécute directement un fichier TypeScript, sans étape de traduction. Sert à lancer le script du jeu de données de
+démonstration (<code>npm run donnees</code>).</p>
+</div>
+
+<div class="fiche">
+<h3>vitest <span class="version">5.0.3</span></h3>
+<p>Lance les <strong>tests automatiques</strong> (<code>npm test</code>) : de petits programmes qui vérifient que le
+code fait ce qu'on attend, à chaque modification, sur le Mac et sur GitHub.</p>
+</div>
+
+<div class="fiche">
+<h3>eslint <span class="version">9.39.5</span> et eslint-config-next <span class="version">16.4.0</span></h3>
+<p>Relit le code et signale les erreurs probables et les mauvaises pratiques, avec les règles recommandées
+par Next.js.</p>
+</div>
+
+<h2>5. À garder en tête</h2>
+<div class="attention">
+<p><strong>Auth.js est en version bêta</strong> (5.0.0-beta.32) : une mise à jour peut changer son fonctionnement.
+On la vérifie avant de mettre à jour.</p>
+<p><strong>Version de Node.js</strong> : 24.21.0 est celle du Mac. Celle de Vercel se règle dans les paramètres du
+projet ; elle n'a pas encore été vérifiée. Les deux doivent correspondre.</p>
+<p><strong>Le symbole <code>^</code></strong> dans <code>package.json</code> signifie « cette version ou une plus
+récente de la même série ». C'est pourquoi on relève la version exacte dans <code>package-lock.json</code>.</p>
+</div>
+
+<p><strong>Mettre à jour les versions de cette fiche</strong> : depuis le dossier du projet, la commande suivante
+affiche la version installée de chaque paquet déclaré.</p>
+<pre>node -e 'const l=require("./package-lock.json"),p=require("./package.json");
+for (const n of Object.keys({...p.dependencies,...p.devDependencies})) console.log(n, l.packages["node_modules/"+n].version)'</pre>
+
+</body>
+</html>
