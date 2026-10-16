@@ -95,3 +95,11 @@ export function cachetMoyen(
     return { devise, moyenne: Math.round(somme / nombre), nombre };
   });
 }
+
+// Affichées à la place d'une photo absente : « Anna Petit » → « AP », « Jean-Luc Roy » → « JR ».
+export function initiales(nom: string): string {
+  const mots = nom.trim().split(/\s+/).filter(Boolean);
+  if (mots.length === 0) return "?";
+  const premiere = (mot: string) => mot.charAt(0).toLocaleUpperCase("fr-FR");
+  return mots.length === 1 ? premiere(mots[0]) : premiere(mots[0]) + premiere(mots[mots.length - 1]);
+}

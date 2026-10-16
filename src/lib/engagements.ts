@@ -1,4 +1,4 @@
-import { and, asc, desc, eq, gte, ilike, inArray, lt, or, type SQL } from "drizzle-orm";
+import { and, asc, desc, eq, gte, ilike, inArray, lt, ne, or, type SQL } from "drizzle-orm";
 import { db } from "@/db";
 import { STATUTS_TENUS, type ConcertSitue } from "@/lib/conflit";
 import { engagementMusiciens, engagements, lieux, piecesJointes, programmateurs, utilisateurs } from "@/db/schema";
@@ -221,4 +221,80 @@ export async function lirePieceJointe(engagementId: string, pieceId: string) {
     .from(piecesJointes)
     .where(and(eq(piecesJointes.id, pieceId), eq(piecesJointes.engagementId, engagementId)));
   return piece ?? null;
+}
+
+// Les musiciens, avec le nombre de leurs engagements à venir (annulés exclus). Réservé à l'agent : la page appelle
+// verifierAdmin avant.
+export async function listerFichesMusiciens() {
+  const [musiciens, aVenir] = await Promise.all([
+    db
+      .select({ id: utilisateurs.id, nom: utilisateurs.nom, instrument: utilisateurs.instrument })
+      .from(utilisateurs)
+      .where(eq(utilisateurs.role, "musicien"))
+      .orderBy(asc(utilisateurs.nom)),
+    db
+      .select({ musicienId: engagementMusiciens.musicienId })
+      .from(engagementMusiciens)
+      .innerJoin(engagements, eq(engagementMusiciens.engagementId, engagements.id))
+      .where(and(gte(engagements.debut, new Date()), ne(engagements.statut, "annule"))),
+  ]);
+  return musiciens.map((m) => ({ ...m, aVenir: aVenir.filter((l) => l.musicienId === m.id).length }));
+}
+
+// Lit la fiche d'un musicien pour ce lecteur. Renvoie null si l'identifiant n'est pas celui d'un musicien (adresse
+// inventée, ou l'agent), ou si un musicien ouvre la fiche d'un autre : la page dit « introuvable » dans tous les cas,
+// et la tentative d'un musicien est journalisée. Le chemin de la photo n'est pas lu (jamais envoyé au navigateur).
+export async function lireMusicien(lecteur: Lecteur, id: string) {
+  if (!UUID.test(id)) return null;
+  if (lecteur.role === "musicien" && lecteur.id !== id) {
+    console.warn(`Accès refusé : ${lecteur.nom} (musicien) sur la fiche du musicien ${id}`);
+    return null;
+  }
+
+  const [musicien] = await db
+    .select({
+      id: utilisateurs.id,
+      nom: utilisateurs.nom,
+      instrument: utilisateurs.instrument,
+      biographie: utilisateurs.biographie,
+      repertoire: utilisateurs.repertoire,
+    })
+    .from(utilisateurs)
+    .where(and(eq(utilisateurs.id, id), eq(utilisateurs.role, "musicien")));
+  if (!musicien) return null;
+
+  const lignes = await db
+    .select({
+      id: engagements.id,
+      titre: engagements.titre,
+      debut: engagements.debut,
+      precisionDate: engagements.precisionDate,
+      statut: engagements.statut,
+      cachet: engagements.cachet,
+      devise: engagements.devise,
+      lieu: lieux.nom,
+      ville: lieux.ville,
+      pays: lieux.pays,
+    })
+    .from(engagements)
+    .innerJoin(lieux, eq(engagements.lieuId, lieux.id))
+    .where(
+      inArray(
+        engagements.id,
+        db.select({ id: engagementMusiciens.engagementId }).from(engagementMusiciens).where(eq(engagementMusiciens.musicienId, id)),
+      ),
+    );
+
+  // Nombre de musiciens de chaque engagement : le cachet est partagé entre eux.
+  const liens = lignes.length
+    ? await db
+        .select({ engagementId: engagementMusiciens.engagementId })
+        .from(engagementMusiciens)
+        .where(inArray(engagementMusiciens.engagementId, lignes.map((l) => l.id)))
+    : [];
+  const engagementsDuMusicien = lignes.map((l) => ({
+    ...l,
+    nombreMusiciens: liens.filter((x) => x.engagementId === l.id).length,
+  }));
+  return { ...musicien, engagements: engagementsDuMusicien };
 }

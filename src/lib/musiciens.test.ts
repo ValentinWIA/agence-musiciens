@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   BIOGRAPHIE_MAX,
   cachetMoyen,
+  initiales,
   PHOTO_MAX_OCTETS,
   recapEngagements,
   REPERTOIRE_MAX_LIGNES,
@@ -148,5 +149,14 @@ describe("cachet moyen", () => {
 
   it("arrondit au centime (1 000,01 € en duo → 500,01 €)", () => {
     expect(cachetMoyen([{ statut: "confirme", cachet: 100001, devise: "EUR", nombreMusiciens: 2 }])[0].moyenne).toBe(50001);
+  });
+});
+
+describe("initiales", () => {
+  it("prénom et nom ; nom composé ; un seul mot ; vide", () => {
+    expect(initiales("Anna Petit")).toBe("AP");
+    expect(initiales("Jean-Luc de la Roche")).toBe("JR");
+    expect(initiales("  élise  ")).toBe("É");
+    expect(initiales("")).toBe("?");
   });
 });

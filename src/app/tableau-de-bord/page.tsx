@@ -24,11 +24,12 @@ async function ContenuTableauDeBord() {
       titre: agent ? "Engagements" : "Mes engagements",
       texte: agent ? "Tous les concerts, filtrés par statut, musicien ou date." : "Les concerts auxquels vous participez.",
     },
+    // « Nouvel engagement » n'a pas de tuile : le bouton est sur la page des engagements.
+    agent
+      ? { href: "/musiciens", titre: "Musiciens", texte: "Les fiches des musiciens : biographie, répertoire, engagements." }
+      : { href: `/musiciens/${utilisateur.id}`, titre: "Ma fiche", texte: "Votre biographie, votre répertoire et vos engagements." },
     ...(agent
-      ? [
-          { href: "/engagements/nouveau", titre: "Nouvel engagement", texte: "Saisir une demande de concert." },
-          { href: "/invitations", titre: "Inviter un musicien", texte: "Créer un lien d'accès pour un nouveau musicien." },
-        ]
+      ? [{ href: "/invitations", titre: "Inviter un musicien", texte: "Créer un lien d'accès pour un nouveau musicien." }]
       : []),
   ];
   return (
