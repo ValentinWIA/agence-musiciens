@@ -7,15 +7,17 @@ import { Input } from "@/components/ui/input";
 import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { formaterMontant } from "@/lib/argent";
+import { dateDepassee, estEnCours } from "@/lib/cycle-de-vie";
 import { formaterDebut } from "@/lib/dates";
-import { LIBELLES_STATUT, listerEngagements, listerMusiciens, type Filtres } from "@/lib/engagements";
+import { LIBELLES_STATUT, listerEngagements, listerMusiciens, type Filtres, type Statut } from "@/lib/engagements";
 import { verifierSession } from "@/lib/session";
 
-// Les filtres viennent de l'adresse (?statut=option&periode=passes) : une valeur inconnue est simplement ignorée.
+// Les filtres viennent de l'adresse (?statut=option&periode=tous) : une valeur inconnue est simplement ignorée
+// (une ancienne adresse ?periode=passes revient donc à « En cours »).
 const schemaFiltres = z.object({
   statut: z.enum(Object.keys(LIBELLES_STATUT) as [keyof typeof LIBELLES_STATUT]).optional().catch(undefined),
   musicien: z.uuid().optional().catch(undefined),
-  periode: z.enum(["a-venir", "passes"]).catch("a-venir"),
+  periode: z.enum(["en-cours", "tous"]).catch("en-cours"),
   recherche: z.string().trim().max(100).optional().catch(undefined).transform((t) => t || undefined),
 });
 
@@ -42,6 +44,10 @@ async function ContenuEngagements({ searchParams }: { searchParams: Promise<Reco
     estAgent ? listerMusiciens() : Promise.resolve([]),
   ]);
   const filtresActifs = !!(filtres.statut || filtres.musicien || filtres.recherche);
+  // Payé ou annulé ne sont jamais « en cours » : on le dit, plutôt qu'une liste vide sans explication.
+  const statutHorsEnCours =
+    filtres.periode === "en-cours" && filtres.statut && !estEnCours({ statut: filtres.statut, cachet: null });
+  const maintenant = new Date();
 
   return (
     <>
@@ -73,8 +79,8 @@ async function ContenuEngagements({ searchParams }: { searchParams: Promise<Reco
           </NativeSelect>
         )}
         <NativeSelect name="periode" defaultValue={filtres.periode} aria-label="Période">
-          <NativeSelectOption value="a-venir">À venir</NativeSelectOption>
-          <NativeSelectOption value="passes">Passés</NativeSelectOption>
+          <NativeSelectOption value="en-cours">En cours</NativeSelectOption>
+          <NativeSelectOption value="tous">Tous</NativeSelectOption>
         </NativeSelect>
         <Input name="recherche" defaultValue={filtres.recherche} placeholder="Lieu, ville, titre…" className="w-48" />
         <Button type="submit">Filtrer</Button>
@@ -85,9 +91,20 @@ async function ContenuEngagements({ searchParams }: { searchParams: Promise<Reco
         )}
       </form>
 
-      {liste.length === 0 ? (
+      {statutHorsEnCours ? (
         <p className="text-muted-foreground">
-          {filtresActifs ? "Aucun engagement ne correspond à ces filtres." : "Aucun engagement pour l'instant."}
+          Aucun engagement en cours avec ce statut.{" "}
+          <Link href={`/engagements?${new URLSearchParams({ ...lienFiltres(filtres), periode: "tous" })}`} className="underline">
+            Voir dans Tous
+          </Link>
+        </p>
+      ) : liste.length === 0 ? (
+        <p className="text-muted-foreground">
+          {filtresActifs
+            ? `Aucun engagement${filtres.periode === "en-cours" ? " en cours" : ""} ne correspond à ces filtres.`
+            : filtres.periode === "en-cours"
+              ? "Aucun engagement en cours."
+              : "Aucun engagement pour l'instant."}
         </p>
       ) : (
         <Table>
@@ -107,6 +124,10 @@ async function ContenuEngagements({ searchParams }: { searchParams: Promise<Reco
                   <Link href={`/engagements/${e.id}`} className="underline">
                     {formaterDebut(e.debut, e.precisionDate, e.pays)}
                   </Link>
+                  {/* Une demande, une option ou un contrat envoyé dont la date est passée : à régler ou à annuler. */}
+                  {STATUTS_A_REGLER.includes(e.statut) && dateDepassee(e, e.pays, maintenant) && (
+                    <span className="ml-2 text-xs text-muted-foreground">date passée</span>
+                  )}
                 </TableCell>
                 <TableCell className="min-w-48 whitespace-normal">
                   {e.titre && <div className="font-medium">{e.titre}</div>}
@@ -126,6 +147,13 @@ async function ContenuEngagements({ searchParams }: { searchParams: Promise<Reco
       )}
     </>
   );
+}
+
+const STATUTS_A_REGLER: readonly Statut[] = ["demande", "option", "contrat_envoye"];
+
+// Les filtres renseignés, pour refaire une adresse (sans les champs vides).
+function lienFiltres(filtres: Filtres): Record<string, string> {
+  return Object.fromEntries(Object.entries(filtres).filter(([, v]) => v)) as Record<string, string>;
 }
 
 function ChargementListe() {

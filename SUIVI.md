@@ -10,7 +10,7 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 
 ## État de reprise
 
-*Dernière mise à jour : 16 octobre 2026 (fiches musiciens : M1 à M5 faites, pull request ouverte)*
+*Dernière mise à jour : 16 octobre 2026 (engagements « En cours / Tous » : C1 à C3 validées, pull request ouverte)*
 
 - **Fait** : cadrage (SPEC), comptes, squelette Next.js, dépôt GitHub public, site en ligne
   (https://agence-musiciens.vercel.app), région `fra1`, base Neon reliée à Vercel.
@@ -185,9 +185,33 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
     l'humain a commité lui-même). Signalé dans le README ; à remplacer avant tout usage réel.
     **Gestes validés le 16/10** (« Portraits envoyés : 4. » dans les journaux ; visages dans la grille et les fiches ;
     Louis sur la photo d'Anna → introuvable ; retrait → initiales).
-    **Prochaine action** : pull request `fiches-musiciens` → `main`, fusion par l'humain, vérification en production
-    (migrations 0008 et 0009 ; le jeu de données n'est pas rechargé en production : sans rechargement, pas de
-    biographies, notes ni portraits fictifs). Puis branche `engagements-en-cours`.
+    **PR n° 8 fusionnée le 16/10** (vérifications vertes). En production, le jeu de données n'est pas rechargé :
+    pas de biographies, notes ni portraits fictifs tant qu'on ne relance pas le chargement (avec le jeton Blob).
+    **Samuel Vrignon supprimé de la production** le 16/10 par l'humain (éditeur SQL Neon, en une transaction : son
+    engagement d'essai « Récital piano » du 05/11, puis ses réinitialisations, puis le compte, rôle musicien exigé).
+    Leçon : la clé étrangère `engagement_musiciens → utilisateurs` refuse de supprimer un musicien encore engagé.
+  - **En cours : branche `engagements-en-cours`** (depuis `main`, 16/10). Cadrage plus bas (« En cours / Tous »).
+    **Précisions validées le 16/10** : (a) *joué* avec cachet « à définir » reste en cours (seul un cachet 0, bénévole,
+    sort) ; (b) « date passée » pour une date au mois ou à la saison seulement **après la fin de la période** ;
+    (c) « En cours » + statut payé ou annulé → liste vide, « Aucun engagement en cours avec ce statut » + lien
+    « Voir dans Tous ». États : vide « Aucun engagement en cours. » (ou « …ne correspond à ces filtres. ») ;
+    chargement inchangé ; mention discrète « date passée » à côté de la date (demande, option, contrat envoyé).
+    **Tranches validées** : **C1** règles pures `estEnCours` et `dateDepassee` dans `src/lib/cycle-de-vie.ts` + tests
+    (payé et annulé exclus, bénévole joué exclu, joué « à définir » gardé, facturé gardé, mois passé seulement à sa
+    fin) → **C2** page `/engagements` : sélecteur « En cours / Tous », requête et tris, mention, ancienne adresse
+    `?periode=passes` → « En cours », messages vides (gestes) → **C3** test garantissant dans le jeu de données un
+    impayé passé, une demande à date passée et un bénévole joué (puis gestes).
+    **C1 ✅** (commit `ed52a9c`) : `estEnCours` et `dateDepassee` (`src/lib/cycle-de-vie.ts`), 6 tests.
+    **C2 ✅** (commit `408de8a`) : `/engagements` en « En cours / Tous » ; « En cours » filtré par `estEnCours`
+    (règle non recopiée en SQL), mention « date passée », message « Aucun engagement en cours avec ce statut » + lien
+    « Voir dans Tous ». **Gestes 1 à 6 validés le 16/10.** La fiche musicien garde « À venir / Passés » (son parcours ;
+    hors périmètre, décidé le 16/10).
+    **C3 ✅** (commit `93d88c7`) : deux cas fictifs ajoutés **en fin de liste** (les identifiants dépendent de la
+    position) : « Concert-lecture » (demande à date passée, 05/09) et « Concert caritatif » (bénévole joué, 27/06) ;
+    3 tests dans `src/lib/jeu-de-donnees.test.ts`, jugés au 16/10/2026 (149 tests). **Gestes validés le 16/10.**
+    **Pull request ouverte le 16/10** vers `main`. **Prochaine action : fusion (avec l'accord de l'humain), vérification
+    en production** (« En cours » par défaut ; les deux cas fictifs n'y sont pas tant que le jeu n'est pas rechargé),
+    puis menu latéral (7).
     **Ancienne prochaine action (pour mémoire)** : M5 (photos ; 4 portraits générés avec Canva, choisis par l'humain, dans `scripts/portraits/`).
   - **Ordre décidé** (tout avant la semaine 2) : fiches musiciens (+ tuile « Nouvel engagement » retirée) →
     **engagements « En cours / Tous »** (branche `engagements-en-cours`, depuis `main`) → menu
@@ -214,8 +238,7 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   explications courtes.
 - **Limite connue** : changer le mot de passe ne ferme pas les sessions déjà ouvertes (elles expirent seules).
 - **Reste à faire (côté humain)** : créer le compte UptimeRobot.
-  **Supprimer « Samuel Vrignon » des musiciens en production** (demandé le 16/10), lors de la prochaine mise en
-  production : c'est l'humain qui lance la commande (garde-fou de Claude Code), après confirmation de la ligne visée.
+  ✅ « Samuel Vrignon » supprimé des musiciens en production (16/10).
   **Brancher un vrai nom de domaine sur Resend** (noté le 16/10) : sans domaine vérifié, Resend n'écrit qu'à
   l'adresse du propriétaire du compte, donc les courriels d'invitation et de réinitialisation n'arrivent pas aux
   musiciens (leur lien est seulement affiché à l'agent). Étapes : acheter un domaine, l'ajouter dans Resend,

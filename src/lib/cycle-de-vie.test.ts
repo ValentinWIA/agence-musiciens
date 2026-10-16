@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest";
 import {
   controlerModification,
+  dateDepassee,
+  estEnCours,
   estVerrouille,
   jugerTransition,
   statutApres,
@@ -139,5 +141,46 @@ describe("modification : ce qui reste modifiable selon le statut", () => {
       cachet: expect.stringContaining("cachet"),
     });
     expect(controlerModification("contrat_envoye", { precisionDate: "jour", dureeMinutes: 90, cachet: 0 })).toEqual({});
+  });
+});
+
+describe("suivi : ce qui est « en cours »", () => {
+  it("exclut payé et annulé, quelle que soit la date", () => {
+    expect(estEnCours(engagement({ statut: "paye" }))).toBe(false);
+    expect(estEnCours(engagement({ statut: "annule" }))).toBe(false);
+  });
+
+  it("garde les étapes avant le paiement, dont le facturé (un impayé)", () => {
+    for (const statut of ["demande", "option", "contrat_envoye", "confirme", "facture"] as Statut[]) {
+      expect(estEnCours(engagement({ statut }))).toBe(true);
+    }
+  });
+
+  it("exclut un concert bénévole joué, mais garde un joué au cachet « à définir » ou payant", () => {
+    expect(estEnCours(engagement({ statut: "joue", cachet: 0 }))).toBe(false);
+    expect(estEnCours(engagement({ statut: "joue", cachet: null }))).toBe(true);
+    expect(estEnCours(engagement({ statut: "joue", cachet: 350000 }))).toBe(true);
+  });
+});
+
+describe("suivi : la date est-elle passée ?", () => {
+  it("une date précise est passée dès son heure de début", () => {
+    expect(dateDepassee(engagement({ debut: new Date("2026-10-12T11:59:00Z") }), "France", maintenant)).toBe(true);
+    expect(dateDepassee(engagement({ debut: new Date("2026-10-12T12:01:00Z") }), "France", maintenant)).toBe(false);
+  });
+
+  it("un mois n'est passé qu'à sa fin, à l'heure du lieu", () => {
+    // « octobre 2026 » commence le 1er octobre à minuit à Paris (30/09, 22 h UTC).
+    const octobre = engagement({ debut: new Date("2026-09-30T22:00:00Z"), precisionDate: "mois" });
+    expect(dateDepassee(octobre, "France", maintenant)).toBe(false);
+    expect(dateDepassee(octobre, "France", new Date("2026-10-31T22:59:00Z"))).toBe(false);
+    expect(dateDepassee(octobre, "France", new Date("2026-10-31T23:00:00Z"))).toBe(true);
+  });
+
+  it("une saison n'est passée qu'à la fin de ses trois mois", () => {
+    // « été 2026 » : du 1er juin au 31 août, à Paris.
+    const ete = engagement({ debut: new Date("2026-05-31T22:00:00Z"), precisionDate: "saison" });
+    expect(dateDepassee(ete, "France", new Date("2026-08-31T12:00:00Z"))).toBe(false);
+    expect(dateDepassee(ete, "France", maintenant)).toBe(true);
   });
 });

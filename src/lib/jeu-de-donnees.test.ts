@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { ENGAGEMENTS, LIEUX } from "../../scripts/donnees-fictives";
+import { versUniteMinimale } from "./argent";
 import { trouverConflits, type Concert } from "./conflit";
+import { dateDepassee, estEnCours } from "./cycle-de-vie";
 
 // Le jeu de données sert à la démonstration : ce test garantit que ses cas « CAS » donnent toujours le résultat
 // annoncé, même si l'on change un réglage de la règle (la marge ramenée de 4 h à 1 h en avait déjà défait un).
@@ -32,5 +34,31 @@ describe("jeu de données : les cas de démonstration de la règle de conflit", 
 
   it("aucun autre engagement « contrat envoyé » n'attend d'être confirmé", () => {
     expect(concerts.filter((c) => c.statut === "contrat_envoye")).toHaveLength(4);
+  });
+});
+
+// Le jeu de données décrit l'automne 2026 : on le juge à une date fixe, pour que le test ne change pas avec le temps.
+const le16octobre = new Date("2026-10-16T12:00:00+02:00");
+const suivis = ENGAGEMENTS.map((e) => {
+  const etat = {
+    statut: e.statut,
+    cachet: e.cachet === undefined ? null : versUniteMinimale(e.cachet, e.devise ?? "EUR"),
+    debut: new Date(e.debut),
+    precisionDate: e.precision ?? "jour",
+  };
+  return { ...etat, enCours: estEnCours(etat), passe: dateDepassee(etat, LIEUX[e.lieu].pays, le16octobre) };
+});
+
+describe("jeu de données : les cas de démonstration de « En cours »", () => {
+  it("contient un impayé d'un concert passé, en cours", () => {
+    expect(suivis.some((e) => e.statut === "facture" && e.passe && e.enCours)).toBe(true);
+  });
+
+  it("contient une demande à date passée, en cours (mention « date passée »)", () => {
+    expect(suivis.some((e) => e.statut === "demande" && e.passe && e.enCours)).toBe(true);
+  });
+
+  it("contient un concert bénévole joué, hors « En cours »", () => {
+    expect(suivis.some((e) => e.statut === "joue" && e.cachet === 0 && !e.enCours)).toBe(true);
   });
 });

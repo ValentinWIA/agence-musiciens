@@ -1,7 +1,8 @@
 import { createHash } from "node:crypto";
-import { and, asc, desc, eq, gte, ilike, inArray, lt, ne, or, sql, type SQL } from "drizzle-orm";
+import { and, asc, desc, eq, gte, ilike, inArray, ne, or, sql, type SQL } from "drizzle-orm";
 import { db } from "@/db";
 import { STATUTS_TENUS, type ConcertSitue } from "@/lib/conflit";
+import { estEnCours } from "@/lib/cycle-de-vie";
 import { engagementMusiciens, engagements, lieux, piecesJointes, programmateurs, utilisateurs } from "@/db/schema";
 
 export const LIBELLES_STATUT = {
@@ -19,7 +20,7 @@ export type Statut = keyof typeof LIBELLES_STATUT;
 export type Filtres = {
   statut?: Statut;
   musicien?: string;
-  periode: "a-venir" | "passes";
+  periode: "en-cours" | "tous";
   recherche?: string;
 };
 
@@ -28,12 +29,7 @@ type Lecteur = { id: string; nom: string; role: "admin" | "musicien" };
 // Lit les engagements visibles par ce lecteur : tous pour l'agent, les siens seulement pour un musicien.
 // C'est ici, côté serveur, que la règle de visibilité s'applique, quels que soient les filtres demandés.
 export async function listerEngagements(lecteur: Lecteur, filtres: Filtres) {
-  const debutDuJour = new Date();
-  debutDuJour.setHours(0, 0, 0, 0);
-
-  const conditions: SQL[] = [
-    filtres.periode === "a-venir" ? gte(engagements.debut, debutDuJour) : lt(engagements.debut, debutDuJour),
-  ];
+  const conditions: SQL[] = [];
   if (filtres.statut) conditions.push(eq(engagements.statut, filtres.statut));
   if (filtres.recherche) {
     const motif = `%${filtres.recherche}%`;
@@ -64,7 +60,9 @@ export async function listerEngagements(lecteur: Lecteur, filtres: Filtres) {
     .from(engagements)
     .innerJoin(lieux, eq(engagements.lieuId, lieux.id))
     .where(and(...conditions))
-    .orderBy(filtres.periode === "a-venir" ? asc(engagements.debut) : desc(engagements.debut));
+    .orderBy(filtres.periode === "en-cours" ? asc(engagements.debut) : desc(engagements.debut))
+    // « En cours » ne dépend pas de la date : on garde la règle testée (cycle-de-vie.ts) plutôt que de la recopier en SQL.
+    .then((toutes) => (filtres.periode === "en-cours" ? toutes.filter(estEnCours) : toutes));
 
   const musiciens = lignes.length
     ? await db

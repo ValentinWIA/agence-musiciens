@@ -1,3 +1,4 @@
+import { lireSaisieDate, versChampsDate, type Saison } from "./dates";
 import { LIBELLES_STATUT, type Statut } from "./engagements";
 
 // Le cycle de vie d'un engagement (voir docs/engagements.md, section 2).
@@ -126,4 +127,31 @@ export function controlerModification(
     erreurs.cachet = "Le contrat est envoyé : le cachet ne peut plus être vidé (0 pour un concert bénévole).";
   }
   return erreurs;
+}
+
+// --- Suivi : « En cours » (voir SUIVI.md, cadrage du 16/10) ---
+
+// En cours = il reste quelque chose à faire, quelle que soit la date (l'agent suit les impayés des concerts passés).
+// Payé et annulé sont finis ; un concert bénévole joué aussi, puisqu'il n'y a rien à facturer.
+export function estEnCours(e: Pick<EtatEngagement, "statut" | "cachet">) {
+  if (e.statut === "paye" || e.statut === "annule") return false;
+  return !(e.statut === "joue" && estBenevole(e));
+}
+
+// Une date au mois ou à la saison n'est passée qu'à la fin de sa période (« mai 2027 » l'est le 1er juin),
+// calculée à l'heure du lieu comme à la saisie.
+export function dateDepassee(
+  e: Pick<EtatEngagement, "debut" | "precisionDate">,
+  pays: string,
+  maintenant = new Date(),
+) {
+  if (e.precisionDate === "jour") return e.debut < maintenant;
+  const champs = versChampsDate(e.debut, e.precisionDate, pays);
+  const { finPeriode } = lireSaisieDate(
+    e.precisionDate === "mois"
+      ? { precision: "mois", mois: champs.mois }
+      : { precision: "saison", saison: champs.saison as Saison, annee: Number(champs.annee) },
+    pays,
+  );
+  return finPeriode <= maintenant;
 }
