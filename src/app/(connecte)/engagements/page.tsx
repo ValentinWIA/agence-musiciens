@@ -108,8 +108,8 @@ async function ContenuEngagements({ searchParams }: { searchParams: Promise<Reco
           <TableHeader>
             <TableRow>
               <TableHead>Date</TableHead>
-              <TableHead>Lieu</TableHead>
               <TableHead>Musiciens</TableHead>
+              <TableHead>Lieu</TableHead>
               <TableHead>Statut</TableHead>
               <TableHead className="text-right">Cachet</TableHead>
             </TableRow>
@@ -126,11 +126,12 @@ async function ContenuEngagements({ searchParams }: { searchParams: Promise<Reco
                     <span className="ml-2 text-xs text-muted-foreground">date passée</span>
                   )}
                 </TableCell>
+                {/* Les musiciens avant le lieu : sur téléphone, on voit la date et la colonne suivante. */}
+                <TableCell className="min-w-40 whitespace-normal">{e.musiciens.map((m) => `${m.nom} (${m.instrument})`).join(", ")}</TableCell>
                 <TableCell className="min-w-48 whitespace-normal">
                   {e.titre && <div className="font-medium">{e.titre}</div>}
                   {e.lieu}, {e.ville}
                 </TableCell>
-                <TableCell className="min-w-40 whitespace-normal">{e.musiciens.map((m) => `${m.nom} (${m.instrument})`).join(", ")}</TableCell>
                 <TableCell>
                   <BadgeStatut statut={e.statut} />
                 </TableCell>

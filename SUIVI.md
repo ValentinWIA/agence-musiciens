@@ -10,7 +10,7 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 
 ## État de reprise
 
-*Dernière mise à jour : 16 octobre 2026 (menu latéral : T1 à T4 validées en prévisualisation, pull request ouverte)*
+*Dernière mise à jour : 16 octobre 2026 (menu latéral fusionné et vérifié en production ; colonnes des engagements échangées)*
 
 - **Fait** : cadrage (SPEC), comptes, squelette Next.js, dépôt GitHub public, site en ligne
   (https://agence-musiciens.vercel.app), région `fra1`, base Neon reliée à Vercel.
@@ -212,7 +212,7 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
     **PR n° 9 fusionnée le 16/10** (vérifications vertes, commit `23e8b03`). **Gestes validés en production le 16/10**
     (« En cours » par défaut, impayés passés en tête ; « Tous » avec payés et annulés ; « payé » en « En cours » →
     message et « Voir dans Tous »). Les deux cas fictifs de C3 n'y sont pas tant que le jeu n'est pas rechargé.
-  - **🔄 Menu latéral (7)**, branche `menu-lateral` (depuis `main`, 16/10). Cadrage, écran et plan dans
+  - **✅ Menu latéral (7)**, branche `menu-lateral` (depuis `main`, 16/10). Cadrage, écran et plan dans
     `docs/menu-lateral.md` (commit `a3792f5`). Agent : Tableau de bord · Engagements · Musiciens · Invitations ;
     musicien : Ma fiche · Mes engagements, et `/tableau-de-bord` le renvoie vers sa fiche (sa page d'accueil).
     **T1 ✅** (`a42f3d1`) : `liensDuMenu` et `estActif` (`src/lib/menu.ts`), 8 tests (157 au total).
@@ -220,7 +220,14 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
     **T3 ✅** (`b5cbbae`) : musicien renvoyé vers sa fiche ; bouton de déconnexion du tableau de bord et liens
     « ← Tableau de bord » retirés. **T4 ✅** (`5101052`) : menu repliable sur téléphone (`<dialog>`, bouton ✕ gardé).
     **Gestes T2 à T4 validés le 16/10** en prévisualisation.
-    **Reste (T5)** : fusion de la pull request après accord, gestes en production.
+    **PR n° 10 fusionnée le 16/10** (commit `54f57b8`, vérifications vertes) ; **vérifiée en production le 16/10**.
+    Une fois, sur le téléphone de l'humain, le menu ouvert ne couvrait que le coin supérieur gauche ; non reproduit
+    ensuite (en production, sans correction), ni dans Chrome. Correction possible gardée **sans push** sur la branche
+    locale `menu-telephone-hauteur` (`9924b66` : `<dialog>` sorti de la barre floutée, accroché aux bords haut et bas).
+    À pousser si le défaut revient ; sinon supprimer la branche.
+  - **🔄 Colonnes des engagements**, branche `engagements-colonnes` (depuis `main`, 16/10) : « Musiciens » passe avant
+    « Lieu » (le titre du concert reste avec le lieu), car sur téléphone on ne voyait que la date et le lieu.
+    Solution rapide choisie par l'humain ; les cartes sur téléphone sont notées pour plus tard (amélioration n° 8).
     **À faire après la fusion** (demande de l'humain du 16/10) : le compte de l'agent s'appelle « Agent », d'où
     « Agent / AGENT » en bas du menu. Lui donner un nom fictif en production (une ligne de `utilisateurs`), avec accord.
     **Ancienne prochaine action (pour mémoire)** : M5 (photos ; 4 portraits générés avec Canva, choisis par l'humain, dans `scripts/portraits/`).
@@ -277,7 +284,11 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
        Les KPI (point 2) sont donc calculés pour l'agence seulement.
     7. **Menu latéral à gauche, toujours présent** (demandé le 16/10) : liens vers les pages selon le rôle
        (tableau de bord, engagements, musiciens ou « Ma fiche », calendrier, invitations…) et **déconnexion
-       possible depuis toutes les pages**, pas seulement le tableau de bord. Sur téléphone : menu repliable.
+       possible depuis toutes les pages**, pas seulement le tableau de bord. Sur téléphone : menu repliable. ✅ (PR n° 10)
+    8. **Engagements en cartes sur téléphone** (demandé le 16/10, pour plus tard) : une carte par engagement (date et
+       statut en haut, puis musiciens, lieu, cachet), sans défilement horizontal ; le tableau reste sur ordinateur.
+       Pour l'instant, seules les colonnes « Musiciens » et « Lieu » ont été échangées (le statut reste caché à droite
+       sur téléphone).
   - Améliorations possibles : permettre à l'agent d'annuler une invitation (faute de frappe dans l'adresse) ;
     lien de réinitialisation généré par l'agent pour un musicien (Resend ne lui écrit pas sans nom de domaine).
   - **Chaque déploiement de prévisualisation recharge le jeu de données** (`vercel-build`) : les essais faits à la main
