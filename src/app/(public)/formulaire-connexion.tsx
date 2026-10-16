@@ -4,7 +4,7 @@ import { useActionState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { seConnecter, type EtatConnexion } from "./actions";
+import { seConnecter, type EtatConnexion } from "../actions";
 
 export function FormulaireConnexion() {
   const [etat, action, enCours] = useActionState<EtatConnexion, FormData>(seConnecter, {});

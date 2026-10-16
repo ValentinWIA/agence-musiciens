@@ -1,7 +1,5 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { Cormorant_Garamond, Geist, Geist_Mono } from "next/font/google";
-import { Logo } from "@/components/logo";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -32,13 +30,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${geistSans.variable} ${geistMono.variable} ${cormorant.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        <header className="border-b border-foreground/10 bg-card/60 backdrop-blur-sm">
-          <div className="mx-auto w-full max-w-6xl px-4 py-3">
-            <Link href="/tableau-de-bord" aria-label="AM Management, tableau de bord">
-              <Logo />
-            </Link>
-          </div>
-        </header>
+        {/* L'en-tête est dans (public)/layout.tsx, le menu dans (connecte)/layout.tsx. */}
         {children}
       </body>
     </html>

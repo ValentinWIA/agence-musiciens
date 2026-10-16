@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { listerFichesMusiciens } from "@/lib/engagements";
 import { verifierSession } from "@/lib/session";
 import { GrilleMusiciens } from "../musiciens/grille-musiciens";
-import { seDeconnecter } from "../actions";
+import { seDeconnecter } from "@/app/actions";
 
 export default function PageTableauDeBord() {
   return (
