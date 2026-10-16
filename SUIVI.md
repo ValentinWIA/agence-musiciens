@@ -10,7 +10,7 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 
 ## État de reprise
 
-*Dernière mise à jour : 16 octobre 2026 (fin de semaine 1 : jours fériés, devises)*
+*Dernière mise à jour : 16 octobre 2026 (PR n° 7 fusionnée ; fiches musiciens en cours)*
 
 - **Fait** : cadrage (SPEC), comptes, squelette Next.js, dépôt GitHub public, site en ligne
   (https://agence-musiciens.vercel.app), région `fra1`, base Neon reliée à Vercel.
@@ -150,6 +150,17 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   Cas ajouté au jeu : récital d'Inès à Gaveau le 8 mai 2027. **Gestes à faire en prévisualisation** : fiche du 8 mai
   → « jour férié : Victoire 1945 » ; duo de Genève en CHF → « ≈ … € (taux BCE du …) » ; engagement en EUR → pas de
   conversion ; mauvais mot de passe → plus de `[auth][error]` dans les journaux Vercel.
+- **Reprise du 16/10 (après /clear)** — lire d'abord `AGENTS.md` (la boucle), puis ceci :
+  - **PR n° 7 `fin-semaine-1` fusionnée** (jours fériés, devises, filtre `CredentialsSignin` par `type`) ; gestes 1 à 4
+    validés en prévisualisation. Reste : 2 gestes en production (CHF → €, plus de trace après un mauvais mot de passe).
+  - **En cours : branche `fiches-musiciens`** (locale, **pas encore poussée**). Cadrage validé `docs/fiches-musiciens.md`
+    (choix : cachet moyen par devise, visible du musicien, pas de photo fictive, nom/e-mail/instrument non modifiables).
+    Maquette validée `docs/maquettes/fiches-musiciens.html` (grille de portraits, clic → fiche ; Hugo = cas vide).
+    M1 ✅ commit `b43e7a3` : colonnes `biographie`, `repertoire`, `photo_chemin` (migration 0008), bios fictives.
+    **Prochaine action** : demander l'accord, pousser la branche (preuve M1 : déploiement « Ready »), puis M2.
+  - **Ordre décidé** (tout avant la semaine 2) : fiches musiciens (+ tuile « Nouvel engagement » retirée) → menu
+    latéral (7) → KPI et calendrier (accueil : 7 jours à venir) → plusieurs agents (6) à cadrer → semaine 2.
+  - `docs/flux-de-nuit.md` : brouillon du cadrage de la semaine 2, non commité, à valider plus tard.
 - **Quota** : semaine à 79 % le 12/10 (réinitialisation le 14/10 à 11 h 59). Sessions courtes, `/clear` entre étapes,
   explications courtes.
 - **Limite connue** : changer le mot de passe ne ferme pas les sessions déjà ouvertes (elles expirent seules).
