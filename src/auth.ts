@@ -37,7 +37,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   // Sans ce filtre, Auth.js l'écrit en erreur et Sentry (semaine 2) le remonterait à chaque faute de frappe.
   logger: {
     error(erreur) {
-      if (erreur.name === "CredentialsSignin") return;
+      // `type` et non `name` : la construction raccourcit les noms de classes (`name` y devient « z »).
+      if ("type" in erreur && erreur.type === "CredentialsSignin") return;
       console.error(erreur);
     },
   },
