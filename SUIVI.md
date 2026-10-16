@@ -303,6 +303,9 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
        statut en haut, puis musiciens, lieu, cachet), sans défilement horizontal ; le tableau reste sur ordinateur.
        Pour l'instant, seules les colonnes « Musiciens » et « Lieu » ont été échangées (le statut reste caché à droite
        sur téléphone).
+  - **Renommer « AM Management » en « CM Management »** (demandé le 17/10, les initiales de Claire Morel) : logo
+    (`src/components/logo.tsx`), titre et libellés des trois `layout.tsx`, puis `docs/` (design, présentation,
+    maquettes). Fichiers partagés : sur une petite branche à part, entre deux fonctionnalités (après le calendrier).
   - Améliorations possibles : permettre à l'agent d'annuler une invitation (faute de frappe dans l'adresse) ;
     lien de réinitialisation généré par l'agent pour un musicien (Resend ne lui écrit pas sans nom de domaine).
   - **Chaque déploiement de prévisualisation recharge le jeu de données** (`vercel-build`) : les essais faits à la main
