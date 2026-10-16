@@ -159,7 +159,7 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
     ou ajouter plus tard une table `journal` consultable par l'agent.
   - **Améliorations futures (demandées par l'humain le 12/10)** :
     1. **Fiches musiciens** : photo, biographie, répertoire, cachet moyen (divisé par 2 pour un duo, par le nombre
-       de musiciens en général).
+       de musiciens en général), **récap de ses engagements** (à venir, passés, par statut).
     2. **Indicateurs (KPI)** : nombre de contrats sur l'année ; frise du nombre d'engagements par stade
        (demande → option → contrat envoyé → confirmé → joué, annulé).
     3. **Design global** à poursuivre (pistes non faites dans `docs/design.md` : fiche, formulaire, téléphone, favicon).
