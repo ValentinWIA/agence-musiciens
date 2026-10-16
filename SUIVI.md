@@ -10,7 +10,7 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 
 ## État de reprise
 
-*Dernière mise à jour : 16 octobre 2026 (fiches musiciens : M1 à M5 faites, pull request ouverte)*
+*Dernière mise à jour : 16 octobre 2026 (fiches musiciens fusionnées ; engagements « En cours / Tous » : plan)*
 
 - **Fait** : cadrage (SPEC), comptes, squelette Next.js, dépôt GitHub public, site en ligne
   (https://agence-musiciens.vercel.app), région `fra1`, base Neon reliée à Vercel.
@@ -185,9 +185,12 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
     l'humain a commité lui-même). Signalé dans le README ; à remplacer avant tout usage réel.
     **Gestes validés le 16/10** (« Portraits envoyés : 4. » dans les journaux ; visages dans la grille et les fiches ;
     Louis sur la photo d'Anna → introuvable ; retrait → initiales).
-    **Prochaine action** : pull request `fiches-musiciens` → `main`, fusion par l'humain, vérification en production
-    (migrations 0008 et 0009 ; le jeu de données n'est pas rechargé en production : sans rechargement, pas de
-    biographies, notes ni portraits fictifs). Puis branche `engagements-en-cours`.
+    **PR n° 8 fusionnée le 16/10** (vérifications vertes). En production, le jeu de données n'est pas rechargé :
+    pas de biographies, notes ni portraits fictifs tant qu'on ne relance pas le chargement (avec le jeton Blob).
+    **Samuel Vrignon supprimé de la production** le 16/10 par l'humain (éditeur SQL Neon, en une transaction : son
+    engagement d'essai « Récital piano » du 05/11, puis ses réinitialisations, puis le compte, rôle musicien exigé).
+    Leçon : la clé étrangère `engagement_musiciens → utilisateurs` refuse de supprimer un musicien encore engagé.
+  - **En cours : branche `engagements-en-cours`** (depuis `main`, 16/10) : plan en tranches à valider.
     **Ancienne prochaine action (pour mémoire)** : M5 (photos ; 4 portraits générés avec Canva, choisis par l'humain, dans `scripts/portraits/`).
   - **Ordre décidé** (tout avant la semaine 2) : fiches musiciens (+ tuile « Nouvel engagement » retirée) →
     **engagements « En cours / Tous »** (branche `engagements-en-cours`, depuis `main`) → menu
@@ -214,8 +217,7 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   explications courtes.
 - **Limite connue** : changer le mot de passe ne ferme pas les sessions déjà ouvertes (elles expirent seules).
 - **Reste à faire (côté humain)** : créer le compte UptimeRobot.
-  **Supprimer « Samuel Vrignon » des musiciens en production** (demandé le 16/10), lors de la prochaine mise en
-  production : c'est l'humain qui lance la commande (garde-fou de Claude Code), après confirmation de la ligne visée.
+  ✅ « Samuel Vrignon » supprimé des musiciens en production (16/10).
   **Brancher un vrai nom de domaine sur Resend** (noté le 16/10) : sans domaine vérifié, Resend n'écrit qu'à
   l'adresse du propriétaire du compte, donc les courriels d'invitation et de réinitialisation n'arrivent pas aux
   musiciens (leur lien est seulement affiché à l'agent). Étapes : acheter un domaine, l'ajouter dans Resend,
