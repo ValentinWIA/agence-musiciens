@@ -10,7 +10,7 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 
 ## État de reprise
 
-*Dernière mise à jour : 16 octobre 2026 (fiches musiciens : M1 à M5a faites, M5b en attente de portraits)*
+*Dernière mise à jour : 16 octobre 2026 (fiches musiciens : M1 à M5 faites, pull request ouverte)*
 
 - **Fait** : cadrage (SPEC), comptes, squelette Next.js, dépôt GitHub public, site en ligne
   (https://agence-musiciens.vercel.app), région `fra1`, base Neon reliée à Vercel.
@@ -178,10 +178,16 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
     privé, route protégée `/musiciens/[id]/photo` (`lireCheminPhoto`, refus journalisé), adresse avec empreinte du
     chemin (`?v=`) pour recharger une photo remplacée, photo sur la fiche et la grille. **Gestes 1 à 6 validés le
     16/10** (envoi, remplacement, faux JPEG, plus de 2 Mo, Louis sur la photo d'Anna → introuvable, retrait).
-    **M5b bloquée** : les 4 images déposées le 16/10 (racine du dépôt, non commitées) sont des **photos de banques
-    d'images** (filigranes Unsplash+ et Dreamstime/Depositphotos visibles), donc de vraies personnes, sous licence non
-    acquise : refusées (règle « aucune donnée de vraie personne », point 9 du cadrage). À remplacer par 4 portraits
-    **générés par IA**.
+    M5b ✅ (commit `30ac6b1`, fait par l'humain) : portraits de démonstration (`scripts/portraits/<clé>.jpeg`) envoyés
+    au stockage privé par le jeu de données, à des chemins fixes (`musiciens/demo/…`), remplacés à chaque rechargement.
+    **Écart assumé** : ce sont des **photos de banques d'images** (filigranes visibles), pas des portraits générés ;
+    signalé par l'IA, **gardées par décision de l'humain** le 16/10 (le garde-fou de Claude Code a refusé de les publier,
+    l'humain a commité lui-même). Signalé dans le README ; à remplacer avant tout usage réel.
+    **Gestes validés le 16/10** (« Portraits envoyés : 4. » dans les journaux ; visages dans la grille et les fiches ;
+    Louis sur la photo d'Anna → introuvable ; retrait → initiales).
+    **Prochaine action** : pull request `fiches-musiciens` → `main`, fusion par l'humain, vérification en production
+    (migrations 0008 et 0009 ; le jeu de données n'est pas rechargé en production : sans rechargement, pas de
+    biographies, notes ni portraits fictifs). Puis branche `engagements-en-cours`.
     **Ancienne prochaine action (pour mémoire)** : M5 (photos ; 4 portraits générés avec Canva, choisis par l'humain, dans `scripts/portraits/`).
   - **Ordre décidé** (tout avant la semaine 2) : fiches musiciens (+ tuile « Nouvel engagement » retirée) →
     **engagements « En cours / Tous »** (branche `engagements-en-cours`, depuis `main`) → menu

@@ -38,6 +38,8 @@ Décidé le 16/10/2026 : modifiable par l'agent **et** par le musicien ; un musi
    personne), choisis par l'humain, rangés dans `scripts/portraits/`. Le jeu de données les envoie dans le stockage
    privé à des chemins fixes (remplacés à chaque rechargement, pas d'orphelins) ; ils passent par la même route
    protégée que les vraies photos. Le README le signale.
+   *(Écart du 16/10)* : les portraits retenus sont finalement des **photos de banques d'images**, gardées par décision
+   de l'humain pour la démo ; à remplacer par des portraits générés avant tout usage réel.
 
 **Cas limites** :
 - musicien sans engagement → récap vide et cachet moyen « — » ;
