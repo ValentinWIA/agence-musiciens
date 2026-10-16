@@ -10,7 +10,7 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 
 ## État de reprise
 
-*Dernière mise à jour : 16 octobre 2026 (menu latéral et colonnes des engagements fusionnés)*
+*Dernière mise à jour : 16 octobre 2026 (indicateurs de la saison validés en prévisualisation)*
 
 - **Fait** : cadrage (SPEC), comptes, squelette Next.js, dépôt GitHub public, site en ligne
   (https://agence-musiciens.vercel.app), région `fra1`, base Neon reliée à Vercel.
@@ -229,11 +229,21 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
     « Lieu » (le titre du concert reste avec le lieu), car sur téléphone on ne voyait que la date et le lieu ;
     « date passée » sous la date (colonne plus étroite). Solution rapide choisie par l'humain ; les cartes sur
     téléphone sont notées pour plus tard (amélioration n° 8). Gestes validés sur la prévisualisation le 16/10 ;
-    **PR n° 11 fusionnée le 16/10**. Reste : gestes en production.
-    **Prochaine action** : renommer le compte « Agent » en production (nom fictif, avec accord), puis KPI et
-    calendrier (améliorations n° 2 et 5), avec la boucle d'`AGENTS.md`.
-    **À faire après la fusion** (demande de l'humain du 16/10) : le compte de l'agent s'appelle « Agent », d'où
-    « Agent / AGENT » en bas du menu. Lui donner un nom fictif en production (une ligne de `utilisateurs`), avec accord.
+    **PR n° 11 fusionnée le 16/10**, gestes validés en production le 16/10.
+  - **✅ Agent renommé** en production le 16/10 : « Agent » → **Claire Morel** (nom fictif), par l'humain dans
+    l'éditeur SQL de Neon (branche `main`, `UPDATE` d'une ligne de `utilisateurs`). Le nom est copié dans le cookie
+    à la connexion : il a fallu se déconnecter et se reconnecter. Vérifié dans le menu.
+  - **✅ Indicateurs (amélioration n° 2)**, branche `indicateurs` (depuis `main`, 16/10). Cadrage validé : saison
+    septembre → août (et non l'année civile), rangée par **date du concert**, calculée à l'heure du lieu (une date
+    approximative est enregistrée à minuit locale : « automne 2026 » à Paris = 31 août en UTC). Contrat = contrat
+    envoyé, confirmé, joué, facturé ou payé (bénévole compris, annulé exclu). Frise des 7 statuts + annulé à part,
+    sur la même saison ; chaque pastille mène à `/engagements?statut=…&periode=tous`.
+    K1 `src/lib/indicateurs.ts` (`saisonDe`, `compterIndicateurs`, 7 tests, 164 au total) ; K2 bloc
+    `tableau-de-bord/indicateurs.tsx` + requête `listerPourIndicateurs()`. Gestes 1 à 7 validés en prévisualisation
+    le 16/10 (17 contrats ; 9 / 6 / 4 / 8 / 4 / 1 / 0, annulé 1 ; liens ; téléphone ; Louis sans indicateurs).
+    Limite connue : la liste des engagements n'a pas de filtre de saison (un clic montre toutes les saisons).
+    Reste : pull request, fusion, gestes en production.
+    **Prochaine action** : calendrier (amélioration n° 5), avec la boucle d'`AGENTS.md`.
     **Ancienne prochaine action (pour mémoire)** : M5 (photos ; 4 portraits générés avec Canva, choisis par l'humain, dans `scripts/portraits/`).
   - **Ordre décidé** (tout avant la semaine 2) : fiches musiciens (+ tuile « Nouvel engagement » retirée) →
     **engagements « En cours / Tous »** (branche `engagements-en-cours`, depuis `main`) → menu
@@ -273,7 +283,7 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
     une à la fois, chacune avec la boucle d'`AGENTS.md` (ordre : fiches musiciens + point 4, menu latéral (7), puis KPI et calendrier) :
     1. **Fiches musiciens** : photo, biographie, répertoire, cachet moyen (divisé par 2 pour un duo, par le nombre
        de musiciens en général), **récap de ses engagements** (à venir, passés, par statut).
-    2. **Indicateurs (KPI)** : nombre de contrats sur l'année ; frise du nombre d'engagements par stade
+    2. ✅ **Indicateurs (KPI)** : nombre de contrats sur l'année ; frise du nombre d'engagements par stade
        (demande → option → contrat envoyé → confirmé → joué, annulé).
     3. **Design global** à poursuivre (pistes non faites dans `docs/design.md` : fiche, formulaire, téléphone, favicon).
     4. **« Nouvel engagement »** : retirer la tuile du tableau de bord ; le bouton existe déjà sur la page des
