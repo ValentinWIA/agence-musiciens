@@ -158,7 +158,7 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   - Vercel Hobby ne garde les journaux qu'environ une heure : refaire la tentative juste avant la démo,
     ou ajouter plus tard une table `journal` consultable par l'agent.
   - **Améliorations futures (demandées par l'humain le 12/10)** — **décidé le 16/10 : toutes faites avant la semaine 2**,
-    une à la fois, chacune avec la boucle d'`AGENTS.md` (ordre : fiches musiciens + point 4, puis KPI et calendrier) :
+    une à la fois, chacune avec la boucle d'`AGENTS.md` (ordre : fiches musiciens + point 4, menu latéral (7), puis KPI et calendrier) :
     1. **Fiches musiciens** : photo, biographie, répertoire, cachet moyen (divisé par 2 pour un duo, par le nombre
        de musiciens en général), **récap de ses engagements** (à venir, passés, par statut).
     2. **Indicateurs (KPI)** : nombre de contrats sur l'année ; frise du nombre d'engagements par stade
@@ -173,6 +173,9 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
        Gros chantier : 3ᵉ rôle dans Auth.js, lien agent ↔ musicien en base (migration), et tous les contrôles
        d'accès côté serveur à revoir (un agent ne doit pas ouvrir l'engagement d'un autre : même risque d'IDOR).
        À cadrer avant les KPI (point 2), qui devront être calculés par agent et pour l'agence.
+    7. **Menu latéral à gauche, toujours présent** (demandé le 16/10) : liens vers les pages selon le rôle
+       (tableau de bord, engagements, musiciens ou « Ma fiche », calendrier, invitations…) et **déconnexion
+       possible depuis toutes les pages**, pas seulement le tableau de bord. Sur téléphone : menu repliable.
   - Améliorations possibles : permettre à l'agent d'annuler une invitation (faute de frappe dans l'adresse) ;
     lien de réinitialisation généré par l'agent pour un musicien (Resend ne lui écrit pas sans nom de domaine).
   - **Chaque déploiement de prévisualisation recharge le jeu de données** (`vercel-build`) : les essais faits à la main
