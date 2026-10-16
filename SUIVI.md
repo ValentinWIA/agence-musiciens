@@ -10,7 +10,7 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 
 ## État de reprise
 
-*Dernière mise à jour : 16 octobre 2026 (PR n° 7 fusionnée ; fiches musiciens en cours)*
+*Dernière mise à jour : 16 octobre 2026 (fiches musiciens : M1 à M3c faites, M4 à suivre)*
 
 - **Fait** : cadrage (SPEC), comptes, squelette Next.js, dépôt GitHub public, site en ligne
   (https://agence-musiciens.vercel.app), région `fra1`, base Neon reliée à Vercel.
@@ -153,11 +153,22 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 - **Reprise du 16/10 (après /clear)** — lire d'abord `AGENTS.md` (la boucle), puis ceci :
   - **PR n° 7 `fin-semaine-1` fusionnée** (jours fériés, devises, filtre `CredentialsSignin` par `type`) ; gestes 1 à 4
     validés en prévisualisation. Reste : 2 gestes en production (CHF → €, plus de trace après un mauvais mot de passe).
-  - **En cours : branche `fiches-musiciens`** (locale, **pas encore poussée**). Cadrage validé `docs/fiches-musiciens.md`
-    (choix : cachet moyen par devise, visible du musicien, pas de photo fictive, nom/e-mail/instrument non modifiables).
-    Maquette validée `docs/maquettes/fiches-musiciens.html` (grille de portraits, clic → fiche ; Hugo = cas vide).
-    M1 ✅ commit `b43e7a3` : colonnes `biographie`, `repertoire`, `photo_chemin` (migration 0008), bios fictives.
-    **Prochaine action** : demander l'accord, pousser la branche (preuve M1 : déploiement « Ready »), puis M2.
+  - **En cours : branche `fiches-musiciens`** (poussée ; prévisualisation
+    https://agence-musiciens-git-fiches-musiciens-valentin-4768.vercel.app). Cadrage `docs/fiches-musiciens.md`, ajouts
+    validés le 16/10 : notes privées de l'agent (point 8), **portraits réalistes générés par IA** pour la démo (point 9,
+    remplace « pas de photo fictive »), cachet moyen **en euros** (taux BCE du jour, repli par devise sans taux),
+    passés : 5 affichés + « Afficher plus ».
+    M1 ✅ migration 0008 jouée en prévisualisation. M2 ✅ `src/lib/musiciens.ts` (règles pures, testées).
+    M3 ✅ pages `/musiciens` (agent) et `/musiciens/[id]` (`lireMusicien` : « introuvable » + « Accès refusé »
+    journalisé), tuiles « Musiciens » / « Ma fiche », tuile « Nouvel engagement » retirée ; 4 gestes validés.
+    M3b (commit `de38685`) : grille des musiciens sur le tableau de bord de l'agent, « Nouvel engagement » depuis une
+    fiche (`?musicien=`, pré-coché), « Inviter » sur `/musiciens`. M3c (commit `e9f7a52`) : `cachetMoyenEnEuros`,
+    `<details>` « Afficher plus ». 138 tests ; vérifications vertes, déploiement réussi.
+    **Gestes à faire (M3b + M3c)** : grille au tableau de bord ; Inès pré-cochée → engagement créé visible dans
+    « À venir » ; « Inviter » ; Louis sans grille ni bouton ; cachet de Louis en un seul « ≈ … € » avec date du taux ;
+    « Afficher plus » sur une fiche à plus de 5 passés.
+    **Prochaine action** : M4 (migration 0009 `notes_agent`, page `/musiciens/[id]/modifier`, action `modifierFiche`),
+    puis M5 (photos ; 4 portraits générés avec Canva, choisis par l'humain, dans `scripts/portraits/`).
   - **Ordre décidé** (tout avant la semaine 2) : fiches musiciens (+ tuile « Nouvel engagement » retirée) → menu
     latéral (7) → KPI et calendrier (accueil : 7 jours à venir) → plusieurs agents (6) à cadrer → semaine 2.
   - `docs/flux-de-nuit.md` : brouillon du cadrage de la semaine 2, non commité, à valider plus tard.
