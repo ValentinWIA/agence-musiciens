@@ -167,7 +167,7 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
     **Gestes à faire (M3b + M3c)** : grille au tableau de bord ; Inès pré-cochée → engagement créé visible dans
     « À venir » ; « Inviter » ; Louis sans grille ni bouton ; cachet de Louis en un seul « ≈ … € » avec date du taux ;
     « Afficher plus » sur une fiche à plus de 5 passés.
-    **Prochaine action** : M4 (migration 0009 `notes_agent`, page `/musiciens/[id]/modifier`, action `modifierFiche`),
+    **Prochaine action** : M3e (voir plus bas), puis M4 (migration 0009 `notes_agent`, page `/musiciens/[id]/modifier`, action `modifierFiche`),
     puis M5 (photos ; 4 portraits générés avec Canva, choisis par l'humain, dans `scripts/portraits/`).
   - **Ordre décidé** (tout avant la semaine 2) : fiches musiciens (+ tuile « Nouvel engagement » retirée) →
     **engagements « En cours / Tous »** (branche `engagements-en-cours`, depuis `main`) → menu
@@ -181,8 +181,8 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
     statut, musicien et recherche inchangés ; même règle pour un musicien (ses engagements). Hors périmètre :
     relances et échéances de paiement (piste pour le flux de nuit, semaine 2).
   - **Couleurs des statuts** (commits `9a06be8`, `985ab0c`, poussés) : gradation rouge (demande) → vert (payé),
-    teintes espacées ; badge pâle avant « confirmé », plein ensuite ; annulé gris barré. Rouge et vert validés ;
-    **à juger** : les teintes intermédiaires sont-elles assez distinctes après correction ?
+    teintes espacées ; badge pâle avant « confirmé », plein ensuite ; annulé gris barré. **Validées** par l'humain
+    le 16/10 en prévisualisation.
   - **M3e validée, à faire** : retirer la tuile « Mes engagements » du tableau de bord du **musicien** (sa fiche
     devient sa page principale) ; lien « Rechercher dans mes engagements → » sur sa fiche. Fiche inchangée pour
     l'agent. Plus tard : décider si le musicien arrive directement sur sa fiche.
