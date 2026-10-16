@@ -10,7 +10,7 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 
 ## État de reprise
 
-*Dernière mise à jour : 16 octobre 2026 (engagements « En cours / Tous » fusionnés et vérifiés en production)*
+*Dernière mise à jour : 16 octobre 2026 (menu latéral : T1 à T4 validées en prévisualisation, pull request ouverte)*
 
 - **Fait** : cadrage (SPEC), comptes, squelette Next.js, dépôt GitHub public, site en ligne
   (https://agence-musiciens.vercel.app), région `fra1`, base Neon reliée à Vercel.
@@ -212,8 +212,17 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
     **PR n° 9 fusionnée le 16/10** (vérifications vertes, commit `23e8b03`). **Gestes validés en production le 16/10**
     (« En cours » par défaut, impayés passés en tête ; « Tous » avec payés et annulés ; « payé » en « En cours » →
     message et « Voir dans Tous »). Les deux cas fictifs de C3 n'y sont pas tant que le jeu n'est pas rechargé.
-    **Prochaine action : menu latéral (7)**, branche `menu-lateral` (depuis `main`, 16/10) ; commencer par la boucle
-    (dix lignes, écran et états, tranches).
+  - **🔄 Menu latéral (7)**, branche `menu-lateral` (depuis `main`, 16/10). Cadrage, écran et plan dans
+    `docs/menu-lateral.md` (commit `a3792f5`). Agent : Tableau de bord · Engagements · Musiciens · Invitations ;
+    musicien : Ma fiche · Mes engagements, et `/tableau-de-bord` le renvoie vers sa fiche (sa page d'accueil).
+    **T1 ✅** (`a42f3d1`) : `liensDuMenu` et `estActif` (`src/lib/menu.ts`), 8 tests (157 au total).
+    **T2 ✅** (`2ebbf52`) : groupes de routes `(connecte)/` (menu) et `(public)/` (logo seul) ; adresses inchangées.
+    **T3 ✅** (`b5cbbae`) : musicien renvoyé vers sa fiche ; bouton de déconnexion du tableau de bord et liens
+    « ← Tableau de bord » retirés. **T4 ✅** (`5101052`) : menu repliable sur téléphone (`<dialog>`, bouton ✕ gardé).
+    **Gestes T2 à T4 validés le 16/10** en prévisualisation.
+    **Reste (T5)** : fusion de la pull request après accord, gestes en production.
+    **À faire après la fusion** (demande de l'humain du 16/10) : le compte de l'agent s'appelle « Agent », d'où
+    « Agent / AGENT » en bas du menu. Lui donner un nom fictif en production (une ligne de `utilisateurs`), avec accord.
     **Ancienne prochaine action (pour mémoire)** : M5 (photos ; 4 portraits générés avec Canva, choisis par l'humain, dans `scripts/portraits/`).
   - **Ordre décidé** (tout avant la semaine 2) : fiches musiciens (+ tuile « Nouvel engagement » retirée) →
     **engagements « En cours / Tous »** (branche `engagements-en-cours`, depuis `main`) → menu
@@ -487,4 +496,6 @@ déconnexion ; `/tableau-de-bord` sans session → renvoi vers la connexion.
 | 12/10/2026 | Règle de conflit : marge ramenée de 4 h à 1 h ; seuls les engagements tenus (confirmé et après) bloquent ; concerts passés comptés ; égalité permise | Choix de l’humain au cadrage F ; deux options sur une même date restent possibles, la première confirmée l’emporte |
 | 12/10/2026 | Trajet toujours estimé en voiture (× 1,3 ÷ 80 km/h) ; plus tard, « confirmer quand même » avec une raison | Trop pessimiste en train ou en avion, mais sûr ; la nuit (pas de transport) fait le cas piégé, une vitesse plus haute l'effacerait ; l'agent connaît les horaires |
 | 16/10/2026 | Plusieurs agents et rôle directeur mis de côté | Hypothèse de développement futur ; un seul agent suffit au projet |
+| 16/10/2026 | Musicien : sa fiche est sa page d'accueil (`/tableau-de-bord` y renvoie) | Son tableau de bord n'avait qu'une tuile, « Ma fiche » |
+| 16/10/2026 | Pages rangées en groupes de routes `(connecte)` et `(public)` ; menu de téléphone en `<dialog>` | Un cadre avec menu pour les seules pages connectées, sans changer les adresses ; Échap, voile et clavier fournis par le navigateur, sans paquet |
 | 11/10/2026 | Table `utilisateurs` limitée à 7 colonnes | Invitations et réinitialisations iront dans des tables séparées ; ajouter une colonne plus tard est peu coûteux |

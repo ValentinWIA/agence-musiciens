@@ -106,3 +106,10 @@ utilise l'élément HTML `<dialog>`, qui gère déjà Échap, le voile et le cla
 - **T4 — Téléphone** : barre ☰ + logo, menu qui glisse, voile, fermeture (lien, voile, Échap), page bloquée derrière.
   Preuve : gestes faits sur un vrai téléphone, ou une fenêtre étroite, en prévisualisation.
 - **T5 — Livraison** : build et lint, pull request, fusion après accord, vérification en production, `SUIVI.md`.
+
+## 4. Écarts au plan, validés pendant la construction
+
+- **Deux groupes au lieu d'un** (T2) : `(public)/` porte la bande du logo, sinon le logo serait apparu deux fois sur
+  les pages connectées (en haut de la page et en haut du menu).
+- **Bouton ✕** dans le menu du téléphone (T4) : un téléphone n'a pas de touche Échap ; gardé par l'humain le 16/10.
+- **« ← Tableau de bord » gardé** sur la page « Musicien introuvable » : c'est un lien pour sortir d'une erreur.
