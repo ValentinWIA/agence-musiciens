@@ -8,16 +8,22 @@ import type { Statut } from "./engagements";
 export const BIOGRAPHIE_MAX = 2000; // caractères
 export const REPERTOIRE_MAX_LIGNES = 100;
 export const LIGNE_REPERTOIRE_MAX = 200; // caractères : une œuvre, pas un texte collé sur une seule ligne
+export const NOTES_AGENT_MAX = 2000; // caractères
 
-export type ErreursFiche = { biographie?: string[]; repertoire?: string[] };
+export type ErreursFiche = { biographie?: string[]; repertoire?: string[]; notesAgent?: string[] };
 
 // Texte vide → null (rien à afficher). Répertoire : une œuvre par ligne, lignes vides retirées.
+// Notes de l'agent : absentes de la saisie (musicien) → absentes du résultat, donc jamais écrites.
 export function verifierFiche(saisie: {
   biographie: string;
   repertoire: string;
-}): { erreurs: ErreursFiche } | { fiche: { biographie: string | null; repertoire: string | null } } {
+  notesAgent?: string;
+}):
+  | { erreurs: ErreursFiche }
+  | { fiche: { biographie: string | null; repertoire: string | null; notesAgent?: string | null } } {
   const erreurs: ErreursFiche = {};
   const biographie = saisie.biographie.trim();
+  const notesAgent = saisie.notesAgent?.trim();
   const lignes = saisie.repertoire
     .split(/\r?\n/)
     .map((l) => l.trim())
@@ -30,8 +36,12 @@ export function verifierFiche(saisie: {
   else if (lignes.some((l) => l.length > LIGNE_REPERTOIRE_MAX))
     erreurs.repertoire = [`Une œuvre par ligne, ${LIGNE_REPERTOIRE_MAX} caractères au plus par ligne.`];
 
-  if (erreurs.biographie || erreurs.repertoire) return { erreurs };
-  return { fiche: { biographie: biographie || null, repertoire: lignes.join("\n") || null } };
+  if (notesAgent !== undefined && notesAgent.length > NOTES_AGENT_MAX)
+    erreurs.notesAgent = [`${NOTES_AGENT_MAX} caractères au plus (actuellement ${notesAgent.length}).`];
+
+  if (erreurs.biographie || erreurs.repertoire || erreurs.notesAgent) return { erreurs };
+  const fiche = { biographie: biographie || null, repertoire: lignes.join("\n") || null };
+  return { fiche: notesAgent === undefined ? fiche : { ...fiche, notesAgent: notesAgent || null } };
 }
 
 // Photo : comme pour les PDF, seul le début du contenu compte (ni l'extension ni le type annoncé par le navigateur).

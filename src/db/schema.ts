@@ -19,6 +19,7 @@ export const utilisateurs = pgTable("utilisateurs", {
   biographie: text("biographie"),
   repertoire: text("repertoire"),
   photoChemin: text("photo_chemin"), // chemin dans le stockage privé : jamais envoyé au navigateur
+  notesAgent: text("notes_agent"), // lues et écrites par l'agent seulement : jamais lues pour un musicien
   creeLe: timestamp("cree_le", { withTimezone: true }).notNull().defaultNow(),
 });
 

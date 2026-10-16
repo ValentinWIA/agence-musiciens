@@ -4,6 +4,7 @@ import {
   cachetMoyen,
   cachetMoyenEnEuros,
   initiales,
+  NOTES_AGENT_MAX,
   PHOTO_MAX_OCTETS,
   recapEngagements,
   REPERTOIRE_MAX_LIGNES,
@@ -44,6 +45,21 @@ describe("vérification de la fiche", () => {
         repertoire: ["Une œuvre par ligne, 200 caractères au plus par ligne."],
       },
     });
+  });
+
+  it("notes de l'agent : 2 000 caractères acceptés, un de plus refusé ; vides → null (limite et cas vide)", () => {
+    expect(verifierFiche({ biographie: "", repertoire: "", notesAgent: "a".repeat(NOTES_AGENT_MAX) })).toHaveProperty(
+      "fiche.notesAgent",
+      "a".repeat(NOTES_AGENT_MAX),
+    );
+    expect(verifierFiche({ biographie: "", repertoire: "", notesAgent: "a".repeat(NOTES_AGENT_MAX + 1) })).toEqual({
+      erreurs: { notesAgent: ["2000 caractères au plus (actuellement 2001)."] },
+    });
+    expect(verifierFiche({ biographie: "", repertoire: "", notesAgent: "  " })).toHaveProperty("fiche.notesAgent", null);
+  });
+
+  it("sans notes dans la saisie (cas du musicien), le résultat n'en contient pas : rien ne les écrase", () => {
+    expect(verifierFiche({ biographie: "Bio", repertoire: "" })).not.toHaveProperty("fiche.notesAgent");
   });
 });
 
