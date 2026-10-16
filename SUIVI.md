@@ -242,7 +242,7 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
     `tableau-de-bord/indicateurs.tsx` + requête `listerPourIndicateurs()`. Gestes 1 à 7 validés en prévisualisation
     le 16/10 (17 contrats ; 9 / 6 / 4 / 8 / 4 / 1 / 0, annulé 1 ; liens ; téléphone ; Louis sans indicateurs).
     Limite connue : la liste des engagements n'a pas de filtre de saison (un clic montre toutes les saisons).
-    Reste : pull request, fusion, gestes en production.
+    **PR n° 12 fusionnée le 16/10** ; **gestes validés en production le 16/10** par l'humain.
     **Prochaine action** : calendrier (amélioration n° 5), avec la boucle d'`AGENTS.md`.
     **Ancienne prochaine action (pour mémoire)** : M5 (photos ; 4 portraits générés avec Canva, choisis par l'humain, dans `scripts/portraits/`).
   - **Ordre décidé** (tout avant la semaine 2) : fiches musiciens (+ tuile « Nouvel engagement » retirée) →
