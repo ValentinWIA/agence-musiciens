@@ -5,9 +5,11 @@ import { BadgeStatut } from "@/components/badge-statut";
 import { buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formaterMontant } from "@/lib/argent";
+import { convertirEnEur, lireTaux } from "@/lib/change";
 import { avertissementConflits, trouverConflits } from "@/lib/conflit";
 import { TRANSITIONS, transitionsProposees } from "@/lib/cycle-de-vie";
 import { formaterDebut } from "@/lib/dates";
+import { ferieDuConcert } from "@/lib/feries";
 import { lireAgendaPourConfirmer, lireEngagement, lirePiecesJointes } from "@/lib/engagements";
 import { formaterTaille, LIBELLES_TYPE_PIECE } from "@/lib/pieces-jointes";
 import { verifierSession } from "@/lib/session";
@@ -50,7 +52,17 @@ async function FicheEngagement({
     estAgent && (engagement.statut === "option" || engagement.statut === "contrat_envoye")
       ? await avertissementAgenda(engagement.id)
       : null;
-  const pieces = await lirePiecesJointes(engagement.id);
+  const { devise, cachet } = engagement;
+  const [pieces, ferie, taux] = await Promise.all([
+    lirePiecesJointes(engagement.id),
+    // Un jour férié n'a de sens que pour une date précise.
+    engagement.precisionDate === "jour" ? ferieDuConcert(engagement.debut, lieu.pays) : null,
+    cachet !== null && devise !== "EUR" ? lireTaux() : null,
+  ]);
+  const enEuros =
+    taux && cachet !== null && devise !== "EUR"
+      ? `≈ ${formaterMontant(convertirEnEur(cachet, devise, taux), "EUR")} (taux BCE du ${formaterJourIso(taux.date)})`
+      : null;
 
   return (
     <Card>
@@ -77,6 +89,7 @@ async function FicheEngagement({
         <dl className="grid grid-cols-[max-content_1fr] gap-x-6 gap-y-3 text-sm">
           <Ligne titre="Date">
             {formaterDebut(engagement.debut, engagement.precisionDate, lieu.pays)}
+            {ferie && <span className="text-amber-700 dark:text-amber-300"> — jour férié : {ferie}</span>}
             {engagement.dureeMinutes && ` (durée ${formaterDuree(engagement.dureeMinutes)})`}
           </Ligne>
           <Ligne titre="Lieu">
@@ -93,7 +106,8 @@ async function FicheEngagement({
           </Ligne>
           <Ligne titre="Musiciens">{engagement.musiciens.map((m) => `${m.nom} (${m.instrument})`).join(", ")}</Ligne>
           <Ligne titre="Cachet">
-            {engagement.cachet === null ? "à définir" : formaterMontant(engagement.cachet, engagement.devise)}
+            {cachet === null ? "à définir" : formaterMontant(cachet, devise)}
+            {enEuros && <span className="text-muted-foreground"> {enEuros}</span>}
           </Ligne>
           <Ligne titre="Programme">{engagement.programme ?? "à définir"}</Ligne>
           {engagement.notes && <Ligne titre="Notes">{engagement.notes}</Ligne>}
@@ -155,6 +169,11 @@ function Ligne({ titre, children }: { titre: string; children: React.ReactNode }
       <dd>{children}</dd>
     </>
   );
+}
+
+// « 2026-10-15 » → « 15/10/2026 »
+function formaterJourIso(jour: string) {
+  return jour.split("-").reverse().join("/");
 }
 
 function formaterJour(date: Date) {

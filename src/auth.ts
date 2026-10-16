@@ -33,6 +33,14 @@ const identifiants = z.object({
 export const { handlers, auth, signIn, signOut } = NextAuth({
   session: { strategy: "jwt" }, // la session vit dans un cookie signé avec AUTH_SECRET
   pages: { signIn: "/" },
+  // Un mauvais mot de passe n'est pas une erreur du serveur : notre ligne « Connexion refusée » suffit.
+  // Sans ce filtre, Auth.js l'écrit en erreur et Sentry (semaine 2) le remonterait à chaque faute de frappe.
+  logger: {
+    error(erreur) {
+      if (erreur.name === "CredentialsSignin") return;
+      console.error(erreur);
+    },
+  },
   providers: [
     Credentials({
       credentials: { email: {}, motDePasse: {} },
