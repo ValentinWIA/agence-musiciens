@@ -105,6 +105,11 @@ async function FicheMusicien({ params }: { params: Promise<{ id: string }> }) {
                     ))}
                 </ul>
               </Bloc>
+              {!estAgent && (
+                <Link href="/engagements" className="justify-self-start text-sm underline">
+                  Rechercher dans mes engagements →
+                </Link>
+              )}
             </>
           )}
 
