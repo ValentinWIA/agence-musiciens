@@ -161,3 +161,6 @@ envoyés par courriel). Pour travailler sur sa machine : `vercel env pull .env.l
 - `npm run donnees` remplit la base désignée par `DATABASE_URL_UNPOOLED`. Les identifiants fictifs sont fixes :
   sessions et adresses des fiches restent valables après un rechargement. Le compte de l'agent n'est pas touché.
   Les fichiers PDF déjà déposés ne sont pas effacés du stockage.
+- Les portraits des musiciens fictifs (`scripts/portraits/`) sont envoyés au stockage privé par le jeu de données, à
+  des chemins fixes remplacés à chaque rechargement. **Ce sont des photos de banques d'images** (filigranes visibles),
+  gardées pour la démonstration par décision de l'auteur : à remplacer par des portraits générés avant tout usage réel.
