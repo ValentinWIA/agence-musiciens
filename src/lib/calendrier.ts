@@ -21,6 +21,19 @@ export function jourLocal(date: Date, pays: string): Jour {
     .format(date);
 }
 
+// « 20 h 00 », à l'heure du lieu.
+export function heureLocale(date: Date, pays: string): string {
+  return new Intl.DateTimeFormat("fr-FR", { hour: "2-digit", minute: "2-digit", timeZone: fuseauDuPays(pays) })
+    .format(date)
+    .replace(":", " h ");
+}
+
+// « novembre 2026 »
+export function libelleMois(m: Mois): string {
+  return new Intl.DateTimeFormat("fr-FR", { month: "long", year: "numeric", timeZone: "UTC" })
+    .format(new Date(Date.UTC(m.annee, m.mois - 1, 15)));
+}
+
 function moisDuJour(jour: Jour): Mois {
   const [annee, mois] = jour.split("-").map(Number);
   return { annee, mois };

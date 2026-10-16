@@ -2,7 +2,9 @@ import { describe, expect, it } from "vitest";
 import {
   bornesDuMois,
   casesDuMois,
+  heureLocale,
   jourLocal,
+  libelleMois,
   lireMois,
   moisVoisin,
   rangerPourMois,
@@ -20,6 +22,14 @@ describe("jourLocal", () => {
   it("compte à l'heure du lieu : Tokyo le 3 à 1 h (le 2 en UTC) est le 3", () => {
     expect(jourLocal(new Date("2026-12-02T16:00:00Z"), "Japon")).toBe("2026-12-03");
     expect(jourLocal(new Date("2026-12-02T16:00:00Z"), "France")).toBe("2026-12-02");
+  });
+});
+
+describe("heureLocale et libelleMois", () => {
+  it("écrit l'heure du lieu et le mois en toutes lettres", () => {
+    expect(heureLocale(new Date("2026-12-02T16:00:00Z"), "Japon")).toBe("01 h 00");
+    expect(heureLocale(new Date("2026-11-16T19:00:00Z"), "France")).toBe("20 h 00");
+    expect(libelleMois({ annee: 2026, mois: 11 })).toBe("novembre 2026");
   });
 });
 

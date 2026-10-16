@@ -1,5 +1,5 @@
 import { createHash } from "node:crypto";
-import { and, asc, desc, eq, gte, ilike, inArray, ne, or, sql, type SQL } from "drizzle-orm";
+import { and, asc, desc, eq, gte, ilike, inArray, lt, ne, or, sql, type SQL } from "drizzle-orm";
 import { db } from "@/db";
 import { STATUTS_TENUS, type ConcertSitue } from "@/lib/conflit";
 import { estEnCours } from "@/lib/cycle-de-vie";
@@ -89,6 +89,41 @@ export async function listerPourIndicateurs() {
     .select({ statut: engagements.statut, debut: engagements.debut, pays: lieux.pays })
     .from(engagements)
     .innerJoin(lieux, eq(engagements.lieuId, lieux.id));
+}
+
+// Pour le calendrier : les engagements non annulés qui commencent entre deux instants, avec leurs musiciens.
+// Même règle de visibilité que la liste : un musicien ne reçoit que les siens.
+export async function listerPourCalendrier(lecteur: Lecteur, depuis: Date, jusqua: Date) {
+  const conditions: SQL[] = [gte(engagements.debut, depuis), lt(engagements.debut, jusqua), ne(engagements.statut, "annule")];
+  if (lecteur.role === "musicien") {
+    const sesEngagements = db
+      .select({ id: engagementMusiciens.engagementId })
+      .from(engagementMusiciens)
+      .where(eq(engagementMusiciens.musicienId, lecteur.id));
+    conditions.push(inArray(engagements.id, sesEngagements));
+  }
+  const lignes = await db
+    .select({
+      id: engagements.id,
+      titre: engagements.titre,
+      debut: engagements.debut,
+      precisionDate: engagements.precisionDate,
+      statut: engagements.statut,
+      lieu: lieux.nom,
+      ville: lieux.ville,
+      pays: lieux.pays,
+    })
+    .from(engagements)
+    .innerJoin(lieux, eq(engagements.lieuId, lieux.id))
+    .where(and(...conditions));
+  const musiciens = lignes.length
+    ? await db
+        .select({ engagementId: engagementMusiciens.engagementId, nom: utilisateurs.nom })
+        .from(engagementMusiciens)
+        .innerJoin(utilisateurs, eq(engagementMusiciens.musicienId, utilisateurs.id))
+        .where(inArray(engagementMusiciens.engagementId, lignes.map((l) => l.id)))
+    : [];
+  return lignes.map((l) => ({ ...l, musiciens: musiciens.filter((m) => m.engagementId === l.id).map((m) => m.nom) }));
 }
 
 export async function listerLieux() {

@@ -5,19 +5,21 @@ const agent = { id: "a1", role: "admin" as const };
 const louis = { id: "m1", role: "musicien" as const };
 
 describe("liens du menu selon le rôle", () => {
-  it("donne à l'agent ses 4 pages, dans l'ordre", () => {
+  it("donne à l'agent ses 5 pages, dans l'ordre", () => {
     expect(liensDuMenu(agent).map((l) => l.libelle)).toEqual([
       "Tableau de bord",
       "Engagements",
+      "Calendrier",
       "Musiciens",
       "Invitations",
     ]);
   });
 
-  it("donne au musicien sa fiche (avec son identifiant) et ses engagements", () => {
+  it("donne au musicien sa fiche (avec son identifiant), ses engagements et le calendrier", () => {
     expect(liensDuMenu(louis)).toEqual([
       { href: "/musiciens/m1", libelle: "Ma fiche" },
       { href: "/engagements", libelle: "Mes engagements" },
+      { href: "/calendrier", libelle: "Calendrier" },
     ]);
   });
 

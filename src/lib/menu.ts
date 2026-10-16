@@ -7,6 +7,7 @@ export function liensDuMenu(utilisateur: { id: string; role: "admin" | "musicien
     return [
       { href: "/tableau-de-bord", libelle: "Tableau de bord" },
       { href: "/engagements", libelle: "Engagements" },
+      { href: "/calendrier", libelle: "Calendrier" },
       { href: "/musiciens", libelle: "Musiciens" },
       { href: "/invitations", libelle: "Invitations" },
     ];
@@ -15,6 +16,7 @@ export function liensDuMenu(utilisateur: { id: string; role: "admin" | "musicien
   return [
     { href: `/musiciens/${utilisateur.id}`, libelle: "Ma fiche" },
     { href: "/engagements", libelle: "Mes engagements" },
+    { href: "/calendrier", libelle: "Calendrier" },
   ];
 }
 
