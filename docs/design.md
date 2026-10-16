@@ -56,5 +56,6 @@ défilement. Première version à 5 % : invisible, jugée trop lisse.
 ## Pistes non faites
 
 - Pages de fiche et de formulaire : seulement retouchées par les réglages communs.
-- Liste des engagements sur téléphone : défilement horizontal encore nécessaire.
+- Liste des engagements sur téléphone : défilement horizontal encore nécessaire. *(16/10 : « Musiciens » passe avant
+  « Lieu » ; à terme, une carte par engagement, voir l'amélioration n° 8 de `SUIVI.md`.)*
 - Logo en image (SVG) et icône d'onglet (favicon) assortie.
