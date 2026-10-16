@@ -10,7 +10,7 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 
 ## État de reprise
 
-*Dernière mise à jour : 17 octobre 2026 (calendrier fusionné, pull request n° 13, et vérifié en production)*
+*Dernière mise à jour : 17 octobre 2026 (calendrier en production ; renommage CM Management : R1 et R2 validés, pull request à ouvrir)*
 
 - **Fait** : cadrage (SPEC), comptes, squelette Next.js, dépôt GitHub public, site en ligne
   (https://agence-musiciens.vercel.app), région `fra1`, base Neon reliée à Vercel.
@@ -261,7 +261,7 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
     jusqu'au 16/01 : décaler les dates). Gestes validés le 17/10. 185 tests. Rien de cassé.
     **PR n° 13 fusionnée le 17/10** ; **gestes validés en production le 17/10** par l'humain.
     En production, le concert du 24/10 n'apparaît qu'après rechargement du jeu de données (étape « photos en production »).
-    **Ensuite (une demande à la fois)** : renommer en « CM Management » (branche à part) ; **photos en production**
+    **Ensuite (une demande à la fois)** : renommer en « CM Management » (🔄 branche `cm-management`, voir plus bas) ; **photos en production**
     (demandé le 17/10, pour un air « fini ») : recharger le jeu de données en production (l'humain lance la commande ;
     efface et recrée engagements, lieux, programmateurs et musiciens fictifs ; compte de l'agent intact). Recommandé
     avant : remplacer les portraits à filigrane de `scripts/portraits/`.
@@ -330,7 +330,9 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
     🔄 Cadrage validé le 17/10, branche `cm-management` : monogramme « CM » ; aussi la carte de connexion et
     l'expéditeur des courriels (« Agence-musiciens » → « CM Management ») ; les PDF de `docs/` gardent l'ancien nom
     (exports figés). Hors périmètre : nouveau logo, domaine, noms du dépôt et du projet Vercel.
-    Tranches : **R1** application (+ test : plus d'« AM Management » dans `src/`) ; **R2** `docs/`.
+    **R1 ✅** (`226efe8`) application + test `src/lib/marque.test.ts` (187 tests) ; gestes validés le 17/10.
+    **R2 ✅** (`089f2cf`) `docs/` (design, menu latéral, présentation, slides, maquette). Rien de cassé.
+    **Prochaine action** : pull request → fusion (accord de l'humain) → gestes en production.
   - Améliorations possibles : permettre à l'agent d'annuler une invitation (faute de frappe dans l'adresse) ;
     lien de réinitialisation généré par l'agent pour un musicien (Resend ne lui écrit pas sans nom de domaine).
   - **Chaque déploiement de prévisualisation recharge le jeu de données** (`vercel-build`) : les essais faits à la main
