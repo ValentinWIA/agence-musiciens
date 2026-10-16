@@ -10,7 +10,7 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 
 ## État de reprise
 
-*Dernière mise à jour : 16 octobre 2026 (engagements « En cours / Tous » : C1 à C3 validées, pull request ouverte)*
+*Dernière mise à jour : 16 octobre 2026 (engagements « En cours / Tous » fusionnés et vérifiés en production)*
 
 - **Fait** : cadrage (SPEC), comptes, squelette Next.js, dépôt GitHub public, site en ligne
   (https://agence-musiciens.vercel.app), région `fra1`, base Neon reliée à Vercel.
@@ -190,7 +190,7 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
     **Samuel Vrignon supprimé de la production** le 16/10 par l'humain (éditeur SQL Neon, en une transaction : son
     engagement d'essai « Récital piano » du 05/11, puis ses réinitialisations, puis le compte, rôle musicien exigé).
     Leçon : la clé étrangère `engagement_musiciens → utilisateurs` refuse de supprimer un musicien encore engagé.
-  - **En cours : branche `engagements-en-cours`** (depuis `main`, 16/10). Cadrage plus bas (« En cours / Tous »).
+  - **✅ Fusionné : branche `engagements-en-cours`** (depuis `main`, 16/10). Cadrage plus bas (« En cours / Tous »).
     **Précisions validées le 16/10** : (a) *joué* avec cachet « à définir » reste en cours (seul un cachet 0, bénévole,
     sort) ; (b) « date passée » pour une date au mois ou à la saison seulement **après la fin de la période** ;
     (c) « En cours » + statut payé ou annulé → liste vide, « Aucun engagement en cours avec ce statut » + lien
@@ -209,9 +209,11 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
     **C3 ✅** (commit `93d88c7`) : deux cas fictifs ajoutés **en fin de liste** (les identifiants dépendent de la
     position) : « Concert-lecture » (demande à date passée, 05/09) et « Concert caritatif » (bénévole joué, 27/06) ;
     3 tests dans `src/lib/jeu-de-donnees.test.ts`, jugés au 16/10/2026 (149 tests). **Gestes validés le 16/10.**
-    **Pull request ouverte le 16/10** vers `main`. **Prochaine action : fusion (avec l'accord de l'humain), vérification
-    en production** (« En cours » par défaut ; les deux cas fictifs n'y sont pas tant que le jeu n'est pas rechargé),
-    puis menu latéral (7).
+    **PR n° 9 fusionnée le 16/10** (vérifications vertes, commit `23e8b03`). **Gestes validés en production le 16/10**
+    (« En cours » par défaut, impayés passés en tête ; « Tous » avec payés et annulés ; « payé » en « En cours » →
+    message et « Voir dans Tous »). Les deux cas fictifs de C3 n'y sont pas tant que le jeu n'est pas rechargé.
+    **Prochaine action : menu latéral (7)**, branche `menu-lateral` (depuis `main`, 16/10) ; commencer par la boucle
+    (dix lignes, écran et états, tranches).
     **Ancienne prochaine action (pour mémoire)** : M5 (photos ; 4 portraits générés avec Canva, choisis par l'humain, dans `scripts/portraits/`).
   - **Ordre décidé** (tout avant la semaine 2) : fiches musiciens (+ tuile « Nouvel engagement » retirée) →
     **engagements « En cours / Tous »** (branche `engagements-en-cours`, depuis `main`) → menu
