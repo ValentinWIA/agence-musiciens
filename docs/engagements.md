@@ -138,7 +138,7 @@ Il sert aussi de rendu du vendredi : spécification, cycle de vie, maquette des 
 | Données | Le tableau, trié par date ; une ligne cliquable ouvre la fiche |
 | Erreur | « Impossible de charger les engagements. » + bouton « Réessayer » |
 
-Les filtres sont dans l'adresse (`/engagements?statut=option&periode=passes`) : une liste filtrée peut être rechargée ou partagée.
+Les filtres sont dans l'adresse (`/engagements?statut=option&periode=tous`) : une liste filtrée peut être rechargée ou partagée.
 
 ### 4.2 Fiche — `/engagements/[id]`
 
