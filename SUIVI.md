@@ -10,7 +10,7 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 
 ## État de reprise
 
-*Dernière mise à jour : 17 octobre 2026 (calendrier : L1, L2 et tableau de bord validés en prévisualisation)*
+*Dernière mise à jour : 17 octobre 2026 (calendrier : L1, L2, tableau de bord et L3 validés en prévisualisation)*
 
 - **Fait** : cadrage (SPEC), comptes, squelette Next.js, dépôt GitHub public, site en ligne
   (https://agence-musiciens.vercel.app), région `fra1`, base Neon reliée à Vercel.
@@ -252,9 +252,13 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
     **Tableau de bord ✅** (`d05c1b1`, écart validé, section 4 du cadrage) : tuiles de navigation retirées ; frise des
     indicateurs, mois en grille (bloc partagé `calendrier/calendrier-mois.tsx`, flèches sur place), grille des
     musiciens. Les 7 prochains jours n'y sont plus. Gestes 1 à 5 validés le 17/10.
-    **Prochaine action : L3** — les 7 prochains jours en haut de la fiche du musicien (`/musiciens/[id]`, pour le
-    musicien seulement, avec `rangerSeptJours`). Puis **L4** : liste sur téléphone ; jeu de données avec des
-    engagements dans les semaines à venir et un jour à deux concerts. Puis pull request, fusion, gestes en production.
+    **L3 ✅** (`ef799ee`, `0f6c4ef`, `051b5a8`) bloc « 7 prochains jours » en haut de la fiche, pour le musicien
+    seulement (`calendrier/sept-jours.tsx`) ; seuls les jours occupés. Écart validé : aujourd'hui **à J+7** (de samedi
+    au samedi suivant). Décidé : l'agent ne voit pas ce bloc (proposé, refusé le 17/10). Gestes validés le 17/10.
+    183 tests. Rien de cassé.
+    **Prochaine action : L4** — liste du mois sur téléphone (bloc partagé `calendrier-mois.tsx`, donc aussi le tableau
+    de bord) ; jeu de données avec des engagements dans les semaines à venir (test) et un jour à deux concerts.
+    Puis pull request, fusion, gestes en production.
     **Ensuite (une demande à la fois)** : renommer en « CM Management » (branche à part) ; **photos en production**
     (demandé le 17/10, pour un air « fini ») : recharger le jeu de données en production (l'humain lance la commande ;
     efface et recrée engagements, lieux, programmateurs et musiciens fictifs ; compte de l'agent intact). Recommandé
