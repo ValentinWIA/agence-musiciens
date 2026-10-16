@@ -42,6 +42,10 @@ musicien sur le mois.
 - **L4** liste sur téléphone ; test garantissant des engagements dans les semaines à venir dans le jeu de données
   (ses dates sont fixes : la vue des 7 jours pourrait être vide le jour de la démo), et un jour avec **deux concerts**
   (ajouté le 17/10 : montrer que la case s'allonge).
+  Précisé le 17/10 : **L4a** liste sur téléphone (le serveur envoie grille et liste, le CSS choisit selon la largeur) ;
+  **L4b** concert de Louis le samedi 24/10 (Metz, confirmé, ajouté en fin de liste pour garder les identifiants),
+  et test : chaque fenêtre de 8 jours du 17/10 au 19/12/2026 contient un concert (démo avant mi-décembre ; au-delà,
+  trou des fêtes jusqu'au 16/01, il faudra décaler les dates).
 
 ## 4. Écarts au plan, validés pendant la construction
 
