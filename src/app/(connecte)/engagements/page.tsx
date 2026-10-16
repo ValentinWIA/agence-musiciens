@@ -121,9 +121,10 @@ async function ContenuEngagements({ searchParams }: { searchParams: Promise<Reco
                   <Link href={`/engagements/${e.id}`} className="underline">
                     {formaterDebut(e.debut, e.precisionDate, e.pays)}
                   </Link>
-                  {/* Une demande, une option ou un contrat envoyé dont la date est passée : à régler ou à annuler. */}
+                  {/* Une demande, une option ou un contrat envoyé dont la date est passée : à régler ou à annuler.
+                      Sous la date, pour garder la colonne étroite sur téléphone. */}
                   {STATUTS_A_REGLER.includes(e.statut) && dateDepassee(e, e.pays, maintenant) && (
-                    <span className="ml-2 text-xs text-muted-foreground">date passée</span>
+                    <span className="block text-xs text-muted-foreground">date passée</span>
                   )}
                 </TableCell>
                 {/* Les musiciens avant le lieu : sur téléphone, on voit la date et la colonne suivante. */}
