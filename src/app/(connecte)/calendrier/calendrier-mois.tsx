@@ -1,11 +1,12 @@
 import Link from "next/link";
-import { COULEURS_STATUT } from "@/components/badge-statut";
+import { BadgeStatut, COULEURS_STATUT } from "@/components/badge-statut";
 import { Button } from "@/components/ui/button";
 import {
   bornesDuMois,
   casesDuMois,
   heureLocale,
   jourLocal,
+  libelleJour,
   libelleMois,
   lireMois,
   moisVoisin,
@@ -75,9 +76,37 @@ export async function CalendrierMois({
 
       {vide && <p className="text-muted-foreground">Aucun engagement en {libelleMois(mois)}.</p>}
 
-      {/* Le défilement horizontal sur téléphone est provisoire : la tranche L4 y affichera une liste. */}
-      <div className="overflow-x-auto">
-        <table className="w-full min-w-[48rem] table-fixed border-collapse text-sm">
+      {/* Téléphone : le mois en liste, seulement les jours occupés. Le serveur envoie les deux vues, le CSS choisit. */}
+      {!vide && (
+        <ul className="grid gap-3 md:hidden" aria-label={`Engagements de ${libelleMois(mois)}`}>
+          {[...parJour.keys()].sort().map((jour) => (
+            <li key={jour}>
+              <p
+                className={`text-sm font-medium first-letter:uppercase ${jour === aujourdhui ? "text-primary" : ""}`}
+                aria-current={jour === aujourdhui ? "date" : undefined}
+              >
+                {jour === aujourdhui ? `Aujourd'hui, ${libelleJour(jour)}` : libelleJour(jour)}
+              </p>
+              <ul className="divide-y divide-dashed text-sm">
+                {parJour.get(jour)!.map((e) => (
+                  <li key={e.id} className="flex flex-wrap items-center justify-between gap-2 py-1.5">
+                    <Link href={`/engagements/${e.id}`} className="underline">
+                      <span className="font-medium">{heureLocale(e.debut, e.pays)}</span> {e.titre}
+                      <span className="block text-xs text-muted-foreground">
+                        {e.musiciens.join(", ")} · {e.ville}
+                      </span>
+                    </Link>
+                    <BadgeStatut statut={e.statut} />
+                  </li>
+                ))}
+              </ul>
+            </li>
+          ))}
+        </ul>
+      )}
+
+      <div className="hidden md:block">
+        <table className="w-full table-fixed border-collapse text-sm">
           <thead>
             <tr>
               {JOURS_SEMAINE.map((j) => (
