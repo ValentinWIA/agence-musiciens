@@ -165,6 +165,11 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   explications courtes.
 - **Limite connue** : changer le mot de passe ne ferme pas les sessions déjà ouvertes (elles expirent seules).
 - **Reste à faire (côté humain)** : créer le compte UptimeRobot.
+  **Brancher un vrai nom de domaine sur Resend** (noté le 16/10) : sans domaine vérifié, Resend n'écrit qu'à
+  l'adresse du propriétaire du compte, donc les courriels d'invitation et de réinitialisation n'arrivent pas aux
+  musiciens (leur lien est seulement affiché à l'agent). Étapes : acheter un domaine, l'ajouter dans Resend,
+  recopier les enregistrements DNS demandés (SPF, DKIM) chez le fournisseur du domaine, attendre la vérification,
+  puis changer l'adresse d'expédition dans le code (`src/lib/courriel.ts`).
 - **Points d'attention** :
   - Vercel Hobby ne garde les journaux qu'environ une heure : refaire la tentative juste avant la démo,
     ou ajouter plus tard une table `journal` consultable par l'agent.
