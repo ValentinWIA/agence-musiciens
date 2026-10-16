@@ -40,7 +40,8 @@ musicien sur le mois.
 - **L2** page `/calendrier` : requête filtrée par rôle, grille, navigation, bandeau, lien dans le menu.
 - **L3** bloc « 7 prochains jours » : tableau de bord (agent) et fiche (musicien).
 - **L4** liste sur téléphone ; test garantissant des engagements dans les semaines à venir dans le jeu de données
-  (ses dates sont fixes : la vue des 7 jours pourrait être vide le jour de la démo).
+  (ses dates sont fixes : la vue des 7 jours pourrait être vide le jour de la démo), et un jour avec **deux concerts**
+  (ajouté le 17/10 : montrer que la case s'allonge).
 
 ## 4. Écarts au plan, validés pendant la construction
 
