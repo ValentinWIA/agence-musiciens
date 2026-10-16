@@ -163,3 +163,15 @@ describe("libelleJour et bornesSeptJours", () => {
     expect(hawai >= depuis && hawai < jusqua).toBe(true);
   });
 });
+
+describe("7 prochains jours, juste après minuit", () => {
+  it("le samedi 17 à 0 h 38 à Paris, le concert du samedi 24 à 20 h est vu en entier", () => {
+    const maintenant = new Date("2026-10-16T22:38:00Z"); // samedi 17 à 0 h 38 à Paris, encore vendredi en UTC
+    const aujourdhui = jourLocal(maintenant, "France");
+    expect(aujourdhui).toBe("2026-10-17");
+    const recital = engagement({ debut: new Date("2026-10-24T18:00:00Z") }); // samedi 24 à 20 h à Paris
+    const { depuis, jusqua } = bornesSeptJours(aujourdhui);
+    expect(recital.debut >= depuis && recital.debut < jusqua).toBe(true);
+    expect(rangerSeptJours([recital], aujourdhui).at(-1)).toEqual({ jour: "2026-10-24", engagements: [recital] });
+  });
+});
