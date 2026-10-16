@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { BadgeStatut } from "@/components/badge-statut";
+import { Button } from "@/components/ui/button";
 import { formaterMontant } from "@/lib/argent";
 import { formaterDebut } from "@/lib/dates";
 import { LIBELLES_STATUT, lireMusicien, type Statut } from "@/lib/engagements";
@@ -35,7 +36,14 @@ async function FicheMusicien({ params }: { params: Promise<{ id: string }> }) {
         {estAgent ? "← Tous les musiciens" : "← Tableau de bord"}
       </Link>
       <div className="grid items-start gap-10 md:grid-cols-[280px_1fr]">
-        <Portrait nom={musicien.nom} className="max-w-[280px] rounded-xl border" />
+        <div className="grid max-w-[280px] gap-4">
+          <Portrait nom={musicien.nom} className="rounded-xl border" />
+          {estAgent && (
+            <Button nativeButton={false} render={<Link href={`/engagements/nouveau?musicien=${musicien.id}`} />}>
+              Nouvel engagement
+            </Button>
+          )}
+        </div>
         <div className="grid gap-6">
           <div className="grid gap-1">
             <p className="text-xs tracking-[0.25em] text-muted-foreground uppercase">{musicien.instrument}</p>

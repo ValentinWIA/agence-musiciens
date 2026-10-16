@@ -2,7 +2,9 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { listerFichesMusiciens } from "@/lib/engagements";
 import { verifierSession } from "@/lib/session";
+import { GrilleMusiciens } from "../musiciens/grille-musiciens";
 import { seDeconnecter } from "../actions";
 
 export default function PageTableauDeBord() {
@@ -62,6 +64,15 @@ async function ContenuTableauDeBord() {
           </Link>
         ))}
       </div>
+      {/* L'agent voit ses musiciens dès l'arrivée, sans passer par la page « Musiciens ». */}
+      {agent && (
+        <section className="grid gap-4" aria-labelledby="titre-musiciens">
+          <h2 id="titre-musiciens" className="font-logo text-3xl">
+            Musiciens
+          </h2>
+          <GrilleMusiciens musiciens={await listerFichesMusiciens()} />
+        </section>
+      )}
     </>
   );
 }
