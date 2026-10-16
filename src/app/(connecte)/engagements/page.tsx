@@ -24,9 +24,6 @@ const schemaFiltres = z.object({
 export default function PageEngagements({ searchParams }: PageProps<"/engagements">) {
   return (
     <main className="mx-auto grid w-full max-w-6xl gap-6 p-4">
-      <Link href="/tableau-de-bord" className="text-sm underline">
-        ← Tableau de bord
-      </Link>
       <Suspense fallback={<ChargementListe />}>
         <ContenuEngagements searchParams={searchParams} />
       </Suspense>

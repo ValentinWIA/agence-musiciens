@@ -76,6 +76,9 @@ UptimeRobot et Sentry (semaine 2), API Anthropic (semaine 3), SDK d'agents (sema
 
 Si plusieurs chantiers avancent en même temps (plusieurs agents, ou humain + agent), chacun travaille sur **sa propre
 branche** (une prévisualisation et une branche de base Neon chacune). Relevé du 12/10/2026, d'après les imports.
+Les pages de `src/app/` sont rangées en deux groupes (les parenthèses ne changent pas les adresses) : `(connecte)/`
+(engagements, musiciens, invitations, tableau de bord, avec le menu latéral) et `(public)/` (connexion, installation,
+invitation, mot de passe oublié, réinitialisation).
 
 **Zones assez disjointes pour avancer en parallèle :**
 - **Comptes et accès** : `installation/`, `invitation/`, `invitations/`, `mot-de-passe-oublie/`, `reinitialisation/`,
@@ -91,7 +94,8 @@ branche** (une prévisualisation et une branche de base Neon chacune). Relevé d
   branches qui en créent chacune une entrent forcément en conflit. Une seule branche modifie le schéma à la fois.
 - **Identité et droits** (`src/auth.ts`, `src/lib/session.ts`, importé par 15 fichiers) : changer un rôle touche
   toutes les zones (ex. le 3ᵉ rôle « agent ↔ musicien »). À faire seul, avant ou après le reste.
-- **Composants partagés** : `src/components/ui/`, `badge-statut.tsx`, `layout.tsx`, `page.tsx`, `tableau-de-bord/`.
+- **Composants partagés** : `src/components/ui/`, `badge-statut.tsx`, les `layout.tsx` (racine, `(connecte)/`, `(public)/`),
+  le menu (`(connecte)/menu-*.tsx`, `liens-menu.tsx`, `src/lib/menu.ts`), `(public)/page.tsx`, `tableau-de-bord/`.
 - **Dépendances** : `package.json` et `package-lock.json` (un ajout de paquet par branche, fusionné vite).
 - **Jeu de données** (`scripts/`) : dépend du schéma, suit ses modifications.
 - **`SUIVI.md`** : modifié par tous les chantiers ; une seule personne le met à jour, au moment de la fusion.
