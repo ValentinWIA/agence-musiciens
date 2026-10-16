@@ -9,6 +9,7 @@ import { LIBELLES_STATUT, lireMusicien, type Statut } from "@/lib/engagements";
 import { lireTaux } from "@/lib/change";
 import { cachetMoyenEnEuros, PASSES_AFFICHES, recapEngagements } from "@/lib/musiciens";
 import { verifierSession } from "@/lib/session";
+import { SeptJours } from "../../calendrier/sept-jours";
 import { Portrait } from "../portrait";
 
 export default function PageMusicien({ params, searchParams }: PageProps<"/musiciens/[id]">) {
@@ -52,6 +53,8 @@ async function FicheMusicien({
           Fiche modifiée.
         </p>
       )}
+      {/* Pour le musicien seulement : l'agent a le mois entier sur son tableau de bord. */}
+      {!estAgent && <SeptJours lecteur={utilisateur} />}
       <div className="grid items-start gap-10 md:grid-cols-[280px_1fr]">
         <div className="grid max-w-[280px] gap-4">
           <Portrait nom={musicien.nom} photo={musicien.photo} className="rounded-xl border" />

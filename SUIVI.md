@@ -10,7 +10,7 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 
 ## État de reprise
 
-*Dernière mise à jour : 16 octobre 2026 (indicateurs de la saison validés en prévisualisation)*
+*Dernière mise à jour : 17 octobre 2026 (calendrier : L1 à L4 validés en prévisualisation, pull request n° 13 ouverte)*
 
 - **Fait** : cadrage (SPEC), comptes, squelette Next.js, dépôt GitHub public, site en ligne
   (https://agence-musiciens.vercel.app), région `fra1`, base Neon reliée à Vercel.
@@ -242,8 +242,29 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
     `tableau-de-bord/indicateurs.tsx` + requête `listerPourIndicateurs()`. Gestes 1 à 7 validés en prévisualisation
     le 16/10 (17 contrats ; 9 / 6 / 4 / 8 / 4 / 1 / 0, annulé 1 ; liens ; téléphone ; Louis sans indicateurs).
     Limite connue : la liste des engagements n'a pas de filtre de saison (un clic montre toutes les saisons).
-    Reste : pull request, fusion, gestes en production.
-    **Prochaine action** : calendrier (amélioration n° 5), avec la boucle d'`AGENTS.md`.
+    **PR n° 12 fusionnée le 16/10** ; **gestes validés en production le 16/10** par l'humain.
+  - **🔄 Calendrier (amélioration n° 5)**, branche `calendrier` (depuis `main`, 17/10, poussée ; prévisualisation
+    https://agence-musiciens-git-calendrier-valentin-4768.vercel.app). Cadrage, plan et écarts : `docs/calendrier.md`.
+    Décidé : annulés cachés ; dates approximatives dans un bandeau « Date à préciser » (chaque mois de leur période).
+    **L1 ✅** (`8921715`) `src/lib/calendrier.ts`, règles pures, 16 tests (180 au total).
+    **L2 ✅** (`a7c9b1d`) page `/calendrier` (grille du mois, navigation `?mois=`, lien dans le menu des deux rôles,
+    requête `listerPourCalendrier` filtrée par rôle). Gestes 1 à 6 validés le 17/10.
+    **Tableau de bord ✅** (`d05c1b1`, écart validé, section 4 du cadrage) : tuiles de navigation retirées ; frise des
+    indicateurs, mois en grille (bloc partagé `calendrier/calendrier-mois.tsx`, flèches sur place), grille des
+    musiciens. Les 7 prochains jours n'y sont plus. Gestes 1 à 5 validés le 17/10.
+    **L3 ✅** (`ef799ee`, `0f6c4ef`, `051b5a8`) bloc « 7 prochains jours » en haut de la fiche, pour le musicien
+    seulement (`calendrier/sept-jours.tsx`) ; seuls les jours occupés. Écart validé : aujourd'hui **à J+7** (de samedi
+    au samedi suivant). Décidé : l'agent ne voit pas ce bloc (proposé, refusé le 17/10). Gestes validés le 17/10.
+    **L4 ✅** L4a (`3ca8c8e`) le mois en liste sur téléphone (sous 768 px, seuls les jours occupés ; vaut aussi pour
+    le tableau de bord). L4b (`da7a517`) concert de Louis le 24/10 à Metz (jour à deux concerts, ajouté en fin de
+    liste) ; test : 7 prochains jours jamais vides du 17/10 au 19/12 (démo avant mi-décembre ; après, trou des fêtes
+    jusqu'au 16/01 : décaler les dates). Gestes validés le 17/10. 185 tests. Rien de cassé.
+    **Prochaine action** : pull request n° 13 ouverte le 17/10 → fusion (accord de l'humain) → gestes en production.
+    En production, le concert du 24/10 n'apparaît qu'après rechargement du jeu de données (étape « photos en production »).
+    **Ensuite (une demande à la fois)** : renommer en « CM Management » (branche à part) ; **photos en production**
+    (demandé le 17/10, pour un air « fini ») : recharger le jeu de données en production (l'humain lance la commande ;
+    efface et recrée engagements, lieux, programmateurs et musiciens fictifs ; compte de l'agent intact). Recommandé
+    avant : remplacer les portraits à filigrane de `scripts/portraits/`.
     **Ancienne prochaine action (pour mémoire)** : M5 (photos ; 4 portraits générés avec Canva, choisis par l'humain, dans `scripts/portraits/`).
   - **Ordre décidé** (tout avant la semaine 2) : fiches musiciens (+ tuile « Nouvel engagement » retirée) →
     **engagements « En cours / Tous »** (branche `engagements-en-cours`, depuis `main`) → menu
@@ -303,6 +324,9 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
        statut en haut, puis musiciens, lieu, cachet), sans défilement horizontal ; le tableau reste sur ordinateur.
        Pour l'instant, seules les colonnes « Musiciens » et « Lieu » ont été échangées (le statut reste caché à droite
        sur téléphone).
+  - **Renommer « AM Management » en « CM Management »** (demandé le 17/10, les initiales de Claire Morel) : logo
+    (`src/components/logo.tsx`), titre et libellés des trois `layout.tsx`, puis `docs/` (design, présentation,
+    maquettes). Fichiers partagés : sur une petite branche à part, entre deux fonctionnalités (après le calendrier).
   - Améliorations possibles : permettre à l'agent d'annuler une invitation (faute de frappe dans l'adresse) ;
     lien de réinitialisation généré par l'agent pour un musicien (Resend ne lui écrit pas sans nom de domaine).
   - **Chaque déploiement de prévisualisation recharge le jeu de données** (`vercel-build`) : les essais faits à la main

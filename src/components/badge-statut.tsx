@@ -6,7 +6,7 @@ import { LIBELLES_STATUT, type Statut } from "@/lib/engagements";
 // « confirmé » (même frontière que la règle de conflit, STATUTS_TENUS). Annulé reste gris barré, hors gradation.
 // Le texte reste toujours affiché : la couleur ne porte jamais seule l'information.
 // Classes écrites en entier : Tailwind ne reconnaît pas une classe fabriquée par morceaux.
-const COULEURS: Record<Statut, string> = {
+export const COULEURS_STATUT: Record<Statut, string> = {
   // Pas encore tenus : fond pâle, texte de la même teinte.
   demande:
     "border-[oklch(0.78_0.13_25)] bg-[oklch(0.93_0.06_25)] text-[oklch(0.45_0.17_25)] dark:bg-[oklch(0.33_0.09_25)] dark:text-[oklch(0.92_0.05_25)]",
@@ -24,7 +24,7 @@ const COULEURS: Record<Statut, string> = {
 
 export function BadgeStatut({ statut }: { statut: Statut }) {
   return (
-    <Badge variant="outline" className={COULEURS[statut]}>
+    <Badge variant="outline" className={COULEURS_STATUT[statut]}>
       {LIBELLES_STATUT[statut]}
     </Badge>
   );
