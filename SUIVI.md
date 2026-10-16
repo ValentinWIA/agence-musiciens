@@ -10,7 +10,7 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 
 ## État de reprise
 
-*Dernière mise à jour : 17 octobre 2026 (reprise après /clear : branche `portraits-oidc`, prévisualisation en échec, voir « Prochaine action » sous « photos en production »)*
+*Dernière mise à jour : 17 octobre 2026 (photos en production terminées, PR n° 15 fusionnée ; prochaine demande : voir « Ordre décidé »)*
 
 - **Fait** : cadrage (SPEC), comptes, squelette Next.js, dépôt GitHub public, site en ligne
   (https://agence-musiciens.vercel.app), région `fra1`, base Neon reliée à Vercel.
@@ -261,7 +261,7 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
     jusqu'au 16/01 : décaler les dates). Gestes validés le 17/10. 185 tests. Rien de cassé.
     **PR n° 13 fusionnée le 17/10** ; **gestes validés en production le 17/10** par l'humain.
     En production, le concert du 24/10 n'apparaît qu'après rechargement du jeu de données (étape « photos en production »).
-    **Ensuite (une demande à la fois)** : ✅ renommer en « CM Management » (voir plus bas) ; 🔄 **photos en production**
+    **Ensuite (une demande à la fois)** : ✅ renommer en « CM Management » (voir plus bas) ; ✅ **photos en production**
     (demandé le 17/10, pour un air « fini ») : **jeu de données rechargé en production le 17/10** par l'humain (requête de
     contrôle : 50 engagements, tous fictifs, 0 pièce jointe ; secrets tirés par `vercel env pull` dans
     `.env.production.local`, mot de passe de démo retapé à la main car protégé). Résultat : 53 engagements, **sans
@@ -269,19 +269,18 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
     `BLOB_READ_WRITE_TOKEN`, et le script n'acceptait que ce dernier. Correctif : branche `portraits-oidc`, puis
     relancer le chargement (sans risque : mêmes données, mêmes identifiants). Puis **supprimer** `.env.production.local`
     et `.env.local` (secrets). Portraits à filigrane **gardés** par décision de l'humain le 17/10 (« c'est un exercice »).
-    **État au /clear (17/10)** : branche `portraits-oidc` poussée, commits `c8f36e1` (suivi) et `eada199` (le script
-    accepte `BLOB_READ_WRITE_TOKEN` **ou** `VERCEL_OIDC_TOKEN` + `BLOB_STORE_ID` ; README). 187 tests, lint OK, GitHub vert.
-    **Cassé : la prévisualisation Vercel échoue** (`drizzle-kit migrate` : `url: undefined`) : aucune variable
-    `DATABASE_URL*` pour `Preview (portraits-oidc)`, l'intégration Neon n'a pas créé de branche de base. Hypothèse
-    non vérifiée : limite de branches du plan gratuit Neon (8 branches de prévisualisation existent : engagements,
-    design, fin-semaine-1, fiches-musiciens, engagements-en-cours, indicateurs, calendrier, cm-management).
-    **Prochaine action** : l'humain ouvre la console Neon (Branches) pour lire le message ; si c'est la limite,
-    supprimer (avec son accord) les branches de base des fonctionnalités déjà fusionnées, puis redéployer
-    `portraits-oidc` ; vérifier « Portraits envoyés : 4. » dans les journaux. Ensuite l'humain relance
-    `npx tsx --env-file=.env.production.local scripts/jeu-de-donnees.ts` (attendu : `Portraits envoyés : 4.`),
-    puis `rm .env.production.local .env.local` (secrets, ignorés par Git ; `.vercel/` peut rester). Puis pull request,
-    fusion par l'humain (`! gh pr merge <n> --merge`, la fusion par l'IA est bloquée), gestes en production (portraits
-    sur la grille et les fiches). `docs/flux-de-nuit.md` (non suivi) n'est pas de cette session : ne pas y toucher.
+    Branche `portraits-oidc` : le script accepte `BLOB_READ_WRITE_TOKEN` **ou** `VERCEL_OIDC_TOKEN` + `BLOB_STORE_ID`
+    (commit `eada199`, README). 187 tests, lint OK.
+    **Incident** : la prévisualisation échouait (`drizzle-kit migrate` : `url: undefined`) car le projet Neon était à
+    **10 branches sur 10** (limite du plan gratuit : `main`, `vercel-dev` et 8 `preview/…`). L'humain a supprimé le
+    17/10 les 8 branches de prévisualisation des fonctionnalités fusionnées ; commit vide `ed67104` pour redéployer.
+    L'intégration a alors créé `preview/portraits-oidc` (un déploiement annulé, puis un réussi).
+    Gestes validés le 17/10 : 4 portraits en prévisualisation ; production rechargée par l'humain (`Portraits envoyés :
+    4.`, 53 engagements : l'accès OIDC marche), 4 portraits en production ; `.env.production.local` et `.env.local`
+    effacés. **PR n° 15 fusionnée le 17/10**, déploiement de production « Ready ». Rien de cassé.
+    **À retenir** : après chaque fusion, supprimer la branche `preview/<nom>` dans Neon (garder `main` et `vercel-dev`),
+    ou activer la suppression automatique des branches obsolètes dans l'intégration Neon–Vercel (à décider).
+    `docs/flux-de-nuit.md` (non suivi) n'est pas de cette session : ne pas y toucher.
   - **Ordre décidé** (tout avant la semaine 2) : fiches musiciens (+ tuile « Nouvel engagement » retirée) →
     **engagements « En cours / Tous »** (branche `engagements-en-cours`, depuis `main`) → menu
     latéral (7) → KPI et calendrier (accueil : 7 jours à venir) → semaine 2. *(Plusieurs agents (6) : mis de côté
