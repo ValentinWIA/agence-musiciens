@@ -1,4 +1,4 @@
-# Choix de design — AM Management
+# Choix de design — CM Management
 
 Passe de présentation du 12/10/2026, avant la démo (pull request n° 6). Aucune logique modifiée : seulement
 l'apparence. Décisions prises par l'humain au vu des prévisualisations.
@@ -10,8 +10,8 @@ Le blanc pur et la police par défaut donnaient un air « bâclé ».
 
 ## Identité
 
-- **Nom affiché** : « AM Management » (logo **fictif**), sous-titre « Agence de musiciens ». Titre de l'onglet identique.
-- **Logo** (`src/components/logo.tsx`) : monogramme « AM » dans un carré à trait fin + nom ; en tête de chaque page
+- **Nom affiché** : « CM Management » (logo **fictif**, renommé le 17/10 : initiales de Claire Morel), sous-titre « Agence de musiciens ». Titre de l'onglet identique.
+- **Logo** (`src/components/logo.tsx`) : monogramme « CM » dans un carré à trait fin + nom ; en tête de chaque page
   (bandeau dans `src/app/layout.tsx`), lien vers le tableau de bord.
 
 ## Polices

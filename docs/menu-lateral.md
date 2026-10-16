@@ -30,7 +30,7 @@ avec la page.
 
 ```
 ┌──────────────────┬──────────────────────────────────────┐
-│  AM Management   │                                      │
+│  CM Management   │                                      │
 │                  │   (contenu de la page)               │
 │ ▌Tableau de bord │                                      │
 │  Engagements     │                                      │
@@ -50,7 +50,7 @@ par-dessus un voile sombre. La page derrière ne défile plus tant que le menu e
 
 ```
 ┌────────────────────────┐      ┌───────────────┬────────┐
-│ ☰  AM Management       │      │ AM Management │ ░░░░░░ │
+│ ☰  CM Management       │      │ CM Management │ ░░░░░░ │
 ├────────────────────────┤      │               │ ░░░░░░ │
 │                        │  ☰   │ ▌Ma fiche     │ ░voile░│
 │  (contenu de la page)  │ ──▶  │  Mes engag.   │ ░░░░░░ │
