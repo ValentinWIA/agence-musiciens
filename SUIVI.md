@@ -10,7 +10,7 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 
 ## État de reprise
 
-*Dernière mise à jour : 16 octobre 2026 (fiches musiciens : M1 à M3e faites, M4 en cours)*
+*Dernière mise à jour : 16 octobre 2026 (fiches musiciens : M1 à M4 faites, M5 en cours)*
 
 - **Fait** : cadrage (SPEC), comptes, squelette Next.js, dépôt GitHub public, site en ligne
   (https://agence-musiciens.vercel.app), région `fra1`, base Neon reliée à Vercel.
@@ -167,8 +167,14 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
     **Gestes à faire (M3b + M3c)** : grille au tableau de bord ; Inès pré-cochée → engagement créé visible dans
     « À venir » ; « Inviter » ; Louis sans grille ni bouton ; cachet de Louis en un seul « ≈ … € » avec date du taux ;
     « Afficher plus » sur une fiche à plus de 5 passés.
-    **Prochaine action** : M4 (migration 0009 `notes_agent`, page `/musiciens/[id]/modifier`, action `modifierFiche`),
-    puis M5 (photos ; 4 portraits générés avec Canva, choisis par l'humain, dans `scripts/portraits/`).
+    M4a ✅ (commit `2e84e9d`) : colonne `notes_agent` (migration 0009, jouée en prévisualisation), `verifierFiche`
+    limite les notes à 2 000 caractères et ne les renvoie que si elles étaient dans la saisie ; notes fictives pour
+    Anna et Louis. M4b ✅ (commit `63ce4e0`) : page `/musiciens/[id]/modifier`, action `modifierFiche` (musicien : sa
+    fiche seulement ; notes envoyées par un musicien → refus journalisé), notes lues pour l'agent seulement, bloc
+    « Notes de l'agent » et « Modifier la fiche » sur la fiche. 140 tests. **Gestes 1 à 5 validés le 16/10** (dont la
+    requête trafiquée : champ `notesAgent` ajouté depuis les outils de développement → refusé). Astuce notée : Chrome
+    exige de taper `allow pasting` avant de coller dans la console.
+    **Prochaine action** : M5 (photos ; 4 portraits générés avec Canva, choisis par l'humain, dans `scripts/portraits/`).
   - **Ordre décidé** (tout avant la semaine 2) : fiches musiciens (+ tuile « Nouvel engagement » retirée) →
     **engagements « En cours / Tous »** (branche `engagements-en-cours`, depuis `main`) → menu
     latéral (7) → KPI et calendrier (accueil : 7 jours à venir) → plusieurs agents (6) à cadrer → semaine 2.
