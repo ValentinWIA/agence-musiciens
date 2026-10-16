@@ -7,7 +7,7 @@ export default function LayoutPublic({ children }: { children: React.ReactNode }
     <>
       <header className="border-b border-foreground/10 bg-card/60 backdrop-blur-sm">
         <div className="mx-auto w-full max-w-6xl px-4 py-3">
-          <Link href="/tableau-de-bord" aria-label="AM Management, tableau de bord">
+          <Link href="/tableau-de-bord" aria-label="CM Management, tableau de bord">
             <Logo />
           </Link>
         </div>
