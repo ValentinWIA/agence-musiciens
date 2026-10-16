@@ -10,7 +10,7 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 
 ## État de reprise
 
-*Dernière mise à jour : 16 octobre 2026 (menu latéral fusionné et vérifié en production ; colonnes des engagements échangées)*
+*Dernière mise à jour : 16 octobre 2026 (menu latéral et colonnes des engagements fusionnés)*
 
 - **Fait** : cadrage (SPEC), comptes, squelette Next.js, dépôt GitHub public, site en ligne
   (https://agence-musiciens.vercel.app), région `fra1`, base Neon reliée à Vercel.
@@ -225,9 +225,13 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
     ensuite (en production, sans correction), ni dans Chrome. Correction possible gardée **sans push** sur la branche
     locale `menu-telephone-hauteur` (`9924b66` : `<dialog>` sorti de la barre floutée, accroché aux bords haut et bas).
     À pousser si le défaut revient ; sinon supprimer la branche.
-  - **🔄 Colonnes des engagements**, branche `engagements-colonnes` (depuis `main`, 16/10) : « Musiciens » passe avant
-    « Lieu » (le titre du concert reste avec le lieu), car sur téléphone on ne voyait que la date et le lieu.
-    Solution rapide choisie par l'humain ; les cartes sur téléphone sont notées pour plus tard (amélioration n° 8).
+  - **✅ Colonnes des engagements**, branche `engagements-colonnes` (depuis `main`, 16/10) : « Musiciens » passe avant
+    « Lieu » (le titre du concert reste avec le lieu), car sur téléphone on ne voyait que la date et le lieu ;
+    « date passée » sous la date (colonne plus étroite). Solution rapide choisie par l'humain ; les cartes sur
+    téléphone sont notées pour plus tard (amélioration n° 8). Gestes validés sur la prévisualisation le 16/10 ;
+    **PR n° 11 fusionnée le 16/10**. Reste : gestes en production.
+    **Prochaine action** : renommer le compte « Agent » en production (nom fictif, avec accord), puis KPI et
+    calendrier (améliorations n° 2 et 5), avec la boucle d'`AGENTS.md`.
     **À faire après la fusion** (demande de l'humain du 16/10) : le compte de l'agent s'appelle « Agent », d'où
     « Agent / AGENT » en bas du menu. Lui donner un nom fictif en production (une ligne de `utilisateurs`), avec accord.
     **Ancienne prochaine action (pour mémoire)** : M5 (photos ; 4 portraits générés avec Canva, choisis par l'humain, dans `scripts/portraits/`).
