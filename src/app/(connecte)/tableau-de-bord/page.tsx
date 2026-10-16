@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { listerFichesMusiciens } from "@/lib/engagements";
 import { verifierSession } from "@/lib/session";
 import { GrilleMusiciens } from "../musiciens/grille-musiciens";
+import { Indicateurs } from "./indicateurs";
 
 export default function PageTableauDeBord() {
   return (
@@ -33,6 +34,7 @@ async function ContenuTableauDeBord() {
         <p className="text-xs tracking-[0.25em] text-muted-foreground uppercase">Agent</p>
         <h1 className="font-logo text-4xl">Bonjour {utilisateur.nom}</h1>
       </div>
+      <Indicateurs />
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {tuiles.map((t) => (
           <Link key={t.href} href={t.href} className="group">

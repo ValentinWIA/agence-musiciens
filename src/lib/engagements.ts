@@ -83,6 +83,14 @@ export async function listerMusiciens() {
     .orderBy(asc(utilisateurs.nom));
 }
 
+// Pour les indicateurs du tableau de bord de l'agent : statut, date et pays du lieu (la saison se lit à l'heure du lieu).
+export async function listerPourIndicateurs() {
+  return db
+    .select({ statut: engagements.statut, debut: engagements.debut, pays: lieux.pays })
+    .from(engagements)
+    .innerJoin(lieux, eq(engagements.lieuId, lieux.id));
+}
+
 export async function listerLieux() {
   return db.select({ id: lieux.id, nom: lieux.nom, ville: lieux.ville }).from(lieux).orderBy(asc(lieux.ville), asc(lieux.nom));
 }
