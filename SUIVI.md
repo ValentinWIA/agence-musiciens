@@ -10,7 +10,7 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 
 ## État de reprise
 
-*Dernière mise à jour : 16 octobre 2026 (fiches musiciens fusionnées ; engagements « En cours / Tous » : plan)*
+*Dernière mise à jour : 16 octobre 2026 (engagements « En cours / Tous » : C1 à C3 validées, pull request ouverte)*
 
 - **Fait** : cadrage (SPEC), comptes, squelette Next.js, dépôt GitHub public, site en ligne
   (https://agence-musiciens.vercel.app), région `fra1`, base Neon reliée à Vercel.
@@ -201,7 +201,17 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
     fin) → **C2** page `/engagements` : sélecteur « En cours / Tous », requête et tris, mention, ancienne adresse
     `?periode=passes` → « En cours », messages vides (gestes) → **C3** test garantissant dans le jeu de données un
     impayé passé, une demande à date passée et un bénévole joué (puis gestes).
-    **Prochaine action : C1.**
+    **C1 ✅** (commit `ed52a9c`) : `estEnCours` et `dateDepassee` (`src/lib/cycle-de-vie.ts`), 6 tests.
+    **C2 ✅** (commit `408de8a`) : `/engagements` en « En cours / Tous » ; « En cours » filtré par `estEnCours`
+    (règle non recopiée en SQL), mention « date passée », message « Aucun engagement en cours avec ce statut » + lien
+    « Voir dans Tous ». **Gestes 1 à 6 validés le 16/10.** La fiche musicien garde « À venir / Passés » (son parcours ;
+    hors périmètre, décidé le 16/10).
+    **C3 ✅** (commit `93d88c7`) : deux cas fictifs ajoutés **en fin de liste** (les identifiants dépendent de la
+    position) : « Concert-lecture » (demande à date passée, 05/09) et « Concert caritatif » (bénévole joué, 27/06) ;
+    3 tests dans `src/lib/jeu-de-donnees.test.ts`, jugés au 16/10/2026 (149 tests). **Gestes validés le 16/10.**
+    **Pull request ouverte le 16/10** vers `main`. **Prochaine action : fusion (avec l'accord de l'humain), vérification
+    en production** (« En cours » par défaut ; les deux cas fictifs n'y sont pas tant que le jeu n'est pas rechargé),
+    puis menu latéral (7).
     **Ancienne prochaine action (pour mémoire)** : M5 (photos ; 4 portraits générés avec Canva, choisis par l'humain, dans `scripts/portraits/`).
   - **Ordre décidé** (tout avant la semaine 2) : fiches musiciens (+ tuile « Nouvel engagement » retirée) →
     **engagements « En cours / Tous »** (branche `engagements-en-cours`, depuis `main`) → menu
