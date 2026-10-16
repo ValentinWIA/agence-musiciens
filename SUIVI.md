@@ -10,7 +10,7 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 
 ## État de reprise
 
-*Dernière mise à jour : 16 octobre 2026 (menu latéral et colonnes des engagements fusionnés)*
+*Dernière mise à jour : 16 octobre 2026 (colonnes des engagements vérifiées en production, agent renommé)*
 
 - **Fait** : cadrage (SPEC), comptes, squelette Next.js, dépôt GitHub public, site en ligne
   (https://agence-musiciens.vercel.app), région `fra1`, base Neon reliée à Vercel.
@@ -229,11 +229,11 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
     « Lieu » (le titre du concert reste avec le lieu), car sur téléphone on ne voyait que la date et le lieu ;
     « date passée » sous la date (colonne plus étroite). Solution rapide choisie par l'humain ; les cartes sur
     téléphone sont notées pour plus tard (amélioration n° 8). Gestes validés sur la prévisualisation le 16/10 ;
-    **PR n° 11 fusionnée le 16/10**. Reste : gestes en production.
-    **Prochaine action** : renommer le compte « Agent » en production (nom fictif, avec accord), puis KPI et
-    calendrier (améliorations n° 2 et 5), avec la boucle d'`AGENTS.md`.
-    **À faire après la fusion** (demande de l'humain du 16/10) : le compte de l'agent s'appelle « Agent », d'où
-    « Agent / AGENT » en bas du menu. Lui donner un nom fictif en production (une ligne de `utilisateurs`), avec accord.
+    **PR n° 11 fusionnée le 16/10**, gestes validés en production le 16/10.
+  - **✅ Agent renommé** en production le 16/10 : « Agent » → **Claire Morel** (nom fictif), par l'humain dans
+    l'éditeur SQL de Neon (branche `main`, `UPDATE` d'une ligne de `utilisateurs`). Le nom est copié dans le cookie
+    à la connexion : il a fallu se déconnecter et se reconnecter. Vérifié dans le menu.
+    **Prochaine action** : KPI et calendrier (améliorations n° 2 et 5), avec la boucle d'`AGENTS.md`.
     **Ancienne prochaine action (pour mémoire)** : M5 (photos ; 4 portraits générés avec Canva, choisis par l'humain, dans `scripts/portraits/`).
   - **Ordre décidé** (tout avant la semaine 2) : fiches musiciens (+ tuile « Nouvel engagement » retirée) →
     **engagements « En cours / Tous »** (branche `engagements-en-cours`, depuis `main`) → menu
