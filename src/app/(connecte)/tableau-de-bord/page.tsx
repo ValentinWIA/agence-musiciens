@@ -1,11 +1,10 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { Suspense } from "react";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { listerFichesMusiciens } from "@/lib/engagements";
 import { verifierSession } from "@/lib/session";
 import { GrilleMusiciens } from "../musiciens/grille-musiciens";
-import { seDeconnecter } from "@/app/actions";
 
 export default function PageTableauDeBord() {
   return (
@@ -19,28 +18,20 @@ export default function PageTableauDeBord() {
 
 async function ContenuTableauDeBord() {
   const utilisateur = await verifierSession(); // sans session : renvoi vers la connexion
-  const agent = utilisateur.role === "admin";
+  // Le musicien n'a pas de tableau de bord : sa fiche est sa page d'accueil.
+  if (utilisateur.role !== "admin") redirect(`/musiciens/${utilisateur.id}`);
   // « Nouvel engagement » n'a pas de tuile : le bouton est sur la page des engagements.
-  // Le musicien n'a pas de tuile « Mes engagements » : sa fiche les montre et mène à la recherche.
-  const tuiles = agent
-    ? [
-        { href: "/engagements", titre: "Engagements", texte: "Tous les concerts, filtrés par statut, musicien ou date." },
-        { href: "/musiciens", titre: "Musiciens", texte: "Les fiches des musiciens : biographie, répertoire, engagements." },
-        { href: "/invitations", titre: "Inviter un musicien", texte: "Créer un lien d'accès pour un nouveau musicien." },
-      ]
-    : [{ href: `/musiciens/${utilisateur.id}`, titre: "Ma fiche", texte: "Votre biographie, votre répertoire et vos engagements." }];
+  const tuiles = [
+    { href: "/engagements", titre: "Engagements", texte: "Tous les concerts, filtrés par statut, musicien ou date." },
+    { href: "/musiciens", titre: "Musiciens", texte: "Les fiches des musiciens : biographie, répertoire, engagements." },
+    { href: "/invitations", titre: "Inviter un musicien", texte: "Créer un lien d'accès pour un nouveau musicien." },
+  ];
   return (
     <>
-      <div className="flex flex-wrap items-end justify-between gap-4">
-        <div className="grid gap-1">
-          <p className="text-xs tracking-[0.25em] text-muted-foreground uppercase">{agent ? "Agent" : "Musicien"}</p>
-          <h1 className="font-logo text-4xl">Bonjour {utilisateur.nom}</h1>
-        </div>
-        <form action={seDeconnecter}>
-          <Button type="submit" variant="outline">
-            Se déconnecter
-          </Button>
-        </form>
+      {/* La déconnexion est dans le menu latéral. */}
+      <div className="grid gap-1">
+        <p className="text-xs tracking-[0.25em] text-muted-foreground uppercase">Agent</p>
+        <h1 className="font-logo text-4xl">Bonjour {utilisateur.nom}</h1>
       </div>
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {tuiles.map((t) => (
@@ -60,14 +51,12 @@ async function ContenuTableauDeBord() {
         ))}
       </div>
       {/* L'agent voit ses musiciens dès l'arrivée, sans passer par la page « Musiciens ». */}
-      {agent && (
-        <section className="grid gap-4" aria-labelledby="titre-musiciens">
-          <h2 id="titre-musiciens" className="font-logo text-3xl">
-            Musiciens
-          </h2>
-          <GrilleMusiciens musiciens={await listerFichesMusiciens()} />
-        </section>
-      )}
+      <section className="grid gap-4" aria-labelledby="titre-musiciens">
+        <h2 id="titre-musiciens" className="font-logo text-3xl">
+          Musiciens
+        </h2>
+        <GrilleMusiciens musiciens={await listerFichesMusiciens()} />
+      </section>
     </>
   );
 }

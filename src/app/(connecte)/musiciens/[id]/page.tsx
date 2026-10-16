@@ -42,9 +42,11 @@ async function FicheMusicien({
 
   return (
     <>
-      <Link href={estAgent ? "/musiciens" : "/tableau-de-bord"} className="text-sm underline">
-        {estAgent ? "← Tous les musiciens" : "← Tableau de bord"}
-      </Link>
+      {estAgent && (
+        <Link href="/musiciens" className="text-sm underline">
+          ← Tous les musiciens
+        </Link>
+      )}
       {modifiee && (
         <p role="status" className="rounded-md border px-3 py-2 text-sm">
           Fiche modifiée.

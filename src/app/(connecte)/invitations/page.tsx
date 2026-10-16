@@ -1,5 +1,4 @@
 import { and, asc, gt, isNull } from "drizzle-orm";
-import Link from "next/link";
 import { Suspense } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { db } from "@/db";
@@ -10,9 +9,6 @@ import { FormulaireInvitation } from "./formulaire";
 export default function PageInvitations() {
   return (
     <main className="mx-auto grid w-full max-w-2xl gap-6 p-4">
-      <Link href="/tableau-de-bord" className="text-sm underline">
-        ← Tableau de bord
-      </Link>
       <Suspense fallback={<p>Chargement…</p>}>
         <ContenuInvitations />
       </Suspense>

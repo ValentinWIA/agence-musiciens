@@ -12,9 +12,6 @@ export default function PageMusiciens() {
         <div className="grid gap-1">
           <p className="text-xs tracking-[0.25em] text-muted-foreground uppercase">Agent</p>
           <h1 className="font-logo text-4xl">Musiciens</h1>
-          <Link href="/tableau-de-bord" className="text-sm underline">
-            ← Tableau de bord
-          </Link>
         </div>
         <Button nativeButton={false} render={<Link href="/invitations" />}>
           Inviter un musicien
