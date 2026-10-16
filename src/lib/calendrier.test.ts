@@ -1,9 +1,11 @@
 import { describe, expect, it } from "vitest";
 import {
   bornesDuMois,
+  bornesSeptJours,
   casesDuMois,
   heureLocale,
   jourLocal,
+  libelleJour,
   libelleMois,
   lireMois,
   moisVoisin,
@@ -145,5 +147,18 @@ describe("rangerSeptJours", () => {
     expect(r.map((j) => j.jour)).toEqual(septJours("2026-10-17"));
     expect(r.flatMap((j) => j.engagements)).toEqual([dedans]);
     expect(r.find((j) => j.jour === "2026-10-20")!.engagements).toEqual([dedans]);
+  });
+});
+
+describe("libelleJour et bornesSeptJours", () => {
+  it("écrit le jour en toutes lettres", () => {
+    expect(libelleJour("2026-10-17")).toBe("samedi 17 octobre");
+  });
+  it("couvre un concert à Tokyo le 17 à 1 h et à Hawaï le 23 à 23 h", () => {
+    const { depuis, jusqua } = bornesSeptJours("2026-10-17");
+    const tokyo = new Date("2026-10-16T16:00:00Z"); // le 17 à 1 h à Tokyo
+    const hawai = new Date("2026-10-24T09:00:00Z"); // le 23 à 23 h à Honolulu
+    expect(tokyo >= depuis && tokyo < jusqua).toBe(true);
+    expect(hawai >= depuis && hawai < jusqua).toBe(true);
   });
 });

@@ -84,9 +84,23 @@ export function casesDuMois(m: Mois): Case[][] {
   );
 }
 
+// « samedi 17 octobre »
+export function libelleJour(jour: Jour): string {
+  return new Intl.DateTimeFormat("fr-FR", { weekday: "long", day: "numeric", month: "long", timeZone: "UTC" })
+    .format(new Date(`${jour}T12:00:00Z`));
+}
+
 // Aujourd'hui et les 6 jours suivants.
 export function septJours(aujourdhui: Jour): Jour[] {
   return Array.from({ length: 7 }, (_, i) => ajouterJours(aujourdhui, i));
+}
+
+// Bornes de la requête des 7 jours : un jour de marge de chaque côté absorbe les fuseaux (Tokyo, Amériques).
+export function bornesSeptJours(aujourdhui: Jour): { depuis: Date; jusqua: Date } {
+  return {
+    depuis: new Date(`${ajouterJours(aujourdhui, -1)}T00:00:00Z`),
+    jusqua: new Date(`${ajouterJours(aujourdhui, 8)}T00:00:00Z`),
+  };
 }
 
 // Bornes larges pour la requête en base d'un mois : une saison commencée deux mois plus tôt le couvre encore,
