@@ -90,16 +90,16 @@ export function libelleJour(jour: Jour): string {
     .format(new Date(`${jour}T12:00:00Z`));
 }
 
-// Aujourd'hui et les 6 jours suivants.
+// Aujourd'hui et les 7 jours suivants : de samedi au samedi suivant (décidé le 17/10).
 export function septJours(aujourdhui: Jour): Jour[] {
-  return Array.from({ length: 7 }, (_, i) => ajouterJours(aujourdhui, i));
+  return Array.from({ length: 8 }, (_, i) => ajouterJours(aujourdhui, i));
 }
 
-// Bornes de la requête des 7 jours : un jour de marge de chaque côté absorbe les fuseaux (Tokyo, Amériques).
+// Bornes de la requête des 7 prochains jours : un jour de marge de chaque côté absorbe les fuseaux (Tokyo, Amériques).
 export function bornesSeptJours(aujourdhui: Jour): { depuis: Date; jusqua: Date } {
   return {
     depuis: new Date(`${ajouterJours(aujourdhui, -1)}T00:00:00Z`),
-    jusqua: new Date(`${ajouterJours(aujourdhui, 8)}T00:00:00Z`),
+    jusqua: new Date(`${ajouterJours(aujourdhui, 9)}T00:00:00Z`),
   };
 }
 
@@ -135,7 +135,7 @@ export function rangerPourMois<T extends EngagementCalendrier>(liste: T[], m: Mo
   return { parJour, aPreciser };
 }
 
-// Les 7 prochains jours, chacun avec ses engagements (liste vide s'il n'y en a pas). Dates précises seulement.
+// Aujourd'hui et les 7 prochains jours, chacun avec ses engagements (liste vide s'il n'y en a pas). Dates précises seulement.
 export function rangerSeptJours<T extends EngagementCalendrier>(liste: T[], aujourdhui: Jour) {
   const jours = septJours(aujourdhui);
   const tries = [...liste].sort(parDebut);

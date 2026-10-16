@@ -4,7 +4,7 @@ Amélioration n° 5 de `SUIVI.md`. Branche `calendrier`, partie de `main` le 16/
 
 ## 1. Ce qu'on veut
 
-1. **7 prochains jours** (aujourd'hui à J+6) : liste par jour (heure, titre, musiciens, lieu, statut en couleur ;
+1. **7 prochains jours** (aujourd'hui à J+7, de samedi à samedi : changé le 17/10) : liste par jour (heure, titre, musiciens, lieu, statut en couleur ;
    clic → fiche). En haut du tableau de bord pour l'agent ; en haut de sa fiche pour le musicien (les siens seulement).
 2. **Page `/calendrier`** : un mois en grille, semaines du lundi au dimanche ; chaque engagement à sa date, coloré
    par statut (mêmes couleurs que les badges) ; clic → fiche.
@@ -50,3 +50,5 @@ musicien sur le mois.
   disparaissent (elles sont dans le menu). Le mois y change sur place (`/tableau-de-bord?mois=2026-12`), même bloc
   que `/calendrier`. La liste des **7 prochains jours n'y est plus** (le mois montre la semaine, aujourd'hui entouré) ;
   elle reste prévue en haut de la fiche du musicien (L3).
+- **17/10, fenêtre des 7 prochains jours** (demandé par l'humain après les gestes de L3) : aujourd'hui **et les 7 jours
+  suivants** (J+7, 8 jours), pour voir de samedi au samedi suivant. Le titre « 7 prochains jours » reste.

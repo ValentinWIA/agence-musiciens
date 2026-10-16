@@ -73,9 +73,9 @@ describe("casesDuMois", () => {
 });
 
 describe("septJours", () => {
-  it("aujourd'hui et les 6 suivants, en passant au mois suivant", () => {
+  it("aujourd'hui et les 7 suivants, en passant au mois suivant", () => {
     expect(septJours("2026-10-28")).toEqual([
-      "2026-10-28", "2026-10-29", "2026-10-30", "2026-10-31", "2026-11-01", "2026-11-02", "2026-11-03",
+      "2026-10-28", "2026-10-29", "2026-10-30", "2026-10-31", "2026-11-01", "2026-11-02", "2026-11-03", "2026-11-04",
     ]);
   });
 });
@@ -141,11 +141,12 @@ describe("rangerSeptJours", () => {
     const dedans = engagement({ debut: new Date("2026-10-20T18:00:00Z") });
     const annule = engagement({ debut: new Date("2026-10-20T18:00:00Z"), statut: "annule" });
     const auMois = engagement({ debut: new Date("2026-10-18T00:00:00Z"), precisionDate: "mois" });
-    const apres = engagement({ debut: new Date("2026-10-24T18:00:00Z") });
+    const samediSuivant = engagement({ debut: new Date("2026-10-24T18:00:00Z") });
+    const apres = engagement({ debut: new Date("2026-10-25T18:00:00Z") });
     const avant = engagement({ debut: new Date("2026-10-16T18:00:00Z") });
-    const r = rangerSeptJours([apres, annule, dedans, auMois, avant], "2026-10-17");
+    const r = rangerSeptJours([apres, samediSuivant, annule, dedans, auMois, avant], "2026-10-17");
     expect(r.map((j) => j.jour)).toEqual(septJours("2026-10-17"));
-    expect(r.flatMap((j) => j.engagements)).toEqual([dedans]);
+    expect(r.flatMap((j) => j.engagements)).toEqual([dedans, samediSuivant]);
     expect(r.find((j) => j.jour === "2026-10-20")!.engagements).toEqual([dedans]);
   });
 });
@@ -154,10 +155,10 @@ describe("libelleJour et bornesSeptJours", () => {
   it("écrit le jour en toutes lettres", () => {
     expect(libelleJour("2026-10-17")).toBe("samedi 17 octobre");
   });
-  it("couvre un concert à Tokyo le 17 à 1 h et à Hawaï le 23 à 23 h", () => {
+  it("couvre un concert à Tokyo le 17 à 1 h et à Hawaï le 24 à 23 h", () => {
     const { depuis, jusqua } = bornesSeptJours("2026-10-17");
     const tokyo = new Date("2026-10-16T16:00:00Z"); // le 17 à 1 h à Tokyo
-    const hawai = new Date("2026-10-24T09:00:00Z"); // le 23 à 23 h à Honolulu
+    const hawai = new Date("2026-10-25T09:00:00Z"); // le 24 à 23 h à Honolulu
     expect(tokyo >= depuis && tokyo < jusqua).toBe(true);
     expect(hawai >= depuis && hawai < jusqua).toBe(true);
   });
