@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import { and, asc, desc, eq, gte, ilike, inArray, lt, ne, or, sql, type SQL } from "drizzle-orm";
 import { db } from "@/db";
 import { STATUTS_TENUS, type ConcertSitue } from "@/lib/conflit";
@@ -225,10 +226,17 @@ export async function lirePieceJointe(engagementId: string, pieceId: string) {
 
 // Les musiciens, avec le nombre de leurs engagements à venir (annulés exclus). Réservé à l'agent : la page appelle
 // verifierAdmin avant.
+// Adresse de la photo pour le navigateur : la route protégée, jamais le chemin dans le stockage. Le paramètre « v »
+// (empreinte du chemin, qui change à chaque nouvelle photo) fait recharger l'image remplacée.
+function adressePhoto(id: string, chemin: string | null) {
+  if (!chemin) return null;
+  return `/musiciens/${id}/photo?v=${createHash("sha256").update(chemin).digest("hex").slice(0, 8)}`;
+}
+
 export async function listerFichesMusiciens() {
   const [musiciens, aVenir] = await Promise.all([
     db
-      .select({ id: utilisateurs.id, nom: utilisateurs.nom, instrument: utilisateurs.instrument })
+      .select({ id: utilisateurs.id, nom: utilisateurs.nom, instrument: utilisateurs.instrument, photoChemin: utilisateurs.photoChemin })
       .from(utilisateurs)
       .where(eq(utilisateurs.role, "musicien"))
       .orderBy(asc(utilisateurs.nom)),
@@ -238,18 +246,18 @@ export async function listerFichesMusiciens() {
       .innerJoin(engagements, eq(engagementMusiciens.engagementId, engagements.id))
       .where(and(gte(engagements.debut, new Date()), ne(engagements.statut, "annule"))),
   ]);
-  return musiciens.map((m) => ({ ...m, aVenir: aVenir.filter((l) => l.musicienId === m.id).length }));
+  return musiciens.map(({ photoChemin, ...m }) => ({
+    ...m,
+    photo: adressePhoto(m.id, photoChemin),
+    aVenir: aVenir.filter((l) => l.musicienId === m.id).length,
+  }));
 }
 
 // Lit la fiche d'un musicien pour ce lecteur. Renvoie null si l'identifiant n'est pas celui d'un musicien (adresse
 // inventée, ou l'agent), ou si un musicien ouvre la fiche d'un autre : la page dit « introuvable » dans tous les cas,
-// et la tentative d'un musicien est journalisée. Le chemin de la photo n'est pas lu (jamais envoyé au navigateur).
+// et la tentative d'un musicien est journalisée. Le chemin de la photo ne sort pas : seule son adresse protégée.
 export async function lireMusicien(lecteur: Lecteur, id: string) {
-  if (!UUID.test(id)) return null;
-  if (lecteur.role === "musicien" && lecteur.id !== id) {
-    console.warn(`Accès refusé : ${lecteur.nom} (musicien) sur la fiche du musicien ${id}`);
-    return null;
-  }
+  if (!ficheAccessible(lecteur, id, "la fiche")) return null;
 
   const [musicien] = await db
     .select({
@@ -258,6 +266,7 @@ export async function lireMusicien(lecteur: Lecteur, id: string) {
       instrument: utilisateurs.instrument,
       biographie: utilisateurs.biographie,
       repertoire: utilisateurs.repertoire,
+      photoChemin: utilisateurs.photoChemin,
       // Pour un musicien, la colonne n'est pas lue du tout : ses notes ne peuvent pas atteindre son navigateur.
       notesAgent: lecteur.role === "admin" ? utilisateurs.notesAgent : sql<string | null>`null`,
     })
@@ -298,5 +307,26 @@ export async function lireMusicien(lecteur: Lecteur, id: string) {
     ...l,
     nombreMusiciens: liens.filter((x) => x.engagementId === l.id).length,
   }));
-  return { ...musicien, engagements: engagementsDuMusicien };
+  const { photoChemin, ...fiche } = musicien;
+  return { ...fiche, photo: adressePhoto(fiche.id, photoChemin), engagements: engagementsDuMusicien };
+}
+
+// Même règle que la fiche : l'agent, ou le musicien lui-même. Un refus d'un musicien est journalisé.
+function ficheAccessible(lecteur: Lecteur, id: string, quoi: string) {
+  if (!UUID.test(id)) return false;
+  if (lecteur.role === "musicien" && lecteur.id !== id) {
+    console.warn(`Accès refusé : ${lecteur.nom} (musicien) sur ${quoi} du musicien ${id}`);
+    return false;
+  }
+  return true;
+}
+
+// Chemin de la photo dans le stockage, pour la route qui la sert (et seulement elle) ; null si refusé ou sans photo.
+export async function lireCheminPhoto(lecteur: Lecteur, id: string) {
+  if (!ficheAccessible(lecteur, id, "la photo")) return null;
+  const [ligne] = await db
+    .select({ chemin: utilisateurs.photoChemin })
+    .from(utilisateurs)
+    .where(and(eq(utilisateurs.id, id), eq(utilisateurs.role, "musicien")));
+  return ligne?.chemin ?? null;
 }

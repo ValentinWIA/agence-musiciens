@@ -52,7 +52,7 @@ async function FicheMusicien({
       )}
       <div className="grid items-start gap-10 md:grid-cols-[280px_1fr]">
         <div className="grid max-w-[280px] gap-4">
-          <Portrait nom={musicien.nom} className="rounded-xl border" />
+          <Portrait nom={musicien.nom} photo={musicien.photo} className="rounded-xl border" />
           {estAgent && (
             <Button nativeButton={false} render={<Link href={`/engagements/nouveau?musicien=${musicien.id}`} />}>
               Nouvel engagement

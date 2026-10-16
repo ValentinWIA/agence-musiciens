@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { lireMusicien } from "@/lib/engagements";
 import { verifierSession } from "@/lib/session";
 import { FormulaireFiche } from "./formulaire-fiche";
+import { FormulairePhoto } from "./formulaire-photo";
 
 export default function PageModifierFiche({ params }: PageProps<"/musiciens/[id]/modifier">) {
   return (
@@ -31,7 +32,8 @@ async function ContenuFormulaire({ params }: { params: Promise<{ id: string }> }
         <CardHeader>
           <CardTitle>Modifier la fiche de {musicien.nom}</CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="grid gap-8">
+          <FormulairePhoto id={musicien.id} nom={musicien.nom} photo={musicien.photo} />
           <FormulaireFiche
             id={musicien.id}
             agent={utilisateur.role === "admin"}
