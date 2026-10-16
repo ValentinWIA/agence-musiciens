@@ -10,7 +10,7 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 
 ## État de reprise
 
-*Dernière mise à jour : 17 octobre 2026 (calendrier : L1 à L4 validés en prévisualisation, pull request n° 13 ouverte)*
+*Dernière mise à jour : 17 octobre 2026 (calendrier fusionné, pull request n° 13, et vérifié en production)*
 
 - **Fait** : cadrage (SPEC), comptes, squelette Next.js, dépôt GitHub public, site en ligne
   (https://agence-musiciens.vercel.app), région `fra1`, base Neon reliée à Vercel.
@@ -243,7 +243,7 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
     le 16/10 (17 contrats ; 9 / 6 / 4 / 8 / 4 / 1 / 0, annulé 1 ; liens ; téléphone ; Louis sans indicateurs).
     Limite connue : la liste des engagements n'a pas de filtre de saison (un clic montre toutes les saisons).
     **PR n° 12 fusionnée le 16/10** ; **gestes validés en production le 16/10** par l'humain.
-  - **🔄 Calendrier (amélioration n° 5)**, branche `calendrier` (depuis `main`, 17/10, poussée ; prévisualisation
+  - **✅ Calendrier (amélioration n° 5)**, branche `calendrier` (depuis `main`, 17/10, poussée ; prévisualisation
     https://agence-musiciens-git-calendrier-valentin-4768.vercel.app). Cadrage, plan et écarts : `docs/calendrier.md`.
     Décidé : annulés cachés ; dates approximatives dans un bandeau « Date à préciser » (chaque mois de leur période).
     **L1 ✅** (`8921715`) `src/lib/calendrier.ts`, règles pures, 16 tests (180 au total).
@@ -259,7 +259,7 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
     le tableau de bord). L4b (`da7a517`) concert de Louis le 24/10 à Metz (jour à deux concerts, ajouté en fin de
     liste) ; test : 7 prochains jours jamais vides du 17/10 au 19/12 (démo avant mi-décembre ; après, trou des fêtes
     jusqu'au 16/01 : décaler les dates). Gestes validés le 17/10. 185 tests. Rien de cassé.
-    **Prochaine action** : pull request n° 13 ouverte le 17/10 → fusion (accord de l'humain) → gestes en production.
+    **PR n° 13 fusionnée le 17/10** ; **gestes validés en production le 17/10** par l'humain.
     En production, le concert du 24/10 n'apparaît qu'après rechargement du jeu de données (étape « photos en production »).
     **Ensuite (une demande à la fois)** : renommer en « CM Management » (branche à part) ; **photos en production**
     (demandé le 17/10, pour un air « fini ») : recharger le jeu de données en production (l'humain lance la commande ;
