@@ -196,6 +196,12 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 - **Cassé** : rien.
 - **À améliorer avant Sentry (semaine 2)** : Auth.js journalise chaque mauvais mot de passe comme une erreur
   (`[auth][error] CredentialsSignin`) ; notre ligne « Connexion refusée » suffit, le message d'Auth.js est à faire taire.
+- **Optionnel (noté le 12/10/2026)** : maquettage des écrans sur Figma (parcours agent et musicien). Pas prévu
+  d'office, mais on peut en avoir besoin si l'on retouche l'interface : travailler l'UX (parcours, étapes) et l'UI
+  (rendu visuel) sur maquette avant de coder.
+- ✅ **Fait (12/10/2026)** : fiche « Infrastructure » — langages, paquets et versions utilisés
+  par le code, expliqués de façon pédagogique. Source unique : `docs/infrastructure.html` (commande de régénération du
+  PDF en tête du fichier) → `docs/infrastructure.pdf`. Versions relevées dans `package-lock.json`, pas de mémoire.
 
 ---
 

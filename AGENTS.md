@@ -72,6 +72,30 @@ UptimeRobot et Sentry (semaine 2), API Anthropic (semaine 3), SDK d'agents (sema
 - **Vérifier avant de livrer** : `npm run build` et `npm run lint` passent.
 - **Commits** : en français, une ligne de titre, puis le pourquoi.
 
+## Parallélisation (cas éventuel)
+
+Si plusieurs chantiers avancent en même temps (plusieurs agents, ou humain + agent), chacun travaille sur **sa propre
+branche** (une prévisualisation et une branche de base Neon chacune). Relevé du 12/10/2026, d'après les imports.
+
+**Zones assez disjointes pour avancer en parallèle :**
+- **Comptes et accès** : `installation/`, `invitation/`, `invitations/`, `mot-de-passe-oublie/`, `reinitialisation/`,
+  `formulaire-connexion.tsx` ; `lib/jeton`, `lib/mot-de-passe`, `lib/courriel`.
+- **Engagements** : `engagements/` (hors `pieces/`) ; `lib/engagements`, `cycle-de-vie`, `conflit`, `dates`, `argent`,
+  `lieux`, `geocodage`.
+- **Pièces jointes** : `engagements/[id]/pieces/` ; `lib/pieces-jointes`.
+- **Logique pure avec tests** : chaque module `src/lib/*.ts` et son `*.test.ts` est autonome.
+- **Documentation et présentation** : `docs/`.
+
+**Points de contact : un seul chantier à la fois, ou en séquence :**
+- **Schéma et migrations** (`src/db/schema.ts`, `drizzle/`) : les migrations sont numérotées à la suite ; deux
+  branches qui en créent chacune une entrent forcément en conflit. Une seule branche modifie le schéma à la fois.
+- **Identité et droits** (`src/auth.ts`, `src/lib/session.ts`, importé par 15 fichiers) : changer un rôle touche
+  toutes les zones (ex. le 3ᵉ rôle « agent ↔ musicien »). À faire seul, avant ou après le reste.
+- **Composants partagés** : `src/components/ui/`, `badge-statut.tsx`, `layout.tsx`, `page.tsx`, `tableau-de-bord/`.
+- **Dépendances** : `package.json` et `package-lock.json` (un ajout de paquet par branche, fusionné vite).
+- **Jeu de données** (`scripts/`) : dépend du schéma, suit ses modifications.
+- **`SUIVI.md`** : modifié par tous les chantiers ; une seule personne le met à jour, au moment de la fusion.
+
 ## Contraintes connues
 
 - Sans nom de domaine, Resend n'envoie qu'à l'adresse du propriétaire du compte : les liens (invitation,
