@@ -24,7 +24,7 @@ export async function lireTaux(appeler: typeof fetch = fetch): Promise<Taux | nu
   try {
     const reponse = await appeler(ADRESSE_API, {
       signal: AbortSignal.timeout(DELAI_MAX_MS),
-      next: { revalidate: 3600 }, // la BCE publie une fois par jour : une lecture par heure suffit
+      next: { revalidate: 43200 }, // la BCE publie une fois par jour ouvré : deux lectures par jour au plus
     });
     if (!reponse.ok) {
       console.warn(`Taux de change indisponibles : statut ${reponse.status}`);

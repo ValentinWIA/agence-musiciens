@@ -145,7 +145,7 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   Ce `SUIVI.md` arrive dans `main` par cette pull request : la branche `engagements` n'a plus rien à fusionner.
   **Fin de semaine 1 (branche `fin-semaine-1`, 16/10)** : jours fériés (`src/lib/feries.ts`, Nager.Date, jours
   nationaux seulement, avertissement à côté de la date, jamais de refus) ; cachet en devise converti en euros à titre
-  indicatif (`src/lib/change.ts`, Frankfurter, taux BCE du jour, rien n'est rangé en base) ; service en panne → rien
+  indicatif (`src/lib/change.ts`, Frankfurter, taux BCE du jour, relus au plus 2 fois par jour, rien n'est rangé en base) ; service en panne → rien
   d'affiché, une ligne dans les journaux. `CredentialsSignin` d'Auth.js filtré (`src/auth.ts`). 114 tests.
   Cas ajouté au jeu : récital d'Inès à Gaveau le 8 mai 2027. **Gestes à faire en prévisualisation** : fiche du 8 mai
   → « jour férié : Victoire 1945 » ; duo de Genève en CHF → « ≈ … € (taux BCE du …) » ; engagement en EUR → pas de
@@ -157,7 +157,8 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 - **Points d'attention** :
   - Vercel Hobby ne garde les journaux qu'environ une heure : refaire la tentative juste avant la démo,
     ou ajouter plus tard une table `journal` consultable par l'agent.
-  - **Améliorations futures (demandées par l'humain le 12/10)** :
+  - **Améliorations futures (demandées par l'humain le 12/10)** — **décidé le 16/10 : toutes faites avant la semaine 2**,
+    une à la fois, chacune avec la boucle d'`AGENTS.md` (ordre : fiches musiciens + point 4, puis KPI et calendrier) :
     1. **Fiches musiciens** : photo, biographie, répertoire, cachet moyen (divisé par 2 pour un duo, par le nombre
        de musiciens en général), **récap de ses engagements** (à venir, passés, par statut).
     2. **Indicateurs (KPI)** : nombre de contrats sur l'année ; frise du nombre d'engagements par stade
