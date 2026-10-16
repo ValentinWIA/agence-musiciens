@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { ENGAGEMENTS, LIEUX } from "../../scripts/donnees-fictives";
 import { versUniteMinimale } from "./argent";
+import { jourLocal, septJours } from "./calendrier";
 import { trouverConflits, type Concert } from "./conflit";
 import { dateDepassee, estEnCours } from "./cycle-de-vie";
 
@@ -60,5 +61,27 @@ describe("jeu de données : les cas de démonstration de « En cours »", () => 
 
   it("contient un concert bénévole joué, hors « En cours »", () => {
     expect(suivis.some((e) => e.statut === "joue" && e.cachet === 0 && !e.enCours)).toBe(true);
+  });
+});
+
+// Les dates du jeu sont fixes : la démo (avant mi-décembre 2026, décidé le 17/10) ne doit jamais tomber sur des
+// « 7 prochains jours » vides. Au-delà du 19/12, trou des fêtes : il faudra décaler les dates.
+const joursOccupes = ENGAGEMENTS.filter((e) => e.statut !== "annule" && (e.precision ?? "jour") === "jour").map((e) =>
+  jourLocal(new Date(e.debut), LIEUX[e.lieu].pays),
+);
+
+describe("jeu de données : les cas de démonstration du calendrier", () => {
+  it("chaque fenêtre des 7 prochains jours, du 17 octobre au 19 décembre 2026, contient un concert", () => {
+    const videsSansConcert: string[] = [];
+    for (let jour = "2026-10-17"; jour <= "2026-12-19"; jour = septJours(jour)[1]) {
+      const fenetre = septJours(jour);
+      if (!joursOccupes.some((j) => fenetre.includes(j))) videsSansConcert.push(jour);
+    }
+    expect(videsSansConcert).toEqual([]);
+  });
+
+  it("contient un jour à venir avec deux concerts (la case du calendrier s'allonge)", () => {
+    const aVenir = joursOccupes.filter((j) => j >= "2026-10-17" && j <= "2026-12-19");
+    expect(aVenir.some((j, i) => aVenir.indexOf(j) !== i)).toBe(true);
   });
 });

@@ -130,4 +130,5 @@ export const ENGAGEMENTS: EngagementFictif[] = [
   // Ajoutés à la fin pour garder les identifiants des précédents (ils dépendent de la position dans la liste).
   { titre: "Concert-lecture", debut: "2026-09-05T18:00:00+02:00", lieu: "bordeaux", programmateur: "delorme", musiciens: ["hugo"], statut: "demande", notes: "CAS demande à date passée : jamais relancée, à annuler (mention « date passée »)." },
   { titre: "Concert caritatif", debut: "2026-06-27T18:00:00+02:00", duree: 60, lieu: "metz", programmateur: "delorme", musiciens: ["ines"], statut: "joue", cachet: "0", programme: RECITAL_VIOLON, notes: "CAS bénévole joué : rien à facturer, hors « En cours »." },
+  { titre: "Récital violon", debut: "2026-10-24T20:00:00+02:00", duree: 75, lieu: "metz", programmateur: "delorme", musiciens: ["louis"], statut: "confirme", cachet: "1600", programme: RECITAL_VIOLON, notes: "CAS deux concerts le même jour : avec le récital d'Anna à Paris (la case du calendrier s'allonge)." },
 ];
