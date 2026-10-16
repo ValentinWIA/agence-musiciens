@@ -133,7 +133,7 @@ Elles vivent dans Vercel (Settings → Environment Variables), jamais dans le d�
 | `DATABASE_URL_UNPOOLED` | Connexion directe, pour les migrations et le jeu de données |
 | `AUTH_SECRET` | Signe le cookie de session |
 | `RESEND_API_KEY` | Envoi des courriels (sans elle, le courriel est seulement noté au journal) |
-| `BLOB_READ_WRITE_TOKEN` | Accès au stockage des PDF |
+| `BLOB_STORE_ID` (+ `VERCEL_OIDC_TOKEN`, fourni par Vercel) | Accès au stockage des PDF et des photos (OIDC, en production) ; ou l'ancien `BLOB_READ_WRITE_TOKEN` |
 | `MOT_DE_PASSE_DEMO` | Mot de passe des comptes fictifs du jeu de données (12 caractères au moins) |
 
 Fournies par Vercel : `VERCEL_ENV`, `VERCEL_BRANCH_URL`, `VERCEL_PROJECT_PRODUCTION_URL` (adresse des liens

@@ -108,8 +108,11 @@ async function principal() {
 // chaque rechargement : pas de fichiers orphelins. Sans stockage (jeton absent, panne), le jeu se charge sans photos.
 async function envoyerPortraits<K extends string>(cles: K[]) {
   const chemins: Partial<Record<K, string>> = {};
-  if (!process.env.BLOB_READ_WRITE_TOKEN) {
-    console.warn("Portraits : BLOB_READ_WRITE_TOKEN absent, musiciens chargés sans photo.");
+  // Deux accès possibles : l'ancien jeton, ou OIDC (jeton temporaire de Vercel + identifiant du stockage), seul
+  // présent en production depuis octobre 2026.
+  const { BLOB_READ_WRITE_TOKEN, VERCEL_OIDC_TOKEN, BLOB_STORE_ID } = process.env;
+  if (!BLOB_READ_WRITE_TOKEN && !(VERCEL_OIDC_TOKEN && BLOB_STORE_ID)) {
+    console.warn("Portraits : ni BLOB_READ_WRITE_TOKEN ni VERCEL_OIDC_TOKEN + BLOB_STORE_ID, musiciens chargés sans photo.");
     return chemins;
   }
   for (const cle of cles) {

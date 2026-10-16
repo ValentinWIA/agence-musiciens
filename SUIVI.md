@@ -10,7 +10,7 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 
 ## État de reprise
 
-*Dernière mise à jour : 17 octobre 2026 (calendrier en production ; renommage CM Management : R1 et R2 validés, pull request à ouvrir)*
+*Dernière mise à jour : 17 octobre 2026 (reprise après /clear : branche `portraits-oidc`, prévisualisation en échec, voir « Prochaine action » sous « photos en production »)*
 
 - **Fait** : cadrage (SPEC), comptes, squelette Next.js, dépôt GitHub public, site en ligne
   (https://agence-musiciens.vercel.app), région `fra1`, base Neon reliée à Vercel.
@@ -261,11 +261,27 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
     jusqu'au 16/01 : décaler les dates). Gestes validés le 17/10. 185 tests. Rien de cassé.
     **PR n° 13 fusionnée le 17/10** ; **gestes validés en production le 17/10** par l'humain.
     En production, le concert du 24/10 n'apparaît qu'après rechargement du jeu de données (étape « photos en production »).
-    **Ensuite (une demande à la fois)** : renommer en « CM Management » (🔄 branche `cm-management`, voir plus bas) ; **photos en production**
-    (demandé le 17/10, pour un air « fini ») : recharger le jeu de données en production (l'humain lance la commande ;
-    efface et recrée engagements, lieux, programmateurs et musiciens fictifs ; compte de l'agent intact). Recommandé
-    avant : remplacer les portraits à filigrane de `scripts/portraits/`.
-    **Ancienne prochaine action (pour mémoire)** : M5 (photos ; 4 portraits générés avec Canva, choisis par l'humain, dans `scripts/portraits/`).
+    **Ensuite (une demande à la fois)** : ✅ renommer en « CM Management » (voir plus bas) ; 🔄 **photos en production**
+    (demandé le 17/10, pour un air « fini ») : **jeu de données rechargé en production le 17/10** par l'humain (requête de
+    contrôle : 50 engagements, tous fictifs, 0 pièce jointe ; secrets tirés par `vercel env pull` dans
+    `.env.production.local`, mot de passe de démo retapé à la main car protégé). Résultat : 53 engagements, **sans
+    portraits** : la production accède au stockage Blob par OIDC (`VERCEL_OIDC_TOKEN` + `BLOB_STORE_ID`), sans
+    `BLOB_READ_WRITE_TOKEN`, et le script n'acceptait que ce dernier. Correctif : branche `portraits-oidc`, puis
+    relancer le chargement (sans risque : mêmes données, mêmes identifiants). Puis **supprimer** `.env.production.local`
+    et `.env.local` (secrets). Portraits à filigrane **gardés** par décision de l'humain le 17/10 (« c'est un exercice »).
+    **État au /clear (17/10)** : branche `portraits-oidc` poussée, commits `c8f36e1` (suivi) et `eada199` (le script
+    accepte `BLOB_READ_WRITE_TOKEN` **ou** `VERCEL_OIDC_TOKEN` + `BLOB_STORE_ID` ; README). 187 tests, lint OK, GitHub vert.
+    **Cassé : la prévisualisation Vercel échoue** (`drizzle-kit migrate` : `url: undefined`) : aucune variable
+    `DATABASE_URL*` pour `Preview (portraits-oidc)`, l'intégration Neon n'a pas créé de branche de base. Hypothèse
+    non vérifiée : limite de branches du plan gratuit Neon (8 branches de prévisualisation existent : engagements,
+    design, fin-semaine-1, fiches-musiciens, engagements-en-cours, indicateurs, calendrier, cm-management).
+    **Prochaine action** : l'humain ouvre la console Neon (Branches) pour lire le message ; si c'est la limite,
+    supprimer (avec son accord) les branches de base des fonctionnalités déjà fusionnées, puis redéployer
+    `portraits-oidc` ; vérifier « Portraits envoyés : 4. » dans les journaux. Ensuite l'humain relance
+    `npx tsx --env-file=.env.production.local scripts/jeu-de-donnees.ts` (attendu : `Portraits envoyés : 4.`),
+    puis `rm .env.production.local .env.local` (secrets, ignorés par Git ; `.vercel/` peut rester). Puis pull request,
+    fusion par l'humain (`! gh pr merge <n> --merge`, la fusion par l'IA est bloquée), gestes en production (portraits
+    sur la grille et les fiches). `docs/flux-de-nuit.md` (non suivi) n'est pas de cette session : ne pas y toucher.
   - **Ordre décidé** (tout avant la semaine 2) : fiches musiciens (+ tuile « Nouvel engagement » retirée) →
     **engagements « En cours / Tous »** (branche `engagements-en-cours`, depuis `main`) → menu
     latéral (7) → KPI et calendrier (accueil : 7 jours à venir) → semaine 2. *(Plusieurs agents (6) : mis de côté
@@ -327,12 +343,12 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   - **Renommer « AM Management » en « CM Management »** (demandé le 17/10, les initiales de Claire Morel) : logo
     (`src/components/logo.tsx`), titre et libellés des trois `layout.tsx`, puis `docs/` (design, présentation,
     maquettes). Fichiers partagés : sur une petite branche à part, entre deux fonctionnalités (après le calendrier).
-    🔄 Cadrage validé le 17/10, branche `cm-management` : monogramme « CM » ; aussi la carte de connexion et
+    ✅ Cadrage validé le 17/10, branche `cm-management` : monogramme « CM » ; aussi la carte de connexion et
     l'expéditeur des courriels (« Agence-musiciens » → « CM Management ») ; les PDF de `docs/` gardent l'ancien nom
     (exports figés). Hors périmètre : nouveau logo, domaine, noms du dépôt et du projet Vercel.
     **R1 ✅** (`226efe8`) application + test `src/lib/marque.test.ts` (187 tests) ; gestes validés le 17/10.
     **R2 ✅** (`089f2cf`) `docs/` (design, menu latéral, présentation, slides, maquette). Rien de cassé.
-    **Prochaine action** : pull request → fusion (accord de l'humain) → gestes en production.
+    **PR n° 14 fusionnée le 17/10** ; **gestes validés en production le 17/10** par l'humain.
   - Améliorations possibles : permettre à l'agent d'annuler une invitation (faute de frappe dans l'adresse) ;
     lien de réinitialisation généré par l'agent pour un musicien (Resend ne lui écrit pas sans nom de domaine).
   - **Chaque déploiement de prévisualisation recharge le jeu de données** (`vercel-build`) : les essais faits à la main
