@@ -152,7 +152,8 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   conversion ; mauvais mot de passe → plus de `[auth][error]` dans les journaux Vercel.
 - **Reprise du 16/10 (après /clear)** — lire d'abord `AGENTS.md` (la boucle), puis ceci :
   - **PR n° 7 `fin-semaine-1` fusionnée** (jours fériés, devises, filtre `CredentialsSignin` par `type`) ; gestes 1 à 4
-    validés en prévisualisation. Reste : 2 gestes en production (CHF → €, plus de trace après un mauvais mot de passe).
+    validés en prévisualisation ; les 2 gestes en production (CHF → €, plus de trace après un mauvais mot de passe)
+    confirmés par l'humain le 17/10.
   - **En cours : branche `fiches-musiciens`** (poussée ; prévisualisation
     https://agence-musiciens-git-fiches-musiciens-valentin-4768.vercel.app). Cadrage `docs/fiches-musiciens.md`, ajouts
     validés le 16/10 : notes privées de l'agent (point 8), **portraits réalistes générés par IA** pour la démo (point 9,
@@ -391,10 +392,10 @@ Un produit se construit par couches. Chaque couche répond à une question et s'
 | 0. Cadrage | Que construit-on, pour qui, avec quelles règles ? | Avant tout | ✅ |
 | 1. Fondations | Où vit le produit ? (comptes, dépôt, hébergeur, base) | 1, jour 1 | ✅ |
 | 2. Squelette | Avec quoi le construit-on ? (framework, langage, interface) | 1, jour 1 | ✅ |
-| 3. Données | Que retient le produit, et sous quelle forme ? | 1 | 🔄 (tables `utilisateurs` et `invitations` ✅ ; engagements à venir) |
-| 4. Identité et droits | Qui est connecté, et qu'a-t-il le droit de faire ? | 1 | ✅ (connexion, invitations, rôles, réinitialisation) |
-| 5. Métier | Que fait le produit ? (engagements, cycle de vie, règles, API externe, courriels, pièces jointes) | 1 | ⬜ |
-| 6. Fiabilité | Comment sait-on que ça marche et que c'est sûr ? (tests, journaux, revue de sécurité, README) | 1 | 🔄 (tests à chaque push et journaux ✅ ; revue de sécurité, README à venir) |
+| 3. Données | Que retient le produit, et sous quelle forme ? | 1 | ✅ (comptes, invitations, réinitialisations, engagements, lieux, programmateurs, pièces jointes ; 10 migrations) |
+| 4. Identité et droits | Qui est connecté, et qu'a-t-il le droit de faire ? | 1 | ✅ (connexion, invitations, rôles, réinitialisation, refus d'accès journalisés) |
+| 5. Métier | Que fait le produit ? (engagements, cycle de vie, règles, API externe, courriels, pièces jointes) | 1 | ✅ (cycle de vie, conflit d'agenda, géocodage, jours fériés, devises, pièces jointes, fiches musiciens, calendrier) |
+| 6. Fiabilité | Comment sait-on que ça marche et que c'est sûr ? (tests, journaux, revue de sécurité, README) | 1 | ✅ (tests à chaque push, journaux, revue de sécurité `docs/securite.md`, README) |
 | 7. Automatisation | Que fait le produit tout seul, la nuit ? | 2 | ⬜ |
 | 8. Intelligence | Que comprend le produit ? (lecture de documents, recherche qui cite ses sources) | 3 | ⬜ |
 | 9. Action | Qu'est-ce que le produit fait à notre place, sous contrôle ? (agent, serveur MCP) | 4 | ⬜ |
@@ -434,7 +435,7 @@ Un produit se construit par couches. Chaque couche répond à une question et s'
 | Vérifier `npm run build` et `npm run lint` | ✅ | Preuve que le projet compile et respecte les règles de style |
 | Revue de simplicité du code généré | ✅ | Rien de superflu, hormis la page d'accueil par défaut, remplacée à la tranche 3 |
 
-### 3. Données 🔄 — fonctionnalité « connexion », tranche 1 ✅
+### 3. Données ✅ — fonctionnalité « connexion », tranche 1 ✅
 
 | Tâche | État | À quoi ça sert |
 |---|---|---|
@@ -446,9 +447,9 @@ Un produit se construit par couches. Chaque couche répond à une question et s'
 
 **Preuve constatée (11/10/2026)** : prévisualisation verte ; table `utilisateurs` présente dans la branche Neon `preview/connexion`, absente de `production`.
 
-À venir, hors de cette table : `invitations` et jetons de réinitialisation (tables séparées), colonne `actif` si besoin.
+Fait depuis : tables `invitations`, `reinitialisations`, puis celles des engagements (détail dans l'état de reprise).
 
-### 4. Identité et droits 🔄 — tranches 2 ✅ et 3 ✅
+### 4. Identité et droits ✅ — tranches 2 ✅ et 3 ✅
 
 | Tâche | État | À quoi ça sert |
 |---|---|---|
