@@ -10,7 +10,7 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 
 ## État de reprise
 
-*Dernière mise à jour : 16 octobre 2026 (fiches musiciens : M1 à M3c faites, M4 à suivre)*
+*Dernière mise à jour : 16 octobre 2026 (fiches musiciens : M1 à M3e faites, M4 en cours)*
 
 - **Fait** : cadrage (SPEC), comptes, squelette Next.js, dépôt GitHub public, site en ligne
   (https://agence-musiciens.vercel.app), région `fra1`, base Neon reliée à Vercel.
@@ -167,7 +167,7 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
     **Gestes à faire (M3b + M3c)** : grille au tableau de bord ; Inès pré-cochée → engagement créé visible dans
     « À venir » ; « Inviter » ; Louis sans grille ni bouton ; cachet de Louis en un seul « ≈ … € » avec date du taux ;
     « Afficher plus » sur une fiche à plus de 5 passés.
-    **Prochaine action** : M3e (voir plus bas), puis M4 (migration 0009 `notes_agent`, page `/musiciens/[id]/modifier`, action `modifierFiche`),
+    **Prochaine action** : M4 (migration 0009 `notes_agent`, page `/musiciens/[id]/modifier`, action `modifierFiche`),
     puis M5 (photos ; 4 portraits générés avec Canva, choisis par l'humain, dans `scripts/portraits/`).
   - **Ordre décidé** (tout avant la semaine 2) : fiches musiciens (+ tuile « Nouvel engagement » retirée) →
     **engagements « En cours / Tous »** (branche `engagements-en-cours`, depuis `main`) → menu
@@ -183,9 +183,10 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   - **Couleurs des statuts** (commits `9a06be8`, `985ab0c`, poussés) : gradation rouge (demande) → vert (payé),
     teintes espacées ; badge pâle avant « confirmé », plein ensuite ; annulé gris barré. **Validées** par l'humain
     le 16/10 en prévisualisation.
-  - **M3e validée, à faire** : retirer la tuile « Mes engagements » du tableau de bord du **musicien** (sa fiche
-    devient sa page principale) ; lien « Rechercher dans mes engagements → » sur sa fiche. Fiche inchangée pour
-    l'agent. Plus tard : décider si le musicien arrive directement sur sa fiche.
+  - **M3e ✅** (commit `16ba2ec`) : tuile « Mes engagements » retirée du tableau de bord du **musicien** (sa fiche
+    devient sa page principale) ; lien « Rechercher dans mes engagements → » sur sa fiche (s'il a des engagements).
+    Fiche inchangée pour l'agent. Gestes validés le 16/10 (Louis : une tuile, lien vers ses seuls engagements ;
+    agent : trois tuiles, pas de lien). Plus tard : décider si le musicien arrive directement sur sa fiche.
   - M3b et M3c : **gestes 1 à 6 validés** le 16/10.
   - `docs/flux-de-nuit.md` : brouillon du cadrage de la semaine 2, non commité, à valider plus tard.
 - **Quota** : semaine à 79 % le 12/10 (réinitialisation le 14/10 à 11 h 59). Sessions courtes, `/clear` entre étapes,
