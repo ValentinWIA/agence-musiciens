@@ -185,7 +185,8 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
     **Ancienne prochaine action (pour mémoire)** : M5 (photos ; 4 portraits générés avec Canva, choisis par l'humain, dans `scripts/portraits/`).
   - **Ordre décidé** (tout avant la semaine 2) : fiches musiciens (+ tuile « Nouvel engagement » retirée) →
     **engagements « En cours / Tous »** (branche `engagements-en-cours`, depuis `main`) → menu
-    latéral (7) → KPI et calendrier (accueil : 7 jours à venir) → plusieurs agents (6) à cadrer → semaine 2.
+    latéral (7) → KPI et calendrier (accueil : 7 jours à venir) → semaine 2. *(Plusieurs agents (6) : mis de côté
+    le 16/10, voir plus bas.)*
   - **Cadrage validé le 16/10 — engagements « En cours / Tous »** (l'agent doit suivre les impayés des concerts
     passés) : le filtre de période de `/engagements` devient « En cours » (par défaut) et « Tous », au lieu de
     « À venir / Passés ». En cours = tout statut sauf payé et annulé, quelle que soit la date, trié du plus ancien au
@@ -229,11 +230,11 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
     5. **Calendrier** (précisé le 16/10) : sur la **page d'accueil** (tableau de bord), les engagements des musiciens
        des **7 jours à venir** ; en plus, vue mensuelle où les engagements apparaissent à leur date (couleur par statut, clic → fiche ;
        un musicien n'y voit que les siens).
-    6. **Plusieurs agents** : chaque agent a son portefeuille de musiciens et ne voit que leurs engagements ;
+    6. **Plusieurs agents** — **mis de côté le 16/10** (hypothèse de développement futur, hors du projet actuel) : chaque agent a son portefeuille de musiciens et ne voit que leurs engagements ;
        nouveau rôle **directeur** (vue d'ensemble de l'agence, tous agents confondus, et répartition des musiciens).
        Gros chantier : 3ᵉ rôle dans Auth.js, lien agent ↔ musicien en base (migration), et tous les contrôles
        d'accès côté serveur à revoir (un agent ne doit pas ouvrir l'engagement d'un autre : même risque d'IDOR).
-       À cadrer avant les KPI (point 2), qui devront être calculés par agent et pour l'agence.
+       Les KPI (point 2) sont donc calculés pour l'agence seulement.
     7. **Menu latéral à gauche, toujours présent** (demandé le 16/10) : liens vers les pages selon le rôle
        (tableau de bord, engagements, musiciens ou « Ma fiche », calendrier, invitations…) et **déconnexion
        possible depuis toutes les pages**, pas seulement le tableau de bord. Sur téléphone : menu repliable.
@@ -454,4 +455,5 @@ déconnexion ; `/tableau-de-bord` sans session → renvoi vers la connexion.
 | 12/10/2026 | Doublon de lieu : même nom et (même ville sans chiffres ou moins de 100 m) | La ville en texte exact laissait créer deux fois la même salle |
 | 12/10/2026 | Règle de conflit : marge ramenée de 4 h à 1 h ; seuls les engagements tenus (confirmé et après) bloquent ; concerts passés comptés ; égalité permise | Choix de l’humain au cadrage F ; deux options sur une même date restent possibles, la première confirmée l’emporte |
 | 12/10/2026 | Trajet toujours estimé en voiture (× 1,3 ÷ 80 km/h) ; plus tard, « confirmer quand même » avec une raison | Trop pessimiste en train ou en avion, mais sûr ; la nuit (pas de transport) fait le cas piégé, une vitesse plus haute l'effacerait ; l'agent connaît les horaires |
+| 16/10/2026 | Plusieurs agents et rôle directeur mis de côté | Hypothèse de développement futur ; un seul agent suffit au projet |
 | 11/10/2026 | Table `utilisateurs` limitée à 7 colonnes | Invitations et réinitialisations iront dans des tables séparées ; ajouter une colonne plus tard est peu coûteux |
