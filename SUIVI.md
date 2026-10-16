@@ -10,7 +10,7 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 
 ## État de reprise
 
-*Dernière mise à jour : 16 octobre 2026 (fiches musiciens : M1 à M4 faites, M5 en cours)*
+*Dernière mise à jour : 16 octobre 2026 (fiches musiciens : M1 à M5a faites, M5b en attente de portraits)*
 
 - **Fait** : cadrage (SPEC), comptes, squelette Next.js, dépôt GitHub public, site en ligne
   (https://agence-musiciens.vercel.app), région `fra1`, base Neon reliée à Vercel.
@@ -174,7 +174,15 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
     « Notes de l'agent » et « Modifier la fiche » sur la fiche. 140 tests. **Gestes 1 à 5 validés le 16/10** (dont la
     requête trafiquée : champ `notesAgent` ajouté depuis les outils de développement → refusé). Astuce notée : Chrome
     exige de taper `allow pasting` avant de coller dans la console.
-    **Prochaine action** : M5 (photos ; 4 portraits générés avec Canva, choisis par l'humain, dans `scripts/portraits/`).
+    M5a ✅ (commit `d4cdf2a`) : photo du musicien (envoi, remplacement qui efface l'ancienne, retrait), stockage Blob
+    privé, route protégée `/musiciens/[id]/photo` (`lireCheminPhoto`, refus journalisé), adresse avec empreinte du
+    chemin (`?v=`) pour recharger une photo remplacée, photo sur la fiche et la grille. **Gestes 1 à 6 validés le
+    16/10** (envoi, remplacement, faux JPEG, plus de 2 Mo, Louis sur la photo d'Anna → introuvable, retrait).
+    **M5b bloquée** : les 4 images déposées le 16/10 (racine du dépôt, non commitées) sont des **photos de banques
+    d'images** (filigranes Unsplash+ et Dreamstime/Depositphotos visibles), donc de vraies personnes, sous licence non
+    acquise : refusées (règle « aucune donnée de vraie personne », point 9 du cadrage). À remplacer par 4 portraits
+    **générés par IA**.
+    **Ancienne prochaine action (pour mémoire)** : M5 (photos ; 4 portraits générés avec Canva, choisis par l'humain, dans `scripts/portraits/`).
   - **Ordre décidé** (tout avant la semaine 2) : fiches musiciens (+ tuile « Nouvel engagement » retirée) →
     **engagements « En cours / Tous »** (branche `engagements-en-cours`, depuis `main`) → menu
     latéral (7) → KPI et calendrier (accueil : 7 jours à venir) → plusieurs agents (6) à cadrer → semaine 2.
@@ -199,6 +207,8 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   explications courtes.
 - **Limite connue** : changer le mot de passe ne ferme pas les sessions déjà ouvertes (elles expirent seules).
 - **Reste à faire (côté humain)** : créer le compte UptimeRobot.
+  **Supprimer « Samuel Vrignon » des musiciens en production** (demandé le 16/10), lors de la prochaine mise en
+  production : c'est l'humain qui lance la commande (garde-fou de Claude Code), après confirmation de la ligne visée.
   **Brancher un vrai nom de domaine sur Resend** (noté le 16/10) : sans domaine vérifié, Resend n'écrit qu'à
   l'adresse du propriétaire du compte, donc les courriels d'invitation et de réinitialisation n'arrivent pas aux
   musiciens (leur lien est seulement affiché à l'agent). Étapes : acheter un domaine, l'ajouter dans Resend,
