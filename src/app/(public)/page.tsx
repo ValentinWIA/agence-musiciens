@@ -10,7 +10,7 @@ export default function PageConnexion() {
     <main className="flex flex-1 items-center justify-center p-4">
       <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle>Agence-musiciens</CardTitle>
+          <CardTitle>CM Management</CardTitle>
           <CardDescription>Connectez-vous pour accéder aux engagements.</CardDescription>
         </CardHeader>
         <CardContent>

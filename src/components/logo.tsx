@@ -6,10 +6,10 @@ export function Logo() {
         aria-hidden
         className="grid size-10 place-items-center rounded-sm border border-foreground/70 font-logo text-xl leading-none tracking-tight"
       >
-        AM
+        CM
       </span>
       <span className="grid leading-tight">
-        <span className="font-logo text-xl">AM Management</span>
+        <span className="font-logo text-xl">CM Management</span>
         <span className="text-[0.65rem] tracking-[0.25em] text-muted-foreground uppercase">Agence de musiciens</span>
       </span>
     </span>

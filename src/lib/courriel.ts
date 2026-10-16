@@ -2,7 +2,7 @@ import { Resend } from "resend";
 
 // Sans nom de domaine vérifié, Resend impose cette adresse d'expédition
 // et n'accepte d'écrire qu'à l'adresse du propriétaire du compte.
-const EXPEDITEUR = "Agence-musiciens <onboarding@resend.dev>";
+const EXPEDITEUR = "CM Management <onboarding@resend.dev>";
 
 // Renvoie vrai si le courriel est parti. Un échec n'interrompt jamais l'action en cours.
 export async function envoyerCourriel({ a, sujet, texte }: { a: string; sujet: string; texte: string }) {

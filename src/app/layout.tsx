@@ -19,7 +19,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "AM Management",
+  title: "CM Management",
   description: "Gestion des engagements de concert de l'agence",
 };
 
