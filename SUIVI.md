@@ -10,7 +10,7 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 
 ## État de reprise
 
-*Dernière mise à jour : 17 octobre 2026 (calendrier et CM Management en production ; jeu de données rechargé en production sans portraits ; correctif sur la branche `portraits-oidc`)*
+*Dernière mise à jour : 17 octobre 2026 (reprise après /clear : branche `portraits-oidc`, prévisualisation en échec, voir « Prochaine action » sous « photos en production »)*
 
 - **Fait** : cadrage (SPEC), comptes, squelette Next.js, dépôt GitHub public, site en ligne
   (https://agence-musiciens.vercel.app), région `fra1`, base Neon reliée à Vercel.
@@ -269,6 +269,19 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
     `BLOB_READ_WRITE_TOKEN`, et le script n'acceptait que ce dernier. Correctif : branche `portraits-oidc`, puis
     relancer le chargement (sans risque : mêmes données, mêmes identifiants). Puis **supprimer** `.env.production.local`
     et `.env.local` (secrets). Portraits à filigrane **gardés** par décision de l'humain le 17/10 (« c'est un exercice »).
+    **État au /clear (17/10)** : branche `portraits-oidc` poussée, commits `c8f36e1` (suivi) et `eada199` (le script
+    accepte `BLOB_READ_WRITE_TOKEN` **ou** `VERCEL_OIDC_TOKEN` + `BLOB_STORE_ID` ; README). 187 tests, lint OK, GitHub vert.
+    **Cassé : la prévisualisation Vercel échoue** (`drizzle-kit migrate` : `url: undefined`) : aucune variable
+    `DATABASE_URL*` pour `Preview (portraits-oidc)`, l'intégration Neon n'a pas créé de branche de base. Hypothèse
+    non vérifiée : limite de branches du plan gratuit Neon (8 branches de prévisualisation existent : engagements,
+    design, fin-semaine-1, fiches-musiciens, engagements-en-cours, indicateurs, calendrier, cm-management).
+    **Prochaine action** : l'humain ouvre la console Neon (Branches) pour lire le message ; si c'est la limite,
+    supprimer (avec son accord) les branches de base des fonctionnalités déjà fusionnées, puis redéployer
+    `portraits-oidc` ; vérifier « Portraits envoyés : 4. » dans les journaux. Ensuite l'humain relance
+    `npx tsx --env-file=.env.production.local scripts/jeu-de-donnees.ts` (attendu : `Portraits envoyés : 4.`),
+    puis `rm .env.production.local .env.local` (secrets, ignorés par Git ; `.vercel/` peut rester). Puis pull request,
+    fusion par l'humain (`! gh pr merge <n> --merge`, la fusion par l'IA est bloquée), gestes en production (portraits
+    sur la grille et les fiches). `docs/flux-de-nuit.md` (non suivi) n'est pas de cette session : ne pas y toucher.
   - **Ordre décidé** (tout avant la semaine 2) : fiches musiciens (+ tuile « Nouvel engagement » retirée) →
     **engagements « En cours / Tous »** (branche `engagements-en-cours`, depuis `main`) → menu
     latéral (7) → KPI et calendrier (accueil : 7 jours à venir) → semaine 2. *(Plusieurs agents (6) : mis de côté
