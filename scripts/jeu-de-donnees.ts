@@ -5,12 +5,16 @@
 //   … --si-previsualisation               → seulement sur une prévisualisation Vercel (utilisé par vercel-build)
 
 import { createHash } from "node:crypto";
+import { readFile } from "node:fs/promises";
+import path from "node:path";
+import { put } from "@vercel/blob";
 import { neon } from "@neondatabase/serverless";
 import bcrypt from "bcryptjs";
 import { and, eq, inArray, like } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/neon-http";
 import * as schema from "@/db/schema";
 import { versUniteMinimale } from "@/lib/argent";
+import { typeDePhoto } from "@/lib/musiciens";
 import { regleMotDePasse } from "@/lib/mot-de-passe";
 import { ENGAGEMENTS, LIEUX, MUSICIENS, PROGRAMMATEURS } from "./donnees-fictives";
 
@@ -65,6 +69,8 @@ async function principal() {
     };
   });
 
+  const portraits = await envoyerPortraits(Object.keys(MUSICIENS) as (keyof typeof MUSICIENS)[]);
+
   // Tout est effacé puis recréé en une seule opération : en cas d'erreur, rien n'a changé.
   await db.batch([
     db.delete(engagements), // leurs musiciens et leurs pièces jointes partent avec eux (cascade)
@@ -77,6 +83,7 @@ async function principal() {
       Object.entries(MUSICIENS).map(([cle, m]) => ({
         id: idMusicien[cle as keyof typeof MUSICIENS],
         ...m,
+        photoChemin: portraits[cle as keyof typeof MUSICIENS] ?? null,
         role: "musicien" as const,
         motDePasseHash: hash,
       })),
@@ -95,6 +102,30 @@ async function principal() {
     `Jeu de données chargé : ${Object.keys(MUSICIENS).length} musiciens, ${Object.keys(PROGRAMMATEURS).length} programmateurs, ` +
       `${Object.keys(LIEUX).length} lieux, ${ENGAGEMENTS.length} engagements.`,
   );
+}
+
+// Portraits de démonstration (scripts/portraits/<clé>.jpeg) envoyés au stockage privé à un chemin fixe, remplacé à
+// chaque rechargement : pas de fichiers orphelins. Sans stockage (jeton absent, panne), le jeu se charge sans photos.
+async function envoyerPortraits<K extends string>(cles: K[]) {
+  const chemins: Partial<Record<K, string>> = {};
+  if (!process.env.BLOB_READ_WRITE_TOKEN) {
+    console.warn("Portraits : BLOB_READ_WRITE_TOKEN absent, musiciens chargés sans photo.");
+    return chemins;
+  }
+  for (const cle of cles) {
+    const contenu = await readFile(path.join(process.cwd(), "scripts/portraits", `${cle}.jpeg`)).catch(() => null);
+    const type = contenu && typeDePhoto(contenu.subarray(0, 12));
+    if (!contenu || !type) continue;
+    const chemin = `musiciens/demo/${cle}.jpeg`;
+    try {
+      await put(chemin, contenu, { access: "private", contentType: type, addRandomSuffix: false, allowOverwrite: true });
+      chemins[cle] = chemin;
+    } catch (e) {
+      console.warn(`Portrait de ${cle} non envoyé :`, e);
+    }
+  }
+  console.log(`Portraits envoyés : ${Object.keys(chemins).length}.`);
+  return chemins;
 }
 
 // Empreinte du nom mise en forme d'UUID (version 5, variante RFC) : même nom → même identifiant.

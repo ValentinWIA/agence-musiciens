@@ -15,6 +15,11 @@ export const utilisateurs = pgTable("utilisateurs", {
   role: role("role").notNull(),
   instrument: instrument("instrument"), // vide pour l'agent
   motDePasseHash: text("mot_de_passe_hash").notNull(),
+  // Fiche du musicien, vide pour l'agent. Le répertoire : une œuvre par ligne.
+  biographie: text("biographie"),
+  repertoire: text("repertoire"),
+  photoChemin: text("photo_chemin"), // chemin dans le stockage privé : jamais envoyé au navigateur
+  notesAgent: text("notes_agent"), // lues et écrites par l'agent seulement : jamais lues pour un musicien
   creeLe: timestamp("cree_le", { withTimezone: true }).notNull().defaultNow(),
 });
 

@@ -10,7 +10,7 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 
 ## État de reprise
 
-*Dernière mise à jour : 16 octobre 2026 (fin de semaine 1 : jours fériés, devises)*
+*Dernière mise à jour : 16 octobre 2026 (fiches musiciens : M1 à M5 faites, pull request ouverte)*
 
 - **Fait** : cadrage (SPEC), comptes, squelette Next.js, dépôt GitHub public, site en ligne
   (https://agence-musiciens.vercel.app), région `fra1`, base Neon reliée à Vercel.
@@ -150,15 +150,82 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   Cas ajouté au jeu : récital d'Inès à Gaveau le 8 mai 2027. **Gestes à faire en prévisualisation** : fiche du 8 mai
   → « jour férié : Victoire 1945 » ; duo de Genève en CHF → « ≈ … € (taux BCE du …) » ; engagement en EUR → pas de
   conversion ; mauvais mot de passe → plus de `[auth][error]` dans les journaux Vercel.
+- **Reprise du 16/10 (après /clear)** — lire d'abord `AGENTS.md` (la boucle), puis ceci :
+  - **PR n° 7 `fin-semaine-1` fusionnée** (jours fériés, devises, filtre `CredentialsSignin` par `type`) ; gestes 1 à 4
+    validés en prévisualisation. Reste : 2 gestes en production (CHF → €, plus de trace après un mauvais mot de passe).
+  - **En cours : branche `fiches-musiciens`** (poussée ; prévisualisation
+    https://agence-musiciens-git-fiches-musiciens-valentin-4768.vercel.app). Cadrage `docs/fiches-musiciens.md`, ajouts
+    validés le 16/10 : notes privées de l'agent (point 8), **portraits réalistes générés par IA** pour la démo (point 9,
+    remplace « pas de photo fictive »), cachet moyen **en euros** (taux BCE du jour, repli par devise sans taux),
+    passés : 5 affichés + « Afficher plus ».
+    M1 ✅ migration 0008 jouée en prévisualisation. M2 ✅ `src/lib/musiciens.ts` (règles pures, testées).
+    M3 ✅ pages `/musiciens` (agent) et `/musiciens/[id]` (`lireMusicien` : « introuvable » + « Accès refusé »
+    journalisé), tuiles « Musiciens » / « Ma fiche », tuile « Nouvel engagement » retirée ; 4 gestes validés.
+    M3b (commit `de38685`) : grille des musiciens sur le tableau de bord de l'agent, « Nouvel engagement » depuis une
+    fiche (`?musicien=`, pré-coché), « Inviter » sur `/musiciens`. M3c (commit `e9f7a52`) : `cachetMoyenEnEuros`,
+    `<details>` « Afficher plus ». 138 tests ; vérifications vertes, déploiement réussi.
+    **Gestes à faire (M3b + M3c)** : grille au tableau de bord ; Inès pré-cochée → engagement créé visible dans
+    « À venir » ; « Inviter » ; Louis sans grille ni bouton ; cachet de Louis en un seul « ≈ … € » avec date du taux ;
+    « Afficher plus » sur une fiche à plus de 5 passés.
+    M4a ✅ (commit `2e84e9d`) : colonne `notes_agent` (migration 0009, jouée en prévisualisation), `verifierFiche`
+    limite les notes à 2 000 caractères et ne les renvoie que si elles étaient dans la saisie ; notes fictives pour
+    Anna et Louis. M4b ✅ (commit `63ce4e0`) : page `/musiciens/[id]/modifier`, action `modifierFiche` (musicien : sa
+    fiche seulement ; notes envoyées par un musicien → refus journalisé), notes lues pour l'agent seulement, bloc
+    « Notes de l'agent » et « Modifier la fiche » sur la fiche. 140 tests. **Gestes 1 à 5 validés le 16/10** (dont la
+    requête trafiquée : champ `notesAgent` ajouté depuis les outils de développement → refusé). Astuce notée : Chrome
+    exige de taper `allow pasting` avant de coller dans la console.
+    M5a ✅ (commit `d4cdf2a`) : photo du musicien (envoi, remplacement qui efface l'ancienne, retrait), stockage Blob
+    privé, route protégée `/musiciens/[id]/photo` (`lireCheminPhoto`, refus journalisé), adresse avec empreinte du
+    chemin (`?v=`) pour recharger une photo remplacée, photo sur la fiche et la grille. **Gestes 1 à 6 validés le
+    16/10** (envoi, remplacement, faux JPEG, plus de 2 Mo, Louis sur la photo d'Anna → introuvable, retrait).
+    M5b ✅ (commit `30ac6b1`, fait par l'humain) : portraits de démonstration (`scripts/portraits/<clé>.jpeg`) envoyés
+    au stockage privé par le jeu de données, à des chemins fixes (`musiciens/demo/…`), remplacés à chaque rechargement.
+    **Écart assumé** : ce sont des **photos de banques d'images** (filigranes visibles), pas des portraits générés ;
+    signalé par l'IA, **gardées par décision de l'humain** le 16/10 (le garde-fou de Claude Code a refusé de les publier,
+    l'humain a commité lui-même). Signalé dans le README ; à remplacer avant tout usage réel.
+    **Gestes validés le 16/10** (« Portraits envoyés : 4. » dans les journaux ; visages dans la grille et les fiches ;
+    Louis sur la photo d'Anna → introuvable ; retrait → initiales).
+    **Prochaine action** : pull request `fiches-musiciens` → `main`, fusion par l'humain, vérification en production
+    (migrations 0008 et 0009 ; le jeu de données n'est pas rechargé en production : sans rechargement, pas de
+    biographies, notes ni portraits fictifs). Puis branche `engagements-en-cours`.
+    **Ancienne prochaine action (pour mémoire)** : M5 (photos ; 4 portraits générés avec Canva, choisis par l'humain, dans `scripts/portraits/`).
+  - **Ordre décidé** (tout avant la semaine 2) : fiches musiciens (+ tuile « Nouvel engagement » retirée) →
+    **engagements « En cours / Tous »** (branche `engagements-en-cours`, depuis `main`) → menu
+    latéral (7) → KPI et calendrier (accueil : 7 jours à venir) → semaine 2. *(Plusieurs agents (6) : mis de côté
+    le 16/10, voir plus bas.)*
+  - **Cadrage validé le 16/10 — engagements « En cours / Tous »** (l'agent doit suivre les impayés des concerts
+    passés) : le filtre de période de `/engagements` devient « En cours » (par défaut) et « Tous », au lieu de
+    « À venir / Passés ». En cours = tout statut sauf payé et annulé, quelle que soit la date, trié du plus ancien au
+    plus récent (impayés anciens en tête) ; Tous = tout, du plus récent au plus ancien. Cas limites : bénévole joué
+    exclu d'« en cours » (statut final) ; demande / option / contrat envoyé à date passée restent en cours, avec
+    impayés passés, marqués « date passée » ; ancienne adresse `?periode=passes` → ignorée, « En cours ». Filtres
+    statut, musicien et recherche inchangés ; même règle pour un musicien (ses engagements). Hors périmètre :
+    relances et échéances de paiement (piste pour le flux de nuit, semaine 2).
+  - **Couleurs des statuts** (commits `9a06be8`, `985ab0c`, poussés) : gradation rouge (demande) → vert (payé),
+    teintes espacées ; badge pâle avant « confirmé », plein ensuite ; annulé gris barré. **Validées** par l'humain
+    le 16/10 en prévisualisation.
+  - **M3e ✅** (commit `16ba2ec`) : tuile « Mes engagements » retirée du tableau de bord du **musicien** (sa fiche
+    devient sa page principale) ; lien « Rechercher dans mes engagements → » sur sa fiche (s'il a des engagements).
+    Fiche inchangée pour l'agent. Gestes validés le 16/10 (Louis : une tuile, lien vers ses seuls engagements ;
+    agent : trois tuiles, pas de lien). Plus tard : décider si le musicien arrive directement sur sa fiche.
+  - M3b et M3c : **gestes 1 à 6 validés** le 16/10.
+  - `docs/flux-de-nuit.md` : brouillon du cadrage de la semaine 2, non commité, à valider plus tard.
 - **Quota** : semaine à 79 % le 12/10 (réinitialisation le 14/10 à 11 h 59). Sessions courtes, `/clear` entre étapes,
   explications courtes.
 - **Limite connue** : changer le mot de passe ne ferme pas les sessions déjà ouvertes (elles expirent seules).
 - **Reste à faire (côté humain)** : créer le compte UptimeRobot.
+  **Supprimer « Samuel Vrignon » des musiciens en production** (demandé le 16/10), lors de la prochaine mise en
+  production : c'est l'humain qui lance la commande (garde-fou de Claude Code), après confirmation de la ligne visée.
+  **Brancher un vrai nom de domaine sur Resend** (noté le 16/10) : sans domaine vérifié, Resend n'écrit qu'à
+  l'adresse du propriétaire du compte, donc les courriels d'invitation et de réinitialisation n'arrivent pas aux
+  musiciens (leur lien est seulement affiché à l'agent). Étapes : acheter un domaine, l'ajouter dans Resend,
+  recopier les enregistrements DNS demandés (SPF, DKIM) chez le fournisseur du domaine, attendre la vérification,
+  puis changer l'adresse d'expédition dans le code (`src/lib/courriel.ts`).
 - **Points d'attention** :
   - Vercel Hobby ne garde les journaux qu'environ une heure : refaire la tentative juste avant la démo,
     ou ajouter plus tard une table `journal` consultable par l'agent.
   - **Améliorations futures (demandées par l'humain le 12/10)** — **décidé le 16/10 : toutes faites avant la semaine 2**,
-    une à la fois, chacune avec la boucle d'`AGENTS.md` (ordre : fiches musiciens + point 4, puis KPI et calendrier) :
+    une à la fois, chacune avec la boucle d'`AGENTS.md` (ordre : fiches musiciens + point 4, menu latéral (7), puis KPI et calendrier) :
     1. **Fiches musiciens** : photo, biographie, répertoire, cachet moyen (divisé par 2 pour un duo, par le nombre
        de musiciens en général), **récap de ses engagements** (à venir, passés, par statut).
     2. **Indicateurs (KPI)** : nombre de contrats sur l'année ; frise du nombre d'engagements par stade
@@ -166,13 +233,17 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
     3. **Design global** à poursuivre (pistes non faites dans `docs/design.md` : fiche, formulaire, téléphone, favicon).
     4. **« Nouvel engagement »** : retirer la tuile du tableau de bord ; le bouton existe déjà sur la page des
        engagements, il y reste seul.
-    5. **Calendrier** : vue mensuelle où les engagements apparaissent à leur date (couleur par statut, clic → fiche ;
+    5. **Calendrier** (précisé le 16/10) : sur la **page d'accueil** (tableau de bord), les engagements des musiciens
+       des **7 jours à venir** ; en plus, vue mensuelle où les engagements apparaissent à leur date (couleur par statut, clic → fiche ;
        un musicien n'y voit que les siens).
-    6. **Plusieurs agents** : chaque agent a son portefeuille de musiciens et ne voit que leurs engagements ;
+    6. **Plusieurs agents** — **mis de côté le 16/10** (hypothèse de développement futur, hors du projet actuel) : chaque agent a son portefeuille de musiciens et ne voit que leurs engagements ;
        nouveau rôle **directeur** (vue d'ensemble de l'agence, tous agents confondus, et répartition des musiciens).
        Gros chantier : 3ᵉ rôle dans Auth.js, lien agent ↔ musicien en base (migration), et tous les contrôles
        d'accès côté serveur à revoir (un agent ne doit pas ouvrir l'engagement d'un autre : même risque d'IDOR).
-       À cadrer avant les KPI (point 2), qui devront être calculés par agent et pour l'agence.
+       Les KPI (point 2) sont donc calculés pour l'agence seulement.
+    7. **Menu latéral à gauche, toujours présent** (demandé le 16/10) : liens vers les pages selon le rôle
+       (tableau de bord, engagements, musiciens ou « Ma fiche », calendrier, invitations…) et **déconnexion
+       possible depuis toutes les pages**, pas seulement le tableau de bord. Sur téléphone : menu repliable.
   - Améliorations possibles : permettre à l'agent d'annuler une invitation (faute de frappe dans l'adresse) ;
     lien de réinitialisation généré par l'agent pour un musicien (Resend ne lui écrit pas sans nom de domaine).
   - **Chaque déploiement de prévisualisation recharge le jeu de données** (`vercel-build`) : les essais faits à la main
@@ -390,4 +461,5 @@ déconnexion ; `/tableau-de-bord` sans session → renvoi vers la connexion.
 | 12/10/2026 | Doublon de lieu : même nom et (même ville sans chiffres ou moins de 100 m) | La ville en texte exact laissait créer deux fois la même salle |
 | 12/10/2026 | Règle de conflit : marge ramenée de 4 h à 1 h ; seuls les engagements tenus (confirmé et après) bloquent ; concerts passés comptés ; égalité permise | Choix de l’humain au cadrage F ; deux options sur une même date restent possibles, la première confirmée l’emporte |
 | 12/10/2026 | Trajet toujours estimé en voiture (× 1,3 ÷ 80 km/h) ; plus tard, « confirmer quand même » avec une raison | Trop pessimiste en train ou en avion, mais sûr ; la nuit (pas de transport) fait le cas piégé, une vitesse plus haute l'effacerait ; l'agent connaît les horaires |
+| 16/10/2026 | Plusieurs agents et rôle directeur mis de côté | Hypothèse de développement futur ; un seul agent suffit au projet |
 | 11/10/2026 | Table `utilisateurs` limitée à 7 colonnes | Invitations et réinitialisations iront dans des tables séparées ; ajouter une colonne plus tard est peu coûteux |

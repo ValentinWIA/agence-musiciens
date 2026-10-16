@@ -5,10 +5,24 @@
 import type { Devise } from "@/lib/argent";
 
 export const MUSICIENS = {
-  anna: { nom: "Anna Petit", email: "anna.petit@agence-musiciens.test", instrument: "piano" },
-  hugo: { nom: "Hugo Lambert", email: "hugo.lambert@agence-musiciens.test", instrument: "piano" },
-  louis: { nom: "Louis Roy", email: "louis.roy@agence-musiciens.test", instrument: "violon" },
-  ines: { nom: "Inès Moreau", email: "ines.moreau@agence-musiciens.test", instrument: "violon" },
+  anna: {
+    nom: "Anna Petit", email: "anna.petit@agence-musiciens.test", instrument: "piano",
+    biographie: "Pianiste fictive formée à Lyon, lauréate d'un concours imaginaire. Se produit en récital et en duo avec violon.",
+    repertoire: "Chopin — Ballades\nDebussy — Préludes, livre I\nSchumann — Kinderszenen",
+    notesAgent: "Souhaite plus de récitals en solo. Relancer Lyon pour la saison 2027-2028.",
+  },
+  hugo: { nom: "Hugo Lambert", email: "hugo.lambert@agence-musiciens.test", instrument: "piano" }, // CAS fiche vide
+  louis: {
+    nom: "Louis Roy", email: "louis.roy@agence-musiciens.test", instrument: "violon",
+    biographie: "Violoniste fictif installé à Londres, chambriste avant tout.",
+    repertoire: "Bach — Partita n° 2\nFranck — Sonate pour violon et piano",
+    notesAgent: "Vit à Londres : prévoir les trajets en train. Préfère les duos aux récitals.",
+  },
+  ines: {
+    nom: "Inès Moreau", email: "ines.moreau@agence-musiciens.test", instrument: "violon",
+    biographie: "Violoniste fictive, passionnée de musique française.",
+    repertoire: "Ravel — Tzigane\nFauré — Sonate n° 1",
+  },
 } as const;
 
 export const PROGRAMMATEURS = {

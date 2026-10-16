@@ -104,7 +104,22 @@ async function FicheEngagement({
               </div>
             )}
           </Ligne>
-          <Ligne titre="Musiciens">{engagement.musiciens.map((m) => `${m.nom} (${m.instrument})`).join(", ")}</Ligne>
+          <Ligne titre="Musiciens">
+            {/* Un musicien n'ouvre que sa propre fiche : pas de lien vers celle de son partenaire de duo. */}
+            {engagement.musiciens.map((m, i) => (
+              <span key={m.id}>
+                {i > 0 && ", "}
+                {estAgent || m.id === utilisateur.id ? (
+                  <Link href={`/musiciens/${m.id}`} className="underline">
+                    {m.nom}
+                  </Link>
+                ) : (
+                  m.nom
+                )}{" "}
+                ({m.instrument})
+              </span>
+            ))}
+          </Ligne>
           <Ligne titre="Cachet">
             {cachet === null ? "à définir" : formaterMontant(cachet, devise)}
             {enEuros && <span className="text-muted-foreground"> {enEuros}</span>}

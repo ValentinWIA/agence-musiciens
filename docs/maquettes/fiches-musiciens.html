@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Maquette — Musiciens</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Geist:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* Maquette statique : mêmes couleurs que src/app/globals.css. Données fictives. */
+  :root {
+    --fond: oklch(0.972 0.005 80); --encre: oklch(0.145 0 0); --carte: #fff;
+    --primaire: oklch(0.27 0.015 55); --doux: oklch(0.5 0.01 80); --bord: oklch(0.9 0.008 80);
+    --accent: oklch(0.93 0.03 80); --or: oklch(0.72 0.1 75); --rayon: 10px;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--fond); color: var(--encre); font: 15px/1.55 Geist, system-ui, sans-serif;
+    background-image: radial-gradient(ellipse at top, oklch(0.93 0.04 80 / .6), transparent 60%); min-height: 100vh; }
+  .serif { font-family: "Cormorant Garamond", Georgia, serif; }
+  .app { display: grid; grid-template-columns: 232px 1fr; min-height: 100vh; }
+  /* Menu latéral (amélioration n° 7) */
+  nav { border-right: 1px solid var(--bord); background: oklch(0.985 0.004 80 / .85); padding: 24px 16px;
+    display: flex; flex-direction: column; gap: 4px; position: sticky; top: 0; height: 100vh; }
+  .logo { display: flex; align-items: center; gap: 10px; margin: 0 8px 28px; }
+  .logo b { border: 1px solid var(--encre); padding: 2px 6px; font: 600 15px "Cormorant Garamond", serif; letter-spacing: .08em; }
+  .logo span { font: 600 19px/1.1 "Cormorant Garamond", serif; }
+  .logo small { display: block; font: 11px Geist; color: var(--doux); letter-spacing: .12em; text-transform: uppercase; }
+  nav a { color: inherit; text-decoration: none; padding: 8px 10px; border-radius: 8px; }
+  nav a:hover { background: var(--accent); }
+  nav a.actif { background: var(--primaire); color: #fff; }
+  nav .bas { margin-top: auto; border-top: 1px solid var(--bord); padding-top: 12px; color: var(--doux); font-size: 13px; }
+  nav .bas button { margin-top: 8px; width: 100%; font: inherit; padding: 8px; border: 1px solid var(--bord); background: var(--carte); border-radius: 8px; cursor: pointer; }
+  main { padding: 40px clamp(16px, 4vw, 56px) 64px; max-width: 1180px; }
+  .surtitre { font-size: 11px; letter-spacing: .25em; text-transform: uppercase; color: var(--doux); margin: 0 0 4px; }
+  h1 { font: 500 44px/1.05 "Cormorant Garamond", serif; margin: 0 0 6px; }
+  .intro { color: var(--doux); margin: 0 0 32px; }
+  /* Liste */
+  .grille { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 24px; }
+  .artiste { background: var(--carte); border: 1px solid var(--bord); border-radius: 14px; overflow: hidden;
+    text-decoration: none; color: inherit; transition: transform .25s, box-shadow .25s; }
+  .artiste:hover, .artiste:focus-visible { transform: translateY(-4px); box-shadow: 0 18px 40px -18px oklch(0.27 0.015 55 / .45); outline: none; }
+  .portrait { aspect-ratio: 4 / 5; display: grid; place-items: center; position: relative; overflow: hidden; }
+  .portrait svg { width: 100%; height: 100%; display: block; transition: transform .5s; }
+  .artiste:hover .portrait svg { transform: scale(1.04); }
+  .initiales { font: 500 64px "Cormorant Garamond", serif; color: var(--primaire); letter-spacing: .04em; }
+  .etiquette { position: absolute; left: 12px; bottom: 12px; background: oklch(1 0 0 / .88); backdrop-filter: blur(4px);
+    padding: 3px 10px; border-radius: 99px; font-size: 12px; }
+  .legende { padding: 14px 16px 16px; }
+  .legende h2 { font: 600 24px/1.1 "Cormorant Garamond", serif; margin: 0 0 2px; }
+  .legende p { margin: 0; color: var(--doux); font-size: 13px; }
+  /* Fiche */
+  .retour { color: var(--doux); text-decoration: none; font-size: 14px; display: inline-block; margin-bottom: 18px; }
+  .fiche { display: grid; grid-template-columns: 300px 1fr; gap: 40px; align-items: start; }
+  .fiche .portrait { border-radius: 14px; border: 1px solid var(--bord); }
+  .carte { background: var(--carte); border: 1px solid var(--bord); border-radius: var(--rayon); padding: 20px 22px; margin-bottom: 20px; }
+  .carte h3 { font: 600 22px "Cormorant Garamond", serif; margin: 0 0 10px; }
+  .chiffres { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
+  .chiffre { background: var(--carte); border: 1px solid var(--bord); border-radius: var(--rayon); padding: 14px 16px; }
+  .chiffre b { display: block; font: 600 30px/1.1 "Cormorant Garamond", serif; }
+  .chiffre span { color: var(--doux); font-size: 12px; }
+  ul.oeuvres { margin: 0; padding: 0; list-style: none; }
+  ul.oeuvres li { padding: 6px 0; border-bottom: 1px dashed var(--bord); }
+  ul.oeuvres li:last-child { border: 0; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  td { padding: 8px 6px; border-top: 1px solid var(--bord); }
+  td a { color: inherit; }
+  .badge { display: inline-block; padding: 1px 9px; border-radius: 99px; font-size: 12px; border: 1px solid var(--bord); }
+  .b-confirme { background: oklch(0.94 0.05 150); } .b-option { background: oklch(0.95 0.05 85); }
+  .b-contrat { background: oklch(0.94 0.04 240); } .b-paye { background: var(--accent); }
+  .statuts { display: flex; flex-wrap: wrap; gap: 8px; }
+  .vide { color: var(--doux); font-style: italic; }
+  .bouton { display: inline-block; background: var(--primaire); color: #fff; padding: 8px 16px; border-radius: 8px; text-decoration: none; font-size: 14px; }
+  .note { margin-top: 40px; font-size: 12px; color: var(--doux); border-top: 1px solid var(--bord); padding-top: 12px; }
+  [hidden] { display: none !important; }
+  @media (max-width: 820px) {
+    .app { grid-template-columns: 1fr; } nav { position: static; height: auto; flex-direction: row; flex-wrap: wrap; }
+    nav .bas, .logo { display: none; } .fiche { grid-template-columns: 1fr; } .fiche .portrait { max-width: 280px; }
+    .chiffres { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <nav aria-label="Menu principal">
+    <div class="logo"><b>AM</b><span>AM Management<small>Agence de musiciens</small></span></div>
+    <a href="#">Tableau de bord</a>
+    <a href="#">Engagements</a>
+    <a href="#liste" class="actif">Musiciens</a>
+    <a href="#">Calendrier</a>
+    <a href="#">Invitations</a>
+    <div class="bas">Connecté : Agent<button type="button">Se déconnecter</button></div>
+  </nav>
+
+  <main>
+    <section id="vue-liste">
+      <p class="surtitre">Agent</p>
+      <h1>Mes artistes</h1>
+      <p class="intro">Cliquez sur un portrait pour ouvrir la fiche.</p>
+      <div class="grille" id="grille"></div>
+    </section>
+
+    <section id="vue-fiche" hidden>
+      <a href="#liste" class="retour">← Tous les artistes</a>
+      <div class="fiche">
+        <div>
+          <div class="portrait" id="f-portrait"></div>
+          <p style="margin-top:14px"><a class="bouton" href="#">Modifier la fiche</a></p>
+        </div>
+        <div>
+          <p class="surtitre" id="f-instrument"></p>
+          <h1 id="f-nom"></h1>
+          <p class="intro" id="f-bio"></p>
+          <div class="chiffres">
+            <div class="chiffre"><b id="f-avenir"></b><span>engagements à venir</span></div>
+            <div class="chiffre"><b id="f-passes"></b><span>concerts passés</span></div>
+            <div class="chiffre"><b id="f-cachet"></b><span>cachet moyen (part du musicien)</span></div>
+          </div>
+          <div class="carte"><h3>À venir</h3><div id="f-liste-avenir"></div></div>
+          <div class="carte"><h3>Par statut</h3><div class="statuts" id="f-statuts"></div></div>
+          <div class="carte"><h3>Répertoire</h3><div id="f-repertoire"></div></div>
+        </div>
+      </div>
+    </section>
+    <p class="note">Maquette statique (16/10/2026) — données fictives, portraits illustrés : aucune vraie photo de personne.</p>
+  </main>
+</div>
+
+<script>
+// Portrait illustré : silhouette sur fond dégradé, couleur propre à chaque artiste.
+function portrait(teinte, instrument) {
+  const motif = instrument === "piano"
+    ? '<g opacity=".18" fill="#fff">' + [0,1,2,3,4,5,6,7].map(i => `<rect x="${20+i*20}" y="215" width="17" height="40" rx="2"/>`).join("") + "</g>"
+    : '<path d="M150 40 C 175 70, 175 110, 150 140 C 125 110, 125 70, 150 40Z" fill="#fff" opacity=".14"/>';
+  return `<svg viewBox="0 0 200 250" role="img" aria-label="Portrait illustré">
+    <defs><linearGradient id="g${teinte}" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="oklch(0.82 0.06 ${teinte})"/><stop offset="1" stop-color="oklch(0.45 0.07 ${teinte})"/></linearGradient></defs>
+    <rect width="200" height="250" fill="url(#g${teinte})"/>${motif}
+    <circle cx="100" cy="105" r="38" fill="oklch(0.3 0.03 ${teinte})" opacity=".85"/>
+    <path d="M30 250 C 35 175, 165 175, 170 250Z" fill="oklch(0.3 0.03 ${teinte})" opacity=".85"/></svg>`;
+}
+
+const ARTISTES = {
+  anna: { nom: "Anna Petit", instrument: "piano", teinte: 30, avenir: 4, passes: 9, cachet: "1 640 € · 2 250 CHF",
+    bio: "Pianiste fictive formée à Lyon, lauréate d'un concours imaginaire. Se produit en récital et en duo avec violon.",
+    repertoire: ["Chopin — Ballades", "Debussy — Préludes, livre I", "Schumann — Kinderszenen"],
+    prochains: [["sam. 12 déc. 2026", "Lyon, Salle Molière", "Contrat envoyé", "contrat"], ["sam. 20 mars 2027", "Paris, Salle Cortot", "Demande", ""], ["sam. 24 avr. 2027", "Lyon — duo avec Inès", "Demande", ""]],
+    statuts: { "Demande": 3, "Option": 1, "Contrat envoyé": 1, "Confirmé": 2, "Payé": 6, "Annulé": 1 } },
+  louis: { nom: "Louis Roy", instrument: "violon", teinte: 250, avenir: 3, passes: 8, cachet: "1 480 € · 2 250 CHF · 1 600 £",
+    bio: "Violoniste fictif installé à Londres, chambriste avant tout.",
+    repertoire: ["Bach — Partita n° 2", "Franck — Sonate pour violon et piano"],
+    prochains: [["sam. 21 nov. 2026", "Genève — duo avec Anna", "Option", "option"], ["sam. 15 mai 2027", "Londres, Wigmore Hall", "Demande", ""]],
+    statuts: { "Demande": 2, "Option": 1, "Confirmé": 1, "Payé": 7 } },
+  ines: { nom: "Inès Moreau", instrument: "violon", teinte: 160, avenir: 5, passes: 7, cachet: "1 550 € · 2 400 CHF",
+    bio: "Violoniste fictive, passionnée de musique française.",
+    repertoire: ["Ravel — Tzigane", "Fauré — Sonate n° 1"],
+    prochains: [["ven. 4 déc. 2026", "Paris, Salle Gaveau", "Confirmé", "confirme"], ["sam. 5 déc. 2026", "Menton", "Contrat envoyé", "contrat"], ["sam. 8 mai 2027", "Paris, Salle Gaveau — jour férié", "Demande", ""]],
+    statuts: { "Demande": 3, "Contrat envoyé": 1, "Confirmé": 2, "Payé": 6 } },
+  hugo: { nom: "Hugo Lambert", instrument: "piano", teinte: null, avenir: 2, passes: 6, cachet: "1 600 € · 1 600 £",
+    bio: null, repertoire: [], prochains: [["sam. 19 déc. 2026", "Zurich — duo avec Inès", "Option", "option"]],
+    statuts: { "Demande": 2, "Option": 1, "Payé": 5 } },
+};
+
+const initiales = (nom) => nom.split(" ").map(m => m[0]).join("");
+const visuel = (a) => a.teinte === null
+  ? `<div class="portrait" style="background:var(--accent)"><span class="initiales">${initiales(a.nom)}</span></div>`
+  : `<div class="portrait">${portrait(a.teinte, a.instrument)}</div>`;
+
+document.getElementById("grille").innerHTML = Object.entries(ARTISTES).map(([id, a]) => `
+  <a class="artiste" href="#${id}">
+    ${visuel(a).replace('</div>', `<span class="etiquette">${a.avenir} à venir</span></div>`)}
+    <div class="legende"><h2>${a.nom}</h2><p>${a.instrument === "piano" ? "Piano" : "Violon"}</p></div>
+  </a>`).join("");
+
+function afficher() {
+  const id = location.hash.slice(1), a = ARTISTES[id];
+  document.getElementById("vue-liste").hidden = !!a;
+  document.getElementById("vue-fiche").hidden = !a;
+  if (!a) return;
+  document.getElementById("f-portrait").outerHTML = visuel(a).replace('class="portrait"', 'class="portrait" id="f-portrait"');
+  document.getElementById("f-instrument").textContent = a.instrument === "piano" ? "Pianiste" : "Violoniste";
+  document.getElementById("f-nom").textContent = a.nom;
+  const bio = document.getElementById("f-bio");
+  bio.textContent = a.bio ?? "Pas encore de biographie.";
+  bio.className = a.bio ? "intro" : "intro vide";
+  document.getElementById("f-avenir").textContent = a.avenir;
+  document.getElementById("f-passes").textContent = a.passes;
+  document.getElementById("f-cachet").textContent = a.cachet;
+  document.getElementById("f-liste-avenir").innerHTML = a.prochains.length
+    ? `<table>${a.prochains.map(([d, l, s, c]) => `<tr><td>${d}</td><td><a href="#">${l}</a></td><td><span class="badge ${c ? "b-" + c : ""}">${s}</span></td></tr>`).join("")}</table>`
+    : '<p class="vide">Aucun engagement pour l\'instant.</p>';
+  document.getElementById("f-statuts").innerHTML = Object.entries(a.statuts).map(([s, n]) => `<span class="badge">${s} · ${n}</span>`).join("");
+  document.getElementById("f-repertoire").innerHTML = a.repertoire.length
+    ? `<ul class="oeuvres">${a.repertoire.map(o => `<li>${o}</li>`).join("")}</ul>`
+    : '<p class="vide">Répertoire non renseigné.</p>';
+  scrollTo(0, 0);
+}
+addEventListener("hashchange", afficher);
+afficher();
+</script>
+</body>
+</html>

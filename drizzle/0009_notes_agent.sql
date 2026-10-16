@@ -1,0 +1,1 @@
+ALTER TABLE "utilisateurs" ADD COLUMN "notes_agent" text;

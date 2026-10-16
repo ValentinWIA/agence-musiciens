@@ -35,7 +35,7 @@ type Props = {
   verrouille?: string;
 };
 
-const VIDE: Valeurs = {
+export const VIDE: Valeurs = {
   titre: "",
   precision: "jour",
   jour: "",
