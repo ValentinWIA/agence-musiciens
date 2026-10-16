@@ -169,8 +169,24 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
     « Afficher plus » sur une fiche à plus de 5 passés.
     **Prochaine action** : M4 (migration 0009 `notes_agent`, page `/musiciens/[id]/modifier`, action `modifierFiche`),
     puis M5 (photos ; 4 portraits générés avec Canva, choisis par l'humain, dans `scripts/portraits/`).
-  - **Ordre décidé** (tout avant la semaine 2) : fiches musiciens (+ tuile « Nouvel engagement » retirée) → menu
+  - **Ordre décidé** (tout avant la semaine 2) : fiches musiciens (+ tuile « Nouvel engagement » retirée) →
+    **engagements « En cours / Tous »** (branche `engagements-en-cours`, depuis `main`) → menu
     latéral (7) → KPI et calendrier (accueil : 7 jours à venir) → plusieurs agents (6) à cadrer → semaine 2.
+  - **Cadrage validé le 16/10 — engagements « En cours / Tous »** (l'agent doit suivre les impayés des concerts
+    passés) : le filtre de période de `/engagements` devient « En cours » (par défaut) et « Tous », au lieu de
+    « À venir / Passés ». En cours = tout statut sauf payé et annulé, quelle que soit la date, trié du plus ancien au
+    plus récent (impayés anciens en tête) ; Tous = tout, du plus récent au plus ancien. Cas limites : bénévole joué
+    exclu d'« en cours » (statut final) ; demande / option / contrat envoyé à date passée restent en cours, avec
+    impayés passés, marqués « date passée » ; ancienne adresse `?periode=passes` → ignorée, « En cours ». Filtres
+    statut, musicien et recherche inchangés ; même règle pour un musicien (ses engagements). Hors périmètre :
+    relances et échéances de paiement (piste pour le flux de nuit, semaine 2).
+  - **Couleurs des statuts** (commits `9a06be8`, `985ab0c`, poussés) : gradation rouge (demande) → vert (payé),
+    teintes espacées ; badge pâle avant « confirmé », plein ensuite ; annulé gris barré. Rouge et vert validés ;
+    **à juger** : les teintes intermédiaires sont-elles assez distinctes après correction ?
+  - **M3e validée, à faire** : retirer la tuile « Mes engagements » du tableau de bord du **musicien** (sa fiche
+    devient sa page principale) ; lien « Rechercher dans mes engagements → » sur sa fiche. Fiche inchangée pour
+    l'agent. Plus tard : décider si le musicien arrive directement sur sa fiche.
+  - M3b et M3c : **gestes 1 à 6 validés** le 16/10.
   - `docs/flux-de-nuit.md` : brouillon du cadrage de la semaine 2, non commité, à valider plus tard.
 - **Quota** : semaine à 79 % le 12/10 (réinitialisation le 14/10 à 11 h 59). Sessions courtes, `/clear` entre étapes,
   explications courtes.
