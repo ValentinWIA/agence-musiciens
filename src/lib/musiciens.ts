@@ -1,4 +1,5 @@
 import { DEVISES, type Devise } from "./argent";
+import { convertirEnEur, type Taux } from "./change";
 import { STATUTS_TENUS } from "./conflit";
 import type { Statut } from "./engagements";
 
@@ -62,7 +63,8 @@ export function verifierPhoto(photo: {
 }
 
 // Récapitulatif des engagements d'un musicien. Les annulés ne sont comptés que dans « par statut » :
-// un concert annulé n'est ni « à venir » ni « joué ».
+// un concert annulé n'est ni « à venir » ni « joué ». La page montre les PASSES_AFFICHES premiers passés,
+// le reste derrière « Afficher plus ».
 export const PASSES_AFFICHES = 5;
 
 export function recapEngagements<E extends { debut: Date; statut: Statut }>(liste: E[], maintenant = new Date()) {
@@ -73,18 +75,22 @@ export function recapEngagements<E extends { debut: Date; statut: Statut }>(list
   const aVenir = actifs.filter((e) => e.debut >= maintenant).sort((a, b) => +a.debut - +b.debut);
   const passes = actifs.filter((e) => e.debut < maintenant).sort((a, b) => +b.debut - +a.debut);
 
-  return { aVenir, derniersPasses: passes.slice(0, PASSES_AFFICHES), nombrePasses: passes.length, parStatut };
+  return { aVenir, passes, parStatut };
 }
 
-// Cachet moyen d'un musicien, une moyenne par devise (pas de conversion). Seuls les engagements tenus comptent ;
-// chaque cachet est partagé entre les musiciens de l'engagement. Bénévole (0) compte, « à définir » (null) non.
+// Cachet moyen d'un musicien. Seuls les engagements tenus comptent ; chaque cachet est partagé entre les
+// musiciens de l'engagement. Bénévole (0) compte, « à définir » (null) non.
+type CachetDuMusicien = { statut: Statut; cachet: number | null; devise: Devise; nombreMusiciens: number };
+
+const compteDansLaMoyenne = (e: CachetDuMusicien): e is CachetDuMusicien & { cachet: number } =>
+  STATUTS_TENUS.includes(e.statut) && e.cachet !== null && e.nombreMusiciens >= 1;
+
+// Une moyenne par devise, sans conversion : le repli quand les taux de change sont indisponibles.
 // Montants en plus petite unité de la devise, moyenne arrondie à l'unité.
-export function cachetMoyen(
-  liste: { statut: Statut; cachet: number | null; devise: Devise; nombreMusiciens: number }[],
-): { devise: Devise; moyenne: number; nombre: number }[] {
+export function cachetMoyen(liste: CachetDuMusicien[]): { devise: Devise; moyenne: number; nombre: number }[] {
   const parDevise = new Map<Devise, { somme: number; nombre: number }>();
   for (const e of liste) {
-    if (!STATUTS_TENUS.includes(e.statut) || e.cachet === null || e.nombreMusiciens < 1) continue;
+    if (!compteDansLaMoyenne(e)) continue;
     const cumul = parDevise.get(e.devise) ?? { somme: 0, nombre: 0 };
     cumul.somme += e.cachet / e.nombreMusiciens;
     cumul.nombre += 1;
@@ -94,6 +100,25 @@ export function cachetMoyen(
     const { somme, nombre } = parDevise.get(devise)!;
     return { devise, moyenne: Math.round(somme / nombre), nombre };
   });
+}
+
+// Une seule moyenne, en centimes d'euro : chaque cachet est converti (taux du jour, comme sur la fiche d'un
+// engagement) puis partagé. Sans taux, et s'il y a des devises étrangères, repli sur une moyenne par devise :
+// jamais des francs suisses comptés comme des euros. `converti` dit s'il faut afficher « ≈ ».
+export function cachetMoyenEnEuros(
+  liste: CachetDuMusicien[],
+  taux: Taux | null,
+): { enEuros: { moyenne: number; nombre: number; converti: boolean } | null } | { parDevise: ReturnType<typeof cachetMoyen> } {
+  const comptes = liste.filter(compteDansLaMoyenne);
+  if (comptes.length === 0) return { enEuros: null };
+  const converti = comptes.some((e) => e.devise !== "EUR");
+  if (converti && !taux) return { parDevise: cachetMoyen(comptes) };
+
+  const somme = comptes.reduce(
+    (total, e) => total + (e.devise === "EUR" ? e.cachet : convertirEnEur(e.cachet, e.devise, taux!)) / e.nombreMusiciens,
+    0,
+  );
+  return { enEuros: { moyenne: Math.round(somme / comptes.length), nombre: comptes.length, converti } };
 }
 
 // Affichées à la place d'une photo absente : « Anna Petit » → « AP », « Jean-Luc Roy » → « JR ».

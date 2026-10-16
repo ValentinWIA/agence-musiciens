@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   BIOGRAPHIE_MAX,
   cachetMoyen,
+  cachetMoyenEnEuros,
   initiales,
   PHOTO_MAX_OCTETS,
   recapEngagements,
@@ -87,10 +88,10 @@ describe("récapitulatif des engagements", () => {
   });
 
   it("aucun engagement (cas vide)", () => {
-    expect(recapEngagements([], maintenant)).toEqual({ aVenir: [], derniersPasses: [], nombrePasses: 0, parStatut: {} });
+    expect(recapEngagements([], maintenant)).toEqual({ aVenir: [], passes: [], parStatut: {} });
   });
 
-  it("à venir du plus proche au plus lointain ; passés du plus récent au plus ancien, 5 au plus avec le total", () => {
+  it("à venir du plus proche au plus lointain ; tous les passés, du plus récent au plus ancien", () => {
     const liste = [
       e("loin", "2027-03-01", "demande"),
       e("proche", "2026-10-20", "confirme"),
@@ -98,15 +99,14 @@ describe("récapitulatif des engagements", () => {
     ];
     const recap = recapEngagements(liste, maintenant);
     expect(recap.aVenir.map((x) => x.id)).toEqual(["proche", "loin"]);
-    expect(recap.derniersPasses.map((x) => x.id)).toEqual(["p5", "p4", "p3", "p2", "p1"]);
-    expect(recap.nombrePasses).toBe(6);
+    expect(recap.passes.map((x) => x.id)).toEqual(["p5", "p4", "p3", "p2", "p1", "p0"]);
     expect(recap.parStatut).toEqual({ demande: 1, confirme: 1, paye: 6 });
   });
 
   it("un annulé n'est ni à venir ni passé, mais compté par statut", () => {
     const recap = recapEngagements([e("a", "2026-12-01", "annule"), e("b", "2026-01-01", "annule")], maintenant);
     expect(recap.aVenir).toEqual([]);
-    expect(recap.nombrePasses).toBe(0);
+    expect(recap.passes).toEqual([]);
     expect(recap.parStatut).toEqual({ annule: 2 });
   });
 });
@@ -158,5 +158,62 @@ describe("initiales", () => {
     expect(initiales("Jean-Luc de la Roche")).toBe("JR");
     expect(initiales("  élise  ")).toBe("É");
     expect(initiales("")).toBe("?");
+  });
+});
+
+describe("cachet moyen en euros", () => {
+  // 1 € = 0,95 CHF : 3 000 CHF valent 3 157,89 €.
+  const taux = { date: "2026-10-16", rates: { CHF: 0.95, USD: 1.1, GBP: 0.85, JPY: 160 } };
+
+  it("aucun engagement tenu → rien à afficher (« — »)", () => {
+    expect(cachetMoyenEnEuros([], taux)).toEqual({ enEuros: null });
+    expect(cachetMoyenEnEuros([{ statut: "demande", cachet: 100000, devise: "CHF", nombreMusiciens: 1 }], null)).toEqual({ enEuros: null });
+  });
+
+  it("tout en euros : pas de conversion, pas de « ≈ », même sans taux", () => {
+    expect(
+      cachetMoyenEnEuros(
+        [
+          { statut: "joue", cachet: 200000, devise: "EUR", nombreMusiciens: 1 },
+          { statut: "paye", cachet: 300000, devise: "EUR", nombreMusiciens: 2 },
+        ],
+        null,
+      ),
+    ).toEqual({ enEuros: { moyenne: 175000, nombre: 2, converti: false } });
+  });
+
+  it("convertit puis partage : un duo à 3 000 CHF compte 1 578,95 € pour chacun", () => {
+    expect(
+      cachetMoyenEnEuros([{ statut: "confirme", cachet: 300000, devise: "CHF", nombreMusiciens: 2 }], taux),
+    ).toEqual({ enEuros: { moyenne: 157895, nombre: 1, converti: true } });
+  });
+
+  it("mélange EUR et CHF → une seule moyenne en euros", () => {
+    expect(
+      cachetMoyenEnEuros(
+        [
+          { statut: "paye", cachet: 100000, devise: "EUR", nombreMusiciens: 1 },
+          { statut: "paye", cachet: 300000, devise: "CHF", nombreMusiciens: 2 },
+        ],
+        taux,
+      ),
+    ).toEqual({ enEuros: { moyenne: 128947, nombre: 2, converti: true } }); // (1 000 + 3 157,89 ÷ 2) ÷ 2
+  });
+
+  it("devise étrangère sans taux (service en panne) → repli sur une moyenne par devise", () => {
+    expect(
+      cachetMoyenEnEuros(
+        [
+          { statut: "paye", cachet: 100000, devise: "EUR", nombreMusiciens: 1 },
+          { statut: "paye", cachet: 300000, devise: "CHF", nombreMusiciens: 2 },
+        ],
+        null,
+      ),
+    ).toEqual({
+      parDevise: [
+        { devise: "EUR", moyenne: 100000, nombre: 1 },
+        { devise: "CHF", moyenne: 150000, nombre: 1 },
+      ],
+    });
   });
 });

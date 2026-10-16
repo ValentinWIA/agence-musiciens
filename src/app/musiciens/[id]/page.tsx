@@ -6,7 +6,8 @@ import { Button } from "@/components/ui/button";
 import { formaterMontant } from "@/lib/argent";
 import { formaterDebut } from "@/lib/dates";
 import { LIBELLES_STATUT, lireMusicien, type Statut } from "@/lib/engagements";
-import { cachetMoyen, PASSES_AFFICHES, recapEngagements } from "@/lib/musiciens";
+import { lireTaux } from "@/lib/change";
+import { cachetMoyenEnEuros, PASSES_AFFICHES, recapEngagements } from "@/lib/musiciens";
 import { verifierSession } from "@/lib/session";
 import { Portrait } from "../portrait";
 
@@ -27,7 +28,9 @@ async function FicheMusicien({ params }: { params: Promise<{ id: string }> }) {
 
   const estAgent = utilisateur.role === "admin";
   const recap = recapEngagements(musicien.engagements);
-  const moyennes = cachetMoyen(musicien.engagements);
+  // Taux lus seulement s'il y a un cachet en devise étrangère (même conversion que la fiche d'un engagement).
+  const taux = musicien.engagements.some((e) => e.devise !== "EUR") ? await lireTaux() : null;
+  const cachet = cachetMoyenEnEuros(musicien.engagements, taux);
   const repertoire = musicien.repertoire?.split("\n") ?? [];
 
   return (
@@ -53,10 +56,20 @@ async function FicheMusicien({ params }: { params: Promise<{ id: string }> }) {
 
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
             <Chiffre valeur={String(recap.aVenir.length)} legende="engagements à venir" />
-            <Chiffre valeur={String(recap.nombrePasses)} legende="engagements passés" />
+            <Chiffre valeur={String(recap.passes.length)} legende="engagements passés" />
             <Chiffre
-              valeur={moyennes.length ? moyennes.map((m) => formaterMontant(m.moyenne, m.devise)).join(" · ") : "—"}
-              legende="cachet moyen (part du musicien)"
+              valeur={
+                "parDevise" in cachet
+                  ? cachet.parDevise.map((m) => formaterMontant(m.moyenne, m.devise)).join(" · ")
+                  : cachet.enEuros
+                    ? `${cachet.enEuros.converti ? "≈ " : ""}${formaterMontant(cachet.enEuros.moyenne, "EUR")}`
+                    : "—"
+              }
+              legende={
+                "enEuros" in cachet && cachet.enEuros?.converti && taux
+                  ? `cachet moyen (part du musicien), converti au taux BCE du ${taux.date.split("-").reverse().join("/")}`
+                  : "cachet moyen (part du musicien)"
+              }
             />
           </div>
 
@@ -69,8 +82,17 @@ async function FicheMusicien({ params }: { params: Promise<{ id: string }> }) {
               <Bloc titre="À venir">
                 <ListeEngagements liste={recap.aVenir} vide="Aucun engagement à venir." />
               </Bloc>
-              <Bloc titre={recap.nombrePasses > PASSES_AFFICHES ? `Passés (les ${PASSES_AFFICHES} derniers sur ${recap.nombrePasses})` : "Passés"}>
-                <ListeEngagements liste={recap.derniersPasses} vide="Aucun engagement passé." />
+              <Bloc titre="Passés">
+                <ListeEngagements liste={recap.passes.slice(0, PASSES_AFFICHES)} vide="Aucun engagement passé." />
+                {/* <details> se déplie au clic sans JavaScript ; tout l'historique est déjà dans la page. */}
+                {recap.passes.length > PASSES_AFFICHES && (
+                  <details className="group mt-2">
+                    <summary className="cursor-pointer text-sm underline group-open:hidden">
+                      Afficher plus ({recap.passes.length - PASSES_AFFICHES} autres)
+                    </summary>
+                    <ListeEngagements liste={recap.passes.slice(PASSES_AFFICHES)} vide="" />
+                  </details>
+                )}
               </Bloc>
               <Bloc titre="Par statut">
                 <ul className="flex flex-wrap gap-2 text-sm">
