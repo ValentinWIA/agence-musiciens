@@ -14,7 +14,7 @@ describe("Sentry ne reçoit jamais de jeton", () => {
   });
 
   it("masque le jeton partout dans l'événement envoyé (adresse, fil d'Ariane), sans casser l'événement", () => {
-    const { beforeSend } = optionsSentry("preview");
+    const { beforeSend } = optionsSentry();
     const evenement = {
       request: { url: "https://site.fr/invitation/secret1" },
       breadcrumbs: [{ data: { from: "/connexion", to: "/reinitialisation/secret2" } }],
@@ -26,7 +26,7 @@ describe("Sentry ne reçoit jamais de jeton", () => {
   });
 
   it("ne collecte ni cookies, ni en-têtes, ni corps de requête, ni variables locales", () => {
-    const { dataCollection } = optionsSentry("production");
+    const { dataCollection } = optionsSentry();
     expect(dataCollection).toMatchObject({
       userInfo: false,
       cookies: false,

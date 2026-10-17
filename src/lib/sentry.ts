@@ -9,10 +9,11 @@ export function masquerJetons(texte: string): string {
   return texte.replace(JETON_DANS_ADRESSE, "/$1/[jeton]");
 }
 
-export function optionsSentry(environnement: string | undefined) {
+// SENTRY_DSN et VERCEL_ENV sont recopiées dans le code du navigateur par next.config.ts.
+export function optionsSentry() {
   return {
-    dsn: process.env.NEXT_PUBLIC_SENTRY_DSN, // absent sur la machine de développement : Sentry ne fait rien
-    environment: environnement ?? "local",
+    dsn: process.env.SENTRY_DSN || undefined, // absent sur la machine de développement : Sentry ne fait rien
+    environment: process.env.VERCEL_ENV || "local",
     dataCollection: {
       userInfo: false,
       cookies: false,

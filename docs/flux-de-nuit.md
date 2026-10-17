@@ -265,8 +265,8 @@ Pushs groupés (décidé le 17/10) : N5a+N5b, N5c, N5d, N5e, N5f+N5g.
 Branche `surveillance` (depuis `main`). Un seul paquet ajouté (`@sentry/nextjs`), une seule migration (0015).
 
 - **Sentry** : erreurs du serveur (pages, actions, routes, cron, via `onRequestError`) et du navigateur, production et
-  prévisualisation distinguées. Variable **`NEXT_PUBLIC_SENTRY_DSN`** (une seule, lue par le serveur et le navigateur :
-  un DSN n'est pas un secret, il ne permet que d'envoyer des erreurs). Sentry 11 collecte tout par défaut : cookies,
+  prévisualisation distinguées. Variable **`SENTRY_DSN`** (une seule ; `next.config.ts` la recopie dans le code du
+  navigateur à la construction : un DSN n'est pas un secret, il ne permet que d'envoyer des erreurs). Sentry 11 collecte tout par défaut : cookies,
   en-têtes, corps des requêtes, variables locales, paramètres d'adresse sont coupés, et les jetons d'invitation et de
   réinitialisation (dans le chemin) remplacés par `[jeton]` avant envoi (`src/lib/sentry.ts`). Pas de
   `withSentryConfig` ni de `SENTRY_AUTH_TOKEN` (décidé le 18/10) : erreurs du navigateur moins lisibles, un secret de
@@ -293,5 +293,5 @@ Branche `surveillance` (depuis `main`). Un seul paquet ajouté (`@sentry/nextjs`
 | S3 | `src/lib/alerte.ts` (règle « une par panne », pure), migration 0015 (`executions.alerte_le` ; lignes existantes vides = aucune alerte envoyée, rien à remplir), courriel + Sentry à l'échec | tests ; geste : fausse clé du flux sur la branche → un courriel et une erreur Sentry, second import → rien de plus ; vraie clé → import réussi |
 | S4 | UptimeRobot (l'humain, sans code) : les deux sondes | alerte reçue via une sonde de test sur une adresse en 404, supprimée ensuite ; capture dans `docs/` |
 
-Ce que l'humain fait : compte Sentry (projet Next.js, DSN dans `NEXT_PUBLIC_SENTRY_DSN`, Production et Preview) avant S2 ; fausse
+Ce que l'humain fait : compte Sentry (projet Next.js, DSN dans `SENTRY_DSN`, Production et Preview) avant S2 ; fausse
 `FLUX_DE_NUIT_CLE` réservée à la branche `surveillance` pour S3, retirée après ; compte UptimeRobot pour S4.

@@ -80,7 +80,7 @@ export async function envoyerErreurDeTest(): Promise<EtatErreurTest> {
   // Sur Vercel, la fonction peut être figée dès la réponse : on attend que l'erreur soit partie.
   const partie = await Sentry.flush(5000);
   console.warn(`Erreur de test Sentry demandée par ${agent.nom} : ${partie ? `envoyée (${numero})` : "non envoyée"}`);
-  if (!process.env.NEXT_PUBLIC_SENTRY_DSN) return { message: "Sentry n'est pas configuré ici (NEXT_PUBLIC_SENTRY_DSN absent)." };
+  if (!process.env.SENTRY_DSN) return { message: "Sentry n'est pas configuré ici (SENTRY_DSN absent)." };
   if (!partie) return { message: "Sentry n'a pas répondu à temps : réessayez." };
   return { reussi: true, message: `Erreur de test envoyée à Sentry (n° ${numero.slice(0, 8)}).` };
 }
