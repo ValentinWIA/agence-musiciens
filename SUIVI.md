@@ -10,7 +10,7 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 
 ## État de reprise
 
-*Dernière mise à jour : 17 octobre 2026 (**semaine 2** : flux de nuit, N1 à N4, D et R en production)*
+*Dernière mise à jour : 17 octobre 2026 (**semaine 2** : flux de nuit, N1 à N4, D, R et échéance sous la pastille en production)*
 
 - **Semaine 2 — flux de nuit**, branche `flux-de-nuit` (depuis `main`, 17/10). Cadrage validé par l'humain le 17/10 :
   `docs/flux-de-nuit.md` (lu sur une vraie nuit : 15 événements dont 2 doublons ; créations sans musicien, sans heure,
@@ -72,11 +72,16 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   « Déjà envoyé aujourd'hui ». **Reste à vérifier le 18/10** : récap reçu sans clic après le cron (6 h–7 h, heure de
   Paris) et ligne « cron » au journal. À faire par l'humain : supprimer les branches Neon `preview/recap` et
   `preview/domaine`. Rien de cassé.
-  **Prochaine étape** : retouche **« échéance sous la pastille »** (branche `echeance-option`, demandée le 17/10) : sur
-  la fiche d'un engagement en option, « jusqu'au ven. 31 oct. » en petit sous la pastille « option », en haut à droite,
-  en orange si l'option expire dans 7 jours ou moins ou est passée (seuil du récap) ; la ligne « Option » du bas
-  disparaît ; agent seulement. Une seule tranche, preuve = geste en prévisualisation. Puis N5, puis S. En N5 : faire
-  pointer « … et N autres » du récap vers `/demandes`.
+  **Échéance sous la pastille ✅** (17/10, branche `echeance-option`, commit `b82975f`) : sur la fiche d'une option,
+  « jusqu'au sam. 31 oct. » en petit sous la pastille, agent seulement, en orange à 7 jours ou moins ou passée ; ligne
+  « Option » du bas retirée. Règle partagée avec le récap (`optionARelancer`, `src/lib/recap.ts`, 1 test, 245 au total).
+  Gestes validés en prévisualisation (gris à J+14, orange à 7 j, rien côté musicien). **PR n° 19 fusionnée le 17/10**
+  (`d5b548c`), vérifiée en production. Trouvé en production : les 6 options du jeu de données, chargées le 16/10 avant
+  la migration 0012, n'avaient pas d'échéance (ni affichée, ni au récap) ; dates du jeu de données remises par l'humain
+  en SQL dans Neon (6 lignes), affichage vérifié. **Le 18/10, le récap doit lister 3 options à relancer** (Londres
+  passée, Zurich, Bordeaux). À faire par l'humain : supprimer la branche Neon `preview/echeance-option`. Rien de cassé.
+  **Prochaine étape : N5** (branche `demandes-recues`, créée depuis `main`), section 9 du cadrage, puis S. En N5 :
+  faire pointer « … et N autres » du récap vers `/demandes`. Commencer par la boucle (dix lignes, écran, tranches).
   Clé du flux recopiée dans Vercel (`FLUX_DE_NUIT_CLE`, Production et Preview) le 17/10.
   Domaine `valentinwalczak.com` (OVH, `contact@` déjà utilisé) : envoi par le sous-domaine `mail.` (tranche D).
 - **Reportés en semaine 5** (décidé le 17/10) : améliorations n° 3 (design global) et n° 8 (engagements en cartes
