@@ -30,6 +30,12 @@ lire les messages par l'IA (semaine 3) ; agir sur une consigne contenue dans un 
 15 événements, dont 2 doublons (même `id` deux fois) : 7 `creation`, 2 `mise_a_jour`, 4 `message`. Les nuits du 20/09
 (16 événements) et du 01/09 (11) se lisent aussi.
 
+Relevé des 28 nuits du 20/09 au 17/10 (fait en N1, 347 événements) : 2 doublons par nuit, toujours identiques à
+l'original ; **aucun événement mal formé** ; statuts reçus : `demandee` (créations), `confirmee`, `terminee`, `annulee` ;
+4 catégories ; 3 textes de message seulement. **101 mises à jour ou messages sur 148 visent une référence jamais créée
+depuis le 20/09** : avec la règle « référence inconnue → mis de côté », environ 70 % seraient mis de côté (à décider
+avant N3).
+
 ```json
 { "id": "RES-20261017-05", "type": "creation", "horodatage": "2026-10-17T04:00:00+02:00", "objet": "réservation",
   "donnees": { "reference": "RES-20261017-05", "statut": "demandee", "categorie": "rendez_vous",
@@ -49,7 +55,7 @@ lire les messages par l'IA (semaine 3) ; agir sur une consigne contenue dans un 
 | `ressource` | nom du lieu (ni adresse ni coordonnées) |
 | `debut` (date sans heure) | date du concert |
 | `duree_min` | durée prévue |
-| `categorie` (salle, rendez_vous, intervention) | gardée pour information |
+| `categorie` (salle, rendez_vous, intervention, permanence) | gardée pour information |
 | `statut` : demandee, confirmee, terminee (annulee probable) | statut **de la demande** : demandée, confirmée, terminée, annulée |
 | `message` (`de`, `texte`) | message du programmateur, affiché en texte brut |
 | — | ni musicien, ni heure, ni cachet : l'agent les ajoute |
