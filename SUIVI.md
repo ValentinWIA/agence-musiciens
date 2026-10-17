@@ -10,7 +10,7 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 
 ## État de reprise
 
-*Dernière mise à jour : 17 octobre 2026 (**semaine 2** : flux de nuit, N1 à N3 terminées)*
+*Dernière mise à jour : 17 octobre 2026 (**semaine 2** : flux de nuit, N1 à N4 terminées, fusion en cours)*
 
 - **Semaine 2 — flux de nuit**, branche `flux-de-nuit` (depuis `main`, 17/10). Cadrage validé par l'humain le 17/10 :
   `docs/flux-de-nuit.md` (lu sur une vraie nuit : 15 événements dont 2 doublons ; créations sans musicien, sans heure,
@@ -34,7 +34,15 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   renvoyé. Décidé (décisions 4 à 7 du cadrage) : nuits importées dans l'ordre ; récap → migration 0012 ; lien du menu
   renommé « Journal des imports » ; en N5, « Demandes reçues » après « Engagements », journal hors menu.
   Limite connue : un événement sans `id` lisible serait réenregistré si sa nuit est rejouée (aucun cas relevé).
-  **Prochaine étape : N4** (rattrapage par étapes, route cron, `CRON_SECRET` à créer dans Vercel avant).
+  **N4 ✅** (17/10, plan `c31f3cc` = section 12 du cadrage, commits `dde7b67`, `19fc43b`) : `nuitsManquantes`
+  (`src/lib/flux.ts`, 3 tests, 225 au total) ; `rattraper` (`src/lib/import-nuit.ts`) importe les nuits manquantes
+  dans l'ordre, s'arrête à la première en échec ou après 200 s (fonction Hobby : 300 s au plus) ; bouton « Rattraper
+  les nuits manquantes » sur `/nuit` ; route `/api/cron/nuit` (401 sans `CRON_SECRET`, comparaison en temps constant),
+  cron `0 4 * * *` UTC dans `vercel.json`. Gestes validés en prévisualisation le 17/10 : 28 nuits rattrapées en
+  quelques secondes, second clic → « Rien à importer », nuit rejouée → 0 traité ; route sans secret → 401 journalisé.
+  `CRON_SECRET` créé par l'humain (Production et Preview). **Fusion de `flux-de-nuit` (N1 à N4) décidée le 17/10.**
+  **Geste à faire en production après la fusion** : Vercel → Settings → Cron Jobs → « Run » → lignes « cron » au journal.
+  **Prochaine étape : R** (récap du matin), puis S, N5, D.
   Clé du flux recopiée dans Vercel (`FLUX_DE_NUIT_CLE`, Production et Preview) le 17/10.
   Domaine `valentinwalczak.com` (OVH, `contact@` déjà utilisé) : envoi par le sous-domaine `mail.` (tranche D).
 - **Reportés en semaine 5** (décidé le 17/10) : améliorations n° 3 (design global) et n° 8 (engagements en cartes
@@ -424,7 +432,7 @@ Un produit se construit par couches. Chaque couche répond à une question et s'
 | 4. Identité et droits | Qui est connecté, et qu'a-t-il le droit de faire ? | 1 | ✅ (connexion, invitations, rôles, réinitialisation, refus d'accès journalisés) |
 | 5. Métier | Que fait le produit ? (engagements, cycle de vie, règles, API externe, courriels, pièces jointes) | 1 | ✅ (cycle de vie, conflit d'agenda, géocodage, jours fériés, devises, pièces jointes, fiches musiciens, calendrier) |
 | 6. Fiabilité | Comment sait-on que ça marche et que c'est sûr ? (tests, journaux, revue de sécurité, README) | 1 | ✅ (tests à chaque push, journaux, revue de sécurité `docs/securite.md`, README) |
-| 7. Automatisation | Que fait le produit tout seul, la nuit ? | 2 | 🔄 (cadrage validé le 17/10, `docs/flux-de-nuit.md`) |
+| 7. Automatisation | Que fait le produit tout seul, la nuit ? | 2 | 🔄 (import des nuits, rattrapage et cron faits ; récap, surveillance, boîte à faire) |
 | 8. Intelligence | Que comprend le produit ? (lecture de documents, recherche qui cite ses sources) | 3 | ⬜ |
 | 9. Action | Qu'est-ce que le produit fait à notre place, sous contrôle ? (agent, serveur MCP) | 4 | ⬜ |
 | 10. Transmission | Quelqu'un d'autre peut-il le reprendre ? (passation, API pour les autres systèmes) | 5 | ⬜ |
