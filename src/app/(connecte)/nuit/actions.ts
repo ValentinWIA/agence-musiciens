@@ -4,6 +4,7 @@ import { refresh } from "next/cache";
 import { z } from "zod";
 import { jourLocal } from "@/lib/calendrier";
 import { PREMIERE_NUIT } from "@/lib/flux";
+import { envoyerRecap } from "@/lib/envoi-recap";
 import { importerNuit, nuitAProposer, rattraper } from "@/lib/import-nuit";
 import { verifierAdmin } from "@/lib/session";
 
@@ -55,6 +56,18 @@ export async function rattraperLesNuits(): Promise<EtatRattrapage> {
   if (echec) phrases.push(`Arrêté sur la nuit du ${formaterJour(echec.nuitDu)} : ${echec.erreur}`);
   if (restantes > 0) phrases.push(`Il en reste ${restantes} : relancez.`);
   return { reussi: !echec, message: phrases.join(" ") };
+}
+
+export type EtatRecap = { message?: string; reussi?: boolean };
+
+export async function envoyerLeRecap(): Promise<EtatRecap> {
+  const agent = await verifierAdmin("/nuit (récap)");
+  console.log(`Récap demandé par ${agent.nom}`);
+  const resultat = await envoyerRecap("bouton");
+  refresh();
+  if (resultat.etat === "envoye") return { reussi: true, message: `Récap envoyé à ${resultat.destinataire}.` };
+  if (resultat.etat === "deja-envoye") return { reussi: true, message: "Déjà envoyé aujourd'hui : rien n'est renvoyé." };
+  return { message: `Récap non envoyé : ${resultat.erreur}` };
 }
 
 function formaterJour(jour: string) {

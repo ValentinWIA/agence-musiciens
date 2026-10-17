@@ -1,4 +1,5 @@
 import { createHash, timingSafeEqual } from "node:crypto";
+import { envoyerRecap } from "@/lib/envoi-recap";
 import { rattraper } from "@/lib/import-nuit";
 
 // Appelée chaque matin par Vercel Cron, qui envoie lui-même « Authorization: Bearer <CRON_SECRET> ».
@@ -13,7 +14,9 @@ export async function GET(requete: Request) {
   }
 
   const resultat = await rattraper("cron");
-  return Response.json(resultat, { status: resultat.echec ? 500 : 200 });
+  // Le récap part même si l'import a échoué : il le dit à l'agent.
+  const recap = await envoyerRecap("cron");
+  return Response.json({ ...resultat, recap }, { status: resultat.echec || recap.etat === "echec" ? 500 : 200 });
 }
 
 // Comparaison en temps constant (sur les empreintes, de même longueur) : le temps de réponse ne trahit pas le secret.
