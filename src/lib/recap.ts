@@ -1,5 +1,6 @@
 import { formaterMontant, type Devise } from "./argent";
 import { ajouterJours, jourLocal, libelleJour, type Jour } from "./calendrier";
+import { LIBELLES_DEMANDE } from "./demandes";
 import { LIBELLES_STATUT, type Statut } from "./engagements";
 import type { StatutDemande } from "./flux";
 
@@ -9,13 +10,6 @@ import type { StatutDemande } from "./flux";
 export const JOURS_AVANT_EXPIRATION = 7;
 export const JOURS_AVANT_IMPAYE = 30;
 export const LIMITE_LISTE = 20;
-
-const LIBELLES_DEMANDE: Record<StatutDemande, string> = {
-  demandee: "demandée",
-  confirmee: "confirmée",
-  terminee: "terminée",
-  annulee: "annulée",
-};
 
 // musiciens : leurs noms, pour que l'agent suive ses dossiers par artiste ; salle : le nom du lieu.
 type Concert = { titre: string | null; debut: Date; pays: string; ville: string; salle: string; musiciens: string[] };

@@ -1,4 +1,5 @@
 import { and, count, desc, eq, like, not } from "drizzle-orm";
+import Link from "next/link";
 import { Suspense } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -31,16 +32,9 @@ async function ContenuNuit() {
   const misDeCote = eq(evenementsFlux.etat, "mis_de_cote");
   const messageInconnu = and(eq(evenementsFlux.type, "message"), like(evenementsFlux.raison, "référence inconnue%"))!;
 
-  const [nuitProposee, liste, messages, autresMisDeCote, [{ total }], [dernierRecap]] = await Promise.all([
+  const [nuitProposee, liste, autresMisDeCote, [{ total }], [dernierRecap]] = await Promise.all([
     nuitAProposer(),
     db.select().from(executions).orderBy(desc(executions.debutLe)).limit(LIMITE),
-    db
-      .select({ id: evenementsFlux.id, nuitDu: executions.nuitDu, reference: evenementsFlux.reference, brut: evenementsFlux.brut })
-      .from(evenementsFlux)
-      .innerJoin(executions, eq(evenementsFlux.executionId, executions.id))
-      .where(and(misDeCote, messageInconnu))
-      .orderBy(desc(evenementsFlux.horodatage))
-      .limit(LIMITE),
     db
       .select({
         id: evenementsFlux.id,
@@ -152,40 +146,10 @@ async function ContenuNuit() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Messages pour une demande inconnue</CardTitle>
-          <CardDescription>
-            Le programmateur écrit au sujet d&apos;une réservation que le flux ne nous a jamais transmise. À lire : rien
-            n&apos;est fait automatiquement.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          {messages.length === 0 ? (
-            <p className="text-sm text-muted-foreground">Aucun message de ce genre.</p>
-          ) : (
-            <ul className="grid gap-3">
-              {messages.map((m) => {
-                const donnees = (m.brut as { donnees?: { de?: unknown; texte?: unknown } }).donnees;
-                return (
-                  <li key={m.id} className="grid gap-1 text-sm">
-                    <p className="text-muted-foreground">
-                      Nuit du {formaterJour(m.nuitDu)} — {String(donnees?.de ?? "?")} — réf. {m.reference}
-                    </p>
-                    {/* Texte brut : React l'échappe, rien n'est interprété. */}
-                    <p className="whitespace-pre-wrap">{String(donnees?.texte ?? "")}</p>
-                  </li>
-                );
-              })}
-            </ul>
-          )}
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
           <CardTitle>Autres événements mis de côté</CardTitle>
           <CardDescription>
-            {total} événement{total > 1 ? "s" : ""} mis de côté en tout (messages compris), les {LIMITE} plus récents
-            ci-dessous.
+            {total} événement{total > 1 ? "s" : ""} mis de côté en tout, les {LIMITE} plus récents ci-dessous. Les
+            messages pour une demande inconnue se lisent sur <Link href="/demandes" className="underline">Demandes reçues</Link>.
           </CardDescription>
         </CardHeader>
         <CardContent>

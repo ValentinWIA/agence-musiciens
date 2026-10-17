@@ -1,0 +1,168 @@
+import { and, count, desc, eq, like } from "drizzle-orm";
+import Link from "next/link";
+import { Suspense } from "react";
+import { z } from "zod";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { db } from "@/db";
+import { demandesRecues, evenementsFlux, executions } from "@/db/schema";
+import { jourLocal } from "@/lib/calendrier";
+import { formaterDuree } from "@/lib/dates";
+import { LIBELLES_DEMANDE, dateDemandePassee, estATraiter, trierDemandes } from "@/lib/demandes";
+import { verifierAdmin } from "@/lib/session";
+
+const LIMITE_MESSAGES = 100;
+
+// ?vue=toutes ; toute autre valeur revient à « À traiter ».
+const schemaVue = z.object({ vue: z.enum(["a-traiter", "toutes"]).catch("a-traiter") });
+
+export default function PageDemandes({ searchParams }: PageProps<"/demandes">) {
+  return (
+    <main className="mx-auto grid w-full max-w-6xl gap-6 p-4">
+      <h1 className="text-2xl font-semibold">Demandes reçues</h1>
+      <Suspense fallback={<div className="h-96 animate-pulse rounded-md bg-muted" aria-label="Chargement" />}>
+        <ContenuDemandes searchParams={searchParams} />
+      </Suspense>
+    </main>
+  );
+}
+
+async function ContenuDemandes({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
+  await verifierAdmin("/demandes"); // un musicien ne voit jamais cette page
+  const { vue } = schemaVue.parse(await searchParams);
+
+  const [demandes, nbMessages, messagesInconnus, [dernierImport]] = await Promise.all([
+    db.select().from(demandesRecues),
+    db
+      .select({ reference: evenementsFlux.reference, total: count() })
+      .from(evenementsFlux)
+      .where(and(eq(evenementsFlux.type, "message"), eq(evenementsFlux.etat, "traite")))
+      .groupBy(evenementsFlux.reference),
+    db
+      .select({ id: evenementsFlux.id, nuitDu: executions.nuitDu, reference: evenementsFlux.reference, brut: evenementsFlux.brut })
+      .from(evenementsFlux)
+      .innerJoin(executions, eq(evenementsFlux.executionId, executions.id))
+      .where(
+        and(
+          eq(evenementsFlux.etat, "mis_de_cote"),
+          eq(evenementsFlux.type, "message"),
+          like(evenementsFlux.raison, "référence inconnue%"),
+        ),
+      )
+      .orderBy(desc(evenementsFlux.horodatage))
+      .limit(LIMITE_MESSAGES),
+    db.select().from(executions).orderBy(desc(executions.debutLe)).limit(1),
+  ]);
+
+  const messagesPar = new Map(nbMessages.map((m) => [m.reference, m.total]));
+  const aTraiter = demandes.filter(estATraiter);
+  const liste = trierDemandes(vue === "toutes" ? demandes : aTraiter);
+  const aujourdhui = jourLocal(new Date(), "France");
+
+  return (
+    <>
+      <p className="text-sm text-muted-foreground">
+        {dernierImport
+          ? `Dernier import : nuit du ${formaterJour(dernierImport.nuitDu)}, ${dernierImport.etat === "en_echec" ? "en échec" : dernierImport.etat === "en_cours" ? "en cours" : "réussi"} — `
+          : "Aucun import pour l'instant — "}
+        <Link href="/nuit" className="underline">
+          voir le journal
+        </Link>
+      </p>
+
+      <nav className="flex gap-4 text-sm" aria-label="Vue">
+        <LienVue href="/demandes" actif={vue === "a-traiter"}>
+          À traiter ({aTraiter.length})
+        </LienVue>
+        <LienVue href="/demandes?vue=toutes" actif={vue === "toutes"}>
+          Toutes ({demandes.length})
+        </LienVue>
+      </nav>
+
+      {liste.length === 0 ? (
+        <p className="text-sm text-muted-foreground">
+          {demandes.length === 0 ? "Aucune demande reçue : importez une nuit depuis le journal." : "Aucune demande à traiter."}
+        </p>
+      ) : (
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Concert le</TableHead>
+              <TableHead>Programmateur</TableHead>
+              <TableHead>Lieu indiqué</TableHead>
+              <TableHead>Durée</TableHead>
+              <TableHead>Statut du flux</TableHead>
+              <TableHead className="text-right">Messages</TableHead>
+              <TableHead>Référence</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {liste.map((d) => (
+              <TableRow key={d.id}>
+                <TableCell>
+                  {formaterJour(d.dateConcert)}
+                  {dateDemandePassee(d.dateConcert, aujourdhui) && (
+                    <span className="block text-xs text-muted-foreground">date passée</span>
+                  )}
+                </TableCell>
+                <TableCell>{d.programmateur}</TableCell>
+                <TableCell>{d.lieu}</TableCell>
+                <TableCell>{formaterDuree(d.dureeMinutes)}</TableCell>
+                <TableCell>
+                  <Badge variant="outline">{LIBELLES_DEMANDE[d.statut]}</Badge>
+                  {d.engagementId && <span className="block text-xs text-muted-foreground">engagement créé</span>}
+                </TableCell>
+                <TableCell className="text-right">{messagesPar.get(d.reference) ?? 0}</TableCell>
+                <TableCell className="text-xs text-muted-foreground">{d.reference}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      )}
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Messages pour une demande inconnue</CardTitle>
+          <CardDescription>
+            Le programmateur écrit au sujet d&apos;une réservation que le flux ne nous a jamais transmise. À lire : rien
+            n&apos;est fait automatiquement.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          {messagesInconnus.length === 0 ? (
+            <p className="text-sm text-muted-foreground">Aucun message de ce genre.</p>
+          ) : (
+            <ul className="grid gap-3">
+              {messagesInconnus.map((m) => {
+                const donnees = (m.brut as { donnees?: { de?: unknown; texte?: unknown } }).donnees;
+                return (
+                  <li key={m.id} className="grid gap-1 text-sm">
+                    <p className="text-muted-foreground">
+                      Nuit du {formaterJour(m.nuitDu)} — {String(donnees?.de ?? "?")} — réf. {m.reference}
+                    </p>
+                    {/* Texte brut : React l'échappe, rien n'est interprété. */}
+                    <p className="whitespace-pre-wrap">{String(donnees?.texte ?? "")}</p>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+        </CardContent>
+      </Card>
+    </>
+  );
+}
+
+function LienVue({ href, actif, children }: { href: string; actif: boolean; children: React.ReactNode }) {
+  return (
+    <Link href={href} aria-current={actif ? "page" : undefined} className={actif ? "font-semibold underline" : "text-muted-foreground hover:underline"}>
+      {children}
+    </Link>
+  );
+}
+
+function formaterJour(jour: string) {
+  return new Intl.DateTimeFormat("fr-FR", { weekday: "short", day: "numeric", month: "short", year: "numeric", timeZone: "UTC" })
+    .format(new Date(`${jour}T12:00:00Z`));
+}

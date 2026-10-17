@@ -3,6 +3,13 @@ import type { StatutDemande } from "./flux";
 
 // Boîte « Demandes reçues » (docs/flux-de-nuit.md, section 15). Logique pure : la lecture en base est ailleurs.
 
+export const LIBELLES_DEMANDE: Record<StatutDemande, string> = {
+  demandee: "demandée",
+  confirmee: "confirmée",
+  terminee: "terminée",
+  annulee: "annulée",
+};
+
 type Demande = { reference: string; statut: StatutDemande; dateConcert: Jour; engagementId: string | null };
 
 // Annulée ou terminée par le programmateur : plus rien à faire, la demande reste visible dans « Toutes ».

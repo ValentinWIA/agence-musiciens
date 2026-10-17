@@ -93,3 +93,9 @@ export function versChampsDate(debut: Date, precision: "jour" | "mois" | "saison
   const saison = (Object.keys(SAISONS_SAISIE) as Saison[]).find((s) => SAISONS_SAISIE[s] === Number(p.month));
   return { ...champs, saison: saison ?? "printemps", annee: p.year };
 }
+
+export function formaterDuree(minutes: number) {
+  const h = Math.floor(minutes / 60);
+  const m = minutes % 60;
+  return h ? `${h} h${m ? ` ${String(m).padStart(2, "0")}` : ""}` : `${m} min`;
+}
