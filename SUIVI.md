@@ -10,7 +10,7 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 
 ## État de reprise
 
-*Dernière mise à jour : 18 octobre 2026 (**semaine 2** : N1 à N4, D, R en production ; N5 entière validée en prévisualisation, PR à fusionner)*
+*Dernière mise à jour : 18 octobre 2026 (**semaine 2** : N1 à N5, D, R en production ; reste S)*
 
 - **Semaine 2 — flux de nuit**, branche `flux-de-nuit` (depuis `main`, 17/10). Cadrage validé par l'humain le 17/10 :
   `docs/flux-de-nuit.md` (lu sur une vraie nuit : 15 événements dont 2 doublons ; créations sans musicien, sans heure,
@@ -80,8 +80,7 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   la migration 0012, n'avaient pas d'échéance (ni affichée, ni au récap) ; dates du jeu de données remises par l'humain
   en SQL dans Neon (6 lignes), affichage vérifié. **Le 18/10, le récap doit lister 3 options à relancer** (Londres
   passée, Zurich, Bordeaux). À faire par l'humain : supprimer la branche Neon `preview/echeance-option`. Rien de cassé.
-  **N5 🔄** (branche `demandes-recues`, poussée ; prévisualisation
-  https://agence-musiciens-git-demandes-recues-valentin-4768.vercel.app). Plan validé = **section 15 du cadrage**
+  **N5 ✅** (branche `demandes-recues`, PR n° 20 fusionnée le 18/10, `6185d2e`). Plan validé = **section 15 du cadrage**
   (`c0967b2`) : 7 tranches, pushs groupés N5a+N5b, N5c, N5d, N5e, N5f+N5g. Décidé : annulée / terminée sortent de
   « À traiter » ; « Remettre à traiter » existe.
   **N5a ✅** (`dfd2759`) `src/lib/demandes.ts` (à traiter, tri, pré-remplissage, homonyme → personne) ; menu « Demandes
@@ -122,7 +121,11 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   Gestes validés le 18/10 en prévisualisation : phrase d'aide, refus (vides, e-mail mal formé, e-mail connu en
   majuscules), création avec et sans structure, saisie gardée, retour à la ligne traitée, bouton hors demande,
   récap reçu avec le lien, sous-titre (date à venir et passée).
-  **Reste** : PR, fusion (migrations 0013 et 0014 jouées en production), gestes en production, puis S.
+  **PR n° 20 fusionnée le 18/10** (`6185d2e`, migrations 0013 et 0014 jouées en production). **Gestes validés en
+  production le 18/10** : menu, liste `/demandes`, fiche, formulaire pré-rempli (sous-titre, « + nouveau
+  programmateur », annulé sans rien enregistrer), musicien renvoyé. **Reste à vérifier le 19/10** : lien « Traiter les
+  demandes reçues » dans le récap du cron. À faire par l'humain : supprimer la branche Neon `preview/demandes-recues`.
+  Rien de cassé. **Prochaine demande : S** (surveillance), avec son propre cadrage ; puis les reportés ci-dessous.
   Après chaque push, rattraper les nuits sur `/nuit` (le jeu de données vide les tables du flux).
   Clé du flux recopiée dans Vercel (`FLUX_DE_NUIT_CLE`, Production et Preview) le 17/10.
   Domaine `valentinwalczak.com` (OVH, `contact@` déjà utilisé) : envoi par le sous-domaine `mail.` (tranche D).
