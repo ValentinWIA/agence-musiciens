@@ -10,7 +10,7 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 
 ## État de reprise
 
-*Dernière mise à jour : 18 octobre 2026 (**semaine 2** : N1 à N5, D, R en production ; reste S)*
+*Dernière mise à jour : 18 octobre 2026 (**semaine 2** : N1 à N5, D, R en production ; S en cours, S1 à S3 validées, reprise à S4)*
 
 - **Semaine 2 — flux de nuit**, branche `flux-de-nuit` (depuis `main`, 17/10). Cadrage validé par l'humain le 17/10 :
   `docs/flux-de-nuit.md` (lu sur une vraie nuit : 15 événements dont 2 doublons ; créations sans musicien, sans heure,
@@ -125,7 +125,31 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   production le 18/10** : menu, liste `/demandes`, fiche, formulaire pré-rempli (sous-titre, « + nouveau
   programmateur », annulé sans rien enregistrer), musicien renvoyé. **Reste à vérifier le 19/10** : lien « Traiter les
   demandes reçues » dans le récap du cron. À faire par l'humain : supprimer la branche Neon `preview/demandes-recues`.
-  Rien de cassé. **Prochaine demande : S** (surveillance), avec son propre cadrage ; puis les reportés ci-dessous.
+  Rien de cassé.
+  **S 🔄** (branche `surveillance` depuis `main`, 18/10). Plan validé = **section 16 du cadrage** (`3eeede2`) : S1 santé,
+  S2 Sentry, S3 alerte de panne, S4 UptimeRobot. Décidé : **deux sondes** (`/api/sante` toutes les 5 min sans la base,
+  `?base=1` toutes les heures : Neon gratuit = 100 CU-h/mois, une sonde de la base toutes les 5 min l'épuiserait) ;
+  bouton « Envoyer une erreur de test » sur `/nuit` ; pas de `SENTRY_AUTH_TOKEN` ; **pas de captures** (décidé au geste).
+  **S1 ✅** (`88aa58e`) `src/lib/sante.ts` + `/api/sante` (`ok` 200 / `en panne` 503, 5 s au plus pour la base), 4 tests.
+  Geste validé en prévisualisation : les deux adresses → `ok`.
+  **S2 ✅** (`ae32518`, `a905107`) `@sentry/nextjs` 11.7.0 fixée, `src/instrumentation.ts` (`onRequestError`),
+  `src/instrumentation-client.ts`, `src/app/global-error.tsx`, `src/lib/sentry.ts` : Sentry 11 collecte tout par
+  défaut → cookies, en-têtes, corps, variables locales coupés, jetons d'invitation / réinitialisation masqués (4 tests,
+  277 au total). Variable **`SENTRY_DSN`** (déjà dans Vercel, Production et Preview), recopiée dans le code du
+  navigateur par `next.config.ts` (`env`) avec `VERCEL_ENV`. Carte « Surveillance » sur `/nuit`, sous « Exécutions ».
+  Geste validé en prévisualisation : erreur de test vue dans Sentry, courriel de Sentry reçu.
+  **S3 ✅** (`2c65961`) `src/lib/alerte.ts` (règle pure « une alerte par panne » : aucune exécution depuis la dernière
+  réussie n'a d'`alerte_le` ; courriel composé), 6 tests, 283 au total ; migration 0015 (`executions.alerte_le`, lignes
+  existantes vides = aucune alerte, rien à remplir) ; `src/lib/envoi-alerte.ts` appelé dans `echouer` avant de libérer
+  le verrou : courriel à l'agent + Sentry, `alerte_le` posé seulement si le courriel est parti. Sentry seul : exécution
+  interrompue, base absente à la création, récap non parti. « alerte envoyée le … » dans la colonne État de `/nuit`.
+  Gestes validés en prévisualisation le 18/10 (fausse `FLUX_DE_NUIT_CLE` en Preview, branche `surveillance`) :
+  1er échec → courriel, erreur Sentry, mention sur `/nuit` ; 2e échec → rien de plus ; variable de branche supprimée,
+  Redeploy → rattrapage réussi.
+  **Reprise : S4** (l'humain, sans code) : UptimeRobot, sonde `/api/sante` toutes les 5 min et `/api/sante?base=1`
+  toutes les heures (adresse de production) ; preuve par une sonde de test sur une adresse en 404, reçue puis supprimée.
+  Puis PR, fusion (migration 0015 jouée en production), erreur de test Sentry en production.
+  **Prochaines demandes après S** : les reportés ci-dessous.
   Après chaque push, rattraper les nuits sur `/nuit` (le jeu de données vide les tables du flux).
   Clé du flux recopiée dans Vercel (`FLUX_DE_NUIT_CLE`, Production et Preview) le 17/10.
   Domaine `valentinwalczak.com` (OVH, `contact@` déjà utilisé) : envoi par le sous-domaine `mail.` (tranche D).

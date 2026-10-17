@@ -9,7 +9,7 @@ import { evenementsFlux, executions, recaps } from "@/db/schema";
 import { jourLocal } from "@/lib/calendrier";
 import { nuitAProposer } from "@/lib/import-nuit";
 import { verifierAdmin } from "@/lib/session";
-import { FormulaireImport, FormulaireRattrapage, FormulaireRecap } from "./formulaire";
+import { FormulaireErreurTest, FormulaireImport, FormulaireRattrapage, FormulaireRecap } from "./formulaire";
 
 const LIMITE = 100;
 
@@ -135,12 +135,31 @@ async function ContenuNuit() {
                     <TableCell className="whitespace-normal">
                       <Etat etat={x.etat} />
                       {x.erreur && <p className="mt-1 text-xs text-destructive">{x.erreur}</p>}
+                      {x.alerteLe && (
+                        <p className="mt-1 text-xs text-muted-foreground">
+                          alerte envoyée le{" "}
+                          {x.alerteLe.toLocaleString("fr-FR", { timeZone: "Europe/Paris", dateStyle: "short", timeStyle: "short" })}
+                        </p>
+                      )}
                     </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
             </Table>
           )}
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Surveillance</CardTitle>
+          <CardDescription>
+            Les erreurs du site partent à Sentry, qui prévient par courriel. Ce bouton en envoie une fausse, pour
+            vérifier que la chaîne marche.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <FormulaireErreurTest />
         </CardContent>
       </Card>
 

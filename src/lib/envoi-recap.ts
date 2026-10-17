@@ -3,6 +3,7 @@ import { db } from "@/db";
 import { demandesRecues, engagementMusiciens, engagements, evenementsFlux, executions, lieux, recaps, utilisateurs } from "@/db/schema";
 import { jourLocal } from "./calendrier";
 import { envoyerCourriel } from "./courriel";
+import { signalerSansCourriel } from "./envoi-alerte";
 import { STATUTS_DEMANDE, type StatutDemande } from "./flux";
 import { origineDuSite } from "./origine";
 import { cachetsImpayes, composerRecap, optionsQuiExpirent, type Message } from "./recap";
@@ -41,6 +42,7 @@ export async function envoyerRecap(declencheur: "cron" | "bouton"): Promise<Resu
   const liberer = async (erreur: string): Promise<ResultatRecap> => {
     await db.delete(recaps).where(eq(recaps.jour, jour));
     console.warn(`Récap du ${jour} (${declencheur}) non envoyé : ${erreur}`);
+    await signalerSansCourriel(`Récap du ${jour} (${declencheur}) non envoyé : ${erreur}`);
     return { etat: "echec", erreur };
   };
 

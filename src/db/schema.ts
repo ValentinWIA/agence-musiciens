@@ -152,6 +152,7 @@ export const executions = pgTable("executions", {
   traites: integer("traites").notNull().default(0),
   misDeCote: integer("mis_de_cote").notNull().default(0),
   erreur: text("erreur"), // message de la panne, si l'exécution a échoué
+  alerteLe: timestamp("alerte_le", { withTimezone: true }), // courriel d'alerte parti (une seule alerte par panne)
 }, (t) => [
   // Verrou : une seule exécution en cours. Un second import simultané (cron + bouton) est refusé par la base.
   uniqueIndex("une_seule_execution_en_cours").on(t.etat).where(sql`${t.etat} = 'en_cours'`),
