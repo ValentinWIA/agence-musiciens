@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { lireNuit, type DejaConnu, type EvenementLu } from "./flux";
+import { bilanNuit, lireNuit, prochaineNuit, type DejaConnu, type EvenementLu } from "./flux";
 import vraieNuit from "./flux.nuit-2026-10-17.json";
 
 const rienDeConnu: DejaConnu = { ids: new Set(), references: new Set() };
@@ -144,5 +144,56 @@ describe("références et doublons", () => {
   it("compare les heures, pas le texte : 04:00+02:00 vient avant 03:30+00:00", () => {
     const evenements = lireOk(nuitDe(creation("B", {}, "2026-10-17T03:30:00+00:00"), creation("A", {}, "2026-10-17T04:00:00+02:00")));
     expect(evenements.map((e) => e.id)).toEqual(["A", "B"]);
+  });
+});
+
+describe("nuit à importer", () => {
+  it("propose la première nuit (20/09) quand rien n'est importé", () => {
+    expect(prochaineNuit(new Set(), "2026-10-17")).toBe("2026-09-20");
+  });
+
+  it("propose le premier trou, même si des nuits plus récentes sont faites", () => {
+    expect(prochaineNuit(new Set(["2026-09-20", "2026-09-21", "2026-09-23"]), "2026-10-17")).toBe("2026-09-22");
+  });
+
+  it("passe le changement de mois", () => {
+    const septembre = new Set(Array.from({ length: 11 }, (_, i) => `2026-09-${20 + i}`));
+    expect(prochaineNuit(septembre, "2026-10-17")).toBe("2026-10-01");
+  });
+
+  it("propose la nuit qui vient de finir quand tout est à jour (pour la rejouer)", () => {
+    expect(prochaineNuit(new Set(["2026-09-20"]), "2026-09-21")).toBe("2026-09-21");
+    expect(prochaineNuit(new Set(), "2026-09-20")).toBe("2026-09-20");
+  });
+});
+
+describe("bilan d'une nuit : ce qu'on écrit, ce qu'on compte", () => {
+  it("vraie nuit, première fois : 13 écrits, 2 copies comptées sans être écrites", () => {
+    const evenements = lireOk(vraieNuit);
+    const { aEcrire, compteurs } = bilanNuit(evenements, new Set());
+    expect(aEcrire).toHaveLength(13);
+    // Rien en base : les 7 créations sont traitées, les 6 mises à jour et messages visent des demandes inconnues.
+    expect(compteurs).toEqual({ recus: 15, doublons: 2, traites: 7, misDeCote: 6 });
+  });
+
+  it("vraie nuit rejouée : rien à écrire, tout compté en doublon", () => {
+    const premiere = bilanNuit(lireOk(vraieNuit), new Set());
+    const ids = new Set(premiere.aEcrire.map((e) => e.id!));
+    const references = new Set(premiere.aEcrire.flatMap((e) => (e.etat === "a-traiter" && e.effet.type === "creation" ? [e.effet.reference] : [])));
+    const { aEcrire, compteurs } = bilanNuit(lireOk(vraieNuit, { ids, references }), ids);
+    expect(aEcrire).toEqual([]);
+    expect(compteurs).toEqual({ recus: 15, doublons: 15, traites: 0, misDeCote: 0 });
+  });
+
+  it("une création d'id nouveau mais de référence connue est écrite comme doublon (on garde la trace)", () => {
+    const evenements = lireOk(nuitDe(creation("A")), { ids: new Set(), references: new Set(["A"]) });
+    const { aEcrire, compteurs } = bilanNuit(evenements, new Set());
+    expect(aEcrire.map((e) => e.etat)).toEqual(["doublon"]);
+    expect(compteurs.doublons).toBe(1);
+  });
+
+  it("un événement sans id lisible est toujours écrit (mis de côté)", () => {
+    const evenements = lireOk(nuitDe({ type: "creation" }));
+    expect(bilanNuit(evenements, new Set()).compteurs).toEqual({ recus: 1, doublons: 0, traites: 0, misDeCote: 1 });
   });
 });

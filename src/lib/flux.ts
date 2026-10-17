@@ -149,3 +149,42 @@ export function lireNuit(reponse: unknown, dejaConnu: DejaConnu): NuitLue {
 
   return { ok: true, nuitDu: enveloppe.data.nuit_du, evenements };
 }
+
+// Première nuit rattrapée (décidé le 17/10).
+export const PREMIERE_NUIT = "2026-09-20";
+
+// Plus ancienne nuit pas encore importée avec succès depuis la première ; si toutes le sont, la nuit qui vient de finir
+// (`aujourdhui`, heure de Paris). Importer dans l'ordre : une mise à jour lue avant sa création serait perdue.
+export function prochaineNuit(reussies: ReadonlySet<string>, aujourdhui: string): string {
+  for (let jour = PREMIERE_NUIT; jour < aujourdhui; jour = lendemain(jour)) {
+    if (!reussies.has(jour)) return jour;
+  }
+  return aujourdhui;
+}
+
+function lendemain(jour: string): string {
+  const d = new Date(`${jour}T00:00:00Z`);
+  d.setUTCDate(d.getUTCDate() + 1);
+  return d.toISOString().slice(0, 10);
+}
+
+export type Compteurs = { recus: number; doublons: number; traites: number; misDeCote: number };
+
+// Ce qu'on écrit d'une nuit lue : un id déjà en base (ou déjà vu cette nuit) n'est que compté comme doublon.
+export function bilanNuit(evenements: EvenementLu[], idsEnBase: ReadonlySet<string>) {
+  const vus = new Set(idsEnBase);
+  const aEcrire: EvenementLu[] = [];
+  const compteurs: Compteurs = { recus: evenements.length, doublons: 0, traites: 0, misDeCote: 0 };
+  for (const evenement of evenements) {
+    if (evenement.id !== null && vus.has(evenement.id)) {
+      compteurs.doublons++;
+      continue;
+    }
+    if (evenement.id !== null) vus.add(evenement.id);
+    aEcrire.push(evenement);
+    if (evenement.etat === "doublon") compteurs.doublons++;
+    else if (evenement.etat === "a-traiter") compteurs.traites++;
+    else compteurs.misDeCote++;
+  }
+  return { aEcrire, compteurs };
+}

@@ -1,0 +1,1 @@
+CREATE UNIQUE INDEX "une_seule_execution_en_cours" ON "executions" USING btree ("etat") WHERE "executions"."etat" = 'en_cours';

@@ -1,4 +1,5 @@
-import { date, doublePrecision, integer, jsonb, pgEnum, pgTable, primaryKey, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import { sql } from "drizzle-orm";
+import { date, doublePrecision, integer, jsonb, pgEnum, pgTable, primaryKey, text, timestamp, uniqueIndex, uuid } from "drizzle-orm/pg-core";
 
 export const role = pgEnum("role", ["admin", "musicien"]);
 export const instrument = pgEnum("instrument", ["piano", "violon"]);
@@ -148,7 +149,10 @@ export const executions = pgTable("executions", {
   traites: integer("traites").notNull().default(0),
   misDeCote: integer("mis_de_cote").notNull().default(0),
   erreur: text("erreur"), // message de la panne, si l'exécution a échoué
-});
+}, (t) => [
+  // Verrou : une seule exécution en cours. Un second import simultané (cron + bouton) est refusé par la base.
+  uniqueIndex("une_seule_execution_en_cours").on(t.etat).where(sql`${t.etat} = 'en_cours'`),
+]);
 
 // Chaque événement reçu, gardé tel quel. Un id du flux déjà présent n'est pas retraité : une copie portant le même id
 // n'est que comptée (executions.doublons). Les messages se lisent ici, par leur référence.
