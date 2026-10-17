@@ -167,3 +167,19 @@ Reportés de la revue de sécurité (`docs/securite.md`), à placer après : lim
 2. Créer `CRON_SECRET` dans Vercel (une longue chaîne aléatoire : `openssl rand -hex 32`) avant N4.
 3. Resend + zone DNS OVH pour `mail.valentinwalczak.com` (tranche D).
 4. Comptes Sentry (projet Next.js, DSN dans `SENTRY_DSN`) et UptimeRobot (tranche S).
+
+## 12. N4 — rattrapage et cron (plan validé le 17/10)
+
+Vérifié dans la doc Vercel le 17/10 : sur Hobby, une fonction dure **300 s au plus** ; un cron passe **une fois par
+jour**, à l'heure près, heure **UTC**, en production seulement, avec `Authorization: Bearer <CRON_SECRET>`.
+
+- `rattraper` importe les nuits manquantes, du 20/09 à celle du matin, une à la fois (verrou et tout ou rien par nuit).
+  Arrêt : plus rien à importer, première nuit en échec, import déjà en cours, ou 200 s écoulées (une nuit coûte au pire
+  ~40 s : 3 essais de 10 s et les attentes).
+- Tout est à jour → rien n'est fait, aucune ligne d'exécution (une exécution = une nuit).
+- Bouton « Rattraper les nuits manquantes » sur `/nuit` ; le formulaire « une nuit » reste pour rejouer.
+- Route `/api/cron/nuit` : sans le bon secret → 401 journalisé. Cron `0 4 * * *` (UTC) : 6 h–7 h à Paris l'été,
+  5 h–6 h l'hiver, nuit bien finie.
+- **N4a** : `nuitsManquantes` (pure, testée) + `rattraper` + bouton. **N4b** : route + `vercel.json`. Preuve de N4b :
+  adresse ouverte sans secret → 401 ; en production, « Run » du cron dans Vercel → ligne « cron » au journal (le secret
+  n'est jamais tapé ni collé). `CRON_SECRET` créé par l'humain (Production et Preview) le 17/10.
