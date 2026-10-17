@@ -16,7 +16,12 @@ import { DefilerVers } from "./defiler-vers";
 const LIMITE_MESSAGES = 100;
 
 // ?vue=toutes ; toute autre valeur revient à « À traiter ». ?ici=<id> : la demande dont on revient.
-const schemaVue = z.object({ vue: z.enum(["a-traiter", "toutes"]).catch("a-traiter"), ici: z.uuid().optional().catch(undefined) });
+// ?cree=<id> : l'engagement qui vient d'être créé depuis une demande (l'agent enchaîne sur la suivante).
+const schemaVue = z.object({
+  vue: z.enum(["a-traiter", "toutes"]).catch("a-traiter"),
+  ici: z.uuid().optional().catch(undefined),
+  cree: z.uuid().optional().catch(undefined),
+});
 
 export default function PageDemandes({ searchParams }: PageProps<"/demandes">) {
   return (
@@ -37,7 +42,7 @@ export default function PageDemandes({ searchParams }: PageProps<"/demandes">) {
 
 async function ContenuDemandes({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   await verifierAdmin("/demandes"); // un musicien ne voit jamais cette page
-  const { vue, ici } = schemaVue.parse(await searchParams);
+  const { vue, ici, cree } = schemaVue.parse(await searchParams);
 
   const [demandes, nbMessages, messagesInconnus, [dernierImport]] = await Promise.all([
     db.select().from(demandesRecues),
@@ -71,6 +76,14 @@ async function ContenuDemandes({ searchParams }: { searchParams: Promise<Record<
 
   return (
     <>
+      {cree && (
+        <p role="status" className="rounded-md border px-3 py-2 text-sm">
+          Engagement créé.{" "}
+          <Link href={`/engagements/${cree}`} className="underline">
+            Voir l&apos;engagement →
+          </Link>
+        </p>
+      )}
       <p className="text-sm text-muted-foreground">
         {dernierImport
           ? `Dernier import : nuit du ${formaterJour(dernierImport.nuitDu)}, ${dernierImport.etat === "en_echec" ? "en échec" : dernierImport.etat === "en_cours" ? "en cours" : "réussi"} — `

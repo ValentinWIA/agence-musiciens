@@ -78,5 +78,6 @@ export async function creerEngagement(_etat: EtatFormulaire, formData: FormData)
 
   const origine = demande ? `, depuis la demande ${demande.reference}` : "";
   console.log(`Engagement créé : ${id} (${lu.lieu.nom}, ${s.musiciens.length} musicien(s)${origine}) par ${agent.nom}`);
-  redirect(`/engagements/${id}?cree=1`);
+  // Venu d'une demande : retour à la file « À traiter » pour enchaîner (décidé le 18/10) ; sinon la fiche créée.
+  redirect(demande ? `/demandes?cree=${id}` : `/engagements/${id}?cree=1`);
 }
