@@ -291,7 +291,7 @@ Branche `surveillance` (depuis `main`). Un seul paquet ajouté (`@sentry/nextjs`
 | S1 | `/api/sante` (avec et sans `?base=1`) | tests (200, 503) ; geste : l'adresse répond `ok` |
 | S2 | `@sentry/nextjs` : `instrumentation.ts`, `instrumentation-client.ts`, `global-error.tsx` ; bouton d'erreur de test | erreur de test vue dans Sentry (prévisualisation, puis production) |
 | S3 | `src/lib/alerte.ts` (règle « une par panne », pure), migration 0015 (`executions.alerte_le` ; lignes existantes vides = aucune alerte envoyée, rien à remplir), courriel + Sentry à l'échec | tests ; geste : fausse clé du flux sur la branche → un courriel et une erreur Sentry, second import → rien de plus ; vraie clé → import réussi |
-| S4 | UptimeRobot (l'humain, sans code) : les deux sondes | alerte reçue via une sonde de test sur une adresse en 404, supprimée ensuite ; capture dans `docs/` |
+| S4 | UptimeRobot (l'humain, sans code) : les deux sondes | alerte reçue via une sonde de test sur une adresse en 404, supprimée ensuite (pas de capture, décidé le 18/10) |
 
 Ce que l'humain fait : compte Sentry (projet Next.js, DSN dans `SENTRY_DSN`, Production et Preview) avant S2 ; fausse
 `FLUX_DE_NUIT_CLE` réservée à la branche `surveillance` pour S3, retirée après ; compte UptimeRobot pour S4.
