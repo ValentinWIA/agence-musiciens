@@ -33,6 +33,8 @@ type Props = {
   id?: string;
   valeurs?: Valeurs;
   verrouille?: string;
+  // Venu d'une demande reçue : son identifiant voyage avec le formulaire, son lieu (texte libre du flux) est rappelé.
+  demande?: { id: string; lieu: string };
 };
 
 export const VIDE: Valeurs = {
@@ -57,7 +59,7 @@ const PRECISIONS = { jour: "précise", mois: "mois", saison: "saison" } as const
 const classeZoneTexte =
   "min-h-20 w-full rounded-lg border border-input bg-transparent px-2.5 py-1.5 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50";
 
-export function FormulaireEngagement({ action: envoyer, lieux, programmateurs, musiciens, id, valeurs = VIDE, verrouille }: Props) {
+export function FormulaireEngagement({ action: envoyer, lieux, programmateurs, musiciens, id, valeurs = VIDE, verrouille, demande }: Props) {
   const [etat, action, enCours] = useActionState<EtatFormulaire, FormData>(envoyer, {});
   const [precision, setPrecision] = useState(valeurs.precision);
   const err = etat.erreurs ?? {};
@@ -84,6 +86,7 @@ export function FormulaireEngagement({ action: envoyer, lieux, programmateurs, m
         className="grid gap-5"
       >
         {id && <input type="hidden" name="id" value={id} />}
+        {demande && <input type="hidden" name="demandeId" value={demande.id} />}
         {verrouille && (
           <p role="note" className="rounded-md border px-3 py-2 text-sm text-muted-foreground">
             {verrouille}
@@ -156,6 +159,7 @@ export function FormulaireEngagement({ action: envoyer, lieux, programmateurs, m
               + nouveau lieu
             </Button>
           )}
+          {demande && <p className="text-sm text-muted-foreground">Lieu indiqué dans la demande : « {demande.lieu} »</p>}
         </Champ>
 
         <Champ id="programmateurId" titre="Programmateur" erreurs={err.programmateurId}>
@@ -215,7 +219,7 @@ export function FormulaireEngagement({ action: envoyer, lieux, programmateurs, m
           </p>
         )}
         <div className="flex justify-end gap-3">
-          <Link href={id ? `/engagements/${id}` : "/engagements"} className="self-center text-sm underline">
+          <Link href={id ? `/engagements/${id}` : demande ? `/demandes/${demande.id}` : "/engagements"} className="self-center text-sm underline">
             Annuler
           </Link>
           <Button type="submit" disabled={enCours}>

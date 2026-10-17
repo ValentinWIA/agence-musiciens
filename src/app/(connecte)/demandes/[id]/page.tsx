@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { z } from "zod";
 import { Badge } from "@/components/ui/badge";
+import { buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { db } from "@/db";
 import { demandesRecues, evenementsFlux } from "@/db/schema";
@@ -86,6 +87,11 @@ async function FicheDemande({ params }: { params: Promise<{ id: string }> }) {
                   Ni musicien, ni heure, ni cachet : c&apos;est l&apos;agent qui les choisit en créant l&apos;engagement.
                   Sans suite ? Écartez-la : elle quitte « À traiter ».
                 </p>
+              )}
+              {!demande.ecarteeLe && (
+                <Link href={`/engagements/nouveau?demande=${demande.id}`} className={buttonVariants({ className: "w-fit" })}>
+                  Créer l&apos;engagement
+                </Link>
               )}
               {/* La clé recrée le bouton (et efface un ancien message) quand l'état change. */}
               <BoutonEcart key={String(!!demande.ecarteeLe)} id={demande.id} ecartee={!!demande.ecarteeLe} />
