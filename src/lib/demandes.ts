@@ -33,14 +33,16 @@ const normaliser = (nom: string) => nom.trim().replace(/\s+/g, " ").toLocaleLowe
 
 // Ce que le formulaire d'engagement reçoit d'une demande : date précise sans heure (le flux n'en donne pas), durée,
 // et le programmateur s'il est le seul à porter exactement ce nom (casse et espaces mis à part).
+// Date passée : laissée vide, l'agent saisit celle convenue par message (le flux ne change jamais la date).
 export function preRemplissage(
   demande: { dateConcert: Jour; dureeMinutes: number; programmateur: string },
   programmateurs: { id: string; nom: string }[],
+  aujourdhui: Jour,
 ): { precision: "jour"; jour: Jour; heure: ""; duree: string; programmateurId: string } {
   const memeNom = programmateurs.filter((p) => normaliser(p.nom) === normaliser(demande.programmateur));
   return {
     precision: "jour",
-    jour: demande.dateConcert,
+    jour: dateDemandePassee(demande.dateConcert, aujourdhui) ? "" : demande.dateConcert,
     heure: "",
     duree: String(demande.dureeMinutes),
     programmateurId: memeNom.length === 1 ? memeNom[0].id : "",

@@ -48,17 +48,23 @@ describe("pré-remplissage du formulaire d'engagement", () => {
   ];
 
   it("reprend la date (sans heure) et la durée de la demande", () => {
-    const valeurs = preRemplissage({ dateConcert: "2026-11-15", dureeMinutes: 120, programmateur: "Inconnu" }, programmateurs);
+    const valeurs = preRemplissage({ dateConcert: "2026-11-15", dureeMinutes: 120, programmateur: "Inconnu" }, programmateurs, "2026-10-18");
     expect(valeurs).toEqual({ precision: "jour", jour: "2026-11-15", heure: "", duree: "120", programmateurId: "" });
   });
 
   it("choisit le programmateur de même nom, casse et espaces mis à part", () => {
-    expect(preRemplissage({ dateConcert: "2026-11-15", dureeMinutes: 60, programmateur: " camille  GIRARD " }, programmateurs).programmateurId).toBe("p1");
+    expect(preRemplissage({ dateConcert: "2026-11-15", dureeMinutes: 60, programmateur: " camille  GIRARD " }, programmateurs, "2026-10-18").programmateurId).toBe("p1");
   });
 
   it("ne choisit personne si deux programmateurs portent ce nom (cas piégé)", () => {
     const homonymes = [...programmateurs, { id: "p3", nom: "Camille Girard" }];
-    expect(preRemplissage({ dateConcert: "2026-11-15", dureeMinutes: 60, programmateur: "Camille Girard" }, homonymes).programmateurId).toBe("");
+    expect(preRemplissage({ dateConcert: "2026-11-15", dureeMinutes: 60, programmateur: "Camille Girard" }, homonymes, "2026-10-18").programmateurId).toBe("");
+  });
+
+  it("laisse la date vide si celle de la demande est passée (l'agent saisit la date convenue)", () => {
+    const valeurs = preRemplissage({ dateConcert: "2026-10-05", dureeMinutes: 90, programmateur: "Inconnu" }, programmateurs, "2026-10-18");
+    expect(valeurs.jour).toBe("");
+    expect(valeurs.duree).toBe("90");
   });
 });
 

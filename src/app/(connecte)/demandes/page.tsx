@@ -65,6 +65,8 @@ async function ContenuDemandes({ searchParams }: { searchParams: Promise<Record<
   const aTraiter = demandes.filter(estATraiter);
   const liste = trierDemandes(vue === "toutes" ? demandes : aTraiter);
   const aujourdhui = jourLocal(new Date(), "France");
+  // La fiche saura revenir sur cet onglet.
+  const suite = vue === "toutes" ? "?vue=toutes" : "";
 
   return (
     <>
@@ -104,9 +106,9 @@ async function ContenuDemandes({ searchParams }: { searchParams: Promise<Record<
           </TableHeader>
           <TableBody>
             {liste.map((d) => (
-              <TableRow key={d.id}>
+              <TableRow key={d.id} id={`demande-${d.id}`} className="scroll-mt-4 target:bg-muted">
                 <TableCell>
-                  <Link href={`/demandes/${d.id}`} className="underline">
+                  <Link href={`/demandes/${d.id}${suite}`} className="underline">
                     {formaterJour(d.dateConcert)}
                   </Link>
                   {dateDemandePassee(d.dateConcert, aujourdhui) && (
@@ -122,7 +124,7 @@ async function ContenuDemandes({ searchParams }: { searchParams: Promise<Record<
                   {d.ecarteeLe && <span className="block text-xs text-muted-foreground">écartée</span>}
                 </TableCell>
                 <TableCell>
-                  <NombreMessages href={`/demandes/${d.id}`} nombre={messagesPar.get(d.reference) ?? 0} />
+                  <NombreMessages href={`/demandes/${d.id}${suite}`} nombre={messagesPar.get(d.reference) ?? 0} />
                 </TableCell>
               </TableRow>
             ))}
