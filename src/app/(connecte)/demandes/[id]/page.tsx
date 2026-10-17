@@ -85,25 +85,36 @@ async function FicheDemande({ params }: { params: Promise<{ id: string }> }) {
 
       <Card>
         <CardHeader>
-          <CardTitle>Historique et messages</CardTitle>
+          <CardTitle>Historique</CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="grid gap-4">
           {historique.length === 0 ? (
             <p className="text-sm text-muted-foreground">Aucun événement.</p>
           ) : (
-            <ol className="grid gap-4">
+            <ol className="grid gap-3">
               {historique.map((h) => (
-                <li key={h.id} className="grid gap-1 text-sm">
-                  <p className="text-muted-foreground">
-                    {h.horodatage?.toLocaleString("fr-FR", { timeZone: "Europe/Paris", dateStyle: "medium", timeStyle: "short" }) ?? "—"}
-                  </p>
-                  <p className={h.genre === "message" ? "font-medium" : undefined}>{h.titre}</p>
-                  {/* Texte brut : React l'échappe ; un message n'est jamais exécuté. */}
-                  {h.texte && <p className="whitespace-pre-wrap rounded-md bg-muted px-3 py-2">{h.texte}</p>}
+                <li key={h.id} className="grid grid-cols-[6.5rem_1fr] gap-x-3 text-sm">
+                  <span className="text-muted-foreground">
+                    {h.horodatage?.toLocaleDateString("fr-FR", { timeZone: "Europe/Paris", weekday: "short", day: "numeric", month: "short" }) ?? "—"}
+                  </span>
+                  <div className="grid gap-1">
+                    <p className={h.genre === "message" ? "font-medium" : undefined}>
+                      {h.genre === "message" && "✉ "}
+                      {h.titre}
+                      {h.genre === "statut" && h.texte && <span className="text-muted-foreground"> — « {h.texte} »</span>}
+                    </p>
+                    {/* Texte brut : React l'échappe ; un message n'est jamais exécuté. */}
+                    {h.genre === "message" && h.texte && (
+                      <p className="whitespace-pre-wrap rounded-md bg-muted px-3 py-2">« {h.texte} »</p>
+                    )}
+                  </div>
                 </li>
               ))}
             </ol>
           )}
+          <p className="text-xs text-muted-foreground">
+            Les messages sont affichés tels qu&apos;ils sont arrivés : l&apos;application n&apos;agit jamais d&apos;après leur contenu.
+          </p>
         </CardContent>
       </Card>
     </>

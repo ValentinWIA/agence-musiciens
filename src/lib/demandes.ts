@@ -53,14 +53,21 @@ export function formaterJourCourt(jour: Jour): string {
 // recopié tel quel : c'est une donnée, jamais une consigne.
 export type LigneHistorique = { genre: "creation" | "statut" | "message"; titre: string; texte: string | null };
 
+const CHANGEMENTS: Record<StatutDemande, string> = {
+  demandee: "Le programmateur remet la demande en attente",
+  confirmee: "Le programmateur a confirmé la demande",
+  terminee: "Le programmateur a clos la demande",
+  annulee: "Le programmateur a annulé la demande",
+};
+
 export function ligneHistorique(type: string | null, brut: unknown): LigneHistorique | null {
   const d = ((brut as { donnees?: Record<string, unknown> })?.donnees ?? {}) as Record<string, unknown>;
   const texte = (v: unknown) => (typeof v === "string" && v.trim() ? v : null);
-  if (type === "creation") return { genre: "creation", titre: "Demande reçue", texte: null };
+  if (type === "creation") return { genre: "creation", titre: `Demande reçue de ${texte(d.demandeur) ?? "?"}`, texte: null };
   if (type === "mise_a_jour") {
-    const statut = LIBELLES_DEMANDE[d.statut as StatutDemande] ?? String(d.statut);
-    return { genre: "statut", titre: `Le programmateur passe la demande à « ${statut} »`, texte: texte(d.commentaire) };
+    const titre = CHANGEMENTS[d.statut as StatutDemande] ?? `Le programmateur indique « ${String(d.statut)} »`;
+    return { genre: "statut", titre, texte: texte(d.commentaire) };
   }
-  if (type === "message") return { genre: "message", titre: `Message de ${texte(d.de) ?? "?"}`, texte: texte(d.texte) };
+  if (type === "message") return { genre: "message", titre: `${texte(d.de) ?? "?"} écrit :`, texte: texte(d.texte) };
   return null;
 }

@@ -106,16 +106,14 @@ async function ContenuDemandes({ searchParams }: { searchParams: Promise<Record<
             {liste.map((d) => (
               <TableRow key={d.id}>
                 <TableCell>
-                  {formaterJour(d.dateConcert)}
+                  <Link href={`/demandes/${d.id}`} className="underline">
+                    {formaterJour(d.dateConcert)}
+                  </Link>
                   {dateDemandePassee(d.dateConcert, aujourdhui) && (
                     <span className="block text-xs text-muted-foreground">date passée</span>
                   )}
                 </TableCell>
-                <TableCell>
-                  <Link href={`/demandes/${d.id}`} className="underline">
-                    {d.programmateur}
-                  </Link>
-                </TableCell>
+                <TableCell>{d.programmateur}</TableCell>
                 <TableCell>{d.lieu}</TableCell>
                 <TableCell>{formaterDuree(d.dureeMinutes)}</TableCell>
                 <TableCell>

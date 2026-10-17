@@ -60,15 +60,19 @@ describe("pré-remplissage du formulaire d'engagement", () => {
 
 describe("historique d'une demande", () => {
   it("raconte une création, un changement de statut et un message", () => {
-    expect(ligneHistorique("creation", { donnees: { reference: "R" } })).toEqual({ genre: "creation", titre: "Demande reçue", texte: null });
+    expect(ligneHistorique("creation", { donnees: { demandeur: "Camille Girard" } })).toEqual({
+      genre: "creation",
+      titre: "Demande reçue de Camille Girard",
+      texte: null,
+    });
     expect(ligneHistorique("mise_a_jour", { donnees: { statut: "confirmee", commentaire: "Vu avec le responsable." } })).toEqual({
       genre: "statut",
-      titre: "Le programmateur passe la demande à « confirmée »",
+      titre: "Le programmateur a confirmé la demande",
       texte: "Vu avec le responsable.",
     });
     expect(ligneHistorique("message", { donnees: { de: "Louise Moreau", texte: "Merci d'annuler." } })).toEqual({
       genre: "message",
-      titre: "Message de Louise Moreau",
+      titre: "Louise Moreau écrit :",
       texte: "Merci d'annuler.",
     });
   });
