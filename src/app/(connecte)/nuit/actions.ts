@@ -1,5 +1,6 @@
 "use server";
 
+import * as Sentry from "@sentry/nextjs";
 import { refresh } from "next/cache";
 import { z } from "zod";
 import { jourLocal } from "@/lib/calendrier";
@@ -68,6 +69,20 @@ export async function envoyerLeRecap(): Promise<EtatRecap> {
   if (resultat.etat === "envoye") return { reussi: true, message: `Récap envoyé à ${resultat.destinataire}.` };
   if (resultat.etat === "deja-envoye") return { reussi: true, message: "Déjà envoyé aujourd'hui : rien n'est renvoyé." };
   return { message: `Récap non envoyé : ${resultat.erreur}` };
+}
+
+export type EtatErreurTest = { message?: string; reussi?: boolean };
+
+// Preuve que Sentry reçoit bien les erreurs de cet environnement, à refaire quand on veut.
+export async function envoyerErreurDeTest(): Promise<EtatErreurTest> {
+  const agent = await verifierAdmin("/nuit (erreur de test)");
+  const numero = Sentry.captureException(new Error(`Erreur de test envoyée depuis /nuit par ${agent.nom}`));
+  // Sur Vercel, la fonction peut être figée dès la réponse : on attend que l'erreur soit partie.
+  const partie = await Sentry.flush(5000);
+  console.warn(`Erreur de test Sentry demandée par ${agent.nom} : ${partie ? `envoyée (${numero})` : "non envoyée"}`);
+  if (!process.env.NEXT_PUBLIC_SENTRY_DSN) return { message: "Sentry n'est pas configuré ici (NEXT_PUBLIC_SENTRY_DSN absent)." };
+  if (!partie) return { message: "Sentry n'a pas répondu à temps : réessayez." };
+  return { reussi: true, message: `Erreur de test envoyée à Sentry (n° ${numero.slice(0, 8)}).` };
 }
 
 function formaterJour(jour: string) {

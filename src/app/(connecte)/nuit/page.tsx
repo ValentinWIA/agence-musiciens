@@ -9,7 +9,7 @@ import { evenementsFlux, executions, recaps } from "@/db/schema";
 import { jourLocal } from "@/lib/calendrier";
 import { nuitAProposer } from "@/lib/import-nuit";
 import { verifierAdmin } from "@/lib/session";
-import { FormulaireImport, FormulaireRattrapage, FormulaireRecap } from "./formulaire";
+import { FormulaireErreurTest, FormulaireImport, FormulaireRattrapage, FormulaireRecap } from "./formulaire";
 
 const LIMITE = 100;
 
@@ -141,6 +141,19 @@ async function ContenuNuit() {
               </TableBody>
             </Table>
           )}
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Surveillance</CardTitle>
+          <CardDescription>
+            Les erreurs du site partent à Sentry, qui prévient par courriel. Ce bouton en envoie une fausse, pour
+            vérifier que la chaîne marche.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <FormulaireErreurTest />
         </CardContent>
       </Card>
 
