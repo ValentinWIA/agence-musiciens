@@ -10,7 +10,7 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 
 ## État de reprise
 
-*Dernière mise à jour : 18 octobre 2026 (**semaine 2** : N1 à N4, D, R en production ; N5a à N5e validées en prévisualisation)*
+*Dernière mise à jour : 18 octobre 2026 (**semaine 2** : N1 à N4, D, R en production ; N5 entière validée en prévisualisation, PR à fusionner)*
 
 - **Semaine 2 — flux de nuit**, branche `flux-de-nuit` (depuis `main`, 17/10). Cadrage validé par l'humain le 17/10 :
   `docs/flux-de-nuit.md` (lu sur une vraie nuit : 15 événements dont 2 doublons ; créations sans musicien, sans heure,
@@ -106,9 +106,23 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   convenue par message reste du texte) : date laissée vide, phrase en rouge « saisissez la date convenue ».
   Gestes validés le 18/10 : pré-remplissage, pas de brouillon d'une autre demande, date passée, retour sur « À
   traiter » et « Toutes », seconde tentative refusée (deux onglets, un seul engagement), écartée sans bouton.
-  Surlignage doré (`30bf0b5`, le gris se voyait à peine) : à revoir au premier geste de N5f.
-  **Reprendre à N5f** : « + nouveau programmateur » dans le formulaire (comme « + nouveau lieu »), pré-rempli avec le
-  nom du demandeur ; l'agent complète structure et e-mail. Puis N5g (récap → `/demandes`), PR, production, puis S.
+  Surlignage doré (`30bf0b5`) : jugé assez visible au geste de N5f.
+  **N5f ✅** (18/10, `b7fe84e`, `ad962f1`, `413aa98`) : `src/lib/programmateurs.ts` (lecture, doublon = même e-mail,
+  homonyme permis, `presenterProgrammateur`) ; « + nouveau programmateur » dans le formulaire (fenêtre à côté, nom
+  du demandeur pré-rempli, créé → choisi), action réservée à l'agent ; phrase d'aide sous la liste (aucun / plusieurs
+  du même nom, règle `programmateursDeMemeNom` partagée avec le pré-remplissage). Pas de téléphone (décidé).
+  Retour au geste : **structure facultative** → migration 0014 (`programmateurs.structure` sans `NOT NULL`), vide →
+  null, nom seul affiché ; lignes existantes en production : toutes ont une structure, rien à remplir.
+  **N5g ✅** (`651e511`) : le récap ajoute « Traiter les demandes reçues : …/demandes » après les listes dès que la
+  nuit apporte quelque chose du flux. 269 tests.
+  **Retours N5e au geste** (`5ee1409`, `8cf77c9`) : après création depuis une demande, retour sur « À traiter »
+  (option A : vider la file) ; la demande traitée reste une fois à sa place, surlignée, défilée, « Voir l'engagement
+  → » sur la ligne ; création à la main → fiche, inchangé. Phrase au-dessus du formulaire en sous-titre sans cadre
+  (le cadre la faisait prendre pour un champ).
+  Gestes validés le 18/10 en prévisualisation : phrase d'aide, refus (vides, e-mail mal formé, e-mail connu en
+  majuscules), création avec et sans structure, saisie gardée, retour à la ligne traitée, bouton hors demande,
+  récap reçu avec le lien, sous-titre (date à venir et passée).
+  **Reste** : PR, fusion (migrations 0013 et 0014 jouées en production), gestes en production, puis S.
   Après chaque push, rattraper les nuits sur `/nuit` (le jeu de données vide les tables du flux).
   Clé du flux recopiée dans Vercel (`FLUX_DE_NUIT_CLE`, Production et Preview) le 17/10.
   Domaine `valentinwalczak.com` (OVH, `contact@` déjà utilisé) : envoi par le sous-domaine `mail.` (tranche D).
