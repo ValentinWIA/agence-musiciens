@@ -10,7 +10,7 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 
 ## État de reprise
 
-*Dernière mise à jour : 17 octobre 2026 (**semaine 2** : N1 à N4, D, R en production ; N5a à N5d validées en prévisualisation)*
+*Dernière mise à jour : 18 octobre 2026 (**semaine 2** : N1 à N4, D, R en production ; N5a à N5e validées en prévisualisation)*
 
 - **Semaine 2 — flux de nuit**, branche `flux-de-nuit` (depuis `main`, 17/10). Cadrage validé par l'humain le 17/10 :
   `docs/flux-de-nuit.md` (lu sur une vraie nuit : 15 événements dont 2 doublons ; créations sans musicien, sans heure,
@@ -93,16 +93,30 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   Expliqué : message ↔ demande par la **référence** du flux. **N5d ✅** (`e733bf3`) migration 0013
   (`demandes_recues.ecartee_le`), « Écarter » / « Remettre à traiter » (condition dans la requête, journalisé).
   258 tests. Gestes N5b à N5d validés le 17/10 (cas des deux onglets : il fallait recharger le second).
-  **Reprendre à N5e** : bouton « Créer l'engagement » sur la fiche → `/engagements/nouveau?demande=<id>`, valeurs de
-  `preRemplissage`, lieu du flux en rappel, `demandeId` caché dans le formulaire. Dans `creerEngagement`
-  (`engagements/nouveau/actions.ts`, un `db.batch`) : lier la demande **dans la même écriture** et refuser une demande
-  déjà liée ou écartée (un `UPDATE` à 0 ligne n'annule pas le batch : prévoir une écriture qui échoue, ou relire
-  avant + condition). Puis N5f (+ nouveau programmateur), N5g (récap → `/demandes`), PR, production, puis S.
+  **N5e ✅** (18/10, commits `42c5883` à `30bf0b5`) : « Créer l'engagement » sur la fiche (sauf écartée) →
+  `/engagements/nouveau?demande=<id>` : résumé de la demande et historique (déplié s'il y a des messages) au-dessus du
+  formulaire ; date et durée reprises, programmateur de même nom, lieu du flux rappelé, `demandeId` caché. Liaison
+  dans le même `db.batch` : les musiciens prennent l'engagement **dans la demande** ; reliée ou écartée entre-temps →
+  valeur vide, la base refuse (23502), rien n'est gardé ; refus journalisé. 259 tests.
+  Retours de l'humain au geste : page qui plantait (`VIDE`, constante d'un fichier « use client », dépliée côté
+  serveur ; le chemin `?musicien=` depuis M3b l'était aussi) ; formulaire non pré-rempli et brouillon d'une autre
+  demande (Next garde les pages visitées avec leur saisie : `key` par demande) ; retour à la liste par ancre sans effet
+  (même raison) → `?ici=<id>`, ligne surlignée en doré et ramenée à l'écran, onglet gardé.
+  **Décidé le 18/10** : demande à date passée **non bloquée** (le flux ne change jamais la date ; une nouvelle date
+  convenue par message reste du texte) : date laissée vide, phrase en rouge « saisissez la date convenue ».
+  Gestes validés le 18/10 : pré-remplissage, pas de brouillon d'une autre demande, date passée, retour sur « À
+  traiter » et « Toutes », seconde tentative refusée (deux onglets, un seul engagement), écartée sans bouton.
+  Surlignage doré (`30bf0b5`, le gris se voyait à peine) : à revoir au premier geste de N5f.
+  **Reprendre à N5f** : « + nouveau programmateur » dans le formulaire (comme « + nouveau lieu »), pré-rempli avec le
+  nom du demandeur ; l'agent complète structure et e-mail. Puis N5g (récap → `/demandes`), PR, production, puis S.
   Après chaque push, rattraper les nuits sur `/nuit` (le jeu de données vide les tables du flux).
   Clé du flux recopiée dans Vercel (`FLUX_DE_NUIT_CLE`, Production et Preview) le 17/10.
   Domaine `valentinwalczak.com` (OVH, `contact@` déjà utilisé) : envoi par le sous-domaine `mail.` (tranche D).
 - **Reportés en semaine 5** (décidé le 17/10) : améliorations n° 3 (design global) et n° 8 (engagements en cartes
   sur téléphone), pour une seule passe de design quand tous les écrans existeront.
+- **Reporté** (noté le 18/10, demande à part avec son cadrage) : l'heure obligatoire d'un engagement est trop
+  contraignante → pouvoir choisir « matin », « après-midi (12 h-18 h) » ou « soir » ; heures de 5 en 5 minutes.
+  Touche le formulaire d'engagement et sans doute le schéma (précision de la date).
 
 - **Fait** : cadrage (SPEC), comptes, squelette Next.js, dépôt GitHub public, site en ligne
   (https://agence-musiciens.vercel.app), région `fra1`, base Neon reliée à Vercel.
