@@ -10,7 +10,7 @@ export function liensDuMenu(utilisateur: { id: string; role: "admin" | "musicien
       { href: "/calendrier", libelle: "Calendrier" },
       { href: "/musiciens", libelle: "Musiciens" },
       { href: "/invitations", libelle: "Invitations" },
-      { href: "/nuit", libelle: "Flux de nuit" },
+      { href: "/nuit", libelle: "Journal des imports" },
     ];
   }
   // Le musicien n'a pas de tableau de bord : sa fiche est sa page d'accueil.

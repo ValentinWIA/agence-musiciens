@@ -12,7 +12,7 @@ describe("liens du menu selon le rôle", () => {
       "Calendrier",
       "Musiciens",
       "Invitations",
-      "Flux de nuit",
+      "Journal des imports",
     ]);
   });
 
@@ -24,7 +24,7 @@ describe("liens du menu selon le rôle", () => {
     ]);
   });
 
-  it("ne montre au musicien ni les invitations, ni la liste des musiciens, ni le tableau de bord, ni le flux de nuit", () => {
+  it("ne montre au musicien ni les invitations, ni la liste des musiciens, ni le tableau de bord, ni le journal des imports", () => {
     const adresses = liensDuMenu(louis).map((l) => l.href);
     expect(adresses).not.toContain("/invitations");
     expect(adresses).not.toContain("/musiciens");

@@ -15,7 +15,7 @@ const LIMITE = 100;
 export default function PageNuit() {
   return (
     <main className="mx-auto grid w-full max-w-5xl gap-6 p-4">
-      <h1 className="text-2xl font-semibold">Flux de nuit</h1>
+      <h1 className="text-2xl font-semibold">Journal des imports</h1>
       <Suspense fallback={<div className="h-96 animate-pulse rounded-md bg-muted" aria-label="Chargement" />}>
         <ContenuNuit />
       </Suspense>

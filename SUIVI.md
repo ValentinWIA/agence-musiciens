@@ -10,7 +10,7 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 
 ## État de reprise
 
-*Dernière mise à jour : 17 octobre 2026 (**semaine 2** : flux de nuit, N1 et N2 terminées)*
+*Dernière mise à jour : 17 octobre 2026 (**semaine 2** : flux de nuit, N1 à N3 terminées)*
 
 - **Semaine 2 — flux de nuit**, branche `flux-de-nuit` (depuis `main`, 17/10). Cadrage validé par l'humain le 17/10 :
   `docs/flux-de-nuit.md` (lu sur une vraie nuit : 15 événements dont 2 doublons ; créations sans musicien, sans heure,
@@ -26,8 +26,16 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   vidées par le jeu de données ; migration jouée en prévisualisation, tables vérifiées dans Neon par l'humain.
   Décidé : messages gardés dans `evenements_flux` (pas de 4ᵉ table) ; engagement supprimé → la demande reste, lien
   vidé ; copie de même `id` comptée, pas stockée ; une colonne `appels` (essais compris), une exécution = une nuit.
-  **Prochaine étape : N3** (import d'une nuit, essais, idempotence, verrou, page `/nuit`, bouton « Importer »).
-  Clé du flux dans `.env.local` (ignoré par git), **à recopier dans Vercel (`FLUX_DE_NUIT_CLE`) avant N3**.
+  **N3 ✅** (17/10, commits `7ba56dc`, `c22b4e4`, `254d33e`) : appel au flux (`src/lib/appel-flux.ts`, 10 s, 3 essais,
+  pas de nouvel essai sur 4xx), import d'une nuit (`src/lib/import-nuit.ts`, écriture en un seul `db.batch`), verrou
+  par index unique partiel (migration 0011, verrou périmé libéré après 5 min), page `/nuit` avec formulaire
+  « Importer la nuit » pré-rempli par la plus ancienne nuit manquante depuis le 20/09 (`prochaineNuit`). 222 tests.
+  Vérifiée en prévisualisation par l'humain : 20/09 importée, rejouée → 0 traité, 16 doublons ; 21/09 ; musicien
+  renvoyé. Décidé (décisions 4 à 7 du cadrage) : nuits importées dans l'ordre ; récap → migration 0012 ; lien du menu
+  renommé « Journal des imports » ; en N5, « Demandes reçues » après « Engagements », journal hors menu.
+  Limite connue : un événement sans `id` lisible serait réenregistré si sa nuit est rejouée (aucun cas relevé).
+  **Prochaine étape : N4** (rattrapage par étapes, route cron, `CRON_SECRET` à créer dans Vercel avant).
+  Clé du flux recopiée dans Vercel (`FLUX_DE_NUIT_CLE`, Production et Preview) le 17/10.
   Domaine `valentinwalczak.com` (OVH, `contact@` déjà utilisé) : envoi par le sous-domaine `mail.` (tranche D).
 - **Reportés en semaine 5** (décidé le 17/10) : améliorations n° 3 (design global) et n° 8 (engagements en cartes
   sur téléphone), pour une seule passe de design quand tous les écrans existeront.

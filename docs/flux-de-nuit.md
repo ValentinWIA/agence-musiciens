@@ -129,7 +129,7 @@ Branche `flux-de-nuit` (N1 à N5) ; une branche à part pour le domaine, le réc
 | N2 | tables `executions`, `evenements_flux`, `demandes_recues` (migration 0010) ; jeu de données rechargeable | migration jouée en prévisualisation |
 | N3 | import d'une nuit (appel, délai, essais, idempotence, verrou) + page `/nuit` + bouton | geste : importer deux fois → rien en double ; journal visible |
 | N4 | rattrapage par étapes + route cron + `CRON_SECRET` | geste : rattraper depuis le 20/09 ; appel de la route sans secret refusé |
-| N5 | boîte `/demandes` + « Créer l'engagement » pré-rempli | geste : une demande devient un engagement ; un musicien n'y a pas accès |
+| N5 | boîte `/demandes` + « Créer l'engagement » pré-rempli ; menu « Demandes reçues » après « Engagements », journal hors menu, messages pour une demande inconnue sur `/demandes` (décision 7) | geste : une demande devient un engagement ; un musicien n'y a pas accès |
 | D | domaine Resend `mail.valentinwalczak.com` (branche `domaine`) | courriel reçu à une autre adresse que celle du compte |
 | R | récap du matin + `option_expire_le` (migration 0012), une fois par jour (branche `recap`) | geste : relancer → récap non renvoyé |
 | S | Sentry, `/api/sante`, UptimeRobot, alerte de panne (branche `surveillance`) | **alertes déclenchées en vrai**, capture gardée |
@@ -154,6 +154,11 @@ Reportés de la revue de sécurité (`docs/securite.md`), à placer après : lim
    Le récap (R) prend donc la migration 0012.
 6. **Essais** (N3) : 10 s par appel, 3 essais ; une réponse 4xx (clé refusée, date future) échoue sans nouvel essai.
    L'écriture d'une nuit se fait en un seul bloc (`db.batch`) : tout ou rien.
+7. **Présentation** (17/10, après N3) : « flux de nuit » est un mot de développeur et `/nuit` une page de
+   surveillance. Le lien du menu devient « Journal des imports » tout de suite. En N5, le menu montre « Demandes
+   reçues » juste après « Engagements » (pas dedans : une demande n'est pas un engagement) ; le journal sort du menu
+   et s'ouvre depuis `/demandes` (« Dernier import : … — voir le journal ») ; les messages pour une demande inconnue
+   passent sur `/demandes`, car ce sont des messages à lire, pas de la surveillance.
 
 ## 11. Ce que l'humain fait
 
