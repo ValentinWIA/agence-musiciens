@@ -30,14 +30,15 @@ type Props = {
   programmateurs: { id: string; nom: string; structure: string }[];
   musiciens: { id: string; nom: string; instrument: string | null }[];
   // En modification : l'engagement, ses valeurs actuelles et, s'il est verrouillé, la raison affichée.
+  // À la création, seulement les champs déjà connus (venus d'un musicien ou d'une demande) ; le reste est vide.
   id?: string;
-  valeurs?: Valeurs;
+  valeurs?: Partial<Valeurs>;
   verrouille?: string;
   // Venu d'une demande reçue : son identifiant voyage avec le formulaire, son lieu (texte libre du flux) est rappelé.
   demande?: { id: string; lieu: string };
 };
 
-export const VIDE: Valeurs = {
+const VIDE: Valeurs = {
   titre: "",
   precision: "jour",
   jour: "",
@@ -59,7 +60,9 @@ const PRECISIONS = { jour: "précise", mois: "mois", saison: "saison" } as const
 const classeZoneTexte =
   "min-h-20 w-full rounded-lg border border-input bg-transparent px-2.5 py-1.5 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50";
 
-export function FormulaireEngagement({ action: envoyer, lieux, programmateurs, musiciens, id, valeurs = VIDE, verrouille, demande }: Props) {
+export function FormulaireEngagement({ action: envoyer, lieux, programmateurs, musiciens, id, valeurs: connues, verrouille, demande }: Props) {
+  // Complété ici, côté navigateur : un serveur ne peut pas lire une constante d'un fichier « use client ».
+  const valeurs = { ...VIDE, ...connues };
   const [etat, action, enCours] = useActionState<EtatFormulaire, FormData>(envoyer, {});
   const [precision, setPrecision] = useState(valeurs.precision);
   const err = etat.erreurs ?? {};

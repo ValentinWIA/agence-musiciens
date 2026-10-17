@@ -5,10 +5,11 @@ import { z } from "zod";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { db } from "@/db";
 import { demandesRecues } from "@/db/schema";
-import { formaterJourCourt, preRemplissage } from "@/lib/demandes";
+import { jourLocal } from "@/lib/calendrier";
+import { dateDemandePassee, formaterJourCourt, preRemplissage } from "@/lib/demandes";
 import { listerLieux, listerMusiciens, listerProgrammateurs } from "@/lib/engagements";
 import { verifierAdmin } from "@/lib/session";
-import { FormulaireEngagement, VIDE } from "../formulaire-engagement";
+import { FormulaireEngagement } from "../formulaire-engagement";
 import { creerEngagement } from "./actions";
 
 export default function PageNouvelEngagement({ searchParams }: PageProps<"/engagements/nouveau">) {
@@ -58,13 +59,18 @@ async function ContenuFormulaire({ searchParams }: { searchParams: Promise<Recor
         <p role="note" className="rounded-md border px-3 py-2 text-sm text-muted-foreground">
           D&apos;après la demande de {demande.programmateur} pour le {formaterJourCourt(demande.dateConcert)} : date et durée
           reprises. Choisissez l&apos;heure, le lieu, les musiciens et le cachet.
+          {dateDemandePassee(demande.dateConcert, jourLocal(new Date(), "France")) && (
+            <span className="mt-1 block font-medium text-foreground">
+              Cette date est passée : l&apos;engagement sera refusé tant que vous n&apos;en choisissez pas une autre.
+            </span>
+          )}
         </p>
         <FormulaireEngagement
           action={creerEngagement}
           lieux={lieux}
           programmateurs={programmateurs}
           musiciens={musiciens}
-          valeurs={{ ...VIDE, ...preRemplissage(demande, programmateurs) }}
+          valeurs={preRemplissage(demande, programmateurs)}
           demande={{ id: demande.id, lieu: demande.lieu }}
         />
       </div>
@@ -77,7 +83,7 @@ async function ContenuFormulaire({ searchParams }: { searchParams: Promise<Recor
       lieux={lieux}
       programmateurs={programmateurs}
       musiciens={musiciens}
-      valeurs={coche ? { ...VIDE, musiciens: [coche.id] } : VIDE}
+      valeurs={coche ? { musiciens: [coche.id] } : undefined}
     />
   );
 }
