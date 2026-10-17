@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { bilanNuit, lireNuit, prochaineNuit, type DejaConnu, type EvenementLu } from "./flux";
+import { bilanNuit, lireNuit, nuitsManquantes, prochaineNuit, type DejaConnu, type EvenementLu } from "./flux";
 import vraieNuit from "./flux.nuit-2026-10-17.json";
 
 const rienDeConnu: DejaConnu = { ids: new Set(), references: new Set() };
@@ -164,6 +164,23 @@ describe("nuit à importer", () => {
   it("propose la nuit qui vient de finir quand tout est à jour (pour la rejouer)", () => {
     expect(prochaineNuit(new Set(["2026-09-20"]), "2026-09-21")).toBe("2026-09-21");
     expect(prochaineNuit(new Set(), "2026-09-20")).toBe("2026-09-20");
+  });
+});
+
+describe("nuits à rattraper", () => {
+  it("rien d'importé : toutes les nuits du 20/09 à celle de ce matin comprise, dans l'ordre", () => {
+    const nuits = nuitsManquantes(new Set(), "2026-10-17");
+    expect(nuits).toHaveLength(28);
+    expect(nuits[0]).toBe("2026-09-20");
+    expect(nuits.at(-1)).toBe("2026-10-17");
+  });
+
+  it("saute les nuits déjà réussies, garde les trous", () => {
+    expect(nuitsManquantes(new Set(["2026-09-20", "2026-09-22"]), "2026-09-23")).toEqual(["2026-09-21", "2026-09-23"]);
+  });
+
+  it("tout est à jour : rien à faire", () => {
+    expect(nuitsManquantes(new Set(["2026-09-20", "2026-09-21"]), "2026-09-21")).toEqual([]);
   });
 });
 

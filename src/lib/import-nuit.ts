@@ -4,7 +4,7 @@ import { db } from "@/db";
 import { demandesRecues, evenementsFlux, executions } from "@/db/schema";
 import { appelerFlux } from "./appel-flux";
 import { jourLocal } from "./calendrier";
-import { bilanNuit, lireNuit, prochaineNuit, type Compteurs, type EvenementLu } from "./flux";
+import { bilanNuit, lireNuit, nuitsManquantes, prochaineNuit, type Compteurs, type EvenementLu } from "./flux";
 
 // Import d'une nuit du flux : verrou, appel, lecture, écriture en un seul bloc. Ne lève jamais d'erreur.
 
@@ -139,11 +139,48 @@ function effetSurLesDemandes(e: EvenementLu): BatchItem<"pg">[] {
   return [];
 }
 
-// Nuit proposée dans le formulaire : le premier trou depuis le 20/09, sinon la nuit qui vient de finir.
-export async function nuitAProposer(): Promise<string> {
+async function nuitsReussies(): Promise<Set<string>> {
   const reussies = await db
     .selectDistinct({ nuitDu: executions.nuitDu })
     .from(executions)
     .where(eq(executions.etat, "reussie"));
-  return prochaineNuit(new Set(reussies.map((l) => l.nuitDu)), jourLocal(new Date(), "France"));
+  return new Set(reussies.map((l) => l.nuitDu));
+}
+
+// Nuit proposée dans le formulaire : le premier trou depuis le 20/09, sinon la nuit qui vient de finir.
+export async function nuitAProposer(): Promise<string> {
+  return prochaineNuit(await nuitsReussies(), jourLocal(new Date(), "France"));
+}
+
+export type ResultatRattrapage = {
+  importees: string[];
+  restantes: number;
+  echec?: { nuitDu: string; erreur: string };
+};
+
+// Une fonction Hobby est coupée à 300 s ; une nuit coûte au pire ~40 s (3 essais de 10 s, attentes, écriture).
+const BUDGET_MS = 200_000;
+
+// Rattrapage : les nuits manquantes une à une, de la plus ancienne à celle du matin. S'arrête à la première nuit en
+// échec (flux en panne, import déjà en cours) ou à la fin du budget ; le passage suivant reprend où celui-ci s'arrête.
+export async function rattraper(declencheur: "cron" | "bouton"): Promise<ResultatRattrapage> {
+  const debut = Date.now();
+  const nuits = nuitsManquantes(await nuitsReussies(), jourLocal(new Date(), "France"));
+  const importees: string[] = [];
+  let echec: ResultatRattrapage["echec"];
+  for (const nuitDu of nuits) {
+    if (Date.now() - debut > BUDGET_MS) break;
+    const resultat = await importerNuit(nuitDu, declencheur);
+    if (!resultat.ok) {
+      echec = { nuitDu, erreur: resultat.erreur };
+      break;
+    }
+    importees.push(nuitDu);
+  }
+  const restantes = nuits.length - importees.length;
+  console.log(
+    `Rattrapage (${declencheur}) : ${importees.length} nuit(s) importée(s), ${restantes} restante(s)` +
+      (echec ? `, arrêté sur la nuit du ${echec.nuitDu}` : ""),
+  );
+  return { importees, restantes, echec };
 }

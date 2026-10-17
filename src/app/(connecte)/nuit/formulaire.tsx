@@ -4,7 +4,7 @@ import { useActionState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { importerUneNuit, type EtatImport } from "./actions";
+import { importerUneNuit, rattraperLesNuits, type EtatImport, type EtatRattrapage } from "./actions";
 
 export function FormulaireImport({ nuitProposee, aujourdhui }: { nuitProposee: string; aujourdhui: string }) {
   const [etat, action, enCours] = useActionState<EtatImport, FormData>(importerUneNuit, {});
@@ -22,6 +22,23 @@ export function FormulaireImport({ nuitProposee, aujourdhui }: { nuitProposee: s
           {enCours ? "Import en cours…" : "Importer la nuit"}
         </Button>
       </div>
+      {etat.message && (
+        <p role={etat.reussi ? "status" : "alert"} className={etat.reussi ? "text-sm" : "text-sm text-destructive"}>
+          {etat.message}
+        </p>
+      )}
+    </form>
+  );
+}
+
+export function FormulaireRattrapage() {
+  const [etat, action, enCours] = useActionState<EtatRattrapage>(rattraperLesNuits, {});
+
+  return (
+    <form action={action} className="grid gap-3">
+      <Button type="submit" disabled={enCours} className="w-fit">
+        {enCours ? "Rattrapage en cours…" : "Rattraper les nuits manquantes"}
+      </Button>
       {etat.message && (
         <p role={etat.reussi ? "status" : "alert"} className={etat.reussi ? "text-sm" : "text-sm text-destructive"}>
           {etat.message}

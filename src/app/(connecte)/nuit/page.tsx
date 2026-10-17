@@ -8,9 +8,12 @@ import { evenementsFlux, executions } from "@/db/schema";
 import { jourLocal } from "@/lib/calendrier";
 import { nuitAProposer } from "@/lib/import-nuit";
 import { verifierAdmin } from "@/lib/session";
-import { FormulaireImport } from "./formulaire";
+import { FormulaireImport, FormulaireRattrapage } from "./formulaire";
 
 const LIMITE = 100;
+
+// Le rattrapage (action de cette page) enchaîne les nuits : jusqu'à la limite d'une fonction Hobby.
+export const maxDuration = 300;
 
 export default function PageNuit() {
   return (
@@ -58,13 +61,15 @@ async function ContenuNuit() {
     <>
       <Card>
         <CardHeader>
-          <CardTitle>Importer une nuit</CardTitle>
+          <CardTitle>Importer</CardTitle>
           <CardDescription>
-            Proposée : la plus ancienne nuit pas encore importée depuis le 20/09. Rejouer une nuit déjà importée ne crée
-            rien en double.
+            Le rattrapage importe dans l&apos;ordre les nuits manquantes depuis le 20/09, jusqu&apos;à celle de ce matin
+            (environ 3 minutes au plus par passage). Pour rejouer une nuit précise, choisissez-la ci-dessous : cela ne
+            crée rien en double.
           </CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="grid gap-6">
+          <FormulaireRattrapage />
           <FormulaireImport nuitProposee={nuitProposee} aujourdhui={jourLocal(new Date(), "France")} />
         </CardContent>
       </Card>

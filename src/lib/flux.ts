@@ -153,13 +153,19 @@ export function lireNuit(reponse: unknown, dejaConnu: DejaConnu): NuitLue {
 // Première nuit rattrapée (décidé le 17/10).
 export const PREMIERE_NUIT = "2026-09-20";
 
-// Plus ancienne nuit pas encore importée avec succès depuis la première ; si toutes le sont, la nuit qui vient de finir
-// (`aujourdhui`, heure de Paris). Importer dans l'ordre : une mise à jour lue avant sa création serait perdue.
-export function prochaineNuit(reussies: ReadonlySet<string>, aujourdhui: string): string {
-  for (let jour = PREMIERE_NUIT; jour < aujourdhui; jour = lendemain(jour)) {
-    if (!reussies.has(jour)) return jour;
+// Nuits pas encore importées avec succès, de la première à celle qui vient de finir (`aujourdhui`, heure de Paris),
+// dans l'ordre : une mise à jour lue avant sa création serait mise de côté pour toujours.
+export function nuitsManquantes(reussies: ReadonlySet<string>, aujourdhui: string): string[] {
+  const manquantes: string[] = [];
+  for (let jour = PREMIERE_NUIT; jour <= aujourdhui; jour = lendemain(jour)) {
+    if (!reussies.has(jour)) manquantes.push(jour);
   }
-  return aujourdhui;
+  return manquantes;
+}
+
+// Nuit proposée dans le formulaire : la plus ancienne manquante ; si tout est à jour, la nuit qui vient de finir.
+export function prochaineNuit(reussies: ReadonlySet<string>, aujourdhui: string): string {
+  return nuitsManquantes(reussies, aujourdhui)[0] ?? aujourdhui;
 }
 
 function lendemain(jour: string): string {
