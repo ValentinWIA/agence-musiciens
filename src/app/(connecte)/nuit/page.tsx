@@ -4,11 +4,11 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { db } from "@/db";
-import { evenementsFlux, executions } from "@/db/schema";
+import { evenementsFlux, executions, recaps } from "@/db/schema";
 import { jourLocal } from "@/lib/calendrier";
 import { nuitAProposer } from "@/lib/import-nuit";
 import { verifierAdmin } from "@/lib/session";
-import { FormulaireImport, FormulaireRattrapage } from "./formulaire";
+import { FormulaireImport, FormulaireRattrapage, FormulaireRecap } from "./formulaire";
 
 const LIMITE = 100;
 
@@ -31,7 +31,7 @@ async function ContenuNuit() {
   const misDeCote = eq(evenementsFlux.etat, "mis_de_cote");
   const messageInconnu = and(eq(evenementsFlux.type, "message"), like(evenementsFlux.raison, "référence inconnue%"))!;
 
-  const [nuitProposee, liste, messages, autresMisDeCote, [{ total }]] = await Promise.all([
+  const [nuitProposee, liste, messages, autresMisDeCote, [{ total }], [dernierRecap]] = await Promise.all([
     nuitAProposer(),
     db.select().from(executions).orderBy(desc(executions.debutLe)).limit(LIMITE),
     db
@@ -55,6 +55,7 @@ async function ContenuNuit() {
       .orderBy(desc(evenementsFlux.horodatage))
       .limit(LIMITE),
     db.select({ total: count() }).from(evenementsFlux).where(misDeCote),
+    db.select().from(recaps).orderBy(desc(recaps.jour)).limit(1),
   ]);
 
   return (
@@ -76,10 +77,30 @@ async function ContenuNuit() {
 
       <Card>
         <CardHeader>
+          <CardTitle>Récap du matin</CardTitle>
+          <CardDescription>
+            Envoyé à l&apos;agent une fois par jour, après l&apos;import du matin : tout ce qui a été importé depuis le
+            récap précédent, les options qui expirent et les cachets impayés.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="grid gap-4">
+          <p className="text-sm">
+            {!dernierRecap
+              ? "Aucun récap envoyé."
+              : dernierRecap.envoyeLe
+                ? `Dernier récap : envoyé le ${dernierRecap.envoyeLe.toLocaleString("fr-FR", { timeZone: "Europe/Paris", dateStyle: "short", timeStyle: "short" })} à ${dernierRecap.destinataire}.`
+                : "Récap du jour en cours d'envoi."}
+          </p>
+          <FormulaireRecap />
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
           <CardTitle>Exécutions</CardTitle>
           <CardDescription>
-            Coût : 0 € (offres gratuites de Vercel et Neon), aucun courriel envoyé pour l&apos;instant. Chaque passage
-            coûte sa durée et ses appels au flux.
+            Coût : 0 € (offres gratuites de Vercel, Neon et Resend ; un courriel par jour pour le récap). Chaque
+            passage coûte sa durée et ses appels au flux.
           </CardDescription>
         </CardHeader>
         <CardContent>

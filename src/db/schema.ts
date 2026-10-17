@@ -99,6 +99,8 @@ export const engagements = pgTable("engagements", {
   notes: text("notes"),
   // Écrite par l'agent quand il confirme malgré un conflit d'agenda (docs/engagements.md, section 11).
   raisonConflit: text("raison_conflit"),
+  // Échéance de l'option, saisie quand l'agent la pose : le récap du matin signale celles qui arrivent.
+  optionExpireLe: date("option_expire_le"),
   creeLe: timestamp("cree_le", { withTimezone: true }).notNull().defaultNow(),
   modifieLe: timestamp("modifie_le", { withTimezone: true }).notNull().defaultNow(),
 });
@@ -185,4 +187,13 @@ export const demandesRecues = pgTable("demandes_recues", {
   commentaire: text("commentaire"), // le dernier reçu avec un changement de statut
   // Si l'engagement est supprimé, la demande reste.
   engagementId: uuid("engagement_id").references(() => engagements.id, { onDelete: "set null" }),
+});
+
+// Un récap du matin par jour (jour de Paris). La ligne est écrite avant l'envoi : un second passage le même jour
+// (cron et clic) ne renvoie rien. Envoi en échec → ligne retirée, pour pouvoir réessayer.
+export const recaps = pgTable("recaps", {
+  jour: date("jour").primaryKey(),
+  creeLe: timestamp("cree_le", { withTimezone: true }).notNull().defaultNow(),
+  envoyeLe: timestamp("envoye_le", { withTimezone: true }), // vide tant que l'envoi est en cours
+  destinataire: text("destinataire"),
 });

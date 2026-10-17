@@ -1,3 +1,4 @@
+import { ajouterJours, type Jour } from "./calendrier";
 import { lireSaisieDate, versChampsDate, type Saison } from "./dates";
 import { LIBELLES_STATUT, type Statut } from "./engagements";
 
@@ -154,4 +155,26 @@ export function dateDepassee(
     pays,
   );
   return finPeriode <= maintenant;
+}
+
+// --- Échéance de l'option (récap du matin, docs/flux-de-nuit.md, section 14) ---
+
+export const JOURS_OPTION = 14;
+
+// Proposée à J+14, mais jamais après le jour du concert.
+export function echeanceProposee(aujourdhui: Jour, jourConcert: Jour): Jour {
+  const proposee = ajouterJours(aujourdhui, JOURS_OPTION);
+  return proposee < jourConcert ? proposee : jourConcert;
+}
+
+export function verifierEcheanceOption(
+  saisie: string | undefined,
+  aujourdhui: Jour,
+  jourConcert: Jour,
+): { echeance: Jour } | { erreur: string } {
+  if (!saisie || !/^\d{4}-\d{2}-\d{2}$/.test(saisie)) return { erreur: "Indiquez jusqu'à quand l'option est posée." };
+  if (saisie < aujourdhui || saisie > jourConcert) {
+    return { erreur: "L'échéance de l'option doit tomber entre aujourd'hui et le jour du concert." };
+  }
+  return { echeance: saisie };
 }

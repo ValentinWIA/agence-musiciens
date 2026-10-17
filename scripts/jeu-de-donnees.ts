@@ -20,7 +20,7 @@ import { ENGAGEMENTS, LIEUX, MUSICIENS, PROGRAMMATEURS } from "./donnees-fictive
 
 const {
   demandesRecues, engagementMusiciens, engagements, evenementsFlux, executions, invitations, lieux, programmateurs,
-  reinitialisations, utilisateurs,
+  recaps, reinitialisations, utilisateurs,
 } = schema;
 const DOMAINE_FICTIF = "%@agence-musiciens.test";
 
@@ -65,6 +65,7 @@ async function principal() {
       programmateurId: idProgrammateur[e.programmateur],
       statut: e.statut,
       statutAvantAnnulation: e.avantAnnulation ?? null,
+      optionExpireLe: e.optionExpireLe ?? null,
       cachet,
       devise,
       programme: e.programme ?? null,
@@ -80,6 +81,7 @@ async function principal() {
     db.delete(evenementsFlux),
     db.delete(executions),
     db.delete(demandesRecues),
+    db.delete(recaps), // le récap du jour peut être renvoyé après un rechargement
     db.delete(engagements), // leurs musiciens et leurs pièces jointes partent avec eux (cascade)
     db.delete(lieux),
     db.delete(programmateurs),

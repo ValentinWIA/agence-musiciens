@@ -62,7 +62,7 @@ export function lireMois(param: string | undefined, aujourdhui: Jour): Mois {
   return moisDuJour(aujourdhui);
 }
 
-function ajouterJours(jour: Jour, n: number): Jour {
+export function ajouterJours(jour: Jour, n: number): Jour {
   const [a, m, j] = jour.split("-").map(Number);
   return new Date(Date.UTC(a, m - 1, j + n)).toISOString().slice(0, 10);
 }

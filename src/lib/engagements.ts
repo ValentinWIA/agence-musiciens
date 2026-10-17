@@ -158,6 +158,7 @@ export async function lireEngagement(lecteur: Lecteur, id: string) {
       programme: engagements.programme,
       notes: engagements.notes,
       raisonConflit: engagements.raisonConflit,
+      optionExpireLe: engagements.optionExpireLe,
       lieuId: engagements.lieuId,
       programmateurId: engagements.programmateurId,
       lieu: { nom: lieux.nom, adresse: lieux.adresse, ville: lieux.ville, pays: lieux.pays },

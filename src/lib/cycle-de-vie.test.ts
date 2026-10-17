@@ -2,11 +2,13 @@ import { describe, expect, it } from "vitest";
 import {
   controlerModification,
   dateDepassee,
+  echeanceProposee,
   estEnCours,
   estVerrouille,
   jugerTransition,
   statutApres,
   transitionsProposees,
+  verifierEcheanceOption,
   type EtatEngagement,
 } from "./cycle-de-vie";
 import type { Statut } from "./engagements";
@@ -182,5 +184,23 @@ describe("suivi : la date est-elle passée ?", () => {
     const ete = engagement({ debut: new Date("2026-05-31T22:00:00Z"), precisionDate: "saison" });
     expect(dateDepassee(ete, "France", new Date("2026-08-31T12:00:00Z"))).toBe(false);
     expect(dateDepassee(ete, "France", maintenant)).toBe(true);
+  });
+});
+
+describe("échéance de l'option", () => {
+  it("proposée à J+14, ou au jour du concert s'il tombe avant", () => {
+    expect(echeanceProposee("2026-10-18", "2026-12-19")).toBe("2026-11-01");
+    expect(echeanceProposee("2026-10-18", "2026-10-25")).toBe("2026-10-25");
+  });
+
+  it("acceptée d'aujourd'hui au jour du concert, bornes comprises", () => {
+    expect(verifierEcheanceOption("2026-10-18", "2026-10-18", "2026-12-19")).toEqual({ echeance: "2026-10-18" });
+    expect(verifierEcheanceOption("2026-12-19", "2026-10-18", "2026-12-19")).toEqual({ echeance: "2026-12-19" });
+  });
+
+  it("refusée si vide, passée, après le concert ou mal écrite", () => {
+    for (const saisie of [undefined, "", "2026-10-17", "2026-12-20", "18/10/2026"]) {
+      expect(verifierEcheanceOption(saisie, "2026-10-18", "2026-12-19")).toHaveProperty("erreur");
+    }
   });
 });

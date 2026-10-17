@@ -4,7 +4,7 @@ import { useActionState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { importerUneNuit, rattraperLesNuits, type EtatImport, type EtatRattrapage } from "./actions";
+import { envoyerLeRecap, importerUneNuit, rattraperLesNuits, type EtatImport, type EtatRattrapage, type EtatRecap } from "./actions";
 
 export function FormulaireImport({ nuitProposee, aujourdhui }: { nuitProposee: string; aujourdhui: string }) {
   const [etat, action, enCours] = useActionState<EtatImport, FormData>(importerUneNuit, {});
@@ -38,6 +38,23 @@ export function FormulaireRattrapage() {
     <form action={action} className="grid gap-3">
       <Button type="submit" disabled={enCours} className="w-fit">
         {enCours ? "Rattrapage en cours…" : "Rattraper les nuits manquantes"}
+      </Button>
+      {etat.message && (
+        <p role={etat.reussi ? "status" : "alert"} className={etat.reussi ? "text-sm" : "text-sm text-destructive"}>
+          {etat.message}
+        </p>
+      )}
+    </form>
+  );
+}
+
+export function FormulaireRecap() {
+  const [etat, action, enCours] = useActionState<EtatRecap>(envoyerLeRecap, {});
+
+  return (
+    <form action={action} className="grid gap-3">
+      <Button type="submit" variant="outline" disabled={enCours} className="w-fit">
+        {enCours ? "Envoi en cours…" : "Envoyer le récap du jour"}
       </Button>
       {etat.message && (
         <p role={etat.reussi ? "status" : "alert"} className={etat.reussi ? "text-sm" : "text-sm text-destructive"}>

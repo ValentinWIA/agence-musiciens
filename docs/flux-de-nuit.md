@@ -196,3 +196,32 @@ exige qu'un courriel arrive à l'agent, pas seulement au propriétaire du compte
 - Hors périmètre : adresse de réponse, courriels en HTML, le récap (R).
 - Preuve : test de la règle `.test` ; geste en prévisualisation : invitation à une adresse de l'humain autre que celle
   du compte Resend → courriel reçu, expédié par `mail.valentinwalczak.com` ; invitation annulée ensuite.
+
+## 14. R — récap du matin (plan validé le 17/10)
+
+Branche `recap` (depuis `main`). Courriel en texte brut à l'agent (rôle `admin`), et à lui seul.
+
+- **Contenu** : demandes reçues ; changements de statut (avec l'écart « le programmateur dit : confirmée » si la
+  demande est déjà un engagement) ; messages à lire ; messages pour une demande inconnue, à part ; options qui
+  expirent dans les 7 jours (ou déjà expirées, encore en option) ; cachets impayés (« joué » ou « facturé », concert
+  passé depuis plus de 30 jours, cachet > 0 : le bénévole n'y est pas) ; bilan des nuits (reçus, doublons, mis de côté
+  regroupés par raison, panne). Section vide → absente ; rien de neuf → « Rien de neuf cette nuit », le récap part.
+- **Période** (décidé le 17/10) : tout ce qui a été importé depuis le récap précédent, pour qu'une nuit rattrapée
+  après une panne ne manque à aucun récap. Chaque liste est limitée à 20 lignes (« … et N autres, voir le journal ») :
+  le premier récap couvre les 28 nuits du rattrapage.
+- **Une fois par jour** (jour de Paris) : table `recaps`, une ligne par jour, écrite **avant** l'envoi (cron et clic
+  simultanés → un seul courriel). Envoi en échec → ligne retirée, on peut réessayer. Une ligne au journal toujours.
+- Import en échec → le récap part quand même et le dit. L'alerte immédiate est dans S.
+- **Adresse de l'agent** (décidé le 17/10) : l'humain met son adresse personnelle (celle du compte Resend) sur le
+  compte agent, en SQL dans Neon. Le jeu de données ne touche pas au compte agent.
+- Hors périmètre : courriel HTML, alerte de panne et Sentry (S), heure d'envoi réglable, récap aux musiciens.
+
+| Tranche | Contenu | Preuve |
+|---|---|---|
+| R1 | `src/lib/recap.ts` (pur) : options qui expirent, impayés, rédaction du texte | tests (7 j et 30 j pile, bénévole, sections vides, panne, limite de 20) |
+| R2 | migration 0012 (`recaps`, `engagements.option_expire_le`) ; échéances dans le jeu de données ; échéance saisie à la pose de l'option (J+14 proposé), affichée sur la fiche | migration jouée ; geste : poser une option → J+14 proposé puis affiché |
+| R3 | `envoyerRecap` (lecture, réservation du jour, envoi), appelé après le rattrapage dans `/api/cron/nuit` ; bloc et bouton « Envoyer le récap du jour » sur `/nuit` | geste : récap reçu ; second clic → rien de renvoyé ; en production, récap reçu après le cron |
+
+Présentation revue au geste (17/10) : « En bref », puis « À faire » (options et impayés avec artistes et salle, messages),
+« Reçu du flux », l'import en une phrase et un lien vers `/nuit` pour les mis de côté. **Ordre changé le 17/10 : N5 avant
+S**, pour que les demandes annoncées par le récap s'ouvrent sur le site.
