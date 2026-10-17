@@ -10,7 +10,7 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 
 ## État de reprise
 
-*Dernière mise à jour : 18 octobre 2026 (**semaine 2** : N1 à N5, D, R en production ; S en cours, S1 et S2 validées, reprise à S3)*
+*Dernière mise à jour : 18 octobre 2026 (**semaine 2** : N1 à N5, D, R en production ; S en cours, S1 à S3 validées, reprise à S4)*
 
 - **Semaine 2 — flux de nuit**, branche `flux-de-nuit` (depuis `main`, 17/10). Cadrage validé par l'humain le 17/10 :
   `docs/flux-de-nuit.md` (lu sur une vraie nuit : 15 événements dont 2 doublons ; créations sans musicien, sans heure,
@@ -138,12 +138,17 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   277 au total). Variable **`SENTRY_DSN`** (déjà dans Vercel, Production et Preview), recopiée dans le code du
   navigateur par `next.config.ts` (`env`) avec `VERCEL_ENV`. Carte « Surveillance » sur `/nuit`, sous « Exécutions ».
   Geste validé en prévisualisation : erreur de test vue dans Sentry, courriel de Sentry reçu.
-  **Reprise : S3** (alerte de panne). Prévu : migration 0015 `executions.alerte_le` ; règle pure « une alerte par
-  panne » = aucune exécution depuis la dernière réussie n'a d'`alerte_le` (une exécution interrompue, sans alerte,
-  n'empêche donc pas l'alerte suivante) ; appelée dans `echouer` de `src/lib/import-nuit.ts` : courriel à l'agent
-  (comme `envoi-recap.ts`) + `Sentry.captureException` + `flush` ; `alerte_le` posé seulement si le courriel est parti ;
-  « base ne répond pas » à la création de l'exécution → Sentry seul ; « alerte envoyée le … » dans la colonne État de
-  `/nuit`. Geste : fausse `FLUX_DE_NUIT_CLE` en Preview pour la seule branche `surveillance`. Puis S4, PR, production.
+  **S3 ✅** (`2c65961`) `src/lib/alerte.ts` (règle pure « une alerte par panne » : aucune exécution depuis la dernière
+  réussie n'a d'`alerte_le` ; courriel composé), 6 tests, 283 au total ; migration 0015 (`executions.alerte_le`, lignes
+  existantes vides = aucune alerte, rien à remplir) ; `src/lib/envoi-alerte.ts` appelé dans `echouer` avant de libérer
+  le verrou : courriel à l'agent + Sentry, `alerte_le` posé seulement si le courriel est parti. Sentry seul : exécution
+  interrompue, base absente à la création, récap non parti. « alerte envoyée le … » dans la colonne État de `/nuit`.
+  Gestes validés en prévisualisation le 18/10 (fausse `FLUX_DE_NUIT_CLE` en Preview, branche `surveillance`) :
+  1er échec → courriel, erreur Sentry, mention sur `/nuit` ; 2e échec → rien de plus ; variable de branche supprimée,
+  Redeploy → rattrapage réussi.
+  **Reprise : S4** (l'humain, sans code) : UptimeRobot, sonde `/api/sante` toutes les 5 min et `/api/sante?base=1`
+  toutes les heures (adresse de production) ; preuve par une sonde de test sur une adresse en 404, reçue puis supprimée.
+  Puis PR, fusion (migration 0015 jouée en production), erreur de test Sentry en production.
   **Prochaines demandes après S** : les reportés ci-dessous.
   Après chaque push, rattraper les nuits sur `/nuit` (le jeu de données vide les tables du flux).
   Clé du flux recopiée dans Vercel (`FLUX_DE_NUIT_CLE`, Production et Preview) le 17/10.
