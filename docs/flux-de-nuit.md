@@ -183,3 +183,16 @@ jour**, à l'heure près, heure **UTC**, en production seulement, avec `Authoriz
 - **N4a** : `nuitsManquantes` (pure, testée) + `rattraper` + bouton. **N4b** : route + `vercel.json`. Preuve de N4b :
   adresse ouverte sans secret → 401 ; en production, « Run » du cron dans Vercel → ligne « cron » au journal (le secret
   n'est jamais tapé ni collé). `CRON_SECRET` créé par l'humain (Production et Preview) le 17/10.
+
+## 13. D — domaine d'envoi (plan validé le 17/10)
+
+DNS de `mail.valentinwalczak.com` vérifiés dans Resend par l'humain le 17/10. D passe avant R : la preuve du récap
+exige qu'un courriel arrive à l'agent, pas seulement au propriétaire du compte Resend.
+
+- **D1** : expéditeur `CM Management <ne-pas-repondre@mail.valentinwalczak.com>` (`src/lib/courriel.ts`) ; rien n'est
+  envoyé vers une adresse en `.test` (domaine réservé, le jeu de données : un envoi rebondirait et abîmerait la
+  réputation du domaine), une ligne au journal à la place ; le lien d'invitation reste affiché à l'agent, le message
+  d'échec ne parle plus de « sans nom de domaine ».
+- Hors périmètre : adresse de réponse, courriels en HTML, le récap (R).
+- Preuve : test de la règle `.test` ; geste en prévisualisation : invitation à une adresse de l'humain autre que celle
+  du compte Resend → courriel reçu, expédié par `mail.valentinwalczak.com` ; invitation annulée ensuite.
