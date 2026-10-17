@@ -10,7 +10,18 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 
 ## État de reprise
 
-*Dernière mise à jour : 17 octobre 2026 (photos en production terminées, PR n° 15 fusionnée ; prochaine demande : voir « Ordre décidé »)*
+*Dernière mise à jour : 17 octobre 2026 (**semaine 1 terminée, semaine 2 commencée** : cadrage du flux de nuit)*
+
+- **Semaine 2 — flux de nuit**, branche `flux-de-nuit` (depuis `main`, 17/10). Cadrage validé par l'humain le 17/10 :
+  `docs/flux-de-nuit.md` (lu sur une vraie nuit : 15 événements dont 2 doublons ; créations sans musicien, sans heure,
+  sans cachet). Décidé : boîte « Demandes reçues » (l'agent en fait un engagement), statuts du flux sans effet sur
+  les engagements, messages jamais suivis, **rattrapage des nuits depuis le 20/09**. Manques de l'ancien brouillon
+  ajoutés : tableau des exécutions, coût de la nuit, alerte de panne, récap une fois par jour, une nuit par étape.
+  **Reste** : l'humain corrige le plan (section 9) et répond aux 2 questions (section 10) ; puis N1.
+  Clé du flux dans `.env.local` (ignoré par git), à recopier dans Vercel avant N3.
+  Domaine `valentinwalczak.com` (OVH, `contact@` déjà utilisé) : envoi par le sous-domaine `mail.` (tranche D).
+- **Reportés en semaine 5** (décidé le 17/10) : améliorations n° 3 (design global) et n° 8 (engagements en cartes
+  sur téléphone), pour une seule passe de design quand tous les écrans existeront.
 
 - **Fait** : cadrage (SPEC), comptes, squelette Next.js, dépôt GitHub public, site en ligne
   (https://agence-musiciens.vercel.app), région `fra1`, base Neon reliée à Vercel.
@@ -396,7 +407,7 @@ Un produit se construit par couches. Chaque couche répond à une question et s'
 | 4. Identité et droits | Qui est connecté, et qu'a-t-il le droit de faire ? | 1 | ✅ (connexion, invitations, rôles, réinitialisation, refus d'accès journalisés) |
 | 5. Métier | Que fait le produit ? (engagements, cycle de vie, règles, API externe, courriels, pièces jointes) | 1 | ✅ (cycle de vie, conflit d'agenda, géocodage, jours fériés, devises, pièces jointes, fiches musiciens, calendrier) |
 | 6. Fiabilité | Comment sait-on que ça marche et que c'est sûr ? (tests, journaux, revue de sécurité, README) | 1 | ✅ (tests à chaque push, journaux, revue de sécurité `docs/securite.md`, README) |
-| 7. Automatisation | Que fait le produit tout seul, la nuit ? | 2 | ⬜ |
+| 7. Automatisation | Que fait le produit tout seul, la nuit ? | 2 | 🔄 (cadrage validé le 17/10, `docs/flux-de-nuit.md`) |
 | 8. Intelligence | Que comprend le produit ? (lecture de documents, recherche qui cite ses sources) | 3 | ⬜ |
 | 9. Action | Qu'est-ce que le produit fait à notre place, sous contrôle ? (agent, serveur MCP) | 4 | ⬜ |
 | 10. Transmission | Quelqu'un d'autre peut-il le reprendre ? (passation, API pour les autres systèmes) | 5 | ⬜ |
@@ -570,3 +581,4 @@ déconnexion ; `/tableau-de-bord` sans session → renvoi vers la connexion.
 | 16/10/2026 | Musicien : sa fiche est sa page d'accueil (`/tableau-de-bord` y renvoie) | Son tableau de bord n'avait qu'une tuile, « Ma fiche » |
 | 16/10/2026 | Pages rangées en groupes de routes `(connecte)` et `(public)` ; menu de téléphone en `<dialog>` | Un cadre avec menu pour les seules pages connectées, sans changer les adresses ; Échap, voile et clavier fournis par le navigateur, sans paquet |
 | 11/10/2026 | Table `utilisateurs` limitée à 7 colonnes | Invitations et réinitialisations iront dans des tables séparées ; ajouter une colonne plus tard est peu coûteux |
+| 17/10/2026 | Flux de nuit : créations rangées dans « Demandes reçues », statuts et messages du flux sans effet sur les engagements, rattrapage depuis le 20/09 | Le flux ne donne ni musicien, ni heure, ni cachet, et ses statuts sautent nos étapes ; l'agent décide ; un message est une donnée, jamais un ordre |
