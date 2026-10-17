@@ -187,6 +187,7 @@ export const demandesRecues = pgTable("demandes_recues", {
   commentaire: text("commentaire"), // le dernier reçu avec un changement de statut
   // Si l'engagement est supprimé, la demande reste.
   engagementId: uuid("engagement_id").references(() => engagements.id, { onDelete: "set null" }),
+  ecarteeLe: timestamp("ecartee_le", { withTimezone: true }), // l'agent n'y donne pas suite ; vide = à traiter
 });
 
 // Un récap du matin par jour (jour de Paris). La ligne est écrite avant l'envoi : un second passage le même jour

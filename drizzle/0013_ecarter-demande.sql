@@ -1,0 +1,1 @@
+ALTER TABLE "demandes_recues" ADD COLUMN "ecartee_le" timestamp with time zone;

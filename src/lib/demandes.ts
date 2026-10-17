@@ -10,11 +10,14 @@ export const LIBELLES_DEMANDE: Record<StatutDemande, string> = {
   annulee: "annulée",
 };
 
-type Demande = { reference: string; statut: StatutDemande; dateConcert: Jour; engagementId: string | null };
+type Demande = { reference: string; statut: StatutDemande; dateConcert: Jour; engagementId: string | null; ecarteeLe: Date | null };
 
-// Annulée ou terminée par le programmateur : plus rien à faire, la demande reste visible dans « Toutes ».
+// Écartée par l'agent, ou annulée / terminée par le programmateur : plus rien à faire, la demande reste visible
+// dans « Toutes ».
 export function estATraiter(demande: Demande): boolean {
-  return demande.engagementId === null && demande.statut !== "annulee" && demande.statut !== "terminee";
+  return (
+    demande.engagementId === null && demande.ecarteeLe === null && demande.statut !== "annulee" && demande.statut !== "terminee"
+  );
 }
 
 // Le concert le plus proche en tête ; à date égale, l'ordre des références reste stable d'une visite à l'autre.

@@ -119,6 +119,7 @@ async function ContenuDemandes({ searchParams }: { searchParams: Promise<Record<
                 <TableCell>
                   <Badge variant="outline">{LIBELLES_DEMANDE[d.statut]}</Badge>
                   {d.engagementId && <span className="block text-xs text-muted-foreground">engagement créé</span>}
+                  {d.ecarteeLe && <span className="block text-xs text-muted-foreground">écartée</span>}
                 </TableCell>
                 <TableCell>
                   <NombreMessages href={`/demandes/${d.id}`} nombre={messagesPar.get(d.reference) ?? 0} />

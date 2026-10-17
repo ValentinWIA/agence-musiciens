@@ -11,6 +11,7 @@ import { jourLocal } from "@/lib/calendrier";
 import { formaterDuree } from "@/lib/dates";
 import { LIBELLES_DEMANDE, dateDemandePassee, formaterJourCourt, ligneHistorique } from "@/lib/demandes";
 import { verifierAdmin } from "@/lib/session";
+import { BoutonEcart } from "./bouton-ecart";
 
 export default function PageDemande({ params }: PageProps<"/demandes/[id]">) {
   return (
@@ -73,9 +74,22 @@ async function FicheDemande({ params }: { params: Promise<{ id: string }> }) {
               Engagement créé →
             </Link>
           ) : (
-            <p className="text-sm text-muted-foreground">
-              Ni musicien, ni heure, ni cachet : c&apos;est l&apos;agent qui les choisit en créant l&apos;engagement.
-            </p>
+            <div className="grid gap-3">
+              {demande.ecarteeLe ? (
+                <p className="text-sm">
+                  Écartée le{" "}
+                  {demande.ecarteeLe.toLocaleDateString("fr-FR", { timeZone: "Europe/Paris", day: "numeric", month: "long" })} :
+                  elle n&apos;est plus dans « À traiter ».
+                </p>
+              ) : (
+                <p className="text-sm text-muted-foreground">
+                  Ni musicien, ni heure, ni cachet : c&apos;est l&apos;agent qui les choisit en créant l&apos;engagement.
+                  Sans suite ? Écartez-la : elle quitte « À traiter ».
+                </p>
+              )}
+              {/* La clé recrée le bouton (et efface un ancien message) quand l'état change. */}
+              <BoutonEcart key={String(!!demande.ecarteeLe)} id={demande.id} ecartee={!!demande.ecarteeLe} />
+            </div>
           )}
           <p className="text-xs text-muted-foreground">
             Référence du flux : {demande.reference} · catégorie : {demande.categorie.replace("_", "-")}

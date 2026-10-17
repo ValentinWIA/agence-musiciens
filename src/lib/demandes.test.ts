@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { dateDemandePassee, estATraiter, formaterJourCourt, ligneHistorique, preRemplissage, trierDemandes } from "./demandes";
 
-const demande = { reference: "RES-20261017-05", statut: "demandee" as const, dateConcert: "2026-11-15", engagementId: null };
+const demande = { reference: "RES-20261017-05", statut: "demandee" as const, dateConcert: "2026-11-15", engagementId: null, ecarteeLe: null };
 
 describe("demande à traiter", () => {
   it("garde une demande sans engagement, demandée ou confirmée", () => {
@@ -11,6 +11,10 @@ describe("demande à traiter", () => {
 
   it("sort une demande devenue engagement", () => {
     expect(estATraiter({ ...demande, engagementId: "e1" })).toBe(false);
+  });
+
+  it("sort une demande écartée par l'agent", () => {
+    expect(estATraiter({ ...demande, ecarteeLe: new Date("2026-10-17T10:00:00Z") })).toBe(false);
   });
 
   it("sort une demande annulée ou terminée par le programmateur", () => {
