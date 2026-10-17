@@ -10,7 +10,7 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 
 ## État de reprise
 
-*Dernière mise à jour : 17 octobre 2026 (**semaine 2** : flux de nuit, N1 à N4, D, R et échéance sous la pastille en production)*
+*Dernière mise à jour : 17 octobre 2026 (**semaine 2** : N1 à N4, D, R en production ; N5a à N5d validées en prévisualisation)*
 
 - **Semaine 2 — flux de nuit**, branche `flux-de-nuit` (depuis `main`, 17/10). Cadrage validé par l'humain le 17/10 :
   `docs/flux-de-nuit.md` (lu sur une vraie nuit : 15 événements dont 2 doublons ; créations sans musicien, sans heure,
@@ -80,8 +80,25 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   la migration 0012, n'avaient pas d'échéance (ni affichée, ni au récap) ; dates du jeu de données remises par l'humain
   en SQL dans Neon (6 lignes), affichage vérifié. **Le 18/10, le récap doit lister 3 options à relancer** (Londres
   passée, Zurich, Bordeaux). À faire par l'humain : supprimer la branche Neon `preview/echeance-option`. Rien de cassé.
-  **Prochaine étape : N5** (branche `demandes-recues`, créée depuis `main`), section 9 du cadrage, puis S. En N5 :
-  faire pointer « … et N autres » du récap vers `/demandes`. Commencer par la boucle (dix lignes, écran, tranches).
+  **N5 🔄** (branche `demandes-recues`, poussée ; prévisualisation
+  https://agence-musiciens-git-demandes-recues-valentin-4768.vercel.app). Plan validé = **section 15 du cadrage**
+  (`c0967b2`) : 7 tranches, pushs groupés N5a+N5b, N5c, N5d, N5e, N5f+N5g. Décidé : annulée / terminée sortent de
+  « À traiter » ; « Remettre à traiter » existe.
+  **N5a ✅** (`dfd2759`) `src/lib/demandes.ts` (à traiter, tri, pré-remplissage, homonyme → personne) ; menu « Demandes
+  reçues » après « Engagements », journal hors menu. **N5b ✅** (`988d94d`) page `/demandes` (À traiter / Toutes,
+  messages pour une demande inconnue déplacés depuis `/nuit`, « Dernier import — voir le journal »).
+  **N5c ✅** (`e2d6859`, `a189cf9`) fiche `/demandes/[id]` avec historique. Retours de l'humain au geste : liste peu
+  claire → phrase d'explication, « Côté programmateur » (et non « statut du flux »), référence seulement sur la fiche,
+  lien sur la **date** (un programmateur peut faire plusieurs demandes), historique au jour, une phrase par événement.
+  Expliqué : message ↔ demande par la **référence** du flux. **N5d ✅** (`e733bf3`) migration 0013
+  (`demandes_recues.ecartee_le`), « Écarter » / « Remettre à traiter » (condition dans la requête, journalisé).
+  258 tests. Gestes N5b à N5d validés le 17/10 (cas des deux onglets : il fallait recharger le second).
+  **Reprendre à N5e** : bouton « Créer l'engagement » sur la fiche → `/engagements/nouveau?demande=<id>`, valeurs de
+  `preRemplissage`, lieu du flux en rappel, `demandeId` caché dans le formulaire. Dans `creerEngagement`
+  (`engagements/nouveau/actions.ts`, un `db.batch`) : lier la demande **dans la même écriture** et refuser une demande
+  déjà liée ou écartée (un `UPDATE` à 0 ligne n'annule pas le batch : prévoir une écriture qui échoue, ou relire
+  avant + condition). Puis N5f (+ nouveau programmateur), N5g (récap → `/demandes`), PR, production, puis S.
+  Après chaque push, rattraper les nuits sur `/nuit` (le jeu de données vide les tables du flux).
   Clé du flux recopiée dans Vercel (`FLUX_DE_NUIT_CLE`, Production et Preview) le 17/10.
   Domaine `valentinwalczak.com` (OVH, `contact@` déjà utilisé) : envoi par le sous-domaine `mail.` (tranche D).
 - **Reportés en semaine 5** (décidé le 17/10) : améliorations n° 3 (design global) et n° 8 (engagements en cartes
