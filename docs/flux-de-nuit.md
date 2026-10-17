@@ -131,7 +131,7 @@ Branche `flux-de-nuit` (N1 à N5) ; une branche à part pour le domaine, le réc
 | N4 | rattrapage par étapes + route cron + `CRON_SECRET` | geste : rattraper depuis le 20/09 ; appel de la route sans secret refusé |
 | N5 | boîte `/demandes` + « Créer l'engagement » pré-rempli | geste : une demande devient un engagement ; un musicien n'y a pas accès |
 | D | domaine Resend `mail.valentinwalczak.com` (branche `domaine`) | courriel reçu à une autre adresse que celle du compte |
-| R | récap du matin + `option_expire_le` (migration 0011), une fois par jour (branche `recap`) | geste : relancer → récap non renvoyé |
+| R | récap du matin + `option_expire_le` (migration 0012), une fois par jour (branche `recap`) | geste : relancer → récap non renvoyé |
 | S | Sentry, `/api/sante`, UptimeRobot, alerte de panne (branche `surveillance`) | **alertes déclenchées en vrai**, capture gardée |
 
 Reportés de la revue de sécurité (`docs/securite.md`), à placer après : limite d'essais de connexion, anti-clickjacking.
@@ -146,6 +146,14 @@ Reportés de la revue de sécurité (`docs/securite.md`), à placer après : lim
 3. **Référence inconnue** (décidé le 17/10, après le relevé de N1) : la règle reste, la mise à jour ou le message est
    mis de côté (on ne rattache rien à une demande qui n'existe pas). Mais `/nuit` et le récap montrent ces messages à
    part, sous « messages pour une demande inconnue », pour que l'agent les lise quand même (N3 et R).
+4. **Quelle nuit importer** (N3) : un champ date, pré-rempli avec la plus ancienne nuit pas encore importée depuis le
+   20/09 (sinon la nuit qui vient de finir). Importer dans l'ordre évite de mettre de côté pour toujours une mise à
+   jour dont la création n'a pas encore été lue ; le champ permet de rejouer une nuit (preuve d'idempotence).
+5. **Verrou** (N3) : migration 0011, index unique partiel « une seule exécution `en_cours` » : la base refuse elle-même
+   le second import. Une exécution `en_cours` depuis plus de 5 min est déclarée interrompue au passage suivant.
+   Le récap (R) prend donc la migration 0012.
+6. **Essais** (N3) : 10 s par appel, 3 essais ; une réponse 4xx (clé refusée, date future) échoue sans nouvel essai.
+   L'écriture d'une nuit se fait en un seul bloc (`db.batch`) : tout ou rien.
 
 ## 11. Ce que l'humain fait
 
