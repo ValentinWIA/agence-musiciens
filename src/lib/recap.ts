@@ -112,11 +112,15 @@ export function composerRecap(d: DonneesRecap): { sujet: string; texte: string }
     section("Messages pour une demande inconnue", d.messagesInconnus.map(ligneMessage)),
   ]);
 
+  // Tout ce qui vient du flux se traite sur /demandes : un seul lien, juste après ces listes.
+  const venuDuFlux = d.demandes.length + d.changements.length + d.messages.length + d.messagesInconnus.length > 0;
+
   const texte = [
     `Bonjour ${d.nomAgent},`,
     enBref.length ? `EN BREF\n${enBref.map((l) => `• ${l}`).join("\n")}` : "Rien de neuf cette nuit.",
     aFaire,
     recuDuFlux,
+    venuDuFlux ? `Traiter les demandes reçues : ${d.lienSite}/demandes` : null,
     `${SEPARATEUR}\nIMPORT\n${bilan(d)}`,
     "Rien n'a été fait automatiquement : les messages sont recopiés tels quels.\n" +
       `Ouvrir CM Management : ${d.lienSite}`,

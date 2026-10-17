@@ -127,6 +127,7 @@ describe("composerRecap", () => {
     expect(texte).not.toContain("REÇU DU FLUX");
     expect(texte).toContain("IMPORT\nNuit du 18/10 importée : 15 reçus, 2 doublons, 0 mis de côté.");
     expect(texte).not.toContain("/nuit"); // rien de mis de côté : pas de lien vers le détail
+    expect(texte).not.toContain("/demandes"); // rien du flux : pas de lien vers les demandes
     expect(texte).toContain("https://agence-musiciens.vercel.app");
   });
 
@@ -186,6 +187,13 @@ describe("composerRecap", () => {
     expect(texte).toContain("• RES-7 : le programmateur dit « confirmée »\n  l'engagement n'a pas changé : à vérifier");
     expect(texte).toContain("Messages pour une demande inconnue\n• Louise Moreau (réf. RES-9) :");
     expect(texte).not.toContain("À FAIRE");
+    expect(texte).toContain("« Décalez à vendredi. »\n\nTraiter les demandes reçues : https://agence-musiciens.vercel.app/demandes\n\n━");
+  });
+
+  it("un message à lire suffit pour le lien vers les demandes, placé avant l'import", () => {
+    const { texte } = composerRecap(donnees({ messages: [{ reference: "RES-4", de: "Louise Moreau", texte: "Merci." }] }));
+    expect(texte).not.toContain("REÇU DU FLUX");
+    expect(texte).toMatch(/« Merci\. »\n\nTraiter les demandes reçues : https:\/\/agence-musiciens\.vercel\.app\/demandes\n\n━+\nIMPORT/);
   });
 
   it("une liste longue s'arrête à 20 lignes", () => {
