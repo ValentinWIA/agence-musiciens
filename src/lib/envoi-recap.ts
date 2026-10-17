@@ -1,6 +1,6 @@
 import { and, asc, desc, eq, gt, inArray, isNotNull, isNull, lt, ne, sql } from "drizzle-orm";
 import { db } from "@/db";
-import { demandesRecues, engagements, evenementsFlux, executions, lieux, recaps, utilisateurs } from "@/db/schema";
+import { demandesRecues, engagementMusiciens, engagements, evenementsFlux, executions, lieux, recaps, utilisateurs } from "@/db/schema";
 import { jourLocal } from "./calendrier";
 import { envoyerCourriel } from "./courriel";
 import { STATUTS_DEMANDE, type StatutDemande } from "./flux";
@@ -97,17 +97,27 @@ async function lireDonnees(depuis: Date, jour: string) {
       .where(and(nouvelles, ne(evenementsFlux.etat, "doublon")))
       .orderBy(asc(evenementsFlux.horodatage)),
     db
-      .select({ titre: engagements.titre, debut: engagements.debut, expireLe: engagements.optionExpireLe, ville: lieux.ville, pays: lieux.pays })
+      .select({
+        id: engagements.id,
+        titre: engagements.titre,
+        debut: engagements.debut,
+        expireLe: engagements.optionExpireLe,
+        salle: lieux.nom,
+        ville: lieux.ville,
+        pays: lieux.pays,
+      })
       .from(engagements)
       .innerJoin(lieux, eq(engagements.lieuId, lieux.id))
       .where(and(eq(engagements.statut, "option"), isNotNull(engagements.optionExpireLe))),
     db
       .select({
+        id: engagements.id,
         titre: engagements.titre,
         debut: engagements.debut,
         statut: engagements.statut,
         cachet: engagements.cachet,
         devise: engagements.devise,
+        salle: lieux.nom,
         ville: lieux.ville,
         pays: lieux.pays,
       })
@@ -115,6 +125,18 @@ async function lireDonnees(depuis: Date, jour: string) {
       .innerJoin(lieux, eq(engagements.lieuId, lieux.id))
       .where(inArray(engagements.statut, ["joue", "facture"])),
   ]);
+
+  // Les musiciens de chaque engagement listé (un ou deux), en une seule requête.
+  const ids = [...options, ...concerts].map((e) => e.id);
+  const liens = ids.length
+    ? await db
+        .select({ engagementId: engagementMusiciens.engagementId, nom: utilisateurs.nom })
+        .from(engagementMusiciens)
+        .innerJoin(utilisateurs, eq(engagementMusiciens.musicienId, utilisateurs.id))
+        .where(inArray(engagementMusiciens.engagementId, ids))
+        .orderBy(asc(utilisateurs.nom))
+    : [];
+  const musiciens = (id: string) => liens.filter((l) => l.engagementId === id).map((l) => l.nom);
 
   const traites = evenements.filter((e) => e.etat === "traite" && e.reference);
   const misDeCote = evenements.filter((e) => e.etat === "mis_de_cote");
@@ -151,8 +173,8 @@ async function lireDonnees(depuis: Date, jour: string) {
       .filter((e) => e.type === "message" && e.raison?.startsWith("référence inconnue"))
       .map(lireMessage),
     raisons: misDeCote.map((e) => e.raison ?? "raison inconnue"),
-    options: optionsQuiExpirent(options.map((o) => ({ ...o, expireLe: o.expireLe! })), jour),
-    impayes: cachetsImpayes(concerts, jour),
+    options: optionsQuiExpirent(options.map((o) => ({ ...o, expireLe: o.expireLe!, musiciens: musiciens(o.id) })), jour),
+    impayes: cachetsImpayes(concerts.map((c) => ({ ...c, musiciens: musiciens(c.id) })), jour),
   };
 }
 
