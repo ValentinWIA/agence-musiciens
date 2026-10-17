@@ -42,7 +42,7 @@ async function FicheDemande({
   const passee = dateDemandePassee(demande.dateConcert, jourLocal(new Date(), "France"));
   // Retour à l'onglet d'où l'on vient (?vue=toutes), la liste déroulée jusqu'à cette demande.
   const { vue } = await searchParams;
-  const retour = `/demandes${vue === "toutes" ? "?vue=toutes" : ""}#demande-${demande.id}`;
+  const retour = `/demandes?${vue === "toutes" ? "vue=toutes&" : ""}ici=${demande.id}`;
 
   return (
     <>

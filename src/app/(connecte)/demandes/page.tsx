@@ -11,11 +11,12 @@ import { jourLocal } from "@/lib/calendrier";
 import { formaterDuree } from "@/lib/dates";
 import { LIBELLES_DEMANDE, dateDemandePassee, estATraiter, formaterJourCourt as formaterJour, trierDemandes } from "@/lib/demandes";
 import { verifierAdmin } from "@/lib/session";
+import { DefilerVers } from "./defiler-vers";
 
 const LIMITE_MESSAGES = 100;
 
-// ?vue=toutes ; toute autre valeur revient à « À traiter ».
-const schemaVue = z.object({ vue: z.enum(["a-traiter", "toutes"]).catch("a-traiter") });
+// ?vue=toutes ; toute autre valeur revient à « À traiter ». ?ici=<id> : la demande dont on revient.
+const schemaVue = z.object({ vue: z.enum(["a-traiter", "toutes"]).catch("a-traiter"), ici: z.uuid().optional().catch(undefined) });
 
 export default function PageDemandes({ searchParams }: PageProps<"/demandes">) {
   return (
@@ -36,7 +37,7 @@ export default function PageDemandes({ searchParams }: PageProps<"/demandes">) {
 
 async function ContenuDemandes({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   await verifierAdmin("/demandes"); // un musicien ne voit jamais cette page
-  const { vue } = schemaVue.parse(await searchParams);
+  const { vue, ici } = schemaVue.parse(await searchParams);
 
   const [demandes, nbMessages, messagesInconnus, [dernierImport]] = await Promise.all([
     db.select().from(demandesRecues),
@@ -106,7 +107,7 @@ async function ContenuDemandes({ searchParams }: { searchParams: Promise<Record<
           </TableHeader>
           <TableBody>
             {liste.map((d) => (
-              <TableRow key={d.id} id={`demande-${d.id}`} className="scroll-mt-4 target:bg-muted">
+              <TableRow key={d.id} id={`demande-${d.id}`} className={d.id === ici ? "bg-muted" : undefined}>
                 <TableCell>
                   <Link href={`/demandes/${d.id}${suite}`} className="underline">
                     {formaterJour(d.dateConcert)}
@@ -131,6 +132,7 @@ async function ContenuDemandes({ searchParams }: { searchParams: Promise<Record<
           </TableBody>
         </Table>
       )}
+      {ici && <DefilerVers id={`demande-${ici}`} />}
 
       <Card>
         <CardHeader>

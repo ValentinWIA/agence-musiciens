@@ -132,7 +132,7 @@ async function ContenuFormulaire({ searchParams }: { searchParams: Promise<Recor
           <p role="note" className="rounded-md border px-3 py-2 text-sm">
             {passee ? (
               <>
-                <span className="font-medium">
+                <span className="font-medium text-destructive">
                   La date demandée ({formaterJourCourt(demande.dateConcert)}) est passée : saisissez la date convenue avec
                   le programmateur.
                 </span>{" "}
