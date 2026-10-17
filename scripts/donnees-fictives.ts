@@ -61,6 +61,7 @@ export type EngagementFictif = {
   musiciens: (keyof typeof MUSICIENS)[];
   statut: Statut;
   avantAnnulation?: Statut; // pour un engagement annulé : le statut qu'il avait, pour pouvoir le rétablir
+  optionExpireLe?: string; // AAAA-MM-JJ, pour une option (ou une option annulée, qui peut être rétablie)
   cachet?: string; // tel qu'un humain le saisirait
   devise?: Devise;
   programme?: string;
@@ -108,12 +109,12 @@ export const ENGAGEMENTS: EngagementFictif[] = [
   { titre: "Récital violon", debut: "2026-12-04T20:00:00+01:00", duree: 120, lieu: "gaveau", programmateur: "garnier", musiciens: ["ines"], statut: "confirme", cachet: "2000", programme: RECITAL_VIOLON },
   { titre: "Concert de fin d'année", debut: "2026-12-05T10:00:00+01:00", duree: 60, lieu: "menton", programmateur: "delorme", musiciens: ["ines"], statut: "contrat_envoye", cachet: "1500", programme: RECITAL_VIOLON, notes: "CAS conflit de distance : Inès finit à Paris la veille à 22 h, environ 690 km (11 h 16 de trajet + 1 h de marge > 12 h). Confirmation impossible." },
   { titre: "Récital piano", debut: "2026-12-12T20:00:00+01:00", duree: 90, lieu: "lyon", programmateur: "delorme", musiciens: ["anna"], statut: "contrat_envoye", cachet: "2100", programme: RECITAL_PIANO, notes: "CAS normal : Anna est libre, confirmation possible." },
-  { titre: "Duo piano-violon", debut: "2026-12-19T19:30:00+01:00", duree: 90, lieu: "zurich", programmateur: "fontaine", musiciens: ["hugo", "ines"], statut: "option", cachet: "5000", devise: "CHF", programme: DUO_2 },
+  { titre: "Duo piano-violon", debut: "2026-12-19T19:30:00+01:00", duree: 90, lieu: "zurich", programmateur: "fontaine", musiciens: ["hugo", "ines"], statut: "option", optionExpireLe: "2026-10-22", cachet: "5000", devise: "CHF", programme: DUO_2 },
   { titre: "Récital piano", debut: "2027-01-16T20:00:00+01:00", duree: 90, lieu: "tce", programmateur: "garnier", musiciens: ["hugo"], statut: "contrat_envoye", cachet: "2600", programme: RECITAL_PIANO_2 },
-  { titre: "Récital violon", debut: "2027-01-23T19:30:00+00:00", duree: 75, lieu: "wigmore", programmateur: "whitfield", musiciens: ["ines"], statut: "option", cachet: "1500", devise: "GBP", programme: RECITAL_VIOLON },
-  { titre: "Duo piano-violon", debut: "2027-02-06T20:00:00+01:00", duree: 90, lieu: "bordeaux", programmateur: "delorme", musiciens: ["anna", "louis"], statut: "option", programme: DUO, notes: "CAS option sans cachet : montant en négociation." },
-  { titre: "Récital piano", debut: "2027-02-13T19:00:00+09:00", duree: 90, lieu: "tokyo", programmateur: "tanaka", musiciens: ["hugo"], statut: "option", cachet: "500000", devise: "JPY", programme: RECITAL_PIANO },
-  { titre: "Récital violon", debut: "2027-03-06T20:00:00+01:00", duree: 75, lieu: "metz", programmateur: "delorme", musiciens: ["louis"], statut: "option", cachet: "1500", programme: RECITAL_VIOLON },
+  { titre: "Récital violon", debut: "2027-01-23T19:30:00+00:00", duree: 75, lieu: "wigmore", programmateur: "whitfield", musiciens: ["ines"], statut: "option", optionExpireLe: "2026-10-15", cachet: "1500", devise: "GBP", programme: RECITAL_VIOLON },
+  { titre: "Duo piano-violon", debut: "2027-02-06T20:00:00+01:00", duree: 90, lieu: "bordeaux", programmateur: "delorme", musiciens: ["anna", "louis"], statut: "option", optionExpireLe: "2026-10-27", programme: DUO, notes: "CAS option sans cachet : montant en négociation." },
+  { titre: "Récital piano", debut: "2027-02-13T19:00:00+09:00", duree: 90, lieu: "tokyo", programmateur: "tanaka", musiciens: ["hugo"], statut: "option", optionExpireLe: "2026-11-13", cachet: "500000", devise: "JPY", programme: RECITAL_PIANO },
+  { titre: "Récital violon", debut: "2027-03-06T20:00:00+01:00", duree: 75, lieu: "metz", programmateur: "delorme", musiciens: ["louis"], statut: "option", optionExpireLe: "2026-11-20", cachet: "1500", programme: RECITAL_VIOLON },
   { titre: "Duo piano-violon", debut: "2027-03-13T17:00:00+01:00", duree: 90, lieu: "geneve", programmateur: "fontaine", musiciens: ["hugo", "louis"], statut: "confirme", cachet: "4700", devise: "CHF", programme: DUO_2, notes: "CAS annulation possible : confirmé, encore annulable avant la date." },
   { titre: "Récital piano", debut: "2027-03-20T20:00:00+01:00", duree: 90, lieu: "cortot", programmateur: "garnier", musiciens: ["anna"], statut: "demande", programme: RECITAL_PIANO_2, notes: "CAS demande sans cachet." },
   { titre: "Récital violon", debut: "2027-05-08T20:00:00+02:00", duree: 75, lieu: "gaveau", programmateur: "garnier", musiciens: ["ines"], statut: "demande", cachet: "1800", notes: "CAS jour férié : 8 mai (avertissement sur la fiche)." },
@@ -121,11 +122,11 @@ export const ENGAGEMENTS: EngagementFictif[] = [
   { titre: "Récital piano", debut: "2027-05-01T00:00:00+02:00", precision: "mois", lieu: "zurich", programmateur: "fontaine", musiciens: ["hugo"], statut: "demande", devise: "CHF", notes: "CAS date approximative : « mai 2027 »." },
   { titre: "Récital violon", debut: "2027-05-15T19:30:00+01:00", duree: 75, lieu: "wigmore", programmateur: "whitfield", musiciens: ["louis"], statut: "demande", cachet: "1600", devise: "GBP" },
   { titre: "Duo piano-violon", debut: "2027-03-01T00:00:00+01:00", precision: "saison", lieu: "tokyo", programmateur: "tanaka", musiciens: ["hugo", "ines"], statut: "demande", devise: "JPY", notes: "CAS date approximative : « printemps 2027 »." },
-  { titre: "Soirée de piano", debut: "2027-06-19T21:00:00+02:00", duree: 90, lieu: "roque", programmateur: "delorme", musiciens: ["anna"], statut: "option", cachet: "3200", programme: RECITAL_PIANO },
+  { titre: "Soirée de piano", debut: "2027-06-19T21:00:00+02:00", duree: 90, lieu: "roque", programmateur: "delorme", musiciens: ["anna"], statut: "option", optionExpireLe: "2026-12-01", cachet: "3200", programme: RECITAL_PIANO },
   { titre: "Récital violon", debut: "2027-06-26T21:00:00+02:00", duree: 75, lieu: "menton", programmateur: "delorme", musiciens: ["ines"], statut: "demande", cachet: "2000" },
   { titre: "Festival d'été", debut: "2027-07-01T00:00:00+02:00", precision: "mois", lieu: "roque", programmateur: "delorme", musiciens: ["hugo"], statut: "demande", notes: "CAS date approximative : « juillet 2027 »." },
   { titre: "Saison d'automne", debut: "2027-09-01T00:00:00+02:00", precision: "saison", lieu: "tce", programmateur: "garnier", musiciens: ["anna", "louis"], statut: "demande", notes: "CAS date approximative : « automne 2027 »." },
-  { titre: "Récital piano", debut: "2027-01-30T20:00:00+01:00", duree: 90, lieu: "bordeaux", programmateur: "delorme", musiciens: ["hugo"], statut: "annule", avantAnnulation: "option", cachet: "1800", notes: "CAS annulé à venir : salle en travaux." },
+  { titre: "Récital piano", debut: "2027-01-30T20:00:00+01:00", duree: 90, lieu: "bordeaux", programmateur: "delorme", musiciens: ["hugo"], statut: "annule", avantAnnulation: "option", optionExpireLe: "2026-11-06", cachet: "1800", notes: "CAS annulé à venir : salle en travaux." },
   { titre: "Récital violon", debut: "2026-11-28T20:00:00+01:00", duree: 75, lieu: "metz", programmateur: "delorme", musiciens: ["louis"], statut: "confirme", cachet: "1600", programme: RECITAL_VIOLON },
   // Ajoutés à la fin pour garder les identifiants des précédents (ils dépendent de la position dans la liste).
   { titre: "Concert-lecture", debut: "2026-09-05T18:00:00+02:00", lieu: "bordeaux", programmateur: "delorme", musiciens: ["hugo"], statut: "demande", notes: "CAS demande à date passée : jamais relancée, à annuler (mention « date passée »)." },

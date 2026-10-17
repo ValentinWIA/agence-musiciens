@@ -6,16 +6,29 @@ import { Label } from "@/components/ui/label";
 import { RAISON_MAX } from "@/lib/conflit";
 import { changerStatut, type EtatChangement } from "./actions";
 
-type Props = { id: string; transitions: { cle: string; libelle: string }[] };
+// echeance : proposée quand « Poser une option » est possible ; l'agent la change s'il veut.
+type Props = { id: string; transitions: { cle: string; libelle: string }[]; echeance?: string };
 
 // Les boutons que le statut permet ; le serveur rejuge chaque clic (conditions, droits).
-export function BoutonsStatut({ id, transitions }: Props) {
+export function BoutonsStatut({ id, transitions, echeance }: Props) {
   const [etat, action, enCours] = useActionState<EtatChangement, FormData>(changerStatut, {});
 
   return (
     <div className="grid gap-3">
       <form action={action} className="flex flex-wrap gap-2">
         <input type="hidden" name="id" value={id} />
+        {echeance && (
+          <div className="flex w-full flex-wrap items-center gap-2">
+            <Label htmlFor="option-expire-le">Option jusqu&apos;au</Label>
+            <input
+              id="option-expire-le"
+              name="optionExpireLe"
+              type="date"
+              defaultValue={echeance}
+              className="h-8 rounded-lg border border-input bg-transparent px-2.5 text-sm"
+            />
+          </div>
+        )}
         {transitions.map(({ cle, libelle }) => (
           <Button
             key={cle}

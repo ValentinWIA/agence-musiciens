@@ -7,7 +7,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formaterMontant } from "@/lib/argent";
 import { convertirEnEur, lireTaux } from "@/lib/change";
 import { avertissementConflits, trouverConflits } from "@/lib/conflit";
-import { TRANSITIONS, transitionsProposees } from "@/lib/cycle-de-vie";
+import { jourLocal, libelleJour } from "@/lib/calendrier";
+import { echeanceProposee, TRANSITIONS, transitionsProposees } from "@/lib/cycle-de-vie";
 import { formaterDebut } from "@/lib/dates";
 import { ferieDuConcert } from "@/lib/feries";
 import { lireAgendaPourConfirmer, lireEngagement, lirePiecesJointes } from "@/lib/engagements";
@@ -47,6 +48,9 @@ async function FicheEngagement({
   const estAgent = utilisateur.role === "admin";
   const { lieu, programmateur } = engagement;
   const transitions = transitionsProposees(engagement).map((cle) => ({ cle, libelle: TRANSITIONS[cle].libelle }));
+  const echeance = transitions.some((t) => t.cle === "poser_option")
+    ? echeanceProposee(jourLocal(new Date(), "France"), jourLocal(engagement.debut, lieu.pays))
+    : undefined;
   // Dès l'option, l'agent est prévenu d'un conflit qui ferait refuser la confirmation (rien n'est bloqué ici).
   const avertissement =
     estAgent && (engagement.statut === "option" || engagement.statut === "contrat_envoye")
@@ -126,6 +130,9 @@ async function FicheEngagement({
           </Ligne>
           <Ligne titre="Programme">{engagement.programme ?? "à définir"}</Ligne>
           {engagement.notes && <Ligne titre="Notes">{engagement.notes}</Ligne>}
+          {estAgent && engagement.statut === "option" && engagement.optionExpireLe && (
+            <Ligne titre="Option">{`jusqu'au ${libelleJour(engagement.optionExpireLe)} ${engagement.optionExpireLe.slice(0, 4)}`}</Ligne>
+          )}
           {/* Visible aussi du musicien : c'est lui qui voyage (docs/engagements.md, section 11). */}
           {engagement.raisonConflit && (
             <Ligne titre="Conflit d'agenda">{`Confirmé malgré un conflit d'agenda : ${engagement.raisonConflit}`}</Ligne>
@@ -137,7 +144,7 @@ async function FicheEngagement({
             <Link href={`/engagements/${engagement.id}/modifier`} className={buttonVariants({ variant: "outline", className: "w-fit" })}>
               Modifier
             </Link>
-            {transitions.length > 0 && <BoutonsStatut id={engagement.id} transitions={transitions} />}
+            {transitions.length > 0 && <BoutonsStatut id={engagement.id} transitions={transitions} echeance={echeance} />}
           </div>
         )}
         <section className="mt-8 grid gap-3" aria-labelledby="titre-pieces">
