@@ -259,3 +259,35 @@ Branche `demandes-recues` (depuis `main`). Pages réservées à l'agent ; un mus
 | N5g | récap : liens vers `/demandes` | test ; récap reçu |
 
 Pushs groupés (décidé le 17/10) : N5a+N5b, N5c, N5d, N5e, N5f+N5g.
+
+## 16. S — surveillance (plan validé le 18/10)
+
+Branche `surveillance` (depuis `main`). Un seul paquet ajouté (`@sentry/nextjs`), une seule migration (0015).
+
+- **Sentry** : erreurs du serveur (pages, actions, routes, cron, via `onRequestError`) et du navigateur, production et
+  prévisualisation distinguées. `sendDefaultPii: false` ; ni mot de passe ni jeton dans les erreurs. Variable
+  `SENTRY_DSN`. Pas de `SENTRY_AUTH_TOKEN` (décidé le 18/10) : erreurs du navigateur moins lisibles, un secret de moins.
+- **Alerte de panne** : import en échec (flux muet, clé refusée, base absente) → courriel immédiat à l'agent + erreur
+  Sentry, **une seule fois par panne** : seulement au passage de « réussi » à « en échec » (`executions.alerte_le`).
+  La panne finit au premier import réussi ; pas de courriel « rétabli » (le récap le dit).
+- Cas limites : « import déjà en cours » n'est pas une panne ; exécution interrompue (> 5 min) → Sentry seul ; récap
+  impossible à envoyer (Resend en panne) → Sentry seul.
+- **`/api/sante`**, publique : `ok` (200) ou `en panne` (503), rien d'autre. Sans paramètre, ne touche pas la base ;
+  `?base=1` fait un `select 1`.
+- **UptimeRobot, deux sondes** (décidé le 18/10) : `/api/sante` toutes les 5 min, `/api/sante?base=1` toutes les
+  heures. Raison : Neon gratuit = 100 CU-h par mois et la base s'endort après 5 min ; une sonde de la base toutes les
+  5 min la garderait allumée (~186 CU-h, quota dépassé vers le 17 du mois). Deux sondes : ~15 CU-h.
+- Écran : `/nuit` affiche « alerte envoyée le … » sur l'exécution qui l'a déclenchée, et un bouton « Envoyer une erreur
+  de test » (agent seulement, journalisé ; décidé le 18/10) pour refaire la preuve Sentry quand on veut.
+- Hors périmètre : suivi des performances et relecture des sessions Sentry, page d'état publique, SMS, limite d'essais
+  de connexion et anti-clickjacking (reportés à part).
+
+| Tranche | Contenu | Preuve |
+|---|---|---|
+| S1 | `/api/sante` (avec et sans `?base=1`) | tests (200, 503) ; geste : l'adresse répond `ok` |
+| S2 | `@sentry/nextjs` : `instrumentation.ts`, `instrumentation-client.ts`, `global-error.tsx` ; bouton d'erreur de test | erreur de test vue dans Sentry (prévisualisation, puis production) |
+| S3 | `src/lib/alerte.ts` (règle « une par panne », pure), migration 0015 (`executions.alerte_le` ; lignes existantes vides = aucune alerte envoyée, rien à remplir), courriel + Sentry à l'échec | tests ; geste : fausse clé du flux sur la branche → un courriel et une erreur Sentry, second import → rien de plus ; vraie clé → import réussi |
+| S4 | UptimeRobot (l'humain, sans code) : les deux sondes | alerte reçue via une sonde de test sur une adresse en 404, supprimée ensuite ; capture dans `docs/` |
+
+Ce que l'humain fait : compte Sentry (projet Next.js, DSN dans `SENTRY_DSN`, Production et Preview) avant S2 ; fausse
+`FLUX_DE_NUIT_CLE` réservée à la branche `surveillance` pour S3, retirée après ; compte UptimeRobot pour S4.
