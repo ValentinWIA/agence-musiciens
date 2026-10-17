@@ -117,6 +117,9 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 - **Reporté** (noté le 18/10, demande à part avec son cadrage) : l'heure obligatoire d'un engagement est trop
   contraignante → pouvoir choisir « matin », « après-midi (12 h-18 h) » ou « soir » ; heures de 5 en 5 minutes.
   Touche le formulaire d'engagement et sans doute le schéma (précision de la date).
+- **Reporté** (noté le 18/10, demande à part avec son cadrage) : sur la fiche musicien, avant le cachet moyen,
+  afficher les **revenus totaux de la saison en cours**. À trancher au cadrage : bornes de la saison (septembre à
+  août ?), engagements comptés (confirmés, réalisés, payés ?), cachets en plusieurs devises.
 
 - **Fait** : cadrage (SPEC), comptes, squelette Next.js, dépôt GitHub public, site en ligne
   (https://agence-musiciens.vercel.app), région `fra1`, base Neon reliée à Vercel.
