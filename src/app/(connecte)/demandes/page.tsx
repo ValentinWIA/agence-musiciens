@@ -69,21 +69,17 @@ async function ContenuDemandes({ searchParams }: { searchParams: Promise<Record<
 
   const messagesPar = new Map(nbMessages.map((m) => [m.reference, m.total]));
   const aTraiter = demandes.filter(estATraiter);
-  const liste = trierDemandes(vue === "toutes" ? demandes : aTraiter);
+  // Retour après « Créer l'engagement » : la demande traitée reste une fois à sa place, surlignée, pour que l'agent
+  // reprenne la file là où il était (décidé le 18/10). Elle n'est plus comptée dans « À traiter ».
+  const traitee = cree ? demandes.find((d) => d.engagementId === cree) : undefined;
+  const liste = trierDemandes(vue === "toutes" ? demandes : traitee ? [...aTraiter, traitee] : aTraiter);
+  const surlignee = traitee?.id ?? ici;
   const aujourdhui = jourLocal(new Date(), "France");
   // La fiche saura revenir sur cet onglet.
   const suite = vue === "toutes" ? "?vue=toutes" : "";
 
   return (
     <>
-      {cree && (
-        <p role="status" className="rounded-md border px-3 py-2 text-sm">
-          Engagement créé.{" "}
-          <Link href={`/engagements/${cree}`} className="underline">
-            Voir l&apos;engagement →
-          </Link>
-        </p>
-      )}
       <p className="text-sm text-muted-foreground">
         {dernierImport
           ? `Dernier import : nuit du ${formaterJour(dernierImport.nuitDu)}, ${dernierImport.etat === "en_echec" ? "en échec" : dernierImport.etat === "en_cours" ? "en cours" : "réussi"} — `
@@ -120,7 +116,7 @@ async function ContenuDemandes({ searchParams }: { searchParams: Promise<Record<
           </TableHeader>
           <TableBody>
             {liste.map((d) => (
-              <TableRow key={d.id} id={`demande-${d.id}`} className={d.id === ici ? "bg-amber-100 shadow-[inset_4px_0_0_var(--color-amber-500)] hover:bg-amber-100" : undefined}>
+              <TableRow key={d.id} id={`demande-${d.id}`} className={d.id === surlignee ? "bg-amber-100 shadow-[inset_4px_0_0_var(--color-amber-500)] hover:bg-amber-100" : undefined}>
                 <TableCell>
                   <Link href={`/demandes/${d.id}${suite}`} className="underline">
                     {formaterJour(d.dateConcert)}
@@ -134,7 +130,16 @@ async function ContenuDemandes({ searchParams }: { searchParams: Promise<Record<
                 <TableCell>{formaterDuree(d.dureeMinutes)}</TableCell>
                 <TableCell>
                   <Badge variant="outline">{LIBELLES_DEMANDE[d.statut]}</Badge>
-                  {d.engagementId && <span className="block text-xs text-muted-foreground">engagement créé</span>}
+                  {d.engagementId && d.id === traitee?.id ? (
+                    <span role="status" className="block text-xs">
+                      engagement créé ·{" "}
+                      <Link href={`/engagements/${d.engagementId}`} className="underline">
+                        Voir l&apos;engagement →
+                      </Link>
+                    </span>
+                  ) : (
+                    d.engagementId && <span className="block text-xs text-muted-foreground">engagement créé</span>
+                  )}
                   {d.ecarteeLe && <span className="block text-xs text-muted-foreground">écartée</span>}
                 </TableCell>
                 <TableCell>
@@ -145,7 +150,7 @@ async function ContenuDemandes({ searchParams }: { searchParams: Promise<Record<
           </TableBody>
         </Table>
       )}
-      {ici && <DefilerVers id={`demande-${ici}`} />}
+      {surlignee && <DefilerVers id={`demande-${surlignee}`} />}
 
       <Card>
         <CardHeader>

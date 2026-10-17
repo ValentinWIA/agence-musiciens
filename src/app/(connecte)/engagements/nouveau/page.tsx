@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { z } from "zod";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { db } from "@/db";
 import { demandesRecues } from "@/db/schema";
 import { jourLocal } from "@/lib/calendrier";
@@ -127,22 +127,23 @@ async function ContenuFormulaire({ searchParams }: { searchParams: Promise<Recor
       <Card>
         <CardHeader>
           <CardTitle>Nouvel engagement</CardTitle>
-        </CardHeader>
-        <CardContent className="grid gap-5">
-          <p role="note" className="rounded-md border px-3 py-2 text-sm">
+          {/* Sous-titre sans cadre : un cadre le faisait prendre pour un champ à remplir (retour du 18/10). */}
+          <CardDescription>
             {passee ? (
               <>
                 <span className="font-medium text-destructive">
                   La date demandée ({formaterJourCourt(demande.dateConcert)}) est passée : saisissez la date convenue avec
                   le programmateur.
                 </span>{" "}
-                <span className="text-muted-foreground">Durée reprise de la demande.</span>
+                Durée reprise de la demande, modifiable.
               </>
             ) : (
-              <span className="text-muted-foreground">Date et durée reprises de la demande (modifiables).</span>
+              "Date et durée reprises de la demande, modifiables."
             )}{" "}
-            <span className="text-muted-foreground">Choisissez l&apos;heure, le lieu, les musiciens et le cachet.</span>
-          </p>
+            Il reste l&apos;heure, le lieu, les musiciens et le cachet.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="grid gap-5">
           <FormulaireEngagement
             key={demande.id}
             action={creerEngagement}
