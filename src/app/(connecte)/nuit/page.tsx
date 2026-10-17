@@ -135,6 +135,12 @@ async function ContenuNuit() {
                     <TableCell className="whitespace-normal">
                       <Etat etat={x.etat} />
                       {x.erreur && <p className="mt-1 text-xs text-destructive">{x.erreur}</p>}
+                      {x.alerteLe && (
+                        <p className="mt-1 text-xs text-muted-foreground">
+                          alerte envoyée le{" "}
+                          {x.alerteLe.toLocaleString("fr-FR", { timeZone: "Europe/Paris", dateStyle: "short", timeStyle: "short" })}
+                        </p>
+                      )}
                     </TableCell>
                   </TableRow>
                 ))}

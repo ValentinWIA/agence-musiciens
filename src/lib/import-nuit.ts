@@ -3,6 +3,7 @@ import type { BatchItem } from "drizzle-orm/batch";
 import { db } from "@/db";
 import { demandesRecues, evenementsFlux, executions } from "@/db/schema";
 import { appelerFlux } from "./appel-flux";
+import { alerterPanne, signalerSansCourriel } from "./envoi-alerte";
 import { jourLocal } from "./calendrier";
 import { bilanNuit, lireNuit, nuitsManquantes, prochaineNuit, type Compteurs, type EvenementLu } from "./flux";
 
@@ -25,10 +26,15 @@ function origine(e: unknown): { message: string; code?: string } {
 
 export async function importerNuit(nuitDu: string, declencheur: "cron" | "bouton"): Promise<ResultatImport> {
   // Une fonction coupée en plein import laisserait le verrou pris : au-delà de 5 min, l'exécution est déclarée interrompue.
-  await db
+  const interrompues = await db
     .update(executions)
     .set({ etat: "en_echec", erreur: "interrompue (plus de 5 min)", finLe: new Date() })
-    .where(and(eq(executions.etat, "en_cours"), lt(executions.debutLe, VERROU_PERIME)));
+    .where(and(eq(executions.etat, "en_cours"), lt(executions.debutLe, VERROU_PERIME)))
+    .returning({ nuitDu: executions.nuitDu });
+  for (const { nuitDu: nuit } of interrompues) {
+    console.warn(`Import de la nuit du ${nuit} déclaré interrompu (plus de 5 min)`);
+    await signalerSansCourriel(`Import de la nuit du ${nuit} interrompu (plus de 5 min)`);
+  }
 
   let executionId: string;
   try {
@@ -41,15 +47,18 @@ export async function importerNuit(nuitDu: string, declencheur: "cron" | "bouton
       return { ok: false, nuitDu, erreur: "Un import est déjà en cours." };
     }
     console.error(`Import de la nuit du ${nuitDu} : exécution impossible à créer (${message})`);
+    await signalerSansCourriel(`Import de la nuit du ${nuitDu} (${declencheur}) : la base ne répond pas (${message})`);
     return { ok: false, nuitDu, erreur: "La base ne répond pas." };
   }
 
   let appels = 0;
   const echouer = async (erreur: string): Promise<ResultatImport> => {
     console.warn(`Import de la nuit du ${nuitDu} (${declencheur}) en échec : ${erreur}`);
+    // Avant de libérer le verrou : un second import ne peut pas alerter en même temps.
+    const alerteLe = await alerterPanne({ executionId, nuitDu, erreur, declencheur });
     await db
       .update(executions)
-      .set({ etat: "en_echec", erreur, appels, finLe: new Date() })
+      .set({ etat: "en_echec", erreur, appels, finLe: new Date(), alerteLe })
       .where(eq(executions.id, executionId))
       .catch(() => {}); // si la base ne répond plus, le verrou sera libéré au bout de 5 min
     return { ok: false, nuitDu, erreur };
