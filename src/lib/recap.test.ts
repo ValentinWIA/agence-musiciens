@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   cachetsImpayes,
   composerRecap,
+  optionARelancer,
   optionsQuiExpirent,
   regrouperRaisons,
   type ConcertPasse,
@@ -54,6 +55,14 @@ function donnees(modif: Partial<DonneesRecap> = {}): DonneesRecap {
     ...modif,
   };
 }
+
+describe("optionARelancer", () => {
+  it("vrai à 7 jours pile et pour une échéance passée, faux à 8 jours", () => {
+    expect(optionARelancer("2026-10-25", aujourdhui)).toBe(true);
+    expect(optionARelancer("2026-10-10", aujourdhui)).toBe(true);
+    expect(optionARelancer("2026-10-26", aujourdhui)).toBe(false);
+  });
+});
 
 describe("optionsQuiExpirent", () => {
   it("garde l'échéance à 7 jours pile, pas à 8", () => {

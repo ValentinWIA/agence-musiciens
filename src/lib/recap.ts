@@ -22,10 +22,14 @@ type Concert = { titre: string | null; debut: Date; pays: string; ville: string;
 export type OptionPosee = Concert & { expireLe: Jour };
 export type ConcertPasse = Concert & { statut: Statut; cachet: number | null; devise: Devise };
 
-// Options à relancer : l'échéance tombe dans les 7 jours, ou elle est passée et l'option n'a pas bougé.
+// Option à relancer : l'échéance tombe dans les 7 jours, ou elle est passée et l'option n'a pas bougé.
+// Même règle pour le récap et pour l'échéance en orange sur la fiche.
+export function optionARelancer(expireLe: Jour, aujourdhui: Jour): boolean {
+  return expireLe <= ajouterJours(aujourdhui, JOURS_AVANT_EXPIRATION);
+}
+
 export function optionsQuiExpirent<T extends OptionPosee>(options: T[], aujourdhui: Jour): T[] {
-  const limite = ajouterJours(aujourdhui, JOURS_AVANT_EXPIRATION);
-  return options.filter((o) => o.expireLe <= limite).sort((a, b) => a.expireLe.localeCompare(b.expireLe));
+  return options.filter((o) => optionARelancer(o.expireLe, aujourdhui)).sort((a, b) => a.expireLe.localeCompare(b.expireLe));
 }
 
 // Joué ou facturé, et concert passé depuis plus de 30 jours (jour du lieu). Un bénévole (cachet 0) n'attend rien.
