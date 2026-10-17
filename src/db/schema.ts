@@ -1,4 +1,4 @@
-import { doublePrecision, integer, pgEnum, pgTable, primaryKey, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import { date, doublePrecision, integer, jsonb, pgEnum, pgTable, primaryKey, text, timestamp, uuid } from "drizzle-orm/pg-core";
 
 export const role = pgEnum("role", ["admin", "musicien"]);
 export const instrument = pgEnum("instrument", ["piano", "violon"]);
@@ -6,6 +6,10 @@ export const statut = pgEnum("statut", ["demande", "option", "contrat_envoye", "
 export const devise = pgEnum("devise", ["EUR", "CHF", "USD", "GBP", "JPY"]);
 export const precisionDate = pgEnum("precision_date", ["jour", "mois", "saison"]);
 export const typePiece = pgEnum("type_piece", ["contrat", "fiche_technique", "autre"]); // = TYPES_PIECE
+export const statutDemande = pgEnum("statut_demande", ["demandee", "confirmee", "terminee", "annulee"]); // = STATUTS_DEMANDE
+export const declencheur = pgEnum("declencheur", ["cron", "bouton"]);
+export const etatExecution = pgEnum("etat_execution", ["en_cours", "reussie", "en_echec"]);
+export const etatEvenement = pgEnum("etat_evenement", ["traite", "doublon", "mis_de_cote"]);
 
 // L'agent (admin) et les musiciens. Les programmateurs n'ont pas de compte.
 export const utilisateurs = pgTable("utilisateurs", {
@@ -126,4 +130,55 @@ export const piecesJointes = pgTable("pieces_jointes", {
     .notNull()
     .references(() => utilisateurs.id),
   ajouteeLe: timestamp("ajoutee_le", { withTimezone: true }).notNull().defaultNow(),
+});
+
+// Flux de nuit (docs/flux-de-nuit.md). Ce qui vient du flux est une donnée : rien ici n'est exécuté.
+
+// Un passage de l'import, pour une nuit. Écrit au départ (en cours), complété à la fin.
+export const executions = pgTable("executions", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  nuitDu: date("nuit_du").notNull(),
+  declencheur: declencheur("declencheur").notNull(),
+  etat: etatExecution("etat").notNull().default("en_cours"),
+  debutLe: timestamp("debut_le", { withTimezone: true }).notNull().defaultNow(),
+  finLe: timestamp("fin_le", { withTimezone: true }),
+  appels: integer("appels").notNull().default(0), // appels au flux, essais compris
+  recus: integer("recus").notNull().default(0),
+  doublons: integer("doublons").notNull().default(0),
+  traites: integer("traites").notNull().default(0),
+  misDeCote: integer("mis_de_cote").notNull().default(0),
+  erreur: text("erreur"), // message de la panne, si l'exécution a échoué
+});
+
+// Chaque événement reçu, gardé tel quel. Un id du flux déjà présent n'est pas retraité : une copie portant le même id
+// n'est que comptée (executions.doublons). Les messages se lisent ici, par leur référence.
+export const evenementsFlux = pgTable("evenements_flux", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  fluxId: text("flux_id").unique(), // vide si l'événement était illisible au point de ne pas en avoir
+  executionId: uuid("execution_id")
+    .notNull()
+    .references(() => executions.id),
+  type: text("type"), // tel que reçu, même inconnu
+  reference: text("reference"),
+  horodatage: timestamp("horodatage", { withTimezone: true }),
+  brut: jsonb("brut").notNull(),
+  etat: etatEvenement("etat").notNull(),
+  raison: text("raison"), // pourquoi il a été mis de côté
+});
+
+// Une réservation du flux, dans notre vocabulaire. L'agent en fait un engagement s'il le veut ; le flux ne touche
+// jamais l'engagement.
+export const demandesRecues = pgTable("demandes_recues", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  reference: text("reference").notNull().unique(),
+  statut: statutDemande("statut").notNull(),
+  programmateur: text("programmateur").notNull(), // nom seulement : le flux ne donne ni structure ni e-mail
+  lieu: text("lieu").notNull(), // nom seulement
+  dateConcert: date("date_concert").notNull(), // sans heure
+  dureeMinutes: integer("duree_minutes").notNull(),
+  categorie: text("categorie").notNull(),
+  recueLe: date("recue_le").notNull(),
+  commentaire: text("commentaire"), // le dernier reçu avec un changement de statut
+  // Si l'engagement est supprimé, la demande reste.
+  engagementId: uuid("engagement_id").references(() => engagements.id, { onDelete: "set null" }),
 });

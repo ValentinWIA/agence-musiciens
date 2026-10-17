@@ -18,7 +18,10 @@ import { typeDePhoto } from "@/lib/musiciens";
 import { regleMotDePasse } from "@/lib/mot-de-passe";
 import { ENGAGEMENTS, LIEUX, MUSICIENS, PROGRAMMATEURS } from "./donnees-fictives";
 
-const { engagementMusiciens, engagements, invitations, lieux, programmateurs, reinitialisations, utilisateurs } = schema;
+const {
+  demandesRecues, engagementMusiciens, engagements, evenementsFlux, executions, invitations, lieux, programmateurs,
+  reinitialisations, utilisateurs,
+} = schema;
 const DOMAINE_FICTIF = "%@agence-musiciens.test";
 
 async function principal() {
@@ -73,6 +76,10 @@ async function principal() {
 
   // Tout est effacé puis recréé en une seule opération : en cas d'erreur, rien n'a changé.
   await db.batch([
+    // Le flux de nuit repart de zéro : un nouvel import le remplit à nouveau, à l'identique.
+    db.delete(evenementsFlux),
+    db.delete(executions),
+    db.delete(demandesRecues),
     db.delete(engagements), // leurs musiciens et leurs pièces jointes partent avec eux (cascade)
     db.delete(lieux),
     db.delete(programmateurs),
