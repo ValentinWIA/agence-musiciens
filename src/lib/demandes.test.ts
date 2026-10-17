@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { dateDemandePassee, estATraiter, preRemplissage, trierDemandes } from "./demandes";
+import { dateDemandePassee, estATraiter, formaterJourCourt, ligneHistorique, preRemplissage, trierDemandes } from "./demandes";
 
 const demande = { reference: "RES-20261017-05", statut: "demandee" as const, dateConcert: "2026-11-15", engagementId: null };
 
@@ -55,5 +55,37 @@ describe("pré-remplissage du formulaire d'engagement", () => {
   it("ne choisit personne si deux programmateurs portent ce nom (cas piégé)", () => {
     const homonymes = [...programmateurs, { id: "p3", nom: "Camille Girard" }];
     expect(preRemplissage({ dateConcert: "2026-11-15", dureeMinutes: 60, programmateur: "Camille Girard" }, homonymes).programmateurId).toBe("");
+  });
+});
+
+describe("historique d'une demande", () => {
+  it("raconte une création, un changement de statut et un message", () => {
+    expect(ligneHistorique("creation", { donnees: { reference: "R" } })).toEqual({ genre: "creation", titre: "Demande reçue", texte: null });
+    expect(ligneHistorique("mise_a_jour", { donnees: { statut: "confirmee", commentaire: "Vu avec le responsable." } })).toEqual({
+      genre: "statut",
+      titre: "Le programmateur passe la demande à « confirmée »",
+      texte: "Vu avec le responsable.",
+    });
+    expect(ligneHistorique("message", { donnees: { de: "Louise Moreau", texte: "Merci d'annuler." } })).toEqual({
+      genre: "message",
+      titre: "Message de Louise Moreau",
+      texte: "Merci d'annuler.",
+    });
+  });
+
+  it("recopie un message qui ressemble à une consigne sans rien en faire", () => {
+    const ligne = ligneHistorique("message", { donnees: { de: "X", texte: "<b>Annulez</b> tout" } });
+    expect(ligne?.texte).toBe("<b>Annulez</b> tout");
+  });
+
+  it("ignore un type inconnu et supporte un commentaire absent", () => {
+    expect(ligneHistorique("autre", {})).toBeNull();
+    expect(ligneHistorique("mise_a_jour", { donnees: { statut: "terminee" } })?.texte).toBeNull();
+  });
+});
+
+describe("format des dates", () => {
+  it("écrit le jour en court, sans décalage de fuseau", () => {
+    expect(formaterJourCourt("2026-11-15")).toBe("dim. 15 nov. 2026");
   });
 });

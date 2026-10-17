@@ -43,3 +43,24 @@ export function preRemplissage(
     programmateurId: memeNom.length === 1 ? memeNom[0].id : "",
   };
 }
+
+export function formaterJourCourt(jour: Jour): string {
+  return new Intl.DateTimeFormat("fr-FR", { weekday: "short", day: "numeric", month: "short", year: "numeric", timeZone: "UTC" })
+    .format(new Date(`${jour}T12:00:00Z`));
+}
+
+// Un événement du flux (tel que reçu, déjà validé à l'import), raconté pour l'agent. Le texte d'un message est
+// recopié tel quel : c'est une donnée, jamais une consigne.
+export type LigneHistorique = { genre: "creation" | "statut" | "message"; titre: string; texte: string | null };
+
+export function ligneHistorique(type: string | null, brut: unknown): LigneHistorique | null {
+  const d = ((brut as { donnees?: Record<string, unknown> })?.donnees ?? {}) as Record<string, unknown>;
+  const texte = (v: unknown) => (typeof v === "string" && v.trim() ? v : null);
+  if (type === "creation") return { genre: "creation", titre: "Demande reçue", texte: null };
+  if (type === "mise_a_jour") {
+    const statut = LIBELLES_DEMANDE[d.statut as StatutDemande] ?? String(d.statut);
+    return { genre: "statut", titre: `Le programmateur passe la demande à « ${statut} »`, texte: texte(d.commentaire) };
+  }
+  if (type === "message") return { genre: "message", titre: `Message de ${texte(d.de) ?? "?"}`, texte: texte(d.texte) };
+  return null;
+}

@@ -9,7 +9,7 @@ import { db } from "@/db";
 import { demandesRecues, evenementsFlux, executions } from "@/db/schema";
 import { jourLocal } from "@/lib/calendrier";
 import { formaterDuree } from "@/lib/dates";
-import { LIBELLES_DEMANDE, dateDemandePassee, estATraiter, trierDemandes } from "@/lib/demandes";
+import { LIBELLES_DEMANDE, dateDemandePassee, estATraiter, formaterJourCourt as formaterJour, trierDemandes } from "@/lib/demandes";
 import { verifierAdmin } from "@/lib/session";
 
 const LIMITE_MESSAGES = 100;
@@ -20,7 +20,13 @@ const schemaVue = z.object({ vue: z.enum(["a-traiter", "toutes"]).catch("a-trait
 export default function PageDemandes({ searchParams }: PageProps<"/demandes">) {
   return (
     <main className="mx-auto grid w-full max-w-6xl gap-6 p-4">
-      <h1 className="text-2xl font-semibold">Demandes reçues</h1>
+      <div className="grid gap-1">
+        <h1 className="text-2xl font-semibold">Demandes reçues</h1>
+        <p className="text-sm text-muted-foreground">
+          Chaque nuit, les demandes des programmateurs arrivent ici. Ouvrez-en une pour lire ses messages, puis créez
+          l&apos;engagement ou écartez-la.
+        </p>
+      </div>
       <Suspense fallback={<div className="h-96 animate-pulse rounded-md bg-muted" aria-label="Chargement" />}>
         <ContenuDemandes searchParams={searchParams} />
       </Suspense>
@@ -92,9 +98,8 @@ async function ContenuDemandes({ searchParams }: { searchParams: Promise<Record<
               <TableHead>Programmateur</TableHead>
               <TableHead>Lieu indiqué</TableHead>
               <TableHead>Durée</TableHead>
-              <TableHead>Statut du flux</TableHead>
-              <TableHead className="text-right">Messages</TableHead>
-              <TableHead>Référence</TableHead>
+              <TableHead>Côté programmateur</TableHead>
+              <TableHead>Messages</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -106,15 +111,20 @@ async function ContenuDemandes({ searchParams }: { searchParams: Promise<Record<
                     <span className="block text-xs text-muted-foreground">date passée</span>
                   )}
                 </TableCell>
-                <TableCell>{d.programmateur}</TableCell>
+                <TableCell>
+                  <Link href={`/demandes/${d.id}`} className="underline">
+                    {d.programmateur}
+                  </Link>
+                </TableCell>
                 <TableCell>{d.lieu}</TableCell>
                 <TableCell>{formaterDuree(d.dureeMinutes)}</TableCell>
                 <TableCell>
                   <Badge variant="outline">{LIBELLES_DEMANDE[d.statut]}</Badge>
                   {d.engagementId && <span className="block text-xs text-muted-foreground">engagement créé</span>}
                 </TableCell>
-                <TableCell className="text-right">{messagesPar.get(d.reference) ?? 0}</TableCell>
-                <TableCell className="text-xs text-muted-foreground">{d.reference}</TableCell>
+                <TableCell>
+                  <NombreMessages href={`/demandes/${d.id}`} nombre={messagesPar.get(d.reference) ?? 0} />
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
@@ -154,15 +164,19 @@ async function ContenuDemandes({ searchParams }: { searchParams: Promise<Record<
   );
 }
 
+function NombreMessages({ href, nombre }: { href: string; nombre: number }) {
+  if (nombre === 0) return <span className="text-muted-foreground">—</span>;
+  return (
+    <Link href={href} className="underline">
+      {nombre} message{nombre > 1 ? "s" : ""}
+    </Link>
+  );
+}
+
 function LienVue({ href, actif, children }: { href: string; actif: boolean; children: React.ReactNode }) {
   return (
     <Link href={href} aria-current={actif ? "page" : undefined} className={actif ? "font-semibold underline" : "text-muted-foreground hover:underline"}>
       {children}
     </Link>
   );
-}
-
-function formaterJour(jour: string) {
-  return new Intl.DateTimeFormat("fr-FR", { weekday: "short", day: "numeric", month: "short", year: "numeric", timeZone: "UTC" })
-    .format(new Date(`${jour}T12:00:00Z`));
 }
