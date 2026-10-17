@@ -72,6 +72,7 @@ Les événements d'une nuit sont traités dans l'ordre de leur `horodatage`.
 
 Tout événement reçu est conservé tel quel (`evenements_flux`, clé = `id` du flux), avec son état : traité, doublon,
 mis de côté (et la raison). Un `id` déjà présent n'est pas retraité.
+Une copie portant un `id` déjà présent n'est que comptée (`executions.doublons`), pas stockée une seconde fois (N2).
 
 **Mal formé** (montant en texte, date impossible, champ manquant, accent cassé) : lecture par `zod` ; échec → mis de
 côté avec la raison. Un seul événement cassé n'arrête pas la nuit.

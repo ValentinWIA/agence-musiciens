@@ -10,7 +10,7 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 
 ## État de reprise
 
-*Dernière mise à jour : 17 octobre 2026 (**semaine 1 terminée, semaine 2 commencée** : cadrage du flux de nuit)*
+*Dernière mise à jour : 17 octobre 2026 (**semaine 2** : flux de nuit, N1 et N2 terminées)*
 
 - **Semaine 2 — flux de nuit**, branche `flux-de-nuit` (depuis `main`, 17/10). Cadrage validé par l'humain le 17/10 :
   `docs/flux-de-nuit.md` (lu sur une vraie nuit : 15 événements dont 2 doublons ; créations sans musicien, sans heure,
@@ -22,8 +22,12 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   **N1 ✅** (17/10, commit `5eb0e6b`) : `src/lib/flux.ts`, lecture d'une nuit sans jamais planter (zod, doublons, ordre,
   traduction), 21 tests sur la vraie nuit du 17/10 et des cas mal formés fabriqués (aucun dans les 28 nuits relevées).
   Décidé : référence inconnue → mis de côté, mais messages montrés à part sur `/nuit` et dans le récap.
-  **Prochaine étape : N2** (tables `executions`, `evenements_flux`, `demandes_recues`, migration 0010).
-  Clé du flux dans `.env.local` (ignoré par git), à recopier dans Vercel avant N3.
+  **N2 ✅** (17/10, commit `fd7456b`) : tables `executions`, `evenements_flux`, `demandes_recues` (migration 0010),
+  vidées par le jeu de données ; migration jouée en prévisualisation, tables vérifiées dans Neon par l'humain.
+  Décidé : messages gardés dans `evenements_flux` (pas de 4ᵉ table) ; engagement supprimé → la demande reste, lien
+  vidé ; copie de même `id` comptée, pas stockée ; une colonne `appels` (essais compris), une exécution = une nuit.
+  **Prochaine étape : N3** (import d'une nuit, essais, idempotence, verrou, page `/nuit`, bouton « Importer »).
+  Clé du flux dans `.env.local` (ignoré par git), **à recopier dans Vercel (`FLUX_DE_NUIT_CLE`) avant N3**.
   Domaine `valentinwalczak.com` (OVH, `contact@` déjà utilisé) : envoi par le sous-domaine `mail.` (tranche D).
 - **Reportés en semaine 5** (décidé le 17/10) : améliorations n° 3 (design global) et n° 8 (engagements en cartes
   sur téléphone), pour une seule passe de design quand tous les écrans existeront.
