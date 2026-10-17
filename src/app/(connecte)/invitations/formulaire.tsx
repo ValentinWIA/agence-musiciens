@@ -49,7 +49,7 @@ export function FormulaireInvitation() {
           <p className="text-sm">
             {etat.courrielEnvoye
               ? "Invitation créée et envoyée par courriel. Le lien, valable 7 jours, est aussi ci-dessous :"
-              : "Invitation créée. Le courriel n'a pas pu partir (sans nom de domaine, Resend n'écrit qu'à votre propre adresse) : transmettez ce lien au musicien, valable 7 jours :"}
+              : "Invitation créée. Le courriel n'a pas pu partir : transmettez ce lien au musicien, valable 7 jours :"}
           </p>
           <Input readOnly value={etat.lien} onFocus={(e) => e.currentTarget.select()} />
         </div>
