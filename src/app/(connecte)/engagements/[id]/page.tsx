@@ -10,6 +10,7 @@ import { avertissementConflits, trouverConflits } from "@/lib/conflit";
 import { jourLocal } from "@/lib/calendrier";
 import { echeanceProposee, TRANSITIONS, transitionsProposees } from "@/lib/cycle-de-vie";
 import { formaterDebut, formaterDuree } from "@/lib/dates";
+import { presenterProgrammateur } from "@/lib/programmateurs";
 import { ferieDuConcert } from "@/lib/feries";
 import { lireAgendaPourConfirmer, lireEngagement, lirePiecesJointes } from "@/lib/engagements";
 import { formaterTaille, LIBELLES_TYPE_PIECE } from "@/lib/pieces-jointes";
@@ -121,7 +122,7 @@ async function FicheEngagement({
             {lieu.nom}, {lieu.adresse}, {lieu.ville} ({lieu.pays})
           </Ligne>
           <Ligne titre="Programmateur">
-            {programmateur.nom} — {programmateur.structure}
+            {presenterProgrammateur(programmateur)}
             {estAgent && (
               <div className="text-muted-foreground">
                 {programmateur.email}

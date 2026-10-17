@@ -70,7 +70,8 @@ export const lieux = pgTable("lieux", {
 export const programmateurs = pgTable("programmateurs", {
   id: uuid("id").primaryKey().defaultRandom(),
   nom: text("nom").notNull(),
-  structure: text("structure").notNull(),
+  // Facultative (décidé le 18/10) : un programmateur venu du flux n'a souvent que son nom.
+  structure: text("structure"),
   email: text("email").notNull(),
   telephone: text("telephone"),
 });

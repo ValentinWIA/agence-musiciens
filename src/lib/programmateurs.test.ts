@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { lireProgrammateur, trouverDoublonProgrammateur } from "./programmateurs";
+import { lireProgrammateur, presenterProgrammateur, trouverDoublonProgrammateur } from "./programmateurs";
 
 const valide = { nom: " Hélène Faure ", structure: " Festival de Sully ", email: " h.faure@festival-sully.test " };
 
@@ -12,11 +12,16 @@ describe("lireProgrammateur", () => {
     });
   });
 
-  it("refuse un nom, une structure ou un e-mail vide (ou fait d'espaces)", () => {
+  it("refuse un nom ou un e-mail vide (ou fait d'espaces)", () => {
     const { erreurs } = lireProgrammateur({ nom: "  ", structure: "", email: "" });
     expect(erreurs?.nom).toEqual(["Nom obligatoire."]);
-    expect(erreurs?.structure).toEqual(["Structure obligatoire."]);
     expect(erreurs?.email).toBeDefined();
+    expect(erreurs?.structure).toBeUndefined();
+  });
+
+  it("accepte une structure vide, faite d'espaces ou absente, gardée comme « rien »", () => {
+    expect(lireProgrammateur({ ...valide, structure: "   " }).programmateur?.structure).toBeNull();
+    expect(lireProgrammateur({ nom: "Hélène Faure", email: "h@sully.test" }).programmateur?.structure).toBeNull();
   });
 
   it("refuse un e-mail mal formé", () => {
@@ -24,8 +29,17 @@ describe("lireProgrammateur", () => {
     expect(lireProgrammateur({ ...valide, email: "h faure@sully.test" }).erreurs?.email).toBeDefined();
   });
 
-  it("refuse un champ absent (formulaire trafiqué)", () => {
-    expect(lireProgrammateur({ nom: "Hélène Faure" }).erreurs?.structure).toBeDefined();
+  it("refuse un champ obligatoire absent (formulaire trafiqué)", () => {
+    expect(lireProgrammateur({ nom: "Hélène Faure" }).erreurs?.email).toBeDefined();
+  });
+});
+
+describe("presenterProgrammateur", () => {
+  it("montre la structure après le nom, ou le nom seul", () => {
+    expect(presenterProgrammateur({ nom: "Sophie Garnier", structure: "Saison des salles parisiennes" })).toBe(
+      "Sophie Garnier — Saison des salles parisiennes",
+    );
+    expect(presenterProgrammateur({ nom: "Hélène Faure", structure: null })).toBe("Hélène Faure");
   });
 });
 

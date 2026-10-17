@@ -9,6 +9,7 @@ import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select"
 import { DEVISES } from "@/lib/argent";
 import type { ChampsDate } from "@/lib/dates";
 import { programmateursDeMemeNom } from "@/lib/demandes";
+import { presenterProgrammateur } from "@/lib/programmateurs";
 import { NouveauLieu, type LieuCree } from "./nouveau-lieu";
 import { NouveauProgrammateur, type ProgrammateurCree } from "./nouveau-programmateur";
 import type { EtatFormulaire } from "./saisie";
@@ -29,7 +30,7 @@ export type Valeurs = ChampsDate & {
 type Props = {
   action: (etat: EtatFormulaire, formData: FormData) => Promise<EtatFormulaire>;
   lieux: { id: string; nom: string; ville: string }[];
-  programmateurs: { id: string; nom: string; structure: string }[];
+  programmateurs: { id: string; nom: string; structure: string | null }[];
   musiciens: { id: string; nom: string; instrument: string | null }[];
   // En modification : l'engagement, ses valeurs actuelles et, s'il est verrouillé, la raison affichée.
   // À la création, seulement les champs déjà connus (venus d'un musicien ou d'une demande) ; le reste est vide.
@@ -189,7 +190,7 @@ export function FormulaireEngagement({ action: envoyer, lieux, programmateurs, m
             <NativeSelectOption value="">Choisir…</NativeSelectOption>
             {listeProgrammateurs.map((p) => (
               <NativeSelectOption key={p.id} value={p.id}>
-                {p.nom} — {p.structure}
+                {presenterProgrammateur(p)}
               </NativeSelectOption>
             ))}
           </NativeSelect>

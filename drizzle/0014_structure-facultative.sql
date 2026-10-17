@@ -1,0 +1,1 @@
+ALTER TABLE "programmateurs" ALTER COLUMN "structure" DROP NOT NULL;

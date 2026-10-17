@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { creerProgrammateur, type EtatProgrammateur } from "./programmateurs/actions";
 
-export type ProgrammateurCree = { id: string; nom: string; structure: string };
+export type ProgrammateurCree = { id: string; nom: string; structure: string | null };
 
 type Props = {
   fenetre: RefObject<HTMLDialogElement | null>;
@@ -74,7 +74,7 @@ function FormulaireProgrammateur({
       <Champ id="programmateur-nom" titre="Nom" erreurs={err.nom}>
         <Input id="programmateur-nom" name="nom" maxLength={120} defaultValue={nomPropose} />
       </Champ>
-      <Champ id="programmateur-structure" titre="Structure (salle, festival…)" erreurs={err.structure}>
+      <Champ id="programmateur-structure" titre="Structure : salle, festival… (facultatif)" erreurs={err.structure}>
         <Input id="programmateur-structure" name="structure" maxLength={120} />
       </Champ>
       <Champ id="programmateur-email" titre="E-mail" erreurs={err.email}>
