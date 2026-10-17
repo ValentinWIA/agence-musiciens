@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { dateDemandePassee, estATraiter, formaterJourCourt, ligneHistorique, preRemplissage, trierDemandes } from "./demandes";
+import { dateDemandePassee, estATraiter, formaterJourCourt, ligneHistorique, preRemplissage, programmateursDeMemeNom, trierDemandes } from "./demandes";
 
 const demande = { reference: "RES-20261017-05", statut: "demandee" as const, dateConcert: "2026-11-15", engagementId: null, ecarteeLe: null };
 
@@ -59,6 +59,12 @@ describe("pré-remplissage du formulaire d'engagement", () => {
   it("ne choisit personne si deux programmateurs portent ce nom (cas piégé)", () => {
     const homonymes = [...programmateurs, { id: "p3", nom: "Camille Girard" }];
     expect(preRemplissage({ dateConcert: "2026-11-15", dureeMinutes: 60, programmateur: "Camille Girard" }, homonymes, "2026-10-18").programmateurId).toBe("");
+  });
+
+  it("compte les programmateurs de même nom (phrase d'aide : aucun → le créer, plusieurs → choisir)", () => {
+    expect(programmateursDeMemeNom("Inconnu", programmateurs)).toEqual([]);
+    expect(programmateursDeMemeNom(" louise moreau", programmateurs)).toHaveLength(1);
+    expect(programmateursDeMemeNom("Camille Girard", [...programmateurs, { id: "p3", nom: "Camille Girard" }])).toHaveLength(2);
   });
 
   it("laisse la date vide si celle de la demande est passée (l'agent saisit la date convenue)", () => {

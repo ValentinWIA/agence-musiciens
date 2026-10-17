@@ -150,7 +150,7 @@ async function ContenuFormulaire({ searchParams }: { searchParams: Promise<Recor
             programmateurs={programmateurs}
             musiciens={musiciens}
             valeurs={preRemplissage(demande, programmateurs, aujourdhui)}
-            demande={{ id: demande.id, lieu: demande.lieu }}
+            demande={{ id: demande.id, lieu: demande.lieu, programmateur: demande.programmateur }}
           />
         </CardContent>
       </Card>

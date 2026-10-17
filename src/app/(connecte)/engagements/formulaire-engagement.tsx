@@ -8,7 +8,9 @@ import { Label } from "@/components/ui/label";
 import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select";
 import { DEVISES } from "@/lib/argent";
 import type { ChampsDate } from "@/lib/dates";
+import { programmateursDeMemeNom } from "@/lib/demandes";
 import { NouveauLieu, type LieuCree } from "./nouveau-lieu";
+import { NouveauProgrammateur, type ProgrammateurCree } from "./nouveau-programmateur";
 import type { EtatFormulaire } from "./saisie";
 
 export type Valeurs = ChampsDate & {
@@ -34,8 +36,9 @@ type Props = {
   id?: string;
   valeurs?: Partial<Valeurs>;
   verrouille?: string;
-  // Venu d'une demande reçue : son identifiant voyage avec le formulaire, son lieu (texte libre du flux) est rappelé.
-  demande?: { id: string; lieu: string };
+  // Venu d'une demande reçue : son identifiant voyage avec le formulaire, son lieu (texte libre du flux) est rappelé,
+  // le nom du demandeur sert à la phrase d'aide et pré-remplit « + nouveau programmateur ».
+  demande?: { id: string; lieu: string; programmateur: string };
 };
 
 const VIDE: Valeurs = {
@@ -76,6 +79,15 @@ export function FormulaireEngagement({ action: envoyer, lieux, programmateurs, m
     setListeLieux((l) => [...l, lieu].sort((a, b) => a.ville.localeCompare(b.ville, "fr") || a.nom.localeCompare(b.nom, "fr")));
     setLieuId(lieu.id);
   };
+  // Même principe pour les programmateurs.
+  const [listeProgrammateurs, setListeProgrammateurs] = useState(programmateurs);
+  const [programmateurId, setProgrammateurId] = useState(valeurs.programmateurId);
+  const fenetreProgrammateur = useRef<HTMLDialogElement>(null);
+  const ajouterProgrammateur = (programmateur: ProgrammateurCree) => {
+    setListeProgrammateurs((l) => [...l, programmateur].sort((a, b) => a.nom.localeCompare(b.nom, "fr")));
+    setProgrammateurId(programmateur.id);
+  };
+  const homonymes = demande ? programmateursDeMemeNom(demande.programmateur, listeProgrammateurs).length : 0;
 
   return (
     <>
@@ -170,16 +182,29 @@ export function FormulaireEngagement({ action: envoyer, lieux, programmateurs, m
             id="programmateurId"
             name="programmateurId"
             aria-invalid={!!err.programmateurId}
-            defaultValue={valeurs.programmateurId}
+            value={programmateurId}
+            onChange={(e) => setProgrammateurId(e.target.value)}
             disabled={fige}
           >
             <NativeSelectOption value="">Choisir…</NativeSelectOption>
-            {programmateurs.map((p) => (
+            {listeProgrammateurs.map((p) => (
               <NativeSelectOption key={p.id} value={p.id}>
                 {p.nom} — {p.structure}
               </NativeSelectOption>
             ))}
           </NativeSelect>
+          {!fige && (
+            <Button type="button" variant="outline" size="sm" className="justify-self-start" onClick={() => fenetreProgrammateur.current?.showModal()}>
+              + nouveau programmateur
+            </Button>
+          )}
+          {demande && !programmateurId && homonymes !== 1 && (
+            <p className="text-sm text-muted-foreground">
+              {homonymes === 0
+                ? `Aucun programmateur nommé « ${demande.programmateur} » : créez-le.`
+                : `Plusieurs programmateurs s'appellent « ${demande.programmateur} » : choisissez le bon.`}
+            </p>
+          )}
         </Champ>
 
         <fieldset className="grid gap-2" disabled={fige}>
@@ -231,6 +256,7 @@ export function FormulaireEngagement({ action: envoyer, lieux, programmateurs, m
         </div>
       </form>
       {!fige && <NouveauLieu fenetre={fenetreLieu} onCree={ajouterLieu} />}
+      {!fige && <NouveauProgrammateur fenetre={fenetreProgrammateur} nomPropose={demande?.programmateur} onCree={ajouterProgrammateur} />}
     </>
   );
 }

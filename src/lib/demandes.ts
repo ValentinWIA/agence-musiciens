@@ -31,6 +31,11 @@ export function dateDemandePassee(dateConcert: Jour, aujourdhui: Jour): boolean 
 
 const normaliser = (nom: string) => nom.trim().replace(/\s+/g, " ").toLocaleLowerCase("fr");
 
+// Programmateurs portant exactement le nom du demandeur (casse et espaces mis à part) : un seul → présélectionné.
+export function programmateursDeMemeNom<T extends { nom: string }>(nom: string, programmateurs: T[]): T[] {
+  return programmateurs.filter((p) => normaliser(p.nom) === normaliser(nom));
+}
+
 // Ce que le formulaire d'engagement reçoit d'une demande : date précise sans heure (le flux n'en donne pas), durée,
 // et le programmateur s'il est le seul à porter exactement ce nom (casse et espaces mis à part).
 // Date passée : laissée vide, l'agent saisit celle convenue par message (le flux ne change jamais la date).
@@ -39,7 +44,7 @@ export function preRemplissage(
   programmateurs: { id: string; nom: string }[],
   aujourdhui: Jour,
 ): { precision: "jour"; jour: Jour; heure: ""; duree: string; programmateurId: string } {
-  const memeNom = programmateurs.filter((p) => normaliser(p.nom) === normaliser(demande.programmateur));
+  const memeNom = programmateursDeMemeNom(demande.programmateur, programmateurs);
   return {
     precision: "jour",
     jour: dateDemandePassee(demande.dateConcert, aujourdhui) ? "" : demande.dateConcert,
