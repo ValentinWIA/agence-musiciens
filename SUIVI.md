@@ -120,6 +120,8 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 - **Reporté** (noté le 18/10, demande à part avec son cadrage) : sur la fiche musicien, avant le cachet moyen,
   afficher les **revenus totaux de la saison en cours**. À trancher au cadrage : bornes de la saison (septembre à
   août ?), engagements comptés (confirmés, réalisés, payés ?), cachets en plusieurs devises.
+- **Reporté** (noté le 18/10, petite branche après la fusion de N5) : sur `/engagements`, le bouton « Nouvel
+  engagement » est trop haut ; le placer au même niveau que les filtres.
 
 - **Fait** : cadrage (SPEC), comptes, squelette Next.js, dépôt GitHub public, site en ligne
   (https://agence-musiciens.vercel.app), région `fra1`, base Neon reliée à Vercel.
