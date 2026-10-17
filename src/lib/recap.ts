@@ -1,5 +1,6 @@
 import { formaterMontant, type Devise } from "./argent";
 import { ajouterJours, jourLocal, libelleJour, type Jour } from "./calendrier";
+import { LIBELLES_DEMANDE } from "./demandes";
 import { LIBELLES_STATUT, type Statut } from "./engagements";
 import type { StatutDemande } from "./flux";
 
@@ -9,13 +10,6 @@ import type { StatutDemande } from "./flux";
 export const JOURS_AVANT_EXPIRATION = 7;
 export const JOURS_AVANT_IMPAYE = 30;
 export const LIMITE_LISTE = 20;
-
-const LIBELLES_DEMANDE: Record<StatutDemande, string> = {
-  demandee: "demandée",
-  confirmee: "confirmée",
-  terminee: "terminée",
-  annulee: "annulée",
-};
 
 // musiciens : leurs noms, pour que l'agent suive ses dossiers par artiste ; salle : le nom du lieu.
 type Concert = { titre: string | null; debut: Date; pays: string; ville: string; salle: string; musiciens: string[] };
@@ -118,11 +112,15 @@ export function composerRecap(d: DonneesRecap): { sujet: string; texte: string }
     section("Messages pour une demande inconnue", d.messagesInconnus.map(ligneMessage)),
   ]);
 
+  // Tout ce qui vient du flux se traite sur /demandes : un seul lien, juste après ces listes.
+  const venuDuFlux = d.demandes.length + d.changements.length + d.messages.length + d.messagesInconnus.length > 0;
+
   const texte = [
     `Bonjour ${d.nomAgent},`,
     enBref.length ? `EN BREF\n${enBref.map((l) => `• ${l}`).join("\n")}` : "Rien de neuf cette nuit.",
     aFaire,
     recuDuFlux,
+    venuDuFlux ? `Traiter les demandes reçues : ${d.lienSite}/demandes` : null,
     `${SEPARATEUR}\nIMPORT\n${bilan(d)}`,
     "Rien n'a été fait automatiquement : les messages sont recopiés tels quels.\n" +
       `Ouvrir CM Management : ${d.lienSite}`,

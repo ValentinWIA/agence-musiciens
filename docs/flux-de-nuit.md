@@ -225,3 +225,37 @@ Branche `recap` (depuis `main`). Courriel en texte brut à l'agent (rôle `admin
 Présentation revue au geste (17/10) : « En bref », puis « À faire » (options et impayés avec artistes et salle, messages),
 « Reçu du flux », l'import en une phrase et un lien vers `/nuit` pour les mis de côté. **Ordre changé le 17/10 : N5 avant
 S**, pour que les demandes annoncées par le récap s'ouvrent sur le site.
+
+## 15. N5 — demandes reçues (plan validé le 17/10)
+
+Branche `demandes-recues` (depuis `main`). Pages réservées à l'agent ; un musicien est renvoyé, refus journalisé.
+
+- **À traiter** = sans engagement, pas écartée, et statut du flux ni « annulée » ni « terminée » (décidé le 17/10 :
+  plus rien à faire). Les autres restent dans « Toutes ».
+- **`/demandes`** : « À traiter (n) / Toutes » ; date du concert (« date passée » si dépassée), programmateur, lieu
+  indiqué, durée, statut du flux, nombre de messages ; la date la plus proche en tête. Bloc « Messages pour une
+  demande inconnue » (quitte `/nuit`) ; « Dernier import : … — voir le journal ». Vide : « Aucune demande à traiter. »
+  / « Aucune demande reçue : importez une nuit ».
+- **`/demandes/[id]`** : référence, statut, catégorie, reçue le, historique (mises à jour et messages, texte brut,
+  jamais exécutés) ; « Créer l'engagement », « Écarter » / « Remettre à traiter » (décidé le 17/10), ou « Engagement
+  créé → ». Identifiant inconnu → « introuvable ».
+- **Créer l'engagement** : formulaire existant, date précise et durée pré-remplies, lieu du flux affiché en indice ;
+  programmateur de même nom exact présélectionné, sinon « + nouveau programmateur » pré-rempli avec le nom. Création et
+  liaison en une seule écriture ; une demande déjà reliée ou écartée est refusée côté serveur. Date passée → refusée
+  par le formulaire, comme toujours.
+- Engagement supprimé → lien vidé, la demande redevient à traiter.
+- Menu : « Demandes reçues » après « Engagements » ; « Journal des imports » sort du menu. Le récap renvoie vers
+  `/demandes`.
+- Hors périmètre : compteur dans le menu, réponse au programmateur, création automatique.
+
+| Tranche | Contenu | Preuve |
+|---|---|---|
+| N5a | `src/lib/demandes.ts` (pur) : à traiter, tri, pré-remplissage ; menu | tests |
+| N5b | page `/demandes` (liste, filtre, messages inconnus, lien vers le journal) | gestes |
+| N5c | fiche `/demandes/[id]` avec historique | gestes |
+| N5d | migration 0013 (`demandes_recues.ecartee_le`), « Écarter » / « Remettre à traiter ». Lignes existantes en production : vides = à traiter, rien à remplir | gestes |
+| N5e | « Créer l'engagement » pré-rempli, liaison en une écriture | geste : demande → engagement ; seconde tentative refusée |
+| N5f | « + nouveau programmateur » | gestes |
+| N5g | récap : liens vers `/demandes` | test ; récap reçu |
+
+Pushs groupés (décidé le 17/10) : N5a+N5b, N5c, N5d, N5e, N5f+N5g.

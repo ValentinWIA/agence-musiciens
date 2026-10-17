@@ -70,7 +70,8 @@ export const lieux = pgTable("lieux", {
 export const programmateurs = pgTable("programmateurs", {
   id: uuid("id").primaryKey().defaultRandom(),
   nom: text("nom").notNull(),
-  structure: text("structure").notNull(),
+  // Facultative (décidé le 18/10) : un programmateur venu du flux n'a souvent que son nom.
+  structure: text("structure"),
   email: text("email").notNull(),
   telephone: text("telephone"),
 });
@@ -187,6 +188,7 @@ export const demandesRecues = pgTable("demandes_recues", {
   commentaire: text("commentaire"), // le dernier reçu avec un changement de statut
   // Si l'engagement est supprimé, la demande reste.
   engagementId: uuid("engagement_id").references(() => engagements.id, { onDelete: "set null" }),
+  ecarteeLe: timestamp("ecartee_le", { withTimezone: true }), // l'agent n'y donne pas suite ; vide = à traiter
 });
 
 // Un récap du matin par jour (jour de Paris). La ligne est écrite avant l'envoi : un second passage le même jour

@@ -5,14 +5,14 @@ const agent = { id: "a1", role: "admin" as const };
 const louis = { id: "m1", role: "musicien" as const };
 
 describe("liens du menu selon le rôle", () => {
-  it("donne à l'agent ses 6 pages, dans l'ordre", () => {
+  it("donne à l'agent ses 6 pages, dans l'ordre (le journal des imports s'ouvre depuis les demandes)", () => {
     expect(liensDuMenu(agent).map((l) => l.libelle)).toEqual([
       "Tableau de bord",
       "Engagements",
+      "Demandes reçues",
       "Calendrier",
       "Musiciens",
       "Invitations",
-      "Journal des imports",
     ]);
   });
 
@@ -24,12 +24,12 @@ describe("liens du menu selon le rôle", () => {
     ]);
   });
 
-  it("ne montre au musicien ni les invitations, ni la liste des musiciens, ni le tableau de bord, ni le journal des imports", () => {
+  it("ne montre au musicien ni les invitations, ni la liste des musiciens, ni le tableau de bord, ni les demandes reçues", () => {
     const adresses = liensDuMenu(louis).map((l) => l.href);
     expect(adresses).not.toContain("/invitations");
     expect(adresses).not.toContain("/musiciens");
     expect(adresses).not.toContain("/tableau-de-bord");
-    expect(adresses).not.toContain("/nuit");
+    expect(adresses).not.toContain("/demandes");
   });
 });
 

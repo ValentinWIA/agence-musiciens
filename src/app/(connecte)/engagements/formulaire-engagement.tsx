@@ -8,7 +8,10 @@ import { Label } from "@/components/ui/label";
 import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select";
 import { DEVISES } from "@/lib/argent";
 import type { ChampsDate } from "@/lib/dates";
+import { programmateursDeMemeNom } from "@/lib/demandes";
+import { presenterProgrammateur } from "@/lib/programmateurs";
 import { NouveauLieu, type LieuCree } from "./nouveau-lieu";
+import { NouveauProgrammateur, type ProgrammateurCree } from "./nouveau-programmateur";
 import type { EtatFormulaire } from "./saisie";
 
 export type Valeurs = ChampsDate & {
@@ -27,15 +30,19 @@ export type Valeurs = ChampsDate & {
 type Props = {
   action: (etat: EtatFormulaire, formData: FormData) => Promise<EtatFormulaire>;
   lieux: { id: string; nom: string; ville: string }[];
-  programmateurs: { id: string; nom: string; structure: string }[];
+  programmateurs: { id: string; nom: string; structure: string | null }[];
   musiciens: { id: string; nom: string; instrument: string | null }[];
   // En modification : l'engagement, ses valeurs actuelles et, s'il est verrouillé, la raison affichée.
+  // À la création, seulement les champs déjà connus (venus d'un musicien ou d'une demande) ; le reste est vide.
   id?: string;
-  valeurs?: Valeurs;
+  valeurs?: Partial<Valeurs>;
   verrouille?: string;
+  // Venu d'une demande reçue : son identifiant voyage avec le formulaire, son lieu (texte libre du flux) est rappelé,
+  // le nom du demandeur sert à la phrase d'aide et pré-remplit « + nouveau programmateur ».
+  demande?: { id: string; lieu: string; programmateur: string };
 };
 
-export const VIDE: Valeurs = {
+const VIDE: Valeurs = {
   titre: "",
   precision: "jour",
   jour: "",
@@ -57,7 +64,9 @@ const PRECISIONS = { jour: "précise", mois: "mois", saison: "saison" } as const
 const classeZoneTexte =
   "min-h-20 w-full rounded-lg border border-input bg-transparent px-2.5 py-1.5 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50";
 
-export function FormulaireEngagement({ action: envoyer, lieux, programmateurs, musiciens, id, valeurs = VIDE, verrouille }: Props) {
+export function FormulaireEngagement({ action: envoyer, lieux, programmateurs, musiciens, id, valeurs: connues, verrouille, demande }: Props) {
+  // Complété ici, côté navigateur : un serveur ne peut pas lire une constante d'un fichier « use client ».
+  const valeurs = { ...VIDE, ...connues };
   const [etat, action, enCours] = useActionState<EtatFormulaire, FormData>(envoyer, {});
   const [precision, setPrecision] = useState(valeurs.precision);
   const err = etat.erreurs ?? {};
@@ -71,6 +80,15 @@ export function FormulaireEngagement({ action: envoyer, lieux, programmateurs, m
     setListeLieux((l) => [...l, lieu].sort((a, b) => a.ville.localeCompare(b.ville, "fr") || a.nom.localeCompare(b.nom, "fr")));
     setLieuId(lieu.id);
   };
+  // Même principe pour les programmateurs.
+  const [listeProgrammateurs, setListeProgrammateurs] = useState(programmateurs);
+  const [programmateurId, setProgrammateurId] = useState(valeurs.programmateurId);
+  const fenetreProgrammateur = useRef<HTMLDialogElement>(null);
+  const ajouterProgrammateur = (programmateur: ProgrammateurCree) => {
+    setListeProgrammateurs((l) => [...l, programmateur].sort((a, b) => a.nom.localeCompare(b.nom, "fr")));
+    setProgrammateurId(programmateur.id);
+  };
+  const homonymes = demande ? programmateursDeMemeNom(demande.programmateur, listeProgrammateurs).length : 0;
 
   return (
     <>
@@ -84,6 +102,7 @@ export function FormulaireEngagement({ action: envoyer, lieux, programmateurs, m
         className="grid gap-5"
       >
         {id && <input type="hidden" name="id" value={id} />}
+        {demande && <input type="hidden" name="demandeId" value={demande.id} />}
         {verrouille && (
           <p role="note" className="rounded-md border px-3 py-2 text-sm text-muted-foreground">
             {verrouille}
@@ -156,6 +175,7 @@ export function FormulaireEngagement({ action: envoyer, lieux, programmateurs, m
               + nouveau lieu
             </Button>
           )}
+          {demande && <p className="text-sm text-muted-foreground">Lieu indiqué dans la demande : « {demande.lieu} »</p>}
         </Champ>
 
         <Champ id="programmateurId" titre="Programmateur" erreurs={err.programmateurId}>
@@ -163,16 +183,29 @@ export function FormulaireEngagement({ action: envoyer, lieux, programmateurs, m
             id="programmateurId"
             name="programmateurId"
             aria-invalid={!!err.programmateurId}
-            defaultValue={valeurs.programmateurId}
+            value={programmateurId}
+            onChange={(e) => setProgrammateurId(e.target.value)}
             disabled={fige}
           >
             <NativeSelectOption value="">Choisir…</NativeSelectOption>
-            {programmateurs.map((p) => (
+            {listeProgrammateurs.map((p) => (
               <NativeSelectOption key={p.id} value={p.id}>
-                {p.nom} — {p.structure}
+                {presenterProgrammateur(p)}
               </NativeSelectOption>
             ))}
           </NativeSelect>
+          {!fige && (
+            <Button type="button" variant="outline" size="sm" className="justify-self-start" onClick={() => fenetreProgrammateur.current?.showModal()}>
+              + nouveau programmateur
+            </Button>
+          )}
+          {demande && !programmateurId && homonymes !== 1 && (
+            <p className="text-sm text-muted-foreground">
+              {homonymes === 0
+                ? `Aucun programmateur nommé « ${demande.programmateur} » : créez-le.`
+                : `Plusieurs programmateurs s'appellent « ${demande.programmateur} » : choisissez le bon.`}
+            </p>
+          )}
         </Champ>
 
         <fieldset className="grid gap-2" disabled={fige}>
@@ -215,7 +248,7 @@ export function FormulaireEngagement({ action: envoyer, lieux, programmateurs, m
           </p>
         )}
         <div className="flex justify-end gap-3">
-          <Link href={id ? `/engagements/${id}` : "/engagements"} className="self-center text-sm underline">
+          <Link href={id ? `/engagements/${id}` : demande ? `/demandes/${demande.id}` : "/engagements"} className="self-center text-sm underline">
             Annuler
           </Link>
           <Button type="submit" disabled={enCours}>
@@ -224,6 +257,7 @@ export function FormulaireEngagement({ action: envoyer, lieux, programmateurs, m
         </div>
       </form>
       {!fige && <NouveauLieu fenetre={fenetreLieu} onCree={ajouterLieu} />}
+      {!fige && <NouveauProgrammateur fenetre={fenetreProgrammateur} nomPropose={demande?.programmateur} onCree={ajouterProgrammateur} />}
     </>
   );
 }

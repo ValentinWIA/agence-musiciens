@@ -9,7 +9,8 @@ import { convertirEnEur, lireTaux } from "@/lib/change";
 import { avertissementConflits, trouverConflits } from "@/lib/conflit";
 import { jourLocal } from "@/lib/calendrier";
 import { echeanceProposee, TRANSITIONS, transitionsProposees } from "@/lib/cycle-de-vie";
-import { formaterDebut } from "@/lib/dates";
+import { formaterDebut, formaterDuree } from "@/lib/dates";
+import { presenterProgrammateur } from "@/lib/programmateurs";
 import { ferieDuConcert } from "@/lib/feries";
 import { lireAgendaPourConfirmer, lireEngagement, lirePiecesJointes } from "@/lib/engagements";
 import { formaterTaille, LIBELLES_TYPE_PIECE } from "@/lib/pieces-jointes";
@@ -121,7 +122,7 @@ async function FicheEngagement({
             {lieu.nom}, {lieu.adresse}, {lieu.ville} ({lieu.pays})
           </Ligne>
           <Ligne titre="Programmateur">
-            {programmateur.nom} — {programmateur.structure}
+            {presenterProgrammateur(programmateur)}
             {estAgent && (
               <div className="text-muted-foreground">
                 {programmateur.email}
@@ -225,10 +226,4 @@ function formaterJourCourt(jour: string) {
 
 function formaterJour(date: Date) {
   return new Intl.DateTimeFormat("fr-FR", { dateStyle: "long", timeZone: "Europe/Paris" }).format(date);
-}
-
-function formaterDuree(minutes: number) {
-  const h = Math.floor(minutes / 60);
-  const m = minutes % 60;
-  return h ? `${h} h${m ? ` ${String(m).padStart(2, "0")}` : ""}` : `${m} min`;
 }

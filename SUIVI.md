@@ -10,7 +10,7 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 
 ## État de reprise
 
-*Dernière mise à jour : 17 octobre 2026 (**semaine 2** : flux de nuit, N1 à N4, D et R en production)*
+*Dernière mise à jour : 18 octobre 2026 (**semaine 2** : N1 à N4, D, R en production ; N5 entière validée en prévisualisation, PR à fusionner)*
 
 - **Semaine 2 — flux de nuit**, branche `flux-de-nuit` (depuis `main`, 17/10). Cadrage validé par l'humain le 17/10 :
   `docs/flux-de-nuit.md` (lu sur une vraie nuit : 15 événements dont 2 doublons ; créations sans musicien, sans heure,
@@ -72,15 +72,72 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   « Déjà envoyé aujourd'hui ». **Reste à vérifier le 18/10** : récap reçu sans clic après le cron (6 h–7 h, heure de
   Paris) et ligne « cron » au journal. À faire par l'humain : supprimer les branches Neon `preview/recap` et
   `preview/domaine`. Rien de cassé.
-  **Prochaine étape** : retouche **« échéance sous la pastille »** (branche `echeance-option`, demandée le 17/10) : sur
-  la fiche d'un engagement en option, « jusqu'au ven. 31 oct. » en petit sous la pastille « option », en haut à droite,
-  en orange si l'option expire dans 7 jours ou moins ou est passée (seuil du récap) ; la ligne « Option » du bas
-  disparaît ; agent seulement. Une seule tranche, preuve = geste en prévisualisation. Puis N5, puis S. En N5 : faire
-  pointer « … et N autres » du récap vers `/demandes`.
+  **Échéance sous la pastille ✅** (17/10, branche `echeance-option`, commit `b82975f`) : sur la fiche d'une option,
+  « jusqu'au sam. 31 oct. » en petit sous la pastille, agent seulement, en orange à 7 jours ou moins ou passée ; ligne
+  « Option » du bas retirée. Règle partagée avec le récap (`optionARelancer`, `src/lib/recap.ts`, 1 test, 245 au total).
+  Gestes validés en prévisualisation (gris à J+14, orange à 7 j, rien côté musicien). **PR n° 19 fusionnée le 17/10**
+  (`d5b548c`), vérifiée en production. Trouvé en production : les 6 options du jeu de données, chargées le 16/10 avant
+  la migration 0012, n'avaient pas d'échéance (ni affichée, ni au récap) ; dates du jeu de données remises par l'humain
+  en SQL dans Neon (6 lignes), affichage vérifié. **Le 18/10, le récap doit lister 3 options à relancer** (Londres
+  passée, Zurich, Bordeaux). À faire par l'humain : supprimer la branche Neon `preview/echeance-option`. Rien de cassé.
+  **N5 🔄** (branche `demandes-recues`, poussée ; prévisualisation
+  https://agence-musiciens-git-demandes-recues-valentin-4768.vercel.app). Plan validé = **section 15 du cadrage**
+  (`c0967b2`) : 7 tranches, pushs groupés N5a+N5b, N5c, N5d, N5e, N5f+N5g. Décidé : annulée / terminée sortent de
+  « À traiter » ; « Remettre à traiter » existe.
+  **N5a ✅** (`dfd2759`) `src/lib/demandes.ts` (à traiter, tri, pré-remplissage, homonyme → personne) ; menu « Demandes
+  reçues » après « Engagements », journal hors menu. **N5b ✅** (`988d94d`) page `/demandes` (À traiter / Toutes,
+  messages pour une demande inconnue déplacés depuis `/nuit`, « Dernier import — voir le journal »).
+  **N5c ✅** (`e2d6859`, `a189cf9`) fiche `/demandes/[id]` avec historique. Retours de l'humain au geste : liste peu
+  claire → phrase d'explication, « Côté programmateur » (et non « statut du flux »), référence seulement sur la fiche,
+  lien sur la **date** (un programmateur peut faire plusieurs demandes), historique au jour, une phrase par événement.
+  Expliqué : message ↔ demande par la **référence** du flux. **N5d ✅** (`e733bf3`) migration 0013
+  (`demandes_recues.ecartee_le`), « Écarter » / « Remettre à traiter » (condition dans la requête, journalisé).
+  258 tests. Gestes N5b à N5d validés le 17/10 (cas des deux onglets : il fallait recharger le second).
+  **N5e ✅** (18/10, commits `42c5883` à `30bf0b5`) : « Créer l'engagement » sur la fiche (sauf écartée) →
+  `/engagements/nouveau?demande=<id>` : résumé de la demande et historique (déplié s'il y a des messages) au-dessus du
+  formulaire ; date et durée reprises, programmateur de même nom, lieu du flux rappelé, `demandeId` caché. Liaison
+  dans le même `db.batch` : les musiciens prennent l'engagement **dans la demande** ; reliée ou écartée entre-temps →
+  valeur vide, la base refuse (23502), rien n'est gardé ; refus journalisé. 259 tests.
+  Retours de l'humain au geste : page qui plantait (`VIDE`, constante d'un fichier « use client », dépliée côté
+  serveur ; le chemin `?musicien=` depuis M3b l'était aussi) ; formulaire non pré-rempli et brouillon d'une autre
+  demande (Next garde les pages visitées avec leur saisie : `key` par demande) ; retour à la liste par ancre sans effet
+  (même raison) → `?ici=<id>`, ligne surlignée en doré et ramenée à l'écran, onglet gardé.
+  **Décidé le 18/10** : demande à date passée **non bloquée** (le flux ne change jamais la date ; une nouvelle date
+  convenue par message reste du texte) : date laissée vide, phrase en rouge « saisissez la date convenue ».
+  Gestes validés le 18/10 : pré-remplissage, pas de brouillon d'une autre demande, date passée, retour sur « À
+  traiter » et « Toutes », seconde tentative refusée (deux onglets, un seul engagement), écartée sans bouton.
+  Surlignage doré (`30bf0b5`) : jugé assez visible au geste de N5f.
+  **N5f ✅** (18/10, `b7fe84e`, `ad962f1`, `413aa98`) : `src/lib/programmateurs.ts` (lecture, doublon = même e-mail,
+  homonyme permis, `presenterProgrammateur`) ; « + nouveau programmateur » dans le formulaire (fenêtre à côté, nom
+  du demandeur pré-rempli, créé → choisi), action réservée à l'agent ; phrase d'aide sous la liste (aucun / plusieurs
+  du même nom, règle `programmateursDeMemeNom` partagée avec le pré-remplissage). Pas de téléphone (décidé).
+  Retour au geste : **structure facultative** → migration 0014 (`programmateurs.structure` sans `NOT NULL`), vide →
+  null, nom seul affiché ; lignes existantes en production : toutes ont une structure, rien à remplir.
+  **N5g ✅** (`651e511`) : le récap ajoute « Traiter les demandes reçues : …/demandes » après les listes dès que la
+  nuit apporte quelque chose du flux. 269 tests.
+  **Retours N5e au geste** (`5ee1409`, `8cf77c9`) : après création depuis une demande, retour sur « À traiter »
+  (option A : vider la file) ; la demande traitée reste une fois à sa place, surlignée, défilée, « Voir l'engagement
+  → » sur la ligne ; création à la main → fiche, inchangé. Phrase au-dessus du formulaire en sous-titre sans cadre
+  (le cadre la faisait prendre pour un champ).
+  Gestes validés le 18/10 en prévisualisation : phrase d'aide, refus (vides, e-mail mal formé, e-mail connu en
+  majuscules), création avec et sans structure, saisie gardée, retour à la ligne traitée, bouton hors demande,
+  récap reçu avec le lien, sous-titre (date à venir et passée).
+  **Reste** : PR, fusion (migrations 0013 et 0014 jouées en production), gestes en production, puis S.
+  Après chaque push, rattraper les nuits sur `/nuit` (le jeu de données vide les tables du flux).
   Clé du flux recopiée dans Vercel (`FLUX_DE_NUIT_CLE`, Production et Preview) le 17/10.
   Domaine `valentinwalczak.com` (OVH, `contact@` déjà utilisé) : envoi par le sous-domaine `mail.` (tranche D).
 - **Reportés en semaine 5** (décidé le 17/10) : améliorations n° 3 (design global) et n° 8 (engagements en cartes
   sur téléphone), pour une seule passe de design quand tous les écrans existeront.
+- **Reporté** (noté le 18/10, demande à part avec son cadrage) : l'heure obligatoire d'un engagement est trop
+  contraignante → pouvoir choisir « matin », « après-midi (12 h-18 h) » ou « soir » ; heures de 5 en 5 minutes.
+  Touche le formulaire d'engagement et sans doute le schéma (précision de la date).
+- **Reporté** (noté le 18/10, demande à part avec son cadrage) : sur la fiche musicien, avant le cachet moyen,
+  afficher les **revenus totaux de la saison en cours**. À trancher au cadrage : bornes de la saison (septembre à
+  août ?), engagements comptés (confirmés, réalisés, payés ?), cachets en plusieurs devises.
+- **Reporté** (noté le 18/10, petite branche après la fusion de N5) : sur `/engagements`, le bouton « Nouvel
+  engagement » est trop haut ; le placer au même niveau que les filtres.
+- **Reporté** (noté le 18/10, demande à part avec son cadrage) : filtrer les engagements par programmateur (utile
+  pour une facturation globale).
 
 - **Fait** : cadrage (SPEC), comptes, squelette Next.js, dépôt GitHub public, site en ligne
   (https://agence-musiciens.vercel.app), région `fra1`, base Neon reliée à Vercel.
