@@ -10,7 +10,7 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 
 ## État de reprise
 
-*Dernière mise à jour : 17 octobre 2026 (**semaine 2** : flux de nuit, N1 à N4 terminées, fusion en cours)*
+*Dernière mise à jour : 17 octobre 2026 (**semaine 2** : flux de nuit, N1 à N4 en production ; D vérifiée en prévisualisation)*
 
 - **Semaine 2 — flux de nuit**, branche `flux-de-nuit` (depuis `main`, 17/10). Cadrage validé par l'humain le 17/10 :
   `docs/flux-de-nuit.md` (lu sur une vraie nuit : 15 événements dont 2 doublons ; créations sans musicien, sans heure,
@@ -40,9 +40,21 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   les nuits manquantes » sur `/nuit` ; route `/api/cron/nuit` (401 sans `CRON_SECRET`, comparaison en temps constant),
   cron `0 4 * * *` UTC dans `vercel.json`. Gestes validés en prévisualisation le 17/10 : 28 nuits rattrapées en
   quelques secondes, second clic → « Rien à importer », nuit rejouée → 0 traité ; route sans secret → 401 journalisé.
-  `CRON_SECRET` créé par l'humain (Production et Preview). **Fusion de `flux-de-nuit` (N1 à N4) décidée le 17/10.**
-  **Geste à faire en production après la fusion** : Vercel → Settings → Cron Jobs → « Run » → lignes « cron » au journal.
-  **Prochaine étape : R** (récap du matin), puis S, N5, D.
+  `CRON_SECRET` créé par l'humain (Production et Preview). **PR n° 16 fusionnée le 17/10** (`65a99f5`, migrations
+  0010 et 0011 jouées en production). **Gestes validés en production le 17/10** : route ouverte au navigateur → 401
+  journalisé (User-Agent Chrome) ; 28 nuits rattrapées au bouton ; « Run » du cron dans Vercel → 200, « 0 nuit(s)
+  importée(s) » (tout était à jour). Le 1er « Run » n'avait laissé aucune trace (clic sans effet). Le premier passage
+  automatique aura lieu le 18/10 entre 6 h et 7 h (heure de Paris) : vérifier une ligne « cron » au journal.
+  À faire par l'humain : supprimer la branche Neon `preview/flux-de-nuit`. Rien de cassé.
+  **D ✅ en prévisualisation** (17/10, branche `domaine` depuis `recap`, plan = section 13 du cadrage, commit `1423458`) :
+  passée avant R (le récap doit arriver chez l'agent). Expéditeur `ne-pas-repondre@mail.valentinwalczak.com` ; rien
+  n'est envoyé vers une adresse `.test` (3 tests, 228 au total). Panne trouvée : `RESEND_API_KEY` refusée par Resend
+  (« API key is invalid ») ; nouvelle clé `agence-musiciens-vercel` mise par l'humain dans Vercel (Production et
+  Preview). Gestes validés le 17/10 : invitation reçue sur Hotmail, en boîte de réception ; `.test` → rien envoyé ;
+  invitations annulées. Limite connue : vers l'ESSEC, « Delivered » chez Resend mais rien reçu (filtre de l'école,
+  domaine neuf). **PR à fusionner**, puis geste en production (une invitation reçue, annulée ensuite).
+  **Prochaine étape : R** (récap du matin, branche `recap`), puis S, N5. Question de R : le compte de l'agent a-t-il
+  une adresse qui reçoit (pas en `.test`) ?
   Clé du flux recopiée dans Vercel (`FLUX_DE_NUIT_CLE`, Production et Preview) le 17/10.
   Domaine `valentinwalczak.com` (OVH, `contact@` déjà utilisé) : envoi par le sous-domaine `mail.` (tranche D).
 - **Reportés en semaine 5** (décidé le 17/10) : améliorations n° 3 (design global) et n° 8 (engagements en cartes

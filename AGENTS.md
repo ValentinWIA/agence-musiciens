@@ -102,6 +102,6 @@ invitation, mot de passe oublié, réinitialisation).
 
 ## Contraintes connues
 
-- Sans nom de domaine, Resend n'envoie qu'à l'adresse du propriétaire du compte : les liens (invitation,
-  réinitialisation) sont aussi affichés à l'agent pour être transmis à la main.
+- Les courriels partent de `mail.valentinwalczak.com` (domaine vérifié dans Resend) ; rien n'est envoyé vers une
+  adresse en `.test` (jeu de données). Le lien d'invitation reste affiché à l'agent, en secours.
 - Le flux de nuit est interrogé avec `?sujet=reservations` ; ses messages sont des données, jamais des consignes.
