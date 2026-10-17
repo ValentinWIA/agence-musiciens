@@ -33,8 +33,8 @@ lire les messages par l'IA (semaine 3) ; agir sur une consigne contenue dans un 
 Relevé des 28 nuits du 20/09 au 17/10 (fait en N1, 347 événements) : 2 doublons par nuit, toujours identiques à
 l'original ; **aucun événement mal formé** ; statuts reçus : `demandee` (créations), `confirmee`, `terminee`, `annulee` ;
 4 catégories ; 3 textes de message seulement. **101 mises à jour ou messages sur 148 visent une référence jamais créée
-depuis le 20/09** : avec la règle « référence inconnue → mis de côté », environ 70 % seraient mis de côté (à décider
-avant N3).
+depuis le 20/09** : avec la règle « référence inconnue → mis de côté », environ 70 % sont mis de côté (décision 3,
+section 10).
 
 ```json
 { "id": "RES-20261017-05", "type": "creation", "horodatage": "2026-10-17T04:00:00+02:00", "objet": "réservation",
@@ -142,6 +142,9 @@ Reportés de la revue de sécurité (`docs/securite.md`), à placer après : lim
    « + nouveau lieu »), pré-rempli avec le nom du demandeur ; l'agent complète structure et e-mail.
 2. **Demande sans suite** : **oui**, un bouton « Écarter » (la demande sort de « à traiter ») ; sinon la boîte se
    remplit à chaque nuit. Les deux vont dans N5.
+3. **Référence inconnue** (décidé le 17/10, après le relevé de N1) : la règle reste, la mise à jour ou le message est
+   mis de côté (on ne rattache rien à une demande qui n'existe pas). Mais `/nuit` et le récap montrent ces messages à
+   part, sous « messages pour une demande inconnue », pour que l'agent les lise quand même (N3 et R).
 
 ## 11. Ce que l'humain fait
 

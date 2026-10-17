@@ -18,7 +18,11 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   les engagements, messages jamais suivis, **rattrapage des nuits depuis le 20/09**. Manques de l'ancien brouillon
   ajoutés : tableau des exécutions, coût de la nuit, alerte de panne, récap une fois par jour, une nuit par étape.
   Plan validé le 17/10, ordre **N1 → N2 → N3 → N4 → R → S → N5 → D** (la démo d'abord). Décidé : « + nouveau
-  programmateur » et « Écarter » dans N5. Estimation : 3 à 4 journées de sessions. **Prochaine étape : N1.**
+  programmateur » et « Écarter » dans N5. Estimation : 3 à 4 journées de sessions.
+  **N1 ✅** (17/10, commit `5eb0e6b`) : `src/lib/flux.ts`, lecture d'une nuit sans jamais planter (zod, doublons, ordre,
+  traduction), 21 tests sur la vraie nuit du 17/10 et des cas mal formés fabriqués (aucun dans les 28 nuits relevées).
+  Décidé : référence inconnue → mis de côté, mais messages montrés à part sur `/nuit` et dans le récap.
+  **Prochaine étape : N2** (tables `executions`, `evenements_flux`, `demandes_recues`, migration 0010).
   Clé du flux dans `.env.local` (ignoré par git), à recopier dans Vercel avant N3.
   Domaine `valentinwalczak.com` (OVH, `contact@` déjà utilisé) : envoi par le sous-domaine `mail.` (tranche D).
 - **Reportés en semaine 5** (décidé le 17/10) : améliorations n° 3 (design global) et n° 8 (engagements en cartes
@@ -583,3 +587,4 @@ déconnexion ; `/tableau-de-bord` sans session → renvoi vers la connexion.
 | 16/10/2026 | Pages rangées en groupes de routes `(connecte)` et `(public)` ; menu de téléphone en `<dialog>` | Un cadre avec menu pour les seules pages connectées, sans changer les adresses ; Échap, voile et clavier fournis par le navigateur, sans paquet |
 | 11/10/2026 | Table `utilisateurs` limitée à 7 colonnes | Invitations et réinitialisations iront dans des tables séparées ; ajouter une colonne plus tard est peu coûteux |
 | 17/10/2026 | Flux de nuit : créations rangées dans « Demandes reçues », statuts et messages du flux sans effet sur les engagements, rattrapage depuis le 20/09 | Le flux ne donne ni musicien, ni heure, ni cachet, et ses statuts sautent nos étapes ; l'agent décide ; un message est une donnée, jamais un ordre |
+| 17/10/2026 | Flux : mise à jour ou message vers une demande inconnue mis de côté, messages montrés à part sur `/nuit` et dans le récap | 101 sur 148 visent une demande antérieure au 20/09 ; on ne rattache rien à une demande absente, mais l'agent doit pouvoir lire les messages |
