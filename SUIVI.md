@@ -17,7 +17,8 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   sans cachet). Décidé : boîte « Demandes reçues » (l'agent en fait un engagement), statuts du flux sans effet sur
   les engagements, messages jamais suivis, **rattrapage des nuits depuis le 20/09**. Manques de l'ancien brouillon
   ajoutés : tableau des exécutions, coût de la nuit, alerte de panne, récap une fois par jour, une nuit par étape.
-  **Reste** : l'humain corrige le plan (section 9) et répond aux 2 questions (section 10) ; puis N1.
+  Plan validé le 17/10, ordre **N1 → N2 → N3 → N4 → R → S → N5 → D** (la démo d'abord). Décidé : « + nouveau
+  programmateur » et « Écarter » dans N5. Estimation : 3 à 4 journées de sessions. **Prochaine étape : N1.**
   Clé du flux dans `.env.local` (ignoré par git), à recopier dans Vercel avant N3.
   Domaine `valentinwalczak.com` (OVH, `contact@` déjà utilisé) : envoi par le sous-domaine `mail.` (tranche D).
 - **Reportés en semaine 5** (décidé le 17/10) : améliorations n° 3 (design global) et n° 8 (engagements en cartes

@@ -1,7 +1,8 @@
 # Semaine 2 — flux de nuit et récapitulatif du matin (cadrage)
 
 *Cadrage validé le 17/10/2026 (boîte « Demandes reçues », statuts du flux sans effet sur les engagements, messages
-jamais suivis, rattrapage des nuits passées). Le plan en tranches (section 9) reste à corriger par l'humain.*
+jamais suivis, rattrapage des nuits passées). Plan validé le 17/10, dans l'ordre N1 → N2 → N3 → N4 → R → S → N5 → D
+(ce que la démo du vendredi exige d'abord ; la boîte et le domaine ensuite).*
 
 Source : https://flux-de-nuit.vercel.app, sujet `reservations`, clé dans la variable `FLUX_DE_NUIT_CLE`
 (en-tête `Authorization: Bearer …`). `GET /api/evenements?sujet=reservations` rend la nuit qui vient de se terminer
@@ -128,13 +129,13 @@ Branche `flux-de-nuit` (N1 à N5) ; une branche à part pour le domaine, le réc
 
 Reportés de la revue de sécurité (`docs/securite.md`), à placer après : limite d'essais de connexion, anti-clickjacking.
 
-## 10. Questions ouvertes
+## 10. Décisions du 17/10 (anciennes questions)
 
 1. **Programmateur inconnu** : l'application ne sait pas créer de programmateur, et la table exige structure et
-   e-mail, que le flux ne donne pas. Proposition : un « + nouveau programmateur » dans le formulaire (comme
+   e-mail, que le flux ne donne pas. **Oui** : un « + nouveau programmateur » dans le formulaire (comme
    « + nouveau lieu »), pré-rempli avec le nom du demandeur ; l'agent complète structure et e-mail.
-2. **Demande sans suite** : faut-il un bouton « Écarter » (la demande sort de « à traiter ») ? Sinon la boîte se
-   remplit à chaque nuit.
+2. **Demande sans suite** : **oui**, un bouton « Écarter » (la demande sort de « à traiter ») ; sinon la boîte se
+   remplit à chaque nuit. Les deux vont dans N5.
 
 ## 11. Ce que l'humain fait
 
