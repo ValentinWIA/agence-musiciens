@@ -146,6 +146,7 @@ function bilan(d: DonneesRecap): string {
   for (const n of d.nuits.filter((n) => n.etat === "en_echec")) {
     lignes.push(`Nuit du ${jourMois(n.nuitDu)} : import en échec (${n.erreur ?? "raison inconnue"}), elle sera réessayée.`);
   }
+  if (d.raisons.length) lignes.push(`Détail des événements mis de côté : ${d.lienSite}/nuit`);
   return lignes.join("\n");
 }
 
@@ -161,7 +162,7 @@ function section(titre: string, lignes: string[]): string | null {
 
 function limiter(lignes: string[]): string[] {
   if (lignes.length <= LIMITE_LISTE) return lignes;
-  return [...lignes.slice(0, LIMITE_LISTE), `… et ${lignes.length - LIMITE_LISTE} autres : voir le site`];
+  return [...lignes.slice(0, LIMITE_LISTE), `… et ${lignes.length - LIMITE_LISTE} autres`];
 }
 
 function compte(n: number, singulier: string, pluriel: string): string | null {

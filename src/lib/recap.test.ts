@@ -117,6 +117,7 @@ describe("composerRecap", () => {
     expect(texte).not.toContain("À FAIRE");
     expect(texte).not.toContain("REÇU DU FLUX");
     expect(texte).toContain("IMPORT\nNuit du 18/10 importée : 15 reçus, 2 doublons, 0 mis de côté.");
+    expect(texte).not.toContain("/nuit"); // rien de mis de côté : pas de lien vers le détail
     expect(texte).toContain("https://agence-musiciens.vercel.app");
   });
 
@@ -141,6 +142,7 @@ describe("composerRecap", () => {
       "2 nuits importées (du 20/09 au 21/09) : 28 reçus, 4 doublons, 4 mis de côté (référence inconnue : 3, champ invalide : 1).",
     );
     expect(texte).toContain("Nuit du 22/09 : import en échec (délai dépassé), elle sera réessayée.");
+    expect(texte).toContain("Détail des événements mis de côté : https://agence-musiciens.vercel.app/nuit");
   });
 
   it("à faire : artistes d'abord, salle et ville, échéance, montant et jours écoulés", () => {
@@ -183,6 +185,7 @@ describe("composerRecap", () => {
     expect(texte).toContain("• 23 nouvelles demandes");
     expect(texte).toContain("(réf. RES-19)");
     expect(texte).not.toContain("(réf. RES-20)");
-    expect(texte).toContain("• … et 3 autres : voir le site");
+    expect(texte).toContain("• … et 3 autres");
+    expect(texte).not.toContain("voir le site");
   });
 });
