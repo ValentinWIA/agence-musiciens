@@ -107,7 +107,7 @@ async function ContenuDemandes({ searchParams }: { searchParams: Promise<Record<
           </TableHeader>
           <TableBody>
             {liste.map((d) => (
-              <TableRow key={d.id} id={`demande-${d.id}`} className={d.id === ici ? "bg-muted" : undefined}>
+              <TableRow key={d.id} id={`demande-${d.id}`} className={d.id === ici ? "bg-amber-100 shadow-[inset_4px_0_0_var(--color-amber-500)] hover:bg-amber-100" : undefined}>
                 <TableCell>
                   <Link href={`/demandes/${d.id}${suite}`} className="underline">
                     {formaterJour(d.dateConcert)}
