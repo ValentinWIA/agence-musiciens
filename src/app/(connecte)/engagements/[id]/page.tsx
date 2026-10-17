@@ -7,12 +7,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formaterMontant } from "@/lib/argent";
 import { convertirEnEur, lireTaux } from "@/lib/change";
 import { avertissementConflits, trouverConflits } from "@/lib/conflit";
-import { jourLocal, libelleJour } from "@/lib/calendrier";
+import { jourLocal } from "@/lib/calendrier";
 import { echeanceProposee, TRANSITIONS, transitionsProposees } from "@/lib/cycle-de-vie";
 import { formaterDebut } from "@/lib/dates";
 import { ferieDuConcert } from "@/lib/feries";
 import { lireAgendaPourConfirmer, lireEngagement, lirePiecesJointes } from "@/lib/engagements";
 import { formaterTaille, LIBELLES_TYPE_PIECE } from "@/lib/pieces-jointes";
+import { optionARelancer } from "@/lib/recap";
 import { verifierSession } from "@/lib/session";
 import { BoutonsStatut } from "./boutons-statut";
 import { AjoutPiece } from "./pieces/ajout-piece";
@@ -48,9 +49,18 @@ async function FicheEngagement({
   const estAgent = utilisateur.role === "admin";
   const { lieu, programmateur } = engagement;
   const transitions = transitionsProposees(engagement).map((cle) => ({ cle, libelle: TRANSITIONS[cle].libelle }));
+  const aujourdhui = jourLocal(new Date(), "France");
   const echeance = transitions.some((t) => t.cle === "poser_option")
-    ? echeanceProposee(jourLocal(new Date(), "France"), jourLocal(engagement.debut, lieu.pays))
+    ? echeanceProposee(aujourdhui, jourLocal(engagement.debut, lieu.pays))
     : undefined;
+  // Sous la pastille, pour l'agent seul ; en orange au même seuil que le récap (7 jours, ou échéance passée).
+  const echeanceOption =
+    estAgent && engagement.statut === "option" && engagement.optionExpireLe
+      ? {
+          libelle: `jusqu'au ${formaterJourCourt(engagement.optionExpireLe)}`,
+          aRelancer: optionARelancer(engagement.optionExpireLe, aujourdhui),
+        }
+      : null;
   // Dès l'option, l'agent est prévenu d'un conflit qui ferait refuser la confirmation (rien n'est bloqué ici).
   const avertissement =
     estAgent && (engagement.statut === "option" || engagement.statut === "contrat_envoye")
@@ -86,7 +96,18 @@ async function FicheEngagement({
             {engagement.titre ? `${engagement.titre} — ` : ""}
             {lieu.nom}, {lieu.ville}
           </span>
-          <BadgeStatut statut={engagement.statut} />
+          <span className="flex flex-col items-end gap-1">
+            <BadgeStatut statut={engagement.statut} />
+            {echeanceOption && (
+              <span
+                className={`text-xs font-normal ${
+                  echeanceOption.aRelancer ? "text-amber-700 dark:text-amber-300" : "text-muted-foreground"
+                }`}
+              >
+                {echeanceOption.libelle}
+              </span>
+            )}
+          </span>
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -130,9 +151,6 @@ async function FicheEngagement({
           </Ligne>
           <Ligne titre="Programme">{engagement.programme ?? "à définir"}</Ligne>
           {engagement.notes && <Ligne titre="Notes">{engagement.notes}</Ligne>}
-          {estAgent && engagement.statut === "option" && engagement.optionExpireLe && (
-            <Ligne titre="Option">{`jusqu'au ${libelleJour(engagement.optionExpireLe)} ${engagement.optionExpireLe.slice(0, 4)}`}</Ligne>
-          )}
           {/* Visible aussi du musicien : c'est lui qui voyage (docs/engagements.md, section 11). */}
           {engagement.raisonConflit && (
             <Ligne titre="Conflit d'agenda">{`Confirmé malgré un conflit d'agenda : ${engagement.raisonConflit}`}</Ligne>
@@ -196,6 +214,13 @@ function Ligne({ titre, children }: { titre: string; children: React.ReactNode }
 // « 2026-10-15 » → « 15/10/2026 »
 function formaterJourIso(jour: string) {
   return jour.split("-").reverse().join("/");
+}
+
+// « 2026-10-31 » → « sam. 31 oct. » (tient sous la pastille)
+function formaterJourCourt(jour: string) {
+  return new Intl.DateTimeFormat("fr-FR", { weekday: "short", day: "numeric", month: "short", timeZone: "UTC" }).format(
+    new Date(`${jour}T12:00:00Z`),
+  );
 }
 
 function formaterJour(date: Date) {

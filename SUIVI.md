@@ -10,7 +10,7 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 
 ## État de reprise
 
-*Dernière mise à jour : 17 octobre 2026 (**semaine 2** : flux de nuit, N1 à N4 et D en production, R vérifiée en prévisualisation)*
+*Dernière mise à jour : 17 octobre 2026 (**semaine 2** : flux de nuit, N1 à N4, D et R en production)*
 
 - **Semaine 2 — flux de nuit**, branche `flux-de-nuit` (depuis `main`, 17/10). Cadrage validé par l'humain le 17/10 :
   `docs/flux-de-nuit.md` (lu sur une vraie nuit : 15 événements dont 2 doublons ; créations sans musicien, sans heure,
@@ -56,7 +56,7 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   l'ancienne clé ; corrigée par l'humain (nouvelle clé, Redeploy). **Geste validé en production le 17/10** : invitation
   reçue sur Hotmail, invitations à de vraies adresses annulées. À faire par l'humain : supprimer dans Resend les clés
   inutilisées ; garder une seule variable `RESEND_API_KEY` (Production et Preview) évite ce décalage.
-  **R ✅ en prévisualisation** (17/10, branche `recap`, plan = section 14 du cadrage, commits `2f5f8c8` à `a716557`) :
+  **R ✅** (17/10, branche `recap`, plan = section 14 du cadrage, commits `2f5f8c8` à `a716557`) :
   R1 `src/lib/recap.ts` (pur : options qui expirent sous 7 j, cachets impayés après 30 j, rédaction) ; R2 migration 0012
   (`recaps`, `engagements.option_expire_le`), échéance saisie en posant l'option (J+14 proposé, jamais après le concert),
   affichée sur la fiche ; R3 `src/lib/envoi-recap.ts` (ligne du jour réservée avant l'envoi, retirée si l'envoi échoue),
@@ -67,8 +67,16 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   mis de côté ; plus de « voir le site » tant que `/demandes` n'existe pas. Gestes validés en prévisualisation :
   option posée (J+14, date passée refusée) ; récap reçu ; second clic → « Déjà envoyé aujourd'hui ».
   **Ordre changé le 17/10 : N5 avant S** (le récap annonce des demandes que l'agent ne peut pas encore ouvrir).
-  **Prochaine étape** : PR de `recap`, fusion, vérification en production (récap reçu après le cron du 18/10), puis N5,
-  puis S. En N5 : faire pointer « … et N autres » du récap vers `/demandes`.
+  **PR n° 18 fusionnée le 17/10** (`e093c24`, migration 0012 jouée en production). **Gestes validés en production le
+  17/10** : option posée (J+14 proposé, date passée refusée, échéance affichée) ; récap reçu au bouton, second clic →
+  « Déjà envoyé aujourd'hui ». **Reste à vérifier le 18/10** : récap reçu sans clic après le cron (6 h–7 h, heure de
+  Paris) et ligne « cron » au journal. À faire par l'humain : supprimer les branches Neon `preview/recap` et
+  `preview/domaine`. Rien de cassé.
+  **Prochaine étape** : retouche **« échéance sous la pastille »** (branche `echeance-option`, demandée le 17/10) : sur
+  la fiche d'un engagement en option, « jusqu'au ven. 31 oct. » en petit sous la pastille « option », en haut à droite,
+  en orange si l'option expire dans 7 jours ou moins ou est passée (seuil du récap) ; la ligne « Option » du bas
+  disparaît ; agent seulement. Une seule tranche, preuve = geste en prévisualisation. Puis N5, puis S. En N5 : faire
+  pointer « … et N autres » du récap vers `/demandes`.
   Clé du flux recopiée dans Vercel (`FLUX_DE_NUIT_CLE`, Production et Preview) le 17/10.
   Domaine `valentinwalczak.com` (OVH, `contact@` déjà utilisé) : envoi par le sous-domaine `mail.` (tranche D).
 - **Reportés en semaine 5** (décidé le 17/10) : améliorations n° 3 (design global) et n° 8 (engagements en cartes
