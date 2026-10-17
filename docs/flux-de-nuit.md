@@ -221,3 +221,7 @@ Branche `recap` (depuis `main`). Courriel en texte brut à l'agent (rôle `admin
 | R1 | `src/lib/recap.ts` (pur) : options qui expirent, impayés, rédaction du texte | tests (7 j et 30 j pile, bénévole, sections vides, panne, limite de 20) |
 | R2 | migration 0012 (`recaps`, `engagements.option_expire_le`) ; échéances dans le jeu de données ; échéance saisie à la pose de l'option (J+14 proposé), affichée sur la fiche | migration jouée ; geste : poser une option → J+14 proposé puis affiché |
 | R3 | `envoyerRecap` (lecture, réservation du jour, envoi), appelé après le rattrapage dans `/api/cron/nuit` ; bloc et bouton « Envoyer le récap du jour » sur `/nuit` | geste : récap reçu ; second clic → rien de renvoyé ; en production, récap reçu après le cron |
+
+Présentation revue au geste (17/10) : « En bref », puis « À faire » (options et impayés avec artistes et salle, messages),
+« Reçu du flux », l'import en une phrase et un lien vers `/nuit` pour les mis de côté. **Ordre changé le 17/10 : N5 avant
+S**, pour que les demandes annoncées par le récap s'ouvrent sur le site.
