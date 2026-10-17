@@ -10,7 +10,43 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 
 ## État de reprise
 
-*Dernière mise à jour : 17 octobre 2026 (photos en production terminées, PR n° 15 fusionnée ; prochaine demande : voir « Ordre décidé »)*
+*Dernière mise à jour : 17 octobre 2026 (**semaine 2** : flux de nuit, N1 à N4 terminées, fusion en cours)*
+
+- **Semaine 2 — flux de nuit**, branche `flux-de-nuit` (depuis `main`, 17/10). Cadrage validé par l'humain le 17/10 :
+  `docs/flux-de-nuit.md` (lu sur une vraie nuit : 15 événements dont 2 doublons ; créations sans musicien, sans heure,
+  sans cachet). Décidé : boîte « Demandes reçues » (l'agent en fait un engagement), statuts du flux sans effet sur
+  les engagements, messages jamais suivis, **rattrapage des nuits depuis le 20/09**. Manques de l'ancien brouillon
+  ajoutés : tableau des exécutions, coût de la nuit, alerte de panne, récap une fois par jour, une nuit par étape.
+  Plan validé le 17/10, ordre **N1 → N2 → N3 → N4 → R → S → N5 → D** (la démo d'abord). Décidé : « + nouveau
+  programmateur » et « Écarter » dans N5. Estimation : 3 à 4 journées de sessions.
+  **N1 ✅** (17/10, commit `5eb0e6b`) : `src/lib/flux.ts`, lecture d'une nuit sans jamais planter (zod, doublons, ordre,
+  traduction), 21 tests sur la vraie nuit du 17/10 et des cas mal formés fabriqués (aucun dans les 28 nuits relevées).
+  Décidé : référence inconnue → mis de côté, mais messages montrés à part sur `/nuit` et dans le récap.
+  **N2 ✅** (17/10, commit `fd7456b`) : tables `executions`, `evenements_flux`, `demandes_recues` (migration 0010),
+  vidées par le jeu de données ; migration jouée en prévisualisation, tables vérifiées dans Neon par l'humain.
+  Décidé : messages gardés dans `evenements_flux` (pas de 4ᵉ table) ; engagement supprimé → la demande reste, lien
+  vidé ; copie de même `id` comptée, pas stockée ; une colonne `appels` (essais compris), une exécution = une nuit.
+  **N3 ✅** (17/10, commits `7ba56dc`, `c22b4e4`, `254d33e`) : appel au flux (`src/lib/appel-flux.ts`, 10 s, 3 essais,
+  pas de nouvel essai sur 4xx), import d'une nuit (`src/lib/import-nuit.ts`, écriture en un seul `db.batch`), verrou
+  par index unique partiel (migration 0011, verrou périmé libéré après 5 min), page `/nuit` avec formulaire
+  « Importer la nuit » pré-rempli par la plus ancienne nuit manquante depuis le 20/09 (`prochaineNuit`). 222 tests.
+  Vérifiée en prévisualisation par l'humain : 20/09 importée, rejouée → 0 traité, 16 doublons ; 21/09 ; musicien
+  renvoyé. Décidé (décisions 4 à 7 du cadrage) : nuits importées dans l'ordre ; récap → migration 0012 ; lien du menu
+  renommé « Journal des imports » ; en N5, « Demandes reçues » après « Engagements », journal hors menu.
+  Limite connue : un événement sans `id` lisible serait réenregistré si sa nuit est rejouée (aucun cas relevé).
+  **N4 ✅** (17/10, plan `c31f3cc` = section 12 du cadrage, commits `dde7b67`, `19fc43b`) : `nuitsManquantes`
+  (`src/lib/flux.ts`, 3 tests, 225 au total) ; `rattraper` (`src/lib/import-nuit.ts`) importe les nuits manquantes
+  dans l'ordre, s'arrête à la première en échec ou après 200 s (fonction Hobby : 300 s au plus) ; bouton « Rattraper
+  les nuits manquantes » sur `/nuit` ; route `/api/cron/nuit` (401 sans `CRON_SECRET`, comparaison en temps constant),
+  cron `0 4 * * *` UTC dans `vercel.json`. Gestes validés en prévisualisation le 17/10 : 28 nuits rattrapées en
+  quelques secondes, second clic → « Rien à importer », nuit rejouée → 0 traité ; route sans secret → 401 journalisé.
+  `CRON_SECRET` créé par l'humain (Production et Preview). **Fusion de `flux-de-nuit` (N1 à N4) décidée le 17/10.**
+  **Geste à faire en production après la fusion** : Vercel → Settings → Cron Jobs → « Run » → lignes « cron » au journal.
+  **Prochaine étape : R** (récap du matin), puis S, N5, D.
+  Clé du flux recopiée dans Vercel (`FLUX_DE_NUIT_CLE`, Production et Preview) le 17/10.
+  Domaine `valentinwalczak.com` (OVH, `contact@` déjà utilisé) : envoi par le sous-domaine `mail.` (tranche D).
+- **Reportés en semaine 5** (décidé le 17/10) : améliorations n° 3 (design global) et n° 8 (engagements en cartes
+  sur téléphone), pour une seule passe de design quand tous les écrans existeront.
 
 - **Fait** : cadrage (SPEC), comptes, squelette Next.js, dépôt GitHub public, site en ligne
   (https://agence-musiciens.vercel.app), région `fra1`, base Neon reliée à Vercel.
@@ -396,7 +432,7 @@ Un produit se construit par couches. Chaque couche répond à une question et s'
 | 4. Identité et droits | Qui est connecté, et qu'a-t-il le droit de faire ? | 1 | ✅ (connexion, invitations, rôles, réinitialisation, refus d'accès journalisés) |
 | 5. Métier | Que fait le produit ? (engagements, cycle de vie, règles, API externe, courriels, pièces jointes) | 1 | ✅ (cycle de vie, conflit d'agenda, géocodage, jours fériés, devises, pièces jointes, fiches musiciens, calendrier) |
 | 6. Fiabilité | Comment sait-on que ça marche et que c'est sûr ? (tests, journaux, revue de sécurité, README) | 1 | ✅ (tests à chaque push, journaux, revue de sécurité `docs/securite.md`, README) |
-| 7. Automatisation | Que fait le produit tout seul, la nuit ? | 2 | ⬜ |
+| 7. Automatisation | Que fait le produit tout seul, la nuit ? | 2 | 🔄 (import des nuits, rattrapage et cron faits ; récap, surveillance, boîte à faire) |
 | 8. Intelligence | Que comprend le produit ? (lecture de documents, recherche qui cite ses sources) | 3 | ⬜ |
 | 9. Action | Qu'est-ce que le produit fait à notre place, sous contrôle ? (agent, serveur MCP) | 4 | ⬜ |
 | 10. Transmission | Quelqu'un d'autre peut-il le reprendre ? (passation, API pour les autres systèmes) | 5 | ⬜ |
@@ -570,3 +606,5 @@ déconnexion ; `/tableau-de-bord` sans session → renvoi vers la connexion.
 | 16/10/2026 | Musicien : sa fiche est sa page d'accueil (`/tableau-de-bord` y renvoie) | Son tableau de bord n'avait qu'une tuile, « Ma fiche » |
 | 16/10/2026 | Pages rangées en groupes de routes `(connecte)` et `(public)` ; menu de téléphone en `<dialog>` | Un cadre avec menu pour les seules pages connectées, sans changer les adresses ; Échap, voile et clavier fournis par le navigateur, sans paquet |
 | 11/10/2026 | Table `utilisateurs` limitée à 7 colonnes | Invitations et réinitialisations iront dans des tables séparées ; ajouter une colonne plus tard est peu coûteux |
+| 17/10/2026 | Flux de nuit : créations rangées dans « Demandes reçues », statuts et messages du flux sans effet sur les engagements, rattrapage depuis le 20/09 | Le flux ne donne ni musicien, ni heure, ni cachet, et ses statuts sautent nos étapes ; l'agent décide ; un message est une donnée, jamais un ordre |
+| 17/10/2026 | Flux : mise à jour ou message vers une demande inconnue mis de côté, messages montrés à part sur `/nuit` et dans le récap | 101 sur 148 visent une demande antérieure au 20/09 ; on ne rattache rien à une demande absente, mais l'agent doit pouvoir lire les messages |

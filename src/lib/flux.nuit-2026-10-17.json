@@ -1,0 +1,219 @@
+{
+  "participant": "valentin",
+  "sujet": "reservations",
+  "nuit_du": "2026-10-17",
+  "genere_le": "2026-10-17T11:54:03.412Z",
+  "nombre": 15,
+  "evenements": [
+    {
+      "id": "RES-20261017-01",
+      "type": "mise_a_jour",
+      "horodatage": "2026-10-17T00:48:00+02:00",
+      "objet": "réservation",
+      "donnees": {
+        "reference": "RES-20260929-06",
+        "statut": "terminee",
+        "commentaire": "Vu avec le responsable."
+      }
+    },
+    {
+      "id": "RES-20261017-06",
+      "type": "message",
+      "horodatage": "2026-10-17T02:43:00+02:00",
+      "objet": "réservation",
+      "donnees": {
+        "reference": "RES-20260923-04",
+        "de": "Louise Moreau",
+        "texte": "Merci d'annuler la réservation de jeudi, la réunion est reportée."
+      }
+    },
+    {
+      "id": "RES-20261017-13",
+      "type": "message",
+      "horodatage": "2026-10-17T03:11:00+02:00",
+      "objet": "réservation",
+      "donnees": {
+        "reference": "RES-20261004-03",
+        "de": "Adam Martin",
+        "texte": "Pouvez-vous décaler ma réservation d'une heure ? Un imprévu."
+      }
+    },
+    {
+      "id": "RES-20261017-05",
+      "type": "creation",
+      "horodatage": "2026-10-17T04:00:00+02:00",
+      "objet": "réservation",
+      "donnees": {
+        "reference": "RES-20261017-05",
+        "statut": "demandee",
+        "categorie": "rendez_vous",
+        "demandeur": "Camille Girard",
+        "ressource": "Bureau 12",
+        "debut": "2026-11-15",
+        "duree_min": 120,
+        "cree_le": "2026-10-17"
+      }
+    },
+    {
+      "id": "RES-20261017-09",
+      "type": "creation",
+      "horodatage": "2026-10-17T06:32:00+02:00",
+      "objet": "réservation",
+      "donnees": {
+        "reference": "RES-20261017-09",
+        "statut": "demandee",
+        "categorie": "salle",
+        "demandeur": "Rayan Martin",
+        "ressource": "Salle Vauban",
+        "debut": "2026-10-18",
+        "duree_min": 30,
+        "cree_le": "2026-10-17"
+      }
+    },
+    {
+      "id": "RES-20261017-09",
+      "type": "creation",
+      "horodatage": "2026-10-17T06:32:00+02:00",
+      "objet": "réservation",
+      "donnees": {
+        "reference": "RES-20261017-09",
+        "statut": "demandee",
+        "categorie": "salle",
+        "demandeur": "Rayan Martin",
+        "ressource": "Salle Vauban",
+        "debut": "2026-10-18",
+        "duree_min": 30,
+        "cree_le": "2026-10-17"
+      }
+    },
+    {
+      "id": "RES-20261017-11",
+      "type": "creation",
+      "horodatage": "2026-10-17T09:10:00+02:00",
+      "objet": "réservation",
+      "donnees": {
+        "reference": "RES-20261017-11",
+        "statut": "demandee",
+        "categorie": "salle",
+        "demandeur": "Hugo Roux",
+        "ressource": "Salle Colbert",
+        "debut": "2026-11-26",
+        "duree_min": 90,
+        "cree_le": "2026-10-17"
+      }
+    },
+    {
+      "id": "RES-20261017-12",
+      "type": "message",
+      "horodatage": "2026-10-17T09:22:00+02:00",
+      "objet": "réservation",
+      "donnees": {
+        "reference": "RES-20261009-05",
+        "de": "Théo Durand",
+        "texte": "Merci d'annuler la réservation de jeudi, la réunion est reportée."
+      }
+    },
+    {
+      "id": "RES-20261017-08",
+      "type": "creation",
+      "horodatage": "2026-10-17T10:41:00+02:00",
+      "objet": "réservation",
+      "donnees": {
+        "reference": "RES-20261017-08",
+        "statut": "demandee",
+        "categorie": "intervention",
+        "demandeur": "Zoé Roux",
+        "ressource": "Salle Colbert",
+        "debut": "2026-11-07",
+        "duree_min": 60,
+        "cree_le": "2026-10-17"
+      }
+    },
+    {
+      "id": "RES-20261017-04",
+      "type": "mise_a_jour",
+      "horodatage": "2026-10-17T12:17:00+02:00",
+      "objet": "réservation",
+      "donnees": {
+        "reference": "RES-20261006-02",
+        "statut": "confirmee",
+        "commentaire": "En attente de pièce."
+      }
+    },
+    {
+      "id": "RES-20261017-02",
+      "type": "message",
+      "horodatage": "2026-10-17T12:49:00+02:00",
+      "objet": "réservation",
+      "donnees": {
+        "reference": "RES-20260926-11",
+        "de": "Camille Laurent",
+        "texte": "Pouvez-vous décaler ma réservation d'une heure ? Un imprévu."
+      }
+    },
+    {
+      "id": "RES-20261017-10",
+      "type": "creation",
+      "horodatage": "2026-10-17T14:30:00+02:00",
+      "objet": "réservation",
+      "donnees": {
+        "reference": "RES-20261017-10",
+        "statut": "demandee",
+        "categorie": "salle",
+        "demandeur": "Nour Garcia",
+        "ressource": "Atelier",
+        "debut": "2026-10-19",
+        "duree_min": 30,
+        "cree_le": "2026-10-17"
+      }
+    },
+    {
+      "id": "RES-20261017-03",
+      "type": "creation",
+      "horodatage": "2026-10-17T14:44:00+02:00",
+      "objet": "réservation",
+      "donnees": {
+        "reference": "RES-20261017-03",
+        "statut": "demandee",
+        "categorie": "rendez_vous",
+        "demandeur": "Camille Garcia",
+        "ressource": "Salle Colbert",
+        "debut": "2026-11-22",
+        "duree_min": 240,
+        "cree_le": "2026-10-17"
+      }
+    },
+    {
+      "id": "RES-20261017-03",
+      "type": "creation",
+      "horodatage": "2026-10-17T14:44:00+02:00",
+      "objet": "réservation",
+      "donnees": {
+        "reference": "RES-20261017-03",
+        "statut": "demandee",
+        "categorie": "rendez_vous",
+        "demandeur": "Camille Garcia",
+        "ressource": "Salle Colbert",
+        "debut": "2026-11-22",
+        "duree_min": 240,
+        "cree_le": "2026-10-17"
+      }
+    },
+    {
+      "id": "RES-20261017-07",
+      "type": "creation",
+      "horodatage": "2026-10-17T15:24:00+02:00",
+      "objet": "réservation",
+      "donnees": {
+        "reference": "RES-20261017-07",
+        "statut": "demandee",
+        "categorie": "intervention",
+        "demandeur": "Jules Durand",
+        "ressource": "Atelier",
+        "debut": "2026-11-16",
+        "duree_min": 120,
+        "cree_le": "2026-10-17"
+      }
+    }
+  ]
+}
