@@ -3,7 +3,8 @@ import type { BatchItem } from "drizzle-orm/batch";
 import { db } from "@/db";
 import { demandesRecues, evenementsFlux, executions } from "@/db/schema";
 import { appelerFlux } from "./appel-flux";
-import { bilanNuit, lireNuit, type Compteurs, type EvenementLu } from "./flux";
+import { jourLocal } from "./calendrier";
+import { bilanNuit, lireNuit, prochaineNuit, type Compteurs, type EvenementLu } from "./flux";
 
 // Import d'une nuit du flux : verrou, appel, lecture, écriture en un seul bloc. Ne lève jamais d'erreur.
 
@@ -136,4 +137,13 @@ function effetSurLesDemandes(e: EvenementLu): BatchItem<"pg">[] {
     ];
   }
   return [];
+}
+
+// Nuit proposée dans le formulaire : le premier trou depuis le 20/09, sinon la nuit qui vient de finir.
+export async function nuitAProposer(): Promise<string> {
+  const reussies = await db
+    .selectDistinct({ nuitDu: executions.nuitDu })
+    .from(executions)
+    .where(eq(executions.etat, "reussie"));
+  return prochaineNuit(new Set(reussies.map((l) => l.nuitDu)), jourLocal(new Date(), "France"));
 }
