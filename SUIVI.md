@@ -215,6 +215,12 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 - ~~**Reporté** (noté le 18/10) : bouton « Nouvel engagement » au niveau des filtres~~ ✅ fait dans la passe « envoi ».
 - **Reporté** (noté le 18/10, demande à part avec son cadrage) : filtrer les engagements par programmateur (utile
   pour une facturation globale).
+- **Question notée le 18/10** (après la semaine 3) : une demande reçue devient un engagement au statut « demande »,
+  pas « option ». Raison actuelle : le flux ne donne pas l'heure, et une option exige date et heure précises, durée et
+  échéance (`src/lib/cycle-de-vie.ts`) ; poser une option, c'est s'engager auprès du programmateur (date tenue jusqu'à
+  l'échéance, relance au récap), ce que l'agent fait après avoir vérifié la disponibilité du musicien. Piste si
+  l'agent pose souvent l'option tout de suite : une case « poser l'option dès la création » (heure et échéance
+  saisies) dans le formulaire de création depuis une demande, plutôt qu'un changement de règle.
 
 - **Fait** : cadrage (SPEC), comptes, squelette Next.js, dépôt GitHub public, site en ligne
   (https://agence-musiciens.vercel.app), région `fra1`, base Neon reliée à Vercel.
