@@ -1,0 +1,162 @@
+<!doctype html>
+<!--
+  Source unique du rendu de la semaine 3 (l'IA dans le produit). Après modification, régénérer le PDF depuis le
+  dossier du projet :
+  "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" --headless --no-pdf-header-footer \
+    --print-to-pdf=docs/ia.pdf "file://$PWD/docs/ia.html"
+-->
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Agence-musiciens — L'IA dans le produit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root { --encre: #1a1a1c; --gris: #6b6b70; --filet: #e4e1da; --fond: #f7f5f0; --or: #b08d3c; --or-pale: #f3ead3; --rouge: #a8322d; }
+  @page { size: A4; margin: 16mm 17mm 18mm; }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: "Geist", -apple-system, "Helvetica Neue", Arial, sans-serif; font-size: 9.8pt; line-height: 1.5; color: var(--encre); }
+  h1, h2, h3 { font-family: "Playfair Display", Georgia, serif; font-weight: 600; font-variant-numeric: lining-nums; }
+  .nouvelle-page { break-before: page; margin-top: 0; }
+
+  .entete { background: var(--encre); color: #fff; padding: 20pt 22pt 18pt; border-radius: 4pt; margin-bottom: 16pt; }
+  .entete .marque { font-size: 8pt; letter-spacing: .18em; text-transform: uppercase; color: var(--or); margin: 0 0 6pt; }
+  .entete h1 { font-size: 25pt; line-height: 1.15; margin: 0 0 6pt; }
+  .entete .sous-titre { margin: 0; color: #cfcfd4; font-size: 9.5pt; }
+  .entete hr { border: 0; border-top: 1px solid var(--or); width: 46pt; margin: 10pt 0 0; }
+
+  .principes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8pt; margin: 0 0 6pt; }
+  .principe { background: var(--fond); border-top: 2px solid var(--or); padding: 7pt 9pt; font-size: 8.8pt; break-inside: avoid; }
+  .principe strong { display: block; font-family: "Playfair Display", Georgia, serif; font-size: 10.5pt; margin-bottom: 2pt; }
+
+  h2 { font-size: 15pt; margin: 18pt 0 8pt; padding-bottom: 4pt; border-bottom: 1px solid var(--filet); break-after: avoid; }
+  h2 .num { color: var(--or); margin-right: 6pt; }
+  p { margin: 0 0 6pt; }
+
+  table { width: 100%; border-collapse: collapse; margin: 4pt 0 8pt; font-size: 8.9pt; }
+  th { text-align: left; font-weight: 600; font-size: 7.8pt; letter-spacing: .06em; text-transform: uppercase; color: var(--gris); border-bottom: 1.5px solid var(--encre); padding: 5pt 6pt; }
+  td { vertical-align: top; padding: 6pt; border-bottom: 1px solid var(--filet); }
+  tr { break-inside: avoid; }
+  td.fonction { width: 21%; }
+  td.fonction strong { display: block; font-size: 9.6pt; }
+  td.fonction span { color: var(--gris); font-size: 8pt; }
+  td.prix { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; font-weight: 500; }
+  .etiquette { display: inline-block; font-size: 7.6pt; font-weight: 600; padding: 0 4pt; border-radius: 3pt; white-space: nowrap; }
+  .absent { border: 1px solid #c9c6bf; color: var(--gris); }
+  .relire { background: var(--rouge); color: #fff; }
+  .ia { background: var(--or-pale); color: #6e5520; }
+  q { quotes: "« " " »"; font-style: italic; }
+
+  .encadre { background: var(--fond); border-left: 3px solid var(--or); padding: 7pt 10pt; margin: 8pt 0; font-size: 9pt; break-inside: avoid; }
+  .note { color: var(--gris); font-size: 8.4pt; }
+  .chiffre { display: flex; gap: 10pt; margin: 8pt 0; break-inside: avoid; }
+  .chiffre div { flex: 1; border: 1px solid var(--filet); border-radius: 3pt; padding: 8pt 10pt; }
+  .chiffre b { display: block; font-family: "Playfair Display", Georgia, serif; font-size: 17pt; font-weight: 600; line-height: 1.1; font-variant-numeric: lining-nums; }
+  .chiffre span { color: var(--gris); font-size: 8.2pt; }
+
+  .etapes { list-style: none; padding: 0; margin: 6pt 0; counter-reset: etape; }
+  .etapes li { position: relative; padding: 0 0 8pt 26pt; break-inside: avoid; }
+  .etapes li::before { counter-increment: etape; content: counter(etape); position: absolute; left: 0; top: 0; width: 17pt; height: 17pt; border-radius: 50%; background: var(--encre); color: #fff; font-size: 8pt; font-weight: 600; text-align: center; line-height: 17pt; }
+  .etapes li strong { display: block; }
+  code { font-family: Menlo, monospace; font-size: 8pt; background: #efede7; padding: 0 3pt; border-radius: 2pt; }
+  .pied { margin-top: 14pt; padding-top: 6pt; border-top: 1px solid var(--filet); color: var(--gris); font-size: 7.8pt; }
+</style>
+</head>
+<body>
+
+<div class="entete">
+  <p class="marque">Agence-musiciens · Semaine 3</p>
+  <h1>L'intelligence artificielle dans le produit</h1>
+  <p class="sous-titre">Fonctions IA, erreurs visibles, coûts et retour d'expérience · 19 octobre 2026</p>
+  <hr>
+</div>
+
+<div class="principes">
+  <div class="principe"><strong>Côté serveur seulement</strong>Claude est appelé depuis le serveur (<code>src/lib/ia.ts</code>) ; la clé reste dans les variables d'environnement de Vercel.</div>
+  <div class="principe"><strong>Réservé à l'agent</strong>Les droits sont vérifiés côté serveur : un musicien est renvoyé, une route d'API répond 403.</div>
+  <div class="principe"><strong>L'agent valide toujours</strong>Aucune réponse du modèle ne déclenche d'action : tout est relu, corrigé, enregistré ou copié par l'agent.</div>
+</div>
+
+<h2><span class="num">1</span>Les fonctions IA et les erreurs visibles</h2>
+<p>Pour chaque fonction : ce qu'elle fait, et ce que l'agent voit lorsque le modèle se trompe ou échoue.</p>
+
+<table>
+  <thead><tr><th>Fonction</th><th>Ce qu'elle fait</th><th>Quand le modèle se trompe, l'agent voit…</th></tr></thead>
+  <tbody>
+    <tr>
+      <td class="fonction"><strong>Lire un courrier</strong><span>Courriers</span></td>
+      <td>Remplit expéditeur, signataire, date, référence, montant et type de dossier, dans un format imposé (sortie structurée, revérifiée à l'arrivée). Pour chaque champ, le modèle cite l'extrait exact du courrier.</td>
+      <td><span class="etiquette absent">absent du courrier</span> si l'information n'y figure pas (courrier sans montant, sans date précise).<br>
+          <span class="etiquette relire">à relire</span> si l'extrait cité est introuvable, ou si la date ou le montant n'y sont pas écrits : le code le vérifie, c'est là qu'une invention se voit (<q>l'IA a peut-être inventé</q>).<br>
+          <q>Réponse de l'IA illisible : rien n'est enregistré</q> si la réponse sort du format. Tout reste modifiable avant l'enregistrement.</td>
+    </tr>
+    <tr>
+      <td class="fonction"><strong>Classer</strong><span>même appel</span></td>
+      <td>Une catégorie parmi quatre (annulation, changement, question, autre), avec une phrase de raison.</td>
+      <td>La catégorie proposée, modifiable avant l'enregistrement.</td>
+    </tr>
+    <tr>
+      <td class="fonction"><strong>Résumer</strong><span>même appel</span></td>
+      <td>Une phrase de résumé.</td>
+      <td><span class="etiquette ia">proposé par l'IA, à relire</span> ; modifiable avant l'enregistrement.</td>
+    </tr>
+    <tr>
+      <td class="fonction"><strong>Brouillon de réponse</strong><span>fiche courrier</span></td>
+      <td>Une réponse courtoise, écrite en streaming, qui ne doit rien inventer ni promettre et demande ce qui manque.</td>
+      <td><span class="etiquette ia">rédigé par l'IA, à relire</span> <q>il ne doit rien promettre que l'agence n'a pas décidé</q>. Le texte n'est ni enregistré ni envoyé : l'agent le corrige, le copie ou le jette.</td>
+    </tr>
+    <tr>
+      <td class="fonction"><strong>Question sur les documents</strong><span>Documents</span></td>
+      <td>Recherche les 5 pages les plus proches parmi les 20 documents indexés (embeddings Voyage AI, pgvector), puis répond en streaming en citant ses sources.</td>
+      <td>Les pages citées sous la réponse, avec la phrase citée ; la liste des 20 documents permet de vérifier une page. Aucune source ne peut être inventée : l'API ne cite que les pages fournies. Question hors sujet : <q>aucune source citée</q>. Les étapes s'affichent pendant l'appel.</td>
+    </tr>
+    <tr>
+      <td class="fonction"><strong>Analyse de la nuit</strong><span>Journal des imports, récap</span></td>
+      <td>Trois à cinq phrases sur ce que le flux a apporté, pour la dernière nuit importée à chaque passage.</td>
+      <td><span class="etiquette ia">Analyse (IA, à relire)</span> ; en cas d'échec, <q>indisponible (raison)</q>, et la nuit est importée quand même. Un message du flux qui contient une consigne reste une donnée : il est balisé et ne peut pas sortir de sa balise.</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="encadre">Lorsque le plafond mensuel ou la limite du jour sont atteints, l'agent lit la raison (<q>Plafond de 5 $ atteint ce mois-ci</q>, <q>Limite de 30 appels à l'IA par jour atteinte</q>) et aucun appel n'est fait.</div>
+
+<h2><span class="num">2</span>Coût par appel et par mois</h2>
+<p>Toutes les fonctions utilisent <strong>Claude Haiku 5.5</strong> (0,10 $ par million de jetons en entrée, 0,50 $ en sortie). <strong>Sonnet 5.5</strong> (2 $ / 10 $) peut être choisi par l'agent pour un courrier complexe. Les embeddings sont calculés par <strong>Voyage AI</strong>, sur son offre gratuite.</p>
+
+<table>
+  <thead><tr><th>Fonction</th><th style="text-align:right">Coût par appel (estimé)</th></tr></thead>
+  <tbody>
+    <tr><td>Lire, classer et résumer un courrier (Haiku)</td><td class="prix">≈ 0,001 $</td></tr>
+    <tr><td>Lire un courrier avec Sonnet</td><td class="prix">≈ 0,01 $</td></tr>
+    <tr><td>Question sur les documents (recherche Voyage comprise, gratuite)</td><td class="prix">≈ 0,001 $</td></tr>
+    <tr><td>Brouillon de réponse</td><td class="prix">≈ 0,0005 $</td></tr>
+    <tr><td>Analyse de la nuit</td><td class="prix">≈ 0,0005 $</td></tr>
+    <tr><td>Indexation des 20 documents (50 pages, une fois ; une page inchangée n'est jamais recalculée)</td><td class="prix">0 $</td></tr>
+  </tbody>
+</table>
+
+<div class="chiffre">
+  <div><b>≈ 0,15 $</b><span>par mois pour une agence : 30 analyses de nuit, 50 courriers, 100 questions, 50 brouillons</span></div>
+  <div><b>5 $</b><span>plafond mensuel dans le produit, doublé d'un plafond de dépense dans la console Anthropic</span></div>
+  <div><b>0 €</b><span>d'infrastructure : offres gratuites de Vercel, Neon, Resend, Sentry, UptimeRobot et Voyage</span></div>
+</div>
+
+<p><strong>Garde-fous.</strong> 30 appels par utilisateur et par jour ; courrier de 10 000 caractères et PDF de 2 Mo au plus ; question de 500 caractères au plus ; au-delà du plafond mensuel, plus aucun appel et une alerte envoyée par Sentry.</p>
+<p class="note">Les coûts par appel sont estimés d'après la taille des appels. Les chiffres réels (coût moyen par appel, total du mois) sont relevés par la page <code>/couts</code> du produit, qui enregistre chaque appel avec ses jetons.</p>
+
+<h2 class="nouvelle-page"><span class="num">3</span>Un moment où l'IA a tourné en rond</h2>
+<p><strong>Contexte.</strong> Le 19 octobre, la prévisualisation de la branche <code>brouillon</code> ne se construisait pas. Le journal de Vercel indiquait : <code>Please provide required params for Postgres driver: url: undefined</code>. L'adresse de la base de données de prévisualisation était absente.</p>
+
+<ol class="etapes">
+  <li><strong>Première hypothèse : un retard.</strong> La même panne avait touché la branche <code>questions</code>, puis disparu au second essai, sans que la cause soit recherchée. L'IA a supposé que, pour une branche neuve, la construction démarrait avant que Neon ait fourni l'adresse de la nouvelle base, et a proposé de relancer le déploiement.</li>
+  <li><strong>Deuxième essai : même échec.</strong> Le déploiement relancé sans cache a échoué de la même façon. Relancer encore, par exemple avec un commit vide, aurait pu se répéter indéfiniment et aurait masqué la cause.</li>
+  <li><strong>Sortie : arrêter de relancer et lire.</strong> Une adresse toujours absente après un second essai ne relève pas d'un retard : la base n'avait jamais été créée. Cause identifiée : l'offre gratuite de Neon limite le nombre de branches de base, et chaque fonctionnalité en avait créé une sans qu'elle soit supprimée après la fusion. Les branches des fonctionnalités déjà fusionnées ont été supprimées dans Neon, la branche principale conservée, et la construction suivante a réussi.</li>
+</ol>
+
+<div class="encadre"><strong>Enseignement.</strong> La panne de la branche <code>questions</code> était le même problème, laissé de côté parce qu'un second essai avait réussi. Deux relances sans progrès signalent qu'il faut s'arrêter et lire le journal, non relancer une troisième fois. Le remède, faire le ménage dans Neon après chaque fusion, est consigné dans le suivi du projet.</div>
+
+<p class="pied">Agence-musiciens · rendu de la semaine 3 · source : <code>docs/ia.html</code></p>
+
+</body>
+</html>
