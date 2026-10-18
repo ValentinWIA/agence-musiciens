@@ -4,8 +4,10 @@ import { Suspense } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { db } from "@/db";
 import { passages } from "@/db/schema";
+import { NB_PASSAGES } from "@/lib/questions";
 import { verifierAdmin } from "@/lib/session";
 import { FormulaireIndexation } from "./formulaire-indexation";
+import { FormulaireQuestion } from "./formulaire-question";
 
 export default function PageQuestions() {
   return (
@@ -25,34 +27,53 @@ async function ContenuQuestions() {
     .from(passages);
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Documents de l&apos;agence</CardTitle>
-        <CardDescription>
-          Les 20 documents du flux (procédures, contrats, comptes rendus), une page par passage. Indexer calcule
-          l&apos;empreinte de sens de chaque page ; une page dont le texte n&apos;a pas changé n&apos;est jamais
-          recalculée. Ce calcul est fait par une IA (Voyage AI, gratuite à ce volume) ; chaque indexation qui
-          recalcule au moins une page est un appel compté sur la page{" "}
-          <Link href="/couts" className="underline">
-            Coûts
-          </Link>
-          .
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="grid gap-4">
-        <p className="text-sm">
-          {etat.passages === 0 ? (
-            "Aucun document indexé pour l'instant."
-          ) : (
-            <>
-              <strong>{etat.passages}</strong> passages de <strong>{etat.documents}</strong> documents, indexés pour la
-              dernière fois le{" "}
-              {etat.dernier?.toLocaleString("fr-FR", { timeZone: "Europe/Paris", dateStyle: "long", timeStyle: "short" })}.
-            </>
-          )}
-        </p>
-        <FormulaireIndexation />
-      </CardContent>
-    </Card>
+    <>
+      <Card>
+        <CardHeader>
+          <CardTitle>Poser une question sur les documents</CardTitle>
+          <CardDescription>
+            L&apos;IA cherche les {NB_PASSAGES} pages les plus proches de la question, puis rédige une réponse qui ne
+            peut citer que ces pages. Elle peut se tromper : relisez les sources citées. Chaque question est un appel
+            à l&apos;IA, compté sur la page{" "}
+            <Link href="/couts" className="underline">
+              Coûts
+            </Link>
+            .
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <FormulaireQuestion />
+        </CardContent>
+      </Card>
+      <Card>
+        <CardHeader>
+          <CardTitle>Documents de l&apos;agence</CardTitle>
+          <CardDescription>
+            Les 20 documents du flux (procédures, contrats, comptes rendus), une page par passage. Indexer calcule
+            l&apos;empreinte de sens de chaque page ; une page dont le texte n&apos;a pas changé n&apos;est jamais
+            recalculée. Ce calcul est fait par une IA (Voyage AI, gratuite à ce volume) ; chaque indexation qui
+            recalcule au moins une page est un appel compté sur la page{" "}
+            <Link href="/couts" className="underline">
+              Coûts
+            </Link>
+            .
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="grid gap-4">
+          <p className="text-sm">
+            {etat.passages === 0 ? (
+              "Aucun document indexé pour l'instant."
+            ) : (
+              <>
+                <strong>{etat.passages}</strong> passages de <strong>{etat.documents}</strong> documents, indexés pour la
+                dernière fois le{" "}
+                {etat.dernier?.toLocaleString("fr-FR", { timeZone: "Europe/Paris", dateStyle: "long", timeStyle: "short" })}.
+              </>
+            )}
+          </p>
+          <FormulaireIndexation />
+        </CardContent>
+      </Card>
+    </>
   );
 }

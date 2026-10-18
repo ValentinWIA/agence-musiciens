@@ -1,8 +1,9 @@
 import "server-only"; // la clé Voyage et celle du flux ne doivent jamais partir vers le navigateur
-import { sql } from "drizzle-orm";
+import { cosineDistance, sql } from "drizzle-orm";
 import { z } from "zod";
 import { db } from "@/db";
 import { appelsIa, passages } from "@/db/schema";
+import type { PassageTrouve } from "./questions";
 import { clePassage, documentFlux, listeDocuments, passagesACalculer, passagesDe, texteAIndexer, type Passage } from "./documents";
 
 // Indexation des documents du flux (docs/semaine-3.md, I4) : lancée au bouton, jamais la nuit.
@@ -29,25 +30,30 @@ const reponseVoyage = z.object({
   usage: z.object({ total_tokens: z.number() }),
 });
 
+async function appelerVoyage(textes: string[], type: "document" | "query", cle: string) {
+  const res = await fetch(ADRESSE_VOYAGE, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${cle}`, "Content-Type": "application/json" },
+    body: JSON.stringify({ input: textes, model: MODELE_EMBEDDING, input_type: type, output_dimension: 1024 }),
+    signal: AbortSignal.timeout(60_000),
+  });
+  if (res.status === 429) throw new Error("Voyage : trop de demandes, réessayez dans une minute");
+  if (!res.ok) throw new Error(`Voyage : réponse ${res.status}`);
+  const corps = reponseVoyage.parse(await res.json());
+  if (corps.data.length !== textes.length) throw new Error("Voyage : nombre de vecteurs inattendu");
+  return { vecteurs: [...corps.data].sort((a, b) => a.index - b.index).map((d) => d.embedding), jetons: corps.usage.total_tokens };
+}
+
 // Un seul appel pour toutes les pages à calculer : les 50 pages font ≈ 6 000 jetons, sous la limite par minute.
 async function calculerVecteurs(textes: string[], cle: string, utilisateurId: string): Promise<number[][]> {
   const debut = Date.now();
   let jetons = 0;
   let reussi = false;
   try {
-    const res = await fetch(ADRESSE_VOYAGE, {
-      method: "POST",
-      headers: { Authorization: `Bearer ${cle}`, "Content-Type": "application/json" },
-      body: JSON.stringify({ input: textes, model: MODELE_EMBEDDING, input_type: "document", output_dimension: 1024 }),
-      signal: AbortSignal.timeout(60_000),
-    });
-    if (res.status === 429) throw new Error("Voyage : trop de demandes, réessayez dans une minute");
-    if (!res.ok) throw new Error(`Voyage : réponse ${res.status}`);
-    const corps = reponseVoyage.parse(await res.json());
-    if (corps.data.length !== textes.length) throw new Error("Voyage : nombre de vecteurs inattendu");
-    jetons = corps.usage.total_tokens;
+    const resultat = await appelerVoyage(textes, "document", cle);
+    jetons = resultat.jetons;
     reussi = true;
-    return [...corps.data].sort((a, b) => a.index - b.index).map((d) => d.embedding);
+    return resultat.vecteurs;
   } finally {
     // Compté sur /couts comme les appels à Claude ; 0 $ dans l'offre gratuite de Voyage.
     await db.insert(appelsIa).values({
@@ -61,6 +67,21 @@ async function calculerVecteurs(textes: string[], cle: string, utilisateurId: st
       reussi,
     });
   }
+}
+
+// Les pages les plus proches d'une question. Le vecteur de la question n'est pas compté à part sur /couts
+// (gratuit, quelques jetons) : l'appel à Claude qui suit est compté, lui, et c'est lui que limite le quota.
+export async function chercherPassages(texte: string, nombre: number): Promise<PassageTrouve[]> {
+  const cle = process.env.VOYAGE_API_KEY;
+  if (!cle) throw new Error("clé de Voyage absente");
+  const {
+    vecteurs: [vecteur],
+  } = await appelerVoyage([texte], "query", cle);
+  return db
+    .select({ documentId: passages.documentId, titre: passages.titre, page: passages.page, texte: passages.texte })
+    .from(passages)
+    .orderBy(cosineDistance(passages.vecteur, vecteur))
+    .limit(nombre);
 }
 
 export async function indexerDocuments(utilisateurId: string): Promise<ResultatIndexation> {

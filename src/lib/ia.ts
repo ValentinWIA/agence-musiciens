@@ -10,6 +10,7 @@ import { coutAppel, formaterDollars, PLAFOND_MENSUEL, refusAppel, type Modele } 
 export const MODELE_PAR_FONCTION = {
   test: "claude-haiku-5-5",
   courrier: "claude-haiku-5-5",
+  question: "claude-haiku-5-5",
 } as const satisfies Record<string, Modele>;
 export type FonctionIa = keyof typeof MODELE_PAR_FONCTION;
 
@@ -46,6 +47,7 @@ export async function appelerModele(
   utilisateurId: string | null,
   requete: Omit<Anthropic.MessageCreateParamsNonStreaming, "model">,
   modeleChoisi?: Modele, // courriers : Haiku par défaut, Sonnet au choix de l'agent pour un courrier complexe
+  surTexte?: (morceau: string) => void, // donné : la réponse arrive en streaming, morceau par morceau
 ): Promise<ResultatIa> {
   const refus = await verifierLimites(utilisateurId);
   if (refus) {
@@ -60,7 +62,14 @@ export async function appelerModele(
   try {
     // Créé à chaque appel : sans clé, le constructeur échoue, et il ne doit pas faire échouer la construction du site.
     // 60 s au plus par essai, un seul nouvel essai : une fonction Vercel ne doit pas attendre des minutes.
-    reponse = await new Anthropic({ timeout: 60_000, maxRetries: 1 }).messages.create({ ...requete, model: modele });
+    const client = new Anthropic({ timeout: 60_000, maxRetries: 1 });
+    if (surTexte) {
+      const flux = client.messages.stream({ ...requete, model: modele });
+      flux.on("text", surTexte);
+      reponse = await flux.finalMessage();
+    } else {
+      reponse = await client.messages.create({ ...requete, model: modele });
+    }
   } catch (e) {
     erreur = messageErreur(e);
   }
