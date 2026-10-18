@@ -20,6 +20,7 @@ export type Statut = keyof typeof LIBELLES_STATUT;
 export type Filtres = {
   statut?: Statut;
   musicien?: string;
+  programmateur?: string;
   periode: "en-cours" | "tous";
   recherche?: string;
 };
@@ -31,6 +32,7 @@ type Lecteur = { id: string; nom: string; role: "admin" | "musicien" };
 export async function listerEngagements(lecteur: Lecteur, filtres: Filtres) {
   const conditions: SQL[] = [];
   if (filtres.statut) conditions.push(eq(engagements.statut, filtres.statut));
+  if (filtres.programmateur) conditions.push(eq(engagements.programmateurId, filtres.programmateur));
   if (filtres.recherche) {
     const motif = `%${filtres.recherche}%`;
     conditions.push(or(ilike(lieux.nom, motif), ilike(lieux.ville, motif), ilike(engagements.titre, motif))!);

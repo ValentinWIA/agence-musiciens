@@ -9,7 +9,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { formaterMontant } from "@/lib/argent";
 import { dateDepassee, estEnCours } from "@/lib/cycle-de-vie";
 import { formaterDebut } from "@/lib/dates";
-import { LIBELLES_STATUT, listerEngagements, listerMusiciens, type Filtres, type Statut } from "@/lib/engagements";
+import { LIBELLES_STATUT, listerEngagements, listerMusiciens, listerProgrammateurs, type Filtres, type Statut } from "@/lib/engagements";
+import { presenterProgrammateur } from "@/lib/programmateurs";
 import { verifierSession } from "@/lib/session";
 
 // Les filtres viennent de l'adresse (?statut=option&periode=tous) : une valeur inconnue est simplement ignorée
@@ -17,6 +18,7 @@ import { verifierSession } from "@/lib/session";
 const schemaFiltres = z.object({
   statut: z.enum(Object.keys(LIBELLES_STATUT) as [keyof typeof LIBELLES_STATUT]).optional().catch(undefined),
   musicien: z.uuid().optional().catch(undefined),
+  programmateur: z.uuid().optional().catch(undefined),
   periode: z.enum(["en-cours", "tous"]).catch("en-cours"),
   recherche: z.string().trim().max(100).optional().catch(undefined).transform((t) => t || undefined),
 });
@@ -36,11 +38,12 @@ async function ContenuEngagements({ searchParams }: { searchParams: Promise<Reco
   const filtres: Filtres = schemaFiltres.parse(await searchParams);
   const estAgent = utilisateur.role === "admin";
 
-  const [liste, musiciens] = await Promise.all([
+  const [liste, musiciens, programmateurs] = await Promise.all([
     listerEngagements(utilisateur, filtres),
     estAgent ? listerMusiciens() : Promise.resolve([]),
+    estAgent ? listerProgrammateurs() : Promise.resolve([]),
   ]);
-  const filtresActifs = !!(filtres.statut || filtres.musicien || filtres.recherche);
+  const filtresActifs = !!(filtres.statut || filtres.musicien || filtres.programmateur || filtres.recherche);
   // Payé ou annulé ne sont jamais « en cours » : on le dit, plutôt qu'une liste vide sans explication.
   const statutHorsEnCours =
     filtres.periode === "en-cours" && filtres.statut && !estEnCours({ statut: filtres.statut, cachet: null });
@@ -64,6 +67,17 @@ async function ContenuEngagements({ searchParams }: { searchParams: Promise<Reco
             {musiciens.map((m) => (
               <NativeSelectOption key={m.id} value={m.id}>
                 {m.nom}
+              </NativeSelectOption>
+            ))}
+          </NativeSelect>
+        )}
+        {/* Regroupe ce qui concerne un même programmateur (facturation globale) ; « Nom — Structure » distingue les homonymes. */}
+        {estAgent && (
+          <NativeSelect name="programmateur" defaultValue={filtres.programmateur ?? ""} aria-label="Programmateur">
+            <NativeSelectOption value="">Tous les programmateurs</NativeSelectOption>
+            {programmateurs.map((p) => (
+              <NativeSelectOption key={p.id} value={p.id}>
+                {presenterProgrammateur(p)}
               </NativeSelectOption>
             ))}
           </NativeSelect>
