@@ -5,16 +5,19 @@ const agent = { id: "a1", role: "admin" as const };
 const louis = { id: "m1", role: "musicien" as const };
 
 describe("liens du menu selon le rôle", () => {
-  it("donne à l'agent ses 7 pages, dans l'ordre (journal des imports depuis les demandes, invitations depuis les musiciens)", () => {
+  it("donne à l'agent ses 6 pages, dans l'ordre (journal des imports depuis les demandes, invitations depuis les musiciens)", () => {
     expect(liensDuMenu(agent).map((l) => l.libelle)).toEqual([
       "Tableau de bord",
       "Engagements",
       "Demandes reçues",
+      "Musiciens",
       "Courriers",
       "Documents",
-      "Calendrier",
-      "Musiciens",
     ]);
+  });
+
+  it("ne met pas le calendrier dans le menu de l'agent (le mois est sur son tableau de bord)", () => {
+    expect(liensDuMenu(agent).map((l) => l.href)).not.toContain("/calendrier");
   });
 
   it("donne au musicien sa fiche (avec son identifiant), ses engagements et le calendrier", () => {

@@ -13,14 +13,14 @@ export function liensDuMenu(
       { href: "/tableau-de-bord", libelle: "Tableau de bord" },
       { href: "/engagements", libelle: "Engagements" },
       { href: "/demandes", libelle: "Demandes reçues" },
-      { href: "/courriers", libelle: "Courriers" },
-      { href: "/questions", libelle: "Documents" },
-      { href: "/calendrier", libelle: "Calendrier" },
       {
         href: "/musiciens",
         libelle: "Musiciens",
         ...(musiciens.length > 0 && { sousLiens: musiciens.map((m) => ({ href: `/musiciens/${m.id}`, libelle: m.nom })) }),
       },
+      { href: "/courriers", libelle: "Courriers" },
+      { href: "/questions", libelle: "Documents" },
+      // Pas de « Calendrier » pour l'agent (retiré le 19/10) : le mois est sur son tableau de bord.
     ];
   }
   // Le musicien n'a pas de tableau de bord : sa fiche est sa page d'accueil.

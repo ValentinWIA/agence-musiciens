@@ -33,6 +33,8 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   (sa seule vue du mois) ; page `/calendrier` inchangée. Mettre à jour `src/lib/menu.test.ts`.
   b. fiche musicien : le **répertoire** remonte sous la photo et les boutons (colonne gauche, ordinateur) ; les notes de
   l'agent restent à droite ; sur téléphone, le répertoire reste en bas.
+  **À reprendre (noté le 19/10)** : affichage de la page « Engagements » : filtres trop loin du haut du tableau,
+  bouton « Nouvel engagement » mal placé. Demande à part, avec sa branche et une planche avant le code.
   Ensuite : n° 2 des reportés (heure « matin / après-midi / soir », heures de 5 en 5 min). Décidé le 19/10 : n° 3
   (`/couts` au menu) et n° 4 (Courriers + Demandes réunis) **abandonnés** ; n° 8 (cartes sur téléphone) reste pour plus
   tard. « Confirmer quand même » avec une raison : **déjà fait** (colonne `raison_conflit`), malgré les mentions
