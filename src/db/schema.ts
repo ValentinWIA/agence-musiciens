@@ -216,3 +216,19 @@ export const appelsIa = pgTable("appels_ia", {
   reussi: boolean("reussi").notNull(),
   creeLe: timestamp("cree_le", { withTimezone: true }).notNull().defaultNow(),
 });
+
+// Un courrier lu par l'IA puis relu et validé par l'agent (docs/semaine-3.md, I2). Champs vides = absents du courrier.
+export const courriers = pgTable("courriers", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  texte: text("texte").notNull(), // gardé pour le brouillon de réponse
+  structure: text("structure"),
+  signataire: text("signataire"),
+  dateCourrier: date("date_courrier"),
+  reference: text("reference"),
+  montant: integer("montant"), // en centimes d'euro
+  typeDossier: text("type_dossier"),
+  classement: text("classement").notNull(), // = CLASSEMENTS (src/lib/courrier.ts)
+  modele: text("modele").notNull(), // le modèle qui l'a lu
+  creePar: uuid("cree_par").references(() => utilisateurs.id, { onDelete: "set null" }),
+  creeLe: timestamp("cree_le", { withTimezone: true }).notNull().defaultNow(),
+});

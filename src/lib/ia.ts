@@ -9,6 +9,7 @@ import { coutAppel, formaterDollars, PLAFOND_MENSUEL, refusAppel, type Modele } 
 // Le seul endroit qui appelle Claude. Le modèle de chaque fonction s'écrit ici, une ligne par fonction.
 export const MODELE_PAR_FONCTION = {
   test: "claude-haiku-5-5",
+  courrier: "claude-haiku-5-5",
 } as const satisfies Record<string, Modele>;
 export type FonctionIa = keyof typeof MODELE_PAR_FONCTION;
 
@@ -44,6 +45,7 @@ export async function appelerModele(
   fonction: FonctionIa,
   utilisateurId: string | null,
   requete: Omit<Anthropic.MessageCreateParamsNonStreaming, "model">,
+  modeleChoisi?: Modele, // provisoire : comparer Haiku et Opus sur les courriers (décision 1)
 ): Promise<ResultatIa> {
   const refus = await verifierLimites(utilisateurId);
   if (refus) {
@@ -51,7 +53,7 @@ export async function appelerModele(
     return { ok: false, erreur: refus };
   }
 
-  const modele = MODELE_PAR_FONCTION[fonction];
+  const modele = modeleChoisi ?? MODELE_PAR_FONCTION[fonction];
   const debut = Date.now();
   let reponse: Anthropic.Message | null = null;
   let erreur: string | null = null;
