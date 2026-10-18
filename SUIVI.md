@@ -10,7 +10,7 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 
 ## État de reprise
 
-*Dernière mise à jour : 18 octobre 2026 (**semaine 2** : N1 à N5, D, R en production ; S en production : semaine 2 terminée)*
+*Dernière mise à jour : 18 octobre 2026 (semaine 2 terminée ; **passe de design « envoi » en production**, PR n° 22)*
 
 - **Semaine 2 — flux de nuit**, branche `flux-de-nuit` (depuis `main`, 17/10). Cadrage validé par l'humain le 17/10 :
   `docs/flux-de-nuit.md` (lu sur une vraie nuit : 15 événements dont 2 doublons ; créations sans musicien, sans heure,
@@ -154,19 +154,47 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   **Semaine 2 terminée** (flux de nuit : N1 à N5, D, R, S en production). Branches Neon des prévisualisations
   supprimées par l'humain le 18/10.
   **Prochaines demandes après S** : les reportés ci-dessous.
+- **Passe de design « envoi » ✅** (branche `design-envoi`, **PR n° 22 fusionnée le 18/10**, `fa52147`). Décidé le 18/10 :
+  le projet doit avoir l'air fini à l'envoi → design **avant** le code de la semaine 3 (une session, ordinateur
+  d'abord). Cadrage, décisions et écarts : `docs/design.md`, section « Passe « envoi » » (sections 1 à 5).
+  Tranches V1 à V8 (`052071f` à `2b3cf97`) : palette « black tie » (cadre noir via la classe `.dark` posée sur le menu
+  et les bandeaux, contenu sur blanc froid, filet or, en-têtes de tableau noirs) ; logo « la maison » C | M et
+  `src/app/icon.svg` ; titres en **Playfair Display** partout ; connexion accueillante (contact fictif
+  `assistance@cm-management.test`, « © CM Management 2026 ») ; tableau de bord en deux colonnes : **« À faire »**
+  (factures à relancer, contrats à envoyer, options qui expirent, demandes à traiter ; 10 lignes par liste, listes
+  réparties en deux colonnes équilibrées), saison en frise verticale centrée, calendrier, liste compacte des musiciens ;
+  liste dépliable des musiciens dans le menu de l'agent ; « Invitations » retiré du menu → tuile « + Inviter un
+  musicien » sur `/musiciens` ; « Nouvel engagement » au niveau des filtres. **« À faire » lit la base avec le même code
+  que le récap** (`src/lib/lecture-a-faire.ts`). 293 tests. Choix faits sur des planches HTML locales (palette et
+  logos, puis cinq polices). **Gestes validés en prévisualisation puis en production le 18/10.**
+  Écart corrigé avant commit : `npx prettier` (absent du projet) avait reformaté un fichier → ne pas l'utiliser.
+  **Reste à vérifier le 18/10** (après le cron, 6 h–7 h) : ligne « cron » sur `/nuit` et récap reçu sans clic, dont les
+  options et factures correspondent au panneau « À faire » (première preuve en production de la lecture partagée).
+  **Le 19/10** : lien « Traiter les demandes reçues » dans le récap du cron. Rien de cassé.
+- **Prochaine demande : filtre des engagements par programmateur** (rappelé par l'humain le 18/10), branche
+  `filtre-programmateur` depuis `main`, court cadrage d'abord (engagements sans programmateur ? filtre dans l'adresse
+  comme les autres ?). Puis **semaine 3 (IA)**.
+- **Semaine 3 — lecture préparatoire faite le 18/10** : 10 courriers (`/api/courriers?sujet=reservations`) lus ; pièges
+  confirmés : COU-07 sans montant, COU-04 daté « la semaine dernière » ; références `RES-2024-589` (format différent
+  des nuits, ne correspondent à aucune demande) ; contenu = réunions et salles, **ni date de concert ni programme** →
+  l'adaptation au vocabulaire du produit est à trancher au cadrage. 20 documents listés (procédures, contrats,
+  comptes rendus, notes de service, FAQ ; 2 à 3 pages chacun) mais **texte des pages pas encore lu** : il faut
+  `GET /api/documents?sujet=reservations&id=DOC-reservations-NN`. Le garde-fou de Claude Code a refusé ces appels
+  (pris pour des données personnelles) → c'est l'humain qui les lance avec `!` (commande dans la conversation du 18/10 :
+  boucle `for n in $(seq -w 1 20)` vers le dossier temporaire de la session).
   Après chaque push, rattraper les nuits sur `/nuit` (le jeu de données vide les tables du flux).
   Clé du flux recopiée dans Vercel (`FLUX_DE_NUIT_CLE`, Production et Preview) le 17/10.
   Domaine `valentinwalczak.com` (OVH, `contact@` déjà utilisé) : envoi par le sous-domaine `mail.` (tranche D).
 - **Reportés en semaine 5** (décidé le 17/10) : améliorations n° 3 (design global) et n° 8 (engagements en cartes
-  sur téléphone), pour une seule passe de design quand tous les écrans existeront.
+  sur téléphone), pour une seule passe de design quand tous les écrans existeront. *(18/10 : n° 3 fait en grande partie
+  par la passe « envoi » ; restent le téléphone (n° 8) et les fiches / formulaires, après l'envoi.)*
 - **Reporté** (noté le 18/10, demande à part avec son cadrage) : l'heure obligatoire d'un engagement est trop
   contraignante → pouvoir choisir « matin », « après-midi (12 h-18 h) » ou « soir » ; heures de 5 en 5 minutes.
   Touche le formulaire d'engagement et sans doute le schéma (précision de la date).
 - **Reporté** (noté le 18/10, demande à part avec son cadrage) : sur la fiche musicien, avant le cachet moyen,
   afficher les **revenus totaux de la saison en cours**. À trancher au cadrage : bornes de la saison (septembre à
   août ?), engagements comptés (confirmés, réalisés, payés ?), cachets en plusieurs devises.
-- **Reporté** (noté le 18/10, petite branche après la fusion de N5) : sur `/engagements`, le bouton « Nouvel
-  engagement » est trop haut ; le placer au même niveau que les filtres.
+- ~~**Reporté** (noté le 18/10) : bouton « Nouvel engagement » au niveau des filtres~~ ✅ fait dans la passe « envoi ».
 - **Reporté** (noté le 18/10, demande à part avec son cadrage) : filtrer les engagements par programmateur (utile
   pour une facturation globale).
 
@@ -730,3 +758,4 @@ déconnexion ; `/tableau-de-bord` sans session → renvoi vers la connexion.
 | 11/10/2026 | Table `utilisateurs` limitée à 7 colonnes | Invitations et réinitialisations iront dans des tables séparées ; ajouter une colonne plus tard est peu coûteux |
 | 17/10/2026 | Flux de nuit : créations rangées dans « Demandes reçues », statuts et messages du flux sans effet sur les engagements, rattrapage depuis le 20/09 | Le flux ne donne ni musicien, ni heure, ni cachet, et ses statuts sautent nos étapes ; l'agent décide ; un message est une donnée, jamais un ordre |
 | 17/10/2026 | Flux : mise à jour ou message vers une demande inconnue mis de côté, messages montrés à part sur `/nuit` et dans le récap | 101 sur 148 visent une demande antérieure au 20/09 ; on ne rattache rien à une demande absente, mais l'agent doit pouvoir lire les messages |
+| 18/10/2026 | Passe de design « envoi » avant le code de la semaine 3 ; palette « black tie » (cadre noir, contenu blanc), Playfair Display, « À faire » sur le tableau de bord | Le projet doit avoir l'air fini à l'envoi même si la semaine 3 n'est pas terminée ; « À faire » reprend les règles et la lecture du récap pour ne jamais le contredire |
