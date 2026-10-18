@@ -17,6 +17,8 @@ import { formaterDebut } from "@/lib/dates";
 import { LIBELLES_STATUT, listerPourCalendrier } from "@/lib/engagements";
 
 const JOURS_SEMAINE = ["lun.", "mar.", "mer.", "jeu.", "ven.", "sam.", "dim."];
+// Taille « sm » des boutons, sous 768 px seulement.
+const PETIT_SUR_TELEPHONE = "max-md:h-7 max-md:px-2.5 max-md:text-[0.8rem]";
 
 type Lecteur = Parameters<typeof listerPourCalendrier>[0];
 type EngagementAffiche = Awaited<ReturnType<typeof listerPourCalendrier>>[number];
@@ -48,15 +50,28 @@ export async function CalendrierMois({
         <Titre className={Titre === "h1" ? "font-logo text-4xl leading-tight first-letter:uppercase" : "font-logo text-2xl first-letter:uppercase"}>
           {libelleMois(mois)}
         </Titre>
+        {/* Sur téléphone, flèches seules et petits boutons : les trois tiennent sur une ligne (choix B sur planche). */}
         <nav className="flex flex-wrap gap-2" aria-label="Changer de mois">
-          <Button variant="outline" nativeButton={false} render={<Link href={vers(moisVoisin(mois, -1))} scroll={false} />}>
-            ← Mois précédent
+          <Button
+            variant="outline"
+            className={PETIT_SUR_TELEPHONE}
+            aria-label="Mois précédent"
+            nativeButton={false}
+            render={<Link href={vers(moisVoisin(mois, -1))} scroll={false} />}
+          >
+            ←<span className="max-md:hidden">Mois précédent</span>
           </Button>
-          <Button variant="outline" nativeButton={false} render={<Link href={adresse} scroll={false} />}>
+          <Button variant="outline" className={PETIT_SUR_TELEPHONE} nativeButton={false} render={<Link href={adresse} scroll={false} />}>
             Aujourd&apos;hui
           </Button>
-          <Button variant="outline" nativeButton={false} render={<Link href={vers(moisVoisin(mois, 1))} scroll={false} />}>
-            Mois suivant →
+          <Button
+            variant="outline"
+            className={PETIT_SUR_TELEPHONE}
+            aria-label="Mois suivant"
+            nativeButton={false}
+            render={<Link href={vers(moisVoisin(mois, 1))} scroll={false} />}
+          >
+            <span className="max-md:hidden">Mois suivant</span>→
           </Button>
         </nav>
       </div>
