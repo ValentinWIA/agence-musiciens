@@ -44,8 +44,9 @@ async function ContenuTableauDeBord({ searchParams }: { searchParams: Promise<Re
           </Card>
         </div>
         <div className="grid gap-6">
-          <Indicateurs />
+          {/* Les revenus d'abord : le premier chiffre vu en arrivant (retour du 19/10). */}
           <Revenus />
+          <Indicateurs />
           <Musiciens />
         </div>
       </div>

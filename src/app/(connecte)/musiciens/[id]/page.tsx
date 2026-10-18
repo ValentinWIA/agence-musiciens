@@ -137,7 +137,7 @@ async function FicheMusicien({
                 )}
               </Bloc>
               <Bloc titre="Par statut">
-                <ul className="flex flex-wrap gap-2 text-sm">
+                <ul className="flex flex-wrap justify-center gap-2 text-sm">
                   {(Object.keys(LIBELLES_STATUT) as Statut[])
                     .filter((s) => recap.parStatut[s])
                     .map((s) => (
@@ -188,24 +188,22 @@ type LigneEngagement = {
 function ListeEngagements({ liste, vide }: { liste: LigneEngagement[]; vide: string }) {
   if (liste.length === 0) return <p className="text-sm text-muted-foreground italic">{vide}</p>;
   return (
-    <table className="w-full text-sm">
-      <tbody>
-        {liste.map((e) => (
-          <tr key={e.id} className="border-t first:border-t-0">
-            <td className="py-2 pr-3 whitespace-nowrap">{formaterDebut(e.debut, e.precisionDate, e.pays)}</td>
-            <td className="py-2 pr-3">
-              <Link href={`/engagements/${e.id}`} className="underline">
-                {e.titre ? `${e.titre} — ` : ""}
-                {e.lieu}, {e.ville}
-              </Link>
-            </td>
-            <td className="py-2 text-right">
-              <BadgeStatut statut={e.statut} />
-            </td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
+    // Une ligne par engagement sur ordinateur ; sur téléphone, date et statut en haut, lieu dessous
+    // (un tableau ne rétrécit pas : les pastilles débordaient, 19/10).
+    <ul className="text-sm">
+      {liste.map((e) => (
+        <li key={e.id} className="grid grid-cols-[1fr_auto] items-center gap-x-3 gap-y-0.5 border-t py-2 first:border-t-0 sm:grid-cols-[auto_1fr_auto]">
+          <span className="whitespace-nowrap">{formaterDebut(e.debut, e.precisionDate, e.pays)}</span>
+          <Link href={`/engagements/${e.id}`} className="col-span-2 row-start-2 min-w-0 break-words underline sm:col-span-1 sm:row-start-auto">
+            {e.titre ? `${e.titre} — ` : ""}
+            {e.lieu}, {e.ville}
+          </Link>
+          <span className="col-start-2 row-start-1 justify-self-end sm:col-start-3">
+            <BadgeStatut statut={e.statut} />
+          </span>
+        </li>
+      ))}
+    </ul>
   );
 }
 

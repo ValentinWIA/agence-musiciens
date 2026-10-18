@@ -48,7 +48,8 @@ export function AjoutPiece({ id }: { id: string }) {
           <span className="text-sm font-medium">Fichier PDF (4 Mo au plus)</span>
           {/* Champ natif caché (son bouton « Choisir un fichier » ne se renomme pas) mais toujours envoyé avec le
               formulaire ; nos libellés ouvrent le même sélecteur. */}
-          <div className="flex flex-wrap items-center gap-2">
+          {/* relative : sinon le champ caché, large comme l'écran, élargit la page sur téléphone. */}
+          <div className="relative flex flex-wrap items-center gap-2">
             <Input
               id="fichier-piece"
               name="fichier"
