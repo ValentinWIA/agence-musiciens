@@ -14,7 +14,7 @@ export function liensDuMenu(
       { href: "/engagements", libelle: "Engagements" },
       { href: "/demandes", libelle: "Demandes reçues" },
       { href: "/courriers", libelle: "Courriers" },
-      { href: "/questions", libelle: "Questions" },
+      { href: "/questions", libelle: "Documents" },
       { href: "/calendrier", libelle: "Calendrier" },
       {
         href: "/musiciens",
