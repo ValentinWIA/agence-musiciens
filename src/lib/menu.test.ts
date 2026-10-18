@@ -11,7 +11,7 @@ describe("liens du menu selon le rôle", () => {
       "Engagements",
       "Demandes reçues",
       "Courriers",
-      "Questions",
+      "Documents",
       "Calendrier",
       "Musiciens",
     ]);
