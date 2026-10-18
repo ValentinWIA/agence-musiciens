@@ -10,7 +10,7 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 
 ## État de reprise
 
-*Dernière mise à jour : 19 octobre 2026 (semaine 3 : **I1 à I6 en production**, PR n° 24 à 28 ; reste I7, puis le brouillon)*
+*Dernière mise à jour : 19 octobre 2026 (semaine 3 : **I1 à I6 et brouillon faits**, PR n° 24 à 29 ; I7 abandonné par l'humain)*
 
 - **Semaine 2 — flux de nuit**, branche `flux-de-nuit` (depuis `main`, 17/10). Cadrage validé par l'humain le 17/10 :
   `docs/flux-de-nuit.md` (lu sur une vraie nuit : 15 événements dont 2 doublons ; créations sans musicien, sans heure,
@@ -266,8 +266,17 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   limite connue.
   **Reste à vérifier le 20/10** : cron du matin (6 h–7 h, heure de Paris) → ligne « cron » avec analyse sur `/nuit`,
   récap reçu sans clic avec le bloc « ANALYSE (IA, À RELIRE) ».
-  **Prochaine étape** : I7 (rendu, `docs/ia.md`), après `/clear` ; puis, en dernier et facultatif, le brouillon de
-  réponse dans le cadre « Réponse » de la fiche courrier (la fiche n'exige que deux sur trois : classer + résumer, faits).
+  **Brouillon de réponse ✅** (19/10, branche `brouillon`, commit `3489034`) : bouton « Proposer un brouillon (IA) »
+  dans le cadre « Réponse » de la fiche courrier, texte en streaming (route `POST /api/courriers/[id]/brouillon`, agent
+  seulement, 403 sinon ; fonction « brouillon », Haiku 5.5), modifiable, « Copier », mention « rédigé par l'IA, à
+  relire » ; rien n'est enregistré ni envoyé. Consigne : ne rien inventer ni promettre, demander ce qui manque ; courrier
+  balisé comme donnée (`src/lib/brouillon.ts`, 1 test, 331 au total). Gestes validés en prévisualisation le 19/10.
+  **Panne au déploiement** : `url: undefined` à `drizzle-kit migrate` (aussi au 1er déploiement de `questions`) —
+  **limite de branches de l'offre gratuite Neon atteinte**, l'intégration ne créait pas la base de la nouvelle branche ;
+  l'humain a supprimé dans Neon les branches de prévisualisation des fonctionnalités fusionnées, puis « Redeploy ».
+  **À refaire avant chaque nouvelle branche** si la liste est pleine (jamais la branche principale).
+  **I7 (rendu `docs/ia.md`) abandonné** par l'humain le 19/10.
+  **Prochaine étape** : semaine 4 (agent), après `/clear`.
   Après chaque push, rattraper les nuits sur `/nuit` (le jeu de données vide les tables du flux).
   Clé du flux recopiée dans Vercel (`FLUX_DE_NUIT_CLE`, Production et Preview) le 17/10.
   Domaine `valentinwalczak.com` (OVH, `contact@` déjà utilisé) : envoi par le sous-domaine `mail.` (tranche D).
