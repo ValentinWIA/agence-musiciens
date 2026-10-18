@@ -198,8 +198,14 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   natives de l'API pour les questions ; modèle **choisi sur mesure en I2** (Haiku 5.5 contre Opus 5.5 sur les 10
   courriers) ; Voyage AI si gratuit ; fonctions IA pour l'agent seulement ; classer + brouillon (pas de résumé) ;
   courrier enregistré après validation ; 30 appels par jour et plafond de 5 $ par mois ; analyse de nuit sur `/nuit`
-  et dans le récap. Plan I1 → I7 (section 7). **Prochaine étape : détail de I1 (socle)**, puis clé Anthropic créée
-  par l'humain avec un plafond de dépense dans la console.
+  et dans le récap. Plan I1 → I7 (section 7). Consigne de l'humain : **strict nécessaire, au plus simple**.
+  **I1 ✅** (`8ea3074`) : `@anthropic-ai/sdk`, `src/lib/couts-ia.ts` (prix en millionièmes de dollar, 30 appels par
+  jour, plafond 5 $ par mois, 6 tests, 299 au total), `src/lib/ia.ts` (seul appel à Claude, `server-only`, limites
+  vérifiées avant, appel enregistré même en échec, Sentry au plafond, 60 s et un nouvel essai au plus), migration 0016
+  (`appels_ia`, jamais vidée par le jeu de données), page `/couts` (agent) avec « Tester l'IA », lien depuis `/nuit`.
+  Clé `ANTHROPIC_API_KEY` (Production et Preview) et plafond de dépense dans la console : faits par l'humain.
+  Geste validé en prévisualisation le 18/10 : page vide, test → « OK » et ligne comptée, lien sur `/nuit`, musicien
+  renvoyé. **Prochaine étape : I2 (lecture d'un courrier)**, même branche.
   Après chaque push, rattraper les nuits sur `/nuit` (le jeu de données vide les tables du flux).
   Clé du flux recopiée dans Vercel (`FLUX_DE_NUIT_CLE`, Production et Preview) le 17/10.
   Domaine `valentinwalczak.com` (OVH, `contact@` déjà utilisé) : envoi par le sous-domaine `mail.` (tranche D).
