@@ -14,6 +14,9 @@ export default function LayoutPublic({ children }: { children: React.ReactNode }
         </div>
       </header>
       {children}
+      <footer className="py-6 text-center text-xs tracking-[0.2em] text-muted-foreground uppercase">
+        © CM Management 2026
+      </footer>
     </>
   );
 }
