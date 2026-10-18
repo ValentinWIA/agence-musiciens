@@ -10,7 +10,7 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 
 ## État de reprise
 
-*Dernière mise à jour : 18 octobre 2026 (**semaine 2** : N1 à N5, D, R en production ; S en cours, S1 à S3 validées, reprise à S4)*
+*Dernière mise à jour : 18 octobre 2026 (**semaine 2** : N1 à N5, D, R en production ; S en production : semaine 2 terminée)*
 
 - **Semaine 2 — flux de nuit**, branche `flux-de-nuit` (depuis `main`, 17/10). Cadrage validé par l'humain le 17/10 :
   `docs/flux-de-nuit.md` (lu sur une vraie nuit : 15 événements dont 2 doublons ; créations sans musicien, sans heure,
@@ -45,7 +45,7 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   journalisé (User-Agent Chrome) ; 28 nuits rattrapées au bouton ; « Run » du cron dans Vercel → 200, « 0 nuit(s)
   importée(s) » (tout était à jour). Le 1er « Run » n'avait laissé aucune trace (clic sans effet). Le premier passage
   automatique aura lieu le 18/10 entre 6 h et 7 h (heure de Paris) : vérifier une ligne « cron » au journal.
-  À faire par l'humain : supprimer la branche Neon `preview/flux-de-nuit`. Rien de cassé.
+  Rien de cassé.
   **D ✅** (17/10, branche `domaine` depuis `recap`, plan = section 13 du cadrage, commit `1423458`) :
   passée avant R (le récap doit arriver chez l'agent). Expéditeur `ne-pas-repondre@mail.valentinwalczak.com` ; rien
   n'est envoyé vers une adresse `.test` (3 tests, 228 au total). Panne trouvée : `RESEND_API_KEY` refusée par Resend
@@ -70,8 +70,7 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   **PR n° 18 fusionnée le 17/10** (`e093c24`, migration 0012 jouée en production). **Gestes validés en production le
   17/10** : option posée (J+14 proposé, date passée refusée, échéance affichée) ; récap reçu au bouton, second clic →
   « Déjà envoyé aujourd'hui ». **Reste à vérifier le 18/10** : récap reçu sans clic après le cron (6 h–7 h, heure de
-  Paris) et ligne « cron » au journal. À faire par l'humain : supprimer les branches Neon `preview/recap` et
-  `preview/domaine`. Rien de cassé.
+  Paris) et ligne « cron » au journal. Rien de cassé.
   **Échéance sous la pastille ✅** (17/10, branche `echeance-option`, commit `b82975f`) : sur la fiche d'une option,
   « jusqu'au sam. 31 oct. » en petit sous la pastille, agent seulement, en orange à 7 jours ou moins ou passée ; ligne
   « Option » du bas retirée. Règle partagée avec le récap (`optionARelancer`, `src/lib/recap.ts`, 1 test, 245 au total).
@@ -79,7 +78,7 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   (`d5b548c`), vérifiée en production. Trouvé en production : les 6 options du jeu de données, chargées le 16/10 avant
   la migration 0012, n'avaient pas d'échéance (ni affichée, ni au récap) ; dates du jeu de données remises par l'humain
   en SQL dans Neon (6 lignes), affichage vérifié. **Le 18/10, le récap doit lister 3 options à relancer** (Londres
-  passée, Zurich, Bordeaux). À faire par l'humain : supprimer la branche Neon `preview/echeance-option`. Rien de cassé.
+  passée, Zurich, Bordeaux). Rien de cassé.
   **N5 ✅** (branche `demandes-recues`, PR n° 20 fusionnée le 18/10, `6185d2e`). Plan validé = **section 15 du cadrage**
   (`c0967b2`) : 7 tranches, pushs groupés N5a+N5b, N5c, N5d, N5e, N5f+N5g. Décidé : annulée / terminée sortent de
   « À traiter » ; « Remettre à traiter » existe.
@@ -124,9 +123,8 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   **PR n° 20 fusionnée le 18/10** (`6185d2e`, migrations 0013 et 0014 jouées en production). **Gestes validés en
   production le 18/10** : menu, liste `/demandes`, fiche, formulaire pré-rempli (sous-titre, « + nouveau
   programmateur », annulé sans rien enregistrer), musicien renvoyé. **Reste à vérifier le 19/10** : lien « Traiter les
-  demandes reçues » dans le récap du cron. À faire par l'humain : supprimer la branche Neon `preview/demandes-recues`.
-  Rien de cassé.
-  **S 🔄** (branche `surveillance` depuis `main`, 18/10). Plan validé = **section 16 du cadrage** (`3eeede2`) : S1 santé,
+  demandes reçues » dans le récap du cron. Rien de cassé.
+  **S ✅** (branche `surveillance` depuis `main`, 18/10). Plan validé = **section 16 du cadrage** (`3eeede2`) : S1 santé,
   S2 Sentry, S3 alerte de panne, S4 UptimeRobot. Décidé : **deux sondes** (`/api/sante` toutes les 5 min sans la base,
   `?base=1` toutes les heures : Neon gratuit = 100 CU-h/mois, une sonde de la base toutes les 5 min l'épuiserait) ;
   bouton « Envoyer une erreur de test » sur `/nuit` ; pas de `SENTRY_AUTH_TOKEN` ; **pas de captures** (décidé au geste).
@@ -146,9 +144,15 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   Gestes validés en prévisualisation le 18/10 (fausse `FLUX_DE_NUIT_CLE` en Preview, branche `surveillance`) :
   1er échec → courriel, erreur Sentry, mention sur `/nuit` ; 2e échec → rien de plus ; variable de branche supprimée,
   Redeploy → rattrapage réussi.
-  **Reprise : S4** (l'humain, sans code) : UptimeRobot, sonde `/api/sante` toutes les 5 min et `/api/sante?base=1`
-  toutes les heures (adresse de production) ; preuve par une sonde de test sur une adresse en 404, reçue puis supprimée.
-  Puis PR, fusion (migration 0015 jouée en production), erreur de test Sentry en production.
+  **S4 ✅** (18/10, l'humain, sans code) : compte UptimeRobot, sonde `/api/sante` toutes les 5 min et
+  `/api/sante?base=1` toutes les heures, sur la production. Preuve : la sonde 1, créée avant la fusion, a reçu un 404
+  (`/api/sante` n'existait pas encore en production) → courriel « Down » reçu ; vertes après la fusion.
+  **PR n° 21 fusionnée le 18/10** (`bf469a6`, migration 0015 jouée en production). **Gestes validés en production le
+  18/10** : sondes UptimeRobot vertes, erreur de test Sentry reçue (environnement `production`), `/nuit` inchangée.
+  Leçon : une sonde ne surveille que la production (les prévisualisations sont protégées, 302) → la créer après la
+  fusion. Rien de cassé.
+  **Semaine 2 terminée** (flux de nuit : N1 à N5, D, R, S en production). Branches Neon des prévisualisations
+  supprimées par l'humain le 18/10.
   **Prochaines demandes après S** : les reportés ci-dessous.
   Après chaque push, rattraper les nuits sur `/nuit` (le jeu de données vide les tables du flux).
   Clé du flux recopiée dans Vercel (`FLUX_DE_NUIT_CLE`, Production et Preview) le 17/10.
