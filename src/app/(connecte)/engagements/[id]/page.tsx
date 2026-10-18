@@ -167,7 +167,7 @@ async function FicheEngagement({
           </div>
         )}
         <section className="mt-8 grid gap-3" aria-labelledby="titre-pieces">
-          <h2 id="titre-pieces" className="font-medium">
+          <h2 id="titre-pieces" className="font-logo text-xl">
             Pièces jointes
           </h2>
           {pieces.length === 0 ? (

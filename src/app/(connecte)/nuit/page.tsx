@@ -19,7 +19,7 @@ export const maxDuration = 300;
 export default function PageNuit() {
   return (
     <main className="mx-auto grid w-full max-w-5xl gap-6 p-4">
-      <h1 className="text-2xl font-semibold">Journal des imports</h1>
+      <h1 className="font-logo text-4xl leading-tight">Journal des imports</h1>
       <Suspense fallback={<div className="h-96 animate-pulse rounded-md bg-muted" aria-label="Chargement" />}>
         <ContenuNuit />
       </Suspense>

@@ -45,7 +45,7 @@ export async function CalendrierMois({
   return (
     <section className="grid gap-4" aria-label="Calendrier">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <Titre className={Titre === "h1" ? "text-2xl font-semibold first-letter:uppercase" : "font-logo text-3xl first-letter:uppercase"}>
+        <Titre className={Titre === "h1" ? "font-logo text-4xl leading-tight first-letter:uppercase" : "font-logo text-2xl first-letter:uppercase"}>
           {libelleMois(mois)}
         </Titre>
         <nav className="flex flex-wrap gap-2" aria-label="Changer de mois">

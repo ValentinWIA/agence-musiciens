@@ -52,7 +52,7 @@
 
 :root {
   /* Palette « black tie » (docs/design.md, passe « envoi ») : contenu sur blanc froid, cadre en noir (.dark). */
-  --background: oklch(0.975 0.002 260);
+  --background: oklch(0.962 0.003 260);
   --foreground: oklch(0.17 0.005 260);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.17 0.005 260);
