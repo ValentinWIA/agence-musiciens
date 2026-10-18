@@ -10,7 +10,7 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 
 ## État de reprise
 
-*Dernière mise à jour : 19 octobre 2026 (retour au même niveau, PR n° 37)*
+*Dernière mise à jour : 19 octobre 2026 (retouches groupées, PR n° 38)*
 
 - **✅ Revenus de la saison** (19/10, branche `revenus`, **PR n° 32 fusionnée**, `e1dd3ec`). Carte « Revenus de la
   saison » en tête de la colonne droite du tableau de bord : total des cachets (le « chiffre d'affaires » : pas de
@@ -60,11 +60,16 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   19/10. **Reste** : supprimer la branche Neon `preview/retour-engagements`.
   Note : `verifier` (GitHub) peut échouer au build faute de télécharger Playfair chez Google Fonts : incident de
   réseau, relancer (`gh run rerun <n°> --failed`).
-- **Prochaine demande : retouches groupées** (règle ajoutée à `AGENTS.md` le 19/10), branche `retouches`, un commit
-  par retouche : **bouton retour de « Journal des imports » (`/nuit`) vers « Demandes reçues »** (demandé le 19/10 :
-  aucun moyen d'y revenir) ; **boutons du mois sur le tableau de bord** (téléphone, agent) : « Mois précédent /
-  Aujourd'hui / Mois suivant » trop gros, sur deux lignes → les réduire pour une seule ligne ; planche avant le code.
-  Puis : **harmoniser les pages** (demandé le 19/10) : même marge à gauche, titre à la même hauteur, mêmes polices et
+- **✅ Retouches groupées** (19/10, branche `retouches`, **PR n° 38 fusionnée**, `b84477f`), première application de
+  la règle : lien « ← Demandes reçues » au-dessus du titre de « Journal des imports » (`/nuit`) ; boutons du mois
+  (`calendrier-mois.tsx`, donc tableau de bord et page Calendrier) sous 768 px : flèches seules, taille `sm`
+  (`aria-label` gardé), **toujours sous le titre** et répartis sur la largeur (← au-dessus de lundi, → au-dessus de
+  dimanche ; choix C sur planche). Premier essai (à côté du titre si la place le permet) refusé au geste : avec
+  septembre, novembre, décembre les boutons descendaient, le calendrier changeait de forme d'un mois à l'autre.
+  Ordinateur inchangé. Gestes validés en prévisualisation et en production le 19/10.
+  **Reste** : supprimer la branche Neon `preview/retouches` (et `preview/retour-engagements`, `preview/cartes-telephone`
+  si pas déjà fait).
+- **Prochaine demande : harmoniser les pages** (demandé le 19/10) : même marge à gauche, titre à la même hauteur, mêmes polices et
   tailles sur toutes les pages ; commencer par un relevé page par page (captures ordinateur et téléphone).
   Ensuite : n° 2 des reportés (heure « matin / après-midi / soir », heures de 5 en 5 min). Décidé le 19/10 : n° 3
   (`/couts` au menu) et n° 4 (Courriers + Demandes réunis) **abandonnés**. « Confirmer quand même » avec une raison :
