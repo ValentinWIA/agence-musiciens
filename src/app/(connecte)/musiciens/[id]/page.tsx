@@ -209,8 +209,10 @@ function ListeEngagements({ liste, vide }: { liste: LigneEngagement[]; vide: str
 
 function Chiffre({ valeur, legende }: { valeur: string; legende: string }) {
   return (
-    <div className="flex flex-col items-center justify-center rounded-lg border bg-card px-4 py-3 text-center">
-      <b className="block font-logo text-2xl leading-tight">{valeur}</b>
+    // Sous-grille : les cartes partagent les lignes de la grille parente (chiffres sur une même ligne, légendes sur
+    // la suivante), donc chiffres et légendes restent alignés d'une carte à l'autre quelle que soit la longueur du texte.
+    <div className="row-span-2 grid grid-rows-subgrid justify-items-center gap-y-1 rounded-lg border bg-card px-4 py-3 text-center">
+      <b className="self-end font-logo text-2xl leading-tight">{valeur}</b>
       <span className="text-xs text-muted-foreground">{legende}</span>
     </div>
   );

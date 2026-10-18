@@ -60,7 +60,7 @@ async function Musiciens() {
   return (
     <Card>
       <CardContent className="grid gap-3">
-        <h2 className="font-logo text-2xl">
+        <h2 className="text-center font-logo text-2xl">
           <Link href="/musiciens" className="hover:underline">
             Musiciens
           </Link>
