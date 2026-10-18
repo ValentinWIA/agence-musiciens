@@ -155,7 +155,9 @@ function effetSurLesDemandes(e: EvenementLu): BatchItem<"pg">[] {
 export async function analyserNuit({ executionId, nuitDu, donnees }: { executionId: string; nuitDu: string; donnees: string }) {
   try {
     const resultat = await appelerModele("analyse", null, {
-      max_tokens: 600,
+      // La réflexion du modèle compte dans max_tokens : à 600, elle a tout pris et la réponse est arrivée vide.
+      max_tokens: 2000,
+      output_config: { effort: "low" },
       system: CONSIGNE,
       messages: [{ role: "user", content: donnees }],
     });
