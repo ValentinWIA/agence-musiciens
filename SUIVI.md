@@ -215,7 +215,14 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   Gestes validés le 18/10 : COU-07 montant absent, COU-04 date absente, validation, recette → rien de vérifié,
   coûts comptés, musicien renvoyé ; **les 10 courriers justes avec Haiku**. Décidé : **Haiku par défaut** (comparaison
   avec Opus sautée : zéro erreur), **Sonnet 5.5 au choix** dans le menu pour un courrier complexe.
-  **Prochaine étape : I3 (brouillon de réponse)**, même branche.
+  **I3 ✅ (résumé à la place du brouillon)** (`68512cd` à `058eb4e`) : décidé le 18/10 faute de temps ; le résumé
+  (une phrase, même appel que la lecture, migration 0018 `courriers.resume`) remplit l'exigence « deux sur trois »
+  avec le classement ; le streaming exigé est fait en I5. Fiche `/courriers/[id]` (champs, résumé, texte, « Courrier
+  introuvable ») avec un cadre « Réponse » : zone de texte à remplir à la main, non enregistrée, « Rédaction d'un
+  brouillon par l'IA : en développement ». « Valider » renommé **« Enregistrer »** (pouvait se lire comme accepter
+  la demande) avec la phrase « ne répond pas à l'expéditeur et ne modifie aucun engagement ». Gestes validés le
+  18/10 en prévisualisation. **Le brouillon de réponse est à faire après l'envoi de midi.**
+  **Prochaine étape : PR de I1 à I3, fusion avec l'accord de l'humain, vérification en production**, puis I4 et I5.
   Après chaque push, rattraper les nuits sur `/nuit` (le jeu de données vide les tables du flux).
   Clé du flux recopiée dans Vercel (`FLUX_DE_NUIT_CLE`, Production et Preview) le 17/10.
   Domaine `valentinwalczak.com` (OVH, `contact@` déjà utilisé) : envoi par le sous-domaine `mail.` (tranche D).
