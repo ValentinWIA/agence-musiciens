@@ -1,4 +1,5 @@
 import { avg, count, desc, sum } from "drizzle-orm";
+import Link from "next/link";
 import { Suspense } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -12,14 +13,35 @@ import { FormulaireTest } from "./formulaire";
 
 const LIMITE = 20;
 
-export default function PageCouts() {
+// Pages qui mènent ici (?depuis=…) : le lien de retour y ramène. Une valeur inconnue n'affiche aucun lien.
+const RETOURS: Record<string, { href: string; libelle: string }> = {
+  nuit: { href: "/nuit", libelle: "Journal des imports" },
+  courriers: { href: "/courriers", libelle: "Courriers" },
+  questions: { href: "/questions", libelle: "Documents" },
+};
+
+export default function PageCouts({ searchParams }: PageProps<"/couts">) {
   return (
     <main className="mx-auto grid w-full max-w-5xl gap-6 p-4">
+      <Suspense fallback={null}>
+        <Retour searchParams={searchParams} />
+      </Suspense>
       <h1 className="font-logo text-4xl leading-tight">Coûts</h1>
       <Suspense fallback={<div className="h-96 animate-pulse rounded-md bg-muted" aria-label="Chargement" />}>
         <ContenuCouts />
       </Suspense>
     </main>
+  );
+}
+
+async function Retour({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
+  const { depuis } = await searchParams;
+  const retour = typeof depuis === "string" && Object.hasOwn(RETOURS, depuis) ? RETOURS[depuis] : undefined;
+  if (!retour) return null;
+  return (
+    <Link href={retour.href} className="text-sm underline">
+      ← {retour.libelle}
+    </Link>
   );
 }
 

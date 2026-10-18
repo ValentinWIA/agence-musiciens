@@ -94,7 +94,7 @@ async function ContenuNuit() {
           <CardTitle>Exécutions</CardTitle>
           <CardDescription>
             Chaque passage coûte sa durée et ses appels au flux ; le détail des coûts, IA comprise, est sur la page{" "}
-            <Link href="/couts" className="underline">Coûts</Link>.
+            <Link href="/couts?depuis=nuit" className="underline">Coûts</Link>.
           </CardDescription>
         </CardHeader>
         <CardContent>

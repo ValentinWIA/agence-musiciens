@@ -44,7 +44,7 @@ async function ContenuQuestions() {
             L&apos;IA cherche les {NB_PASSAGES} pages les plus proches de la question, puis rédige une réponse qui ne
             peut citer que ces pages. Elle peut se tromper : relisez les sources citées. Chaque question est un appel
             à l&apos;IA, compté sur la page{" "}
-            <Link href="/couts" className="underline">
+            <Link href="/couts?depuis=questions" className="underline">
               Coûts
             </Link>
             .
@@ -62,7 +62,7 @@ async function ContenuQuestions() {
             l&apos;empreinte de sens de chaque page ; une page dont le texte n&apos;a pas changé n&apos;est jamais
             recalculée. Ce calcul est fait par une IA (Voyage AI, gratuite à ce volume) ; chaque indexation qui
             recalcule au moins une page est un appel compté sur la page{" "}
-            <Link href="/couts" className="underline">
+            <Link href="/couts?depuis=questions" className="underline">
               Coûts
             </Link>
             .

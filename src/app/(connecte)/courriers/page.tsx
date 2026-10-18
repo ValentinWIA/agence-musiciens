@@ -35,7 +35,7 @@ async function ContenuCourriers() {
             L&apos;IA lit le courrier et remplit les champs ; un champ absent du courrier reste vide. Vous relisez,
             corrigez, puis enregistrez : rien n&apos;est enregistré ni envoyé sans vous. Chaque lecture est un appel
             à l&apos;IA, compté sur la page{" "}
-            <Link href="/couts" className="underline">
+            <Link href="/couts?depuis=courriers" className="underline">
               Coûts
             </Link>
             .
