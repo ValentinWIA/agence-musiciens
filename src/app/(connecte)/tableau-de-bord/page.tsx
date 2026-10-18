@@ -78,7 +78,7 @@ async function Musiciens() {
           <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-2">
             {musiciens.map((m) => (
               <li key={m.id}>
-                <Link href={`/musiciens/${m.id}`} className="flex flex-col gap-2 rounded-md p-1 hover:bg-muted">
+                <Link href={`/musiciens/${m.id}`} className="flex flex-col items-center gap-2 rounded-md p-1 text-center hover:bg-muted">
                   <Vignette nom={m.nom} photo={m.photo} />
                   <span className="grid leading-tight">
                     <span className="font-medium">{m.nom}</span>

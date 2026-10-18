@@ -83,27 +83,33 @@ async function FicheMusicien({
             <p className="mt-2 whitespace-pre-line text-muted-foreground">{musicien.biographie ?? "Pas encore de biographie."}</p>
           </div>
 
-          <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-            <Chiffre valeur={String(recap.aVenir.length)} legende="engagements à venir" />
-            <Chiffre valeur={String(recap.passes.length)} legende="engagements passés" />
-            <Chiffre
-              valeur={formaterRevenus(revenus.total, revenus.converti)}
-              legende={`revenus de la saison (${periodeSaison(saison)}), part du musicien`}
-            />
-            <Chiffre
-              valeur={
-                "parDevise" in cachet
-                  ? cachet.parDevise.map((m) => formaterMontantArrondi(m.moyenne, m.devise)).join(" · ")
-                  : cachet.enEuros
-                    ? `${cachet.enEuros.converti ? "≈ " : ""}${formaterMontantArrondi(cachet.enEuros.moyenne, "EUR")}`
-                    : "—"
-              }
-              legende={
-                "enEuros" in cachet && cachet.enEuros?.converti && taux
-                  ? `cachet moyen (part du musicien), converti au taux BCE du ${taux.date.split("-").reverse().join("/")}`
-                  : "cachet moyen (part du musicien)"
-              }
-            />
+          {/* Légendes courtes et de même longueur, précisions dans la note dessous : les cartes restent équilibrées. */}
+          <div className="grid gap-2">
+            <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+              <Chiffre valeur={String(recap.aVenir.length)} legende="engagements à venir" />
+              <Chiffre valeur={String(recap.passes.length)} legende="engagements passés" />
+              <Chiffre
+                valeur={formaterRevenus(revenus.total, revenus.converti)}
+                legende="revenus de la saison"
+              />
+              <Chiffre
+                valeur={
+                  "parDevise" in cachet
+                    ? cachet.parDevise.map((m) => formaterMontantArrondi(m.moyenne, m.devise)).join(" · ")
+                    : cachet.enEuros
+                      ? `${cachet.enEuros.converti ? "≈ " : ""}${formaterMontantArrondi(cachet.enEuros.moyenne, "EUR")}`
+                      : "—"
+                }
+                legende="cachet moyen"
+              />
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Saison : {periodeSaison(saison)}. Revenus et cachet moyen : part du musicien, un cachet à plusieurs étant
+              partagé à parts égales.
+              {(revenus.converti || ("enEuros" in cachet && cachet.enEuros?.converti)) &&
+                taux &&
+                ` Converti au taux BCE du ${taux.date.split("-").reverse().join("/")}.`}
+            </p>
           </div>
 
           {estAgent && (
@@ -212,7 +218,9 @@ function Chiffre({ valeur, legende }: { valeur: string; legende: string }) {
     // Sous-grille : les cartes partagent les lignes de la grille parente (chiffres sur une même ligne, légendes sur
     // la suivante), donc chiffres et légendes restent alignés d'une carte à l'autre quelle que soit la longueur du texte.
     <div className="row-span-2 grid grid-rows-subgrid justify-items-center gap-y-1 rounded-lg border bg-card px-4 py-3 text-center">
-      <b className="self-end font-logo text-2xl leading-tight">{valeur}</b>
+      {/* Chiffres « de titrage » : Playfair dessine par défaut des chiffres elzéviriens (3 et 5 descendent, 1 et 2
+          restent petits), qui ne s'alignent jamais d'une carte à l'autre. */}
+      <b className="self-end font-logo text-2xl leading-tight lining-nums tabular-nums">{valeur}</b>
       <span className="text-xs text-muted-foreground">{legende}</span>
     </div>
   );
