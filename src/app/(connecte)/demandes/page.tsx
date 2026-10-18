@@ -11,7 +11,7 @@ import { jourLocal } from "@/lib/calendrier";
 import { formaterDuree } from "@/lib/dates";
 import { LIBELLES_DEMANDE, dateDemandePassee, estATraiter, formaterJourCourt as formaterJour, trierDemandes } from "@/lib/demandes";
 import { verifierAdmin } from "@/lib/session";
-import { DefilerVers } from "./defiler-vers";
+import { DefilerVers } from "@/components/defiler-vers";
 
 const LIMITE_MESSAGES = 100;
 
@@ -150,7 +150,7 @@ async function ContenuDemandes({ searchParams }: { searchParams: Promise<Record<
           </TableBody>
         </Table>
       )}
-      {surlignee && <DefilerVers id={`demande-${surlignee}`} />}
+      {surlignee && <DefilerVers ids={[`demande-${surlignee}`]} />}
 
       <Card>
         <CardHeader>

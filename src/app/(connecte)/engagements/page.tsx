@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { z } from "zod";
 import { BadgeStatut } from "@/components/badge-statut";
+import { DefilerVers } from "@/components/defiler-vers";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select";
@@ -35,7 +36,10 @@ export default function PageEngagements({ searchParams }: PageProps<"/engagement
 
 async function ContenuEngagements({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   const utilisateur = await verifierSession();
-  const filtres: Filtres = schemaFiltres.parse(await searchParams);
+  const recherche = await searchParams;
+  const filtres: Filtres = schemaFiltres.parse(recherche);
+  // Retour d'une fiche (?ici=…) : l'engagement quitté est surligné et ramené à l'écran, comme pour les demandes reçues.
+  const ici = z.uuid().optional().catch(undefined).parse(recherche.ici);
   const estAgent = utilisateur.role === "admin";
 
   const [liste, musiciens, programmateurs] = await Promise.all([
@@ -48,6 +52,9 @@ async function ContenuEngagements({ searchParams }: { searchParams: Promise<Reco
   const statutHorsEnCours =
     filtres.periode === "en-cours" && filtres.statut && !estEnCours({ statut: filtres.statut, cachet: null });
   const maintenant = new Date();
+  // La fiche reçoit les filtres de la liste, pour y revenir telle quelle.
+  const versFiche = (id: string) => `/engagements/${id}?${new URLSearchParams({ liste: new URLSearchParams(lienFiltres(filtres)).toString() })}`;
+  const surligne = "bg-amber-100 shadow-[inset_4px_0_0_var(--color-amber-500)] hover:bg-amber-100";
 
   return (
     <>
@@ -130,7 +137,11 @@ async function ContenuEngagements({ searchParams }: { searchParams: Promise<Reco
             <ul className="grid gap-2 md:hidden">
               {liste.map((e) => (
                 <li key={e.id}>
-                  <Link href={`/engagements/${e.id}`} className="grid gap-1 rounded-lg border bg-card p-3 shadow-sm">
+                  <Link
+                    href={versFiche(e.id)}
+                    id={`carte-${e.id}`}
+                    className={`grid gap-1 rounded-lg border p-3 shadow-sm ${e.id === ici ? "border-l-4 border-l-amber-500 bg-amber-100 pl-[9px]" : "bg-card"}`}
+                  >
                     <div className="flex items-start justify-between gap-2">
                       <span>
                         <span className="font-medium">{formaterDebut(e.debut, e.precisionDate, e.pays)}</span>
@@ -165,9 +176,9 @@ async function ContenuEngagements({ searchParams }: { searchParams: Promise<Reco
                 </TableHeader>
                 <TableBody>
                   {liste.map((e) => (
-                    <TableRow key={e.id}>
+                    <TableRow key={e.id} id={`engagement-${e.id}`} className={e.id === ici ? surligne : undefined}>
                       <TableCell>
-                        <Link href={`/engagements/${e.id}`} className="underline">
+                        <Link href={versFiche(e.id)} className="underline">
                           {formaterDebut(e.debut, e.precisionDate, e.pays)}
                         </Link>
                         {/* Une demande, une option ou un contrat envoyé dont la date est passée : à régler ou à annuler.
@@ -192,6 +203,7 @@ async function ContenuEngagements({ searchParams }: { searchParams: Promise<Reco
                 </TableBody>
               </Table>
             </div>
+            {ici && <DefilerVers ids={[`carte-${ici}`, `engagement-${ici}`]} />}
           </>
         )}
       </div>

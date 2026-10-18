@@ -23,13 +23,32 @@ import { SupprimerPiece } from "./pieces/supprimer-piece";
 export default function PageEngagement({ params, searchParams }: PageProps<"/engagements/[id]">) {
   return (
     <main className="mx-auto grid w-full max-w-3xl gap-6 p-4">
-      <Link href="/engagements" className="text-sm underline">
-        ← Engagements
-      </Link>
+      <Suspense fallback={<Link href="/engagements" className="text-sm underline">← Engagements</Link>}>
+        <LienRetour params={params} searchParams={searchParams} />
+      </Suspense>
       <Suspense fallback={<div className="h-64 animate-pulse rounded-md bg-muted" aria-label="Chargement" />}>
         <FicheEngagement params={params} searchParams={searchParams} />
       </Suspense>
     </main>
+  );
+}
+
+// Retour à la liste d'où l'on vient (?liste=… : ses filtres), à la hauteur de cet engagement, surligné (?ici=…).
+// Sans ?liste (fiche ouverte depuis le tableau de bord, un musicien…) : la liste « En cours ».
+async function LienRetour({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ id: string }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
+  const { liste } = await searchParams;
+  const retour = new URLSearchParams(typeof liste === "string" ? liste : "");
+  retour.set("ici", (await params).id);
+  return (
+    <Link href={`/engagements?${retour}`} className="text-sm underline">
+      ← Engagements
+    </Link>
   );
 }
 
