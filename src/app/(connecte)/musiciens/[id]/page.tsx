@@ -49,6 +49,22 @@ async function FicheMusicien({
     taux,
   );
   const repertoire = musicien.repertoire?.split("\n") ?? [];
+  // Écrit une fois, affiché à deux places selon la largeur de l'écran (une seule visible à la fois).
+  const blocRepertoire = (
+    <Bloc titre="Répertoire">
+      {repertoire.length === 0 ? (
+        <p className="text-muted-foreground italic">Pas encore de répertoire.</p>
+      ) : (
+        <ul className="divide-y divide-dashed text-sm">
+          {repertoire.map((oeuvre, i) => (
+            <li key={i} className="py-1.5">
+              {oeuvre}
+            </li>
+          ))}
+        </ul>
+      )}
+    </Bloc>
+  );
 
   return (
     <>
@@ -75,6 +91,8 @@ async function FicheMusicien({
           <Button variant="outline" nativeButton={false} render={<Link href={`/musiciens/${musicien.id}/modifier`} />}>
             Modifier la fiche
           </Button>
+          {/* Sur ordinateur, le répertoire sous la photo (19/10) ; sur téléphone, il reste en bas de la fiche. */}
+          <div className="hidden md:block">{blocRepertoire}</div>
         </div>
         <div className="grid min-w-0 grid-cols-1 gap-6">
           <div className="grid gap-1">
@@ -161,19 +179,7 @@ async function FicheMusicien({
             </>
           )}
 
-          <Bloc titre="Répertoire">
-            {repertoire.length === 0 ? (
-              <p className="text-muted-foreground italic">Pas encore de répertoire.</p>
-            ) : (
-              <ul className="divide-y divide-dashed text-sm">
-                {repertoire.map((oeuvre, i) => (
-                  <li key={i} className="py-1.5">
-                    {oeuvre}
-                  </li>
-                ))}
-              </ul>
-            )}
-          </Bloc>
+          <div className="md:hidden">{blocRepertoire}</div>
         </div>
       </div>
     </>
