@@ -3,9 +3,9 @@ import { redirect } from "next/navigation";
 import { Suspense } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { listerFichesMusiciens } from "@/lib/engagements";
+import { initiales } from "@/lib/musiciens";
 import { verifierSession } from "@/lib/session";
 import { CalendrierMois } from "../calendrier/calendrier-mois";
-import { Portrait } from "../musiciens/portrait";
 import { AFaire } from "./a-faire";
 import { Indicateurs } from "./indicateurs";
 
@@ -25,24 +25,27 @@ async function ContenuTableauDeBord({ searchParams }: { searchParams: Promise<Re
   if (utilisateur.role !== "admin") redirect(`/musiciens/${utilisateur.id}`);
   const { mois } = await searchParams;
   const aujourdhui = new Intl.DateTimeFormat("fr-FR", { dateStyle: "full", timeZone: "Europe/Paris" }).format(new Date());
-  // Plus dense (retour de l'humain le 18/10) : à faire et saison côte à côte, puis calendrier et musiciens.
+  // Plus dense (retours de l'humain le 18/10) : à gauche « À faire » et le calendrier, à droite saison et musiciens.
   return (
     <>
       <div className="flex flex-wrap items-baseline justify-between gap-2 border-b border-or/60 pb-3">
         <h1 className="font-logo text-4xl leading-tight">Bonjour {utilisateur.nom}</h1>
         <p className="text-sm text-muted-foreground first-letter:uppercase">{aujourdhui}</p>
       </div>
+      {/* Deux colonnes qui s'empilent chacune (retour du 18/10) : pas de trou sous la carte la plus courte. */}
       <div className="grid items-start gap-6 lg:grid-cols-[1fr_17rem]">
-        <AFaire />
-        <Indicateurs />
-      </div>
-      <div className="grid items-start gap-6 lg:grid-cols-[1fr_17rem]">
-        <Card>
-          <CardContent>
-            <CalendrierMois lecteur={utilisateur} param={mois} adresse="/tableau-de-bord" titre="h2" />
-          </CardContent>
-        </Card>
-        <Musiciens />
+        <div className="grid min-w-0 gap-6">
+          <AFaire />
+          <Card>
+            <CardContent>
+              <CalendrierMois lecteur={utilisateur} param={mois} adresse="/tableau-de-bord" titre="h2" />
+            </CardContent>
+          </Card>
+        </div>
+        <div className="grid gap-6">
+          <Indicateurs />
+          <Musiciens />
+        </div>
       </div>
     </>
   );
@@ -71,7 +74,7 @@ async function Musiciens() {
             {musiciens.map((m) => (
               <li key={m.id}>
                 <Link href={`/musiciens/${m.id}`} className="flex items-center gap-3 rounded-md p-1 hover:bg-muted">
-                  <Portrait nom={m.nom} photo={m.photo} className="w-10 shrink-0 overflow-hidden rounded-sm [&_span]:text-base" />
+                  <Vignette nom={m.nom} photo={m.photo} />
                   <span className="grid leading-tight">
                     <span className="font-medium">{m.nom}</span>
                     <span className="text-xs text-muted-foreground">
@@ -85,5 +88,20 @@ async function Musiciens() {
         )}
       </CardContent>
     </Card>
+  );
+}
+
+// Petite photo décorative : le nom est écrit à côté, donc texte de remplacement vide. Une photo qui ne se charge pas
+// laisse une case neutre au lieu d'un « Portrait de … » coupé (retour du 18/10).
+function Vignette({ nom, photo }: { nom: string; photo: string | null }) {
+  if (photo) {
+    // <img> plutôt que next/image : la photo est servie par une route protégée (voir Portrait).
+    // eslint-disable-next-line @next/next/no-img-element
+    return <img src={photo} alt="" className="size-10 shrink-0 rounded-sm bg-accent object-cover" />;
+  }
+  return (
+    <span aria-hidden className="grid size-10 shrink-0 place-items-center rounded-sm bg-accent font-logo text-sm text-primary">
+      {initiales(nom)}
+    </span>
   );
 }

@@ -20,20 +20,20 @@ export async function Indicateurs() {
   // À la verticale (retour de l'humain le 18/10) : une colonne étroite à côté du panneau « À faire ».
   return (
     <Card>
-      <CardContent className="grid content-start gap-4">
+      <CardContent className="grid content-start justify-items-center gap-4 text-center">
         <h2 className="font-logo text-2xl">Saison {libelleSaison(saison)}</h2>
-        <p className="flex items-baseline gap-2">
+        <p className="grid justify-items-center gap-1">
           <span className="font-logo text-5xl leading-none">{contrats}</span>
           <span className="text-muted-foreground">{contrats > 1 ? "contrats" : "contrat"} cette saison</span>
         </p>
         {total === 0 ? (
           <p className="text-sm text-muted-foreground">Aucun engagement cette saison.</p>
         ) : (
-          <ol className="grid justify-items-start gap-0.5" aria-label="Engagements de la saison par statut">
+          <ol className="grid justify-items-center gap-0.5" aria-label="Engagements de la saison par statut">
             {FRISE.map((statut, i) => (
               <Fragment key={statut}>
                 {i > 0 && (
-                  <li aria-hidden className="pl-9 text-xs leading-none text-muted-foreground">
+                  <li aria-hidden className="text-xs leading-none text-muted-foreground">
                     ↓
                   </li>
                 )}
@@ -42,7 +42,7 @@ export async function Indicateurs() {
                 </li>
               </Fragment>
             ))}
-            <li className="mt-3 border-t pt-3">
+            <li className="mt-3 border-t px-6 pt-3">
               <PastilleStatut statut="annule" nombre={parStatut.annule} />
             </li>
           </ol>
@@ -58,8 +58,8 @@ function PastilleStatut({ statut, nombre }: { statut: Statut; nombre: number }) 
       href={lienStatut(statut)}
       className="flex items-center gap-1.5 rounded-md px-1 py-0.5 hover:bg-muted focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none"
     >
-      <span className="w-6 text-right font-medium tabular-nums">{nombre}</span>
       <BadgeStatut statut={statut} />
+      <span className="font-medium tabular-nums">{nombre}</span>
     </Link>
   );
 }
