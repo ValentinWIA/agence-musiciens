@@ -75,14 +75,17 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   (choisi par l'humain), 16 px sur téléphone ; centrée au-delà d'environ 1520 px (même marge pour toutes). Écrans
   d'erreur alignés. Fiches et formulaires (fiche engagement, nouveau, modifier, modifier musicien, fiche courrier) :
   déjà identiques entre eux (`max-w-3xl`), inchangés ; Invitations à part (décidé). Police : déjà Playfair partout.
-  Gestes validés en prévisualisation et en production le 19/10. **Reste (optionnel)** : hauteur des titres (16 px
-  du haut en général, 24 px tableau de bord et Musiciens, plus bas pour Journal et fiche musicien) et nom de 48 px sur
-  la fiche musicien. Branche Neon `preview/harmonisation` supprimée le 19/10.
+  Gestes validés en prévisualisation et en production le 19/10. Hauteur des titres : abandonnée (décidé le 19/10).
+  Branche Neon `preview/harmonisation` supprimée le 19/10.
   **Site local** : `vercel-dev` n'existe plus ; `vercel env pull .env.development.local --environment=preview
   --git-branch=<branche> --yes` après un push (base de la prévisualisation). Les secrets « sensibles » arrivent vides :
   mettre un `AUTH_SECRET` local au hasard ; session agent fabriquée avec `encode` d'Auth.js (script de captures, hors
   dépôt). Supprimer le fichier à la fin.
-- **Semaine 3 terminée** (I1 à I7). Prochaine piste si le temps le permet : n° 2 des reportés (heure « matin / après-midi / soir », heures de 5 en 5 min). Décidé le 19/10 : n° 3
+- **Semaine 3 terminée** (I1 à I7). **Prochaine demande : heures de 5 en 5 minutes** (décidé le 19/10, branche
+  `heures-5-min`) : `step={300}` sur le champ heure (`formulaire-engagement.tsx`) ; refus côté serveur d'une minute
+  non multiple de 5 (`saisieDate`, `engagements/saisie.ts`) avec message ; test ; prévisualisation et geste (iPhone :
+  la roue peut garder toutes les minutes, le refus suffit). **« Matin / après-midi / soir » : pas prévu**, amélioration
+  éventuelle tout à la fin seulement (schéma + migration, affichage dans une dizaine de fichiers, règle de conflit). Décidé le 19/10 : n° 3
   (`/couts` au menu) et n° 4 (Courriers + Demandes réunis) **abandonnés**. « Confirmer quand même » avec une raison :
   **déjà fait** (colonne `raison_conflit`), malgré les mentions « plus tard » plus bas.
 
@@ -367,6 +370,8 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 - **Reporté** (noté le 18/10, demande à part avec son cadrage) : l'heure obligatoire d'un engagement est trop
   contraignante → pouvoir choisir « matin », « après-midi (12 h-18 h) » ou « soir » ; heures de 5 en 5 minutes.
   Touche le formulaire d'engagement et sans doute le schéma (précision de la date).
+  **Décidé le 19/10** : pas de 5 minutes = prochaine demande ; « matin / après-midi / soir » = amélioration éventuelle
+  tout à la fin du projet, sans doute abandonnée.
 - **Reporté** (noté le 18/10, demande à part avec son cadrage) : sur la fiche musicien, avant le cachet moyen,
   afficher les **revenus totaux de la saison en cours**. À trancher au cadrage : bornes de la saison (septembre à
   août ?), engagements comptés (confirmés, réalisés, payés ?), cachets en plusieurs devises.
