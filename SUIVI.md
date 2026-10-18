@@ -10,7 +10,7 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 
 ## État de reprise
 
-*Dernière mise à jour : 19 octobre 2026 (page Engagements, PR n° 35)*
+*Dernière mise à jour : 19 octobre 2026 (cartes sur téléphone, PR n° 36)*
 
 - **✅ Revenus de la saison** (19/10, branche `revenus`, **PR n° 32 fusionnée**, `e1dd3ec`). Carte « Revenus de la
   saison » en tête de la colonne droite du tableau de bord : total des cachets (le « chiffre d'affaires » : pas de
@@ -43,8 +43,18 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   un vide) ; filtres à 12 px du tableau, cases étirées (`flex-auto`) à la largeur du tableau. Choisi sur planche.
   Gestes validés en prévisualisation et en production le 19/10.
   Branche Neon `preview/engagements-affichage` supprimée le 19/10.
-- **Prochaine demande : cartes d'engagements sur téléphone** (n° 8, demandée le 19/10) : une carte par engagement au
-  lieu du tableau sur téléphone. Branche à part, planche avant le code.
+- **✅ Cartes d'engagements sur téléphone** (n° 8, 19/10, branche `cartes-telephone`, **PR n° 36 fusionnée**,
+  `da86c2e`) : sous 768 px, une carte cliquable par engagement (date et statut en haut, puis musiciens, titre · lieu,
+  cachet en bas à droite) ; le tableau reste à partir de 768 px (`md:`), mêmes données. Choix D sur planche (cartes
+  séparées, serrées). Gestes validés en prévisualisation et en production le 19/10. Branche Neon
+  `preview/cartes-telephone` à supprimer (si pas déjà fait). Rappels du 19/10 : « Tous » reste du plus récent au plus
+  ancien (décidé le 16/10, confirmé) ; « Effacer les filtres » ignore « En cours / Tous » (voulu : c'est une vue).
+  Capture à 375 px : Chrome sans fenêtre affiche au moins 500 px, photographier dans un `<iframe>` de 375 px.
+- **Prochaine demande : retour au même niveau** (demandée le 19/10) : en quittant la fiche d'un engagement, revenir
+  à la même hauteur de la liste `/engagements`, l'engagement quitté surligné, comme pour les demandes reçues
+  (`demandes/defiler-vers.tsx` à reprendre). Branche à part.
+  Puis : **boutons du mois sur le tableau de bord** (téléphone, agent) : « Mois précédent / Aujourd'hui / Mois
+  suivant » trop gros, sur deux lignes → les réduire pour une seule ligne ; planche avant le code.
   Ensuite : n° 2 des reportés (heure « matin / après-midi / soir », heures de 5 en 5 min). Décidé le 19/10 : n° 3
   (`/couts` au menu) et n° 4 (Courriers + Demandes réunis) **abandonnés**. « Confirmer quand même » avec une raison :
   **déjà fait** (colonne `raison_conflit`), malgré les mentions « plus tard » plus bas.
@@ -670,7 +680,7 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
     7. **Menu latéral à gauche, toujours présent** (demandé le 16/10) : liens vers les pages selon le rôle
        (tableau de bord, engagements, musiciens ou « Ma fiche », calendrier, invitations…) et **déconnexion
        possible depuis toutes les pages**, pas seulement le tableau de bord. Sur téléphone : menu repliable. ✅ (PR n° 10)
-    8. **Engagements en cartes sur téléphone** (demandé le 16/10, pour plus tard) : une carte par engagement (date et
+    8. **Engagements en cartes sur téléphone** ✅ (PR n° 36, 19/10) (demandé le 16/10, pour plus tard) : une carte par engagement (date et
        statut en haut, puis musiciens, lieu, cachet), sans défilement horizontal ; le tableau reste sur ordinateur.
        Pour l'instant, seules les colonnes « Musiciens » et « Lieu » ont été échangées (le statut reste caché à droite
        sur téléphone).
