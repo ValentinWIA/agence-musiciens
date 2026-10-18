@@ -182,7 +182,8 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   `/engagements` (agent seulement). Retour au geste : case trop large (libellé le plus long) → largeur fixe `w-56`.
   Geste validé en prévisualisation le 18/10 (filtre seul, avec « Tous », avec un musicien, effacer, vue musicien).
   Premier déploiement Vercel en échec puis relancé seul avec succès ; cause non lue (connecteur Vercel refusé, 403).
-  **PR n° 23 fusionnée le 18/10** ; vérification en production : le même geste, côté agent.
+  **PR n° 23 fusionnée le 18/10** (`a466a0d`). **Geste validé en production le 18/10** (filtrer, effacer). Rien de cassé.
+  **Prochaine demande : semaine 3 (IA)**, après `/clear`.
 - **Semaine 3 — lecture préparatoire faite le 18/10** : 10 courriers (`/api/courriers?sujet=reservations`) lus ; pièges
   confirmés : COU-07 sans montant, COU-04 daté « la semaine dernière » ; références `RES-2024-589` (format différent
   des nuits, ne correspondent à aucune demande) ; contenu = réunions et salles, **ni date de concert ni programme** →
