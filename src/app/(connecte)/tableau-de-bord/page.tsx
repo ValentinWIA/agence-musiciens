@@ -8,6 +8,7 @@ import { verifierSession } from "@/lib/session";
 import { CalendrierMois } from "../calendrier/calendrier-mois";
 import { AFaire } from "./a-faire";
 import { Indicateurs } from "./indicateurs";
+import { Revenus } from "./revenus";
 
 export default function PageTableauDeBord({ searchParams }: PageProps<"/tableau-de-bord">) {
   return (
@@ -44,6 +45,7 @@ async function ContenuTableauDeBord({ searchParams }: { searchParams: Promise<Re
         </div>
         <div className="grid gap-6">
           <Indicateurs />
+          <Revenus />
           <Musiciens />
         </div>
       </div>
