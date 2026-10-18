@@ -10,7 +10,7 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 
 ## État de reprise
 
-*Dernière mise à jour : 19 octobre 2026 (cartes sur téléphone, PR n° 36)*
+*Dernière mise à jour : 19 octobre 2026 (retour au même niveau, PR n° 37)*
 
 - **✅ Revenus de la saison** (19/10, branche `revenus`, **PR n° 32 fusionnée**, `e1dd3ec`). Carte « Revenus de la
   saison » en tête de la colonne droite du tableau de bord : total des cachets (le « chiffre d'affaires » : pas de
@@ -50,11 +50,20 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   `preview/cartes-telephone` à supprimer (si pas déjà fait). Rappels du 19/10 : « Tous » reste du plus récent au plus
   ancien (décidé le 16/10, confirmé) ; « Effacer les filtres » ignore « En cours / Tous » (voulu : c'est une vue).
   Capture à 375 px : Chrome sans fenêtre affiche au moins 500 px, photographier dans un `<iframe>` de 375 px.
-- **Prochaine demande : retour au même niveau** (demandée le 19/10) : en quittant la fiche d'un engagement, revenir
-  à la même hauteur de la liste `/engagements`, l'engagement quitté surligné, comme pour les demandes reçues
-  (`demandes/defiler-vers.tsx` à reprendre). Branche à part.
-  Puis : **boutons du mois sur le tableau de bord** (téléphone, agent) : « Mois précédent / Aujourd'hui / Mois
-  suivant » trop gros, sur deux lignes → les réduire pour une seule ligne ; planche avant le code.
+- **✅ Retour au même niveau** (19/10, branche `retour-engagements`, **PR n° 37 fusionnée**, `dd3c2c0`) : la liste
+  passe ses filtres à la fiche (`?liste=…`) ; « ← Engagements » y revient avec `?ici=…` : engagement quitté surligné
+  en ambre et ramené au milieu de l'écran (carte sur téléphone, ligne du tableau sur ordinateur, celle qui est
+  affichée). Fiche ouverte d'ailleurs → liste « En cours ». `DefilerVers` déplacé dans `src/components/` (demandes et
+  engagements). Corrigé au passage : le gris d'une ligne sur deux (règle du tableau, plus spécifique) cachait l'ambre
+  → `bg-amber-100!` (engagements et demandes). Hors périmètre, décidé : « Modifier » puis enregistrer perd le
+  contexte ; bouton « retour » du navigateur sans surlignage. Gestes validés en prévisualisation et en production le
+  19/10. **Reste** : supprimer la branche Neon `preview/retour-engagements`.
+  Note : `verifier` (GitHub) peut échouer au build faute de télécharger Playfair chez Google Fonts : incident de
+  réseau, relancer (`gh run rerun <n°> --failed`).
+- **Prochaine demande : retouches groupées** (règle ajoutée à `AGENTS.md` le 19/10), branche `retouches`, un commit
+  par retouche : **bouton retour de « Journal des imports » (`/nuit`) vers « Demandes reçues »** (demandé le 19/10 :
+  aucun moyen d'y revenir) ; **boutons du mois sur le tableau de bord** (téléphone, agent) : « Mois précédent /
+  Aujourd'hui / Mois suivant » trop gros, sur deux lignes → les réduire pour une seule ligne ; planche avant le code.
   Puis : **harmoniser les pages** (demandé le 19/10) : même marge à gauche, titre à la même hauteur, mêmes polices et
   tailles sur toutes les pages ; commencer par un relevé page par page (captures ordinateur et téléphone).
   Ensuite : n° 2 des reportés (heure « matin / après-midi / soir », heures de 5 en 5 min). Décidé le 19/10 : n° 3

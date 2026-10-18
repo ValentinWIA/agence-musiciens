@@ -23,6 +23,10 @@ Ce projet suit la fiche « Vos cinq exercices, en cinq semaines » : un seul pro
 
 - Le produit est en ligne dès le premier soir et le reste. On ne travaille jamais sur une version non déployée.
 - Une demande à la fois. Une fonctionnalité par branche, une prévisualisation par branche, la production sur `main`.
+  **Exception (décidée le 19/10) : retouches groupées.** Plusieurs petites retouches **disjointes** (quelques lignes
+  chacune, fichiers différents, sans schéma ni droits) partagent une branche `retouches` : un commit par retouche,
+  une prévisualisation, des gestes faits ensemble, une pull request. Une retouche qui coince est retirée de la branche
+  (`git revert`), le reste est fusionné.
   On ne teste jamais sur la production.
 - Avant chaque génération : un commit avec un message qui dit **pourquoi**. Après : raconter en français ce qui a changé.
 - Les tests sont rejoués à chaque push. Dire ce que chaque test vérifie : un test vert ne prouve que ce qu'il teste.
