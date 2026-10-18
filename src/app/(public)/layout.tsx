@@ -5,7 +5,8 @@ import { Logo } from "@/components/logo";
 export default function LayoutPublic({ children }: { children: React.ReactNode }) {
   return (
     <>
-      <header className="border-b border-foreground/10 bg-card/60 backdrop-blur-sm">
+      {/* « dark » : le cadre noir de la palette (globals.css), pas un mode sombre. */}
+      <header className="dark border-b border-or/35 bg-background text-foreground">
         <div className="mx-auto w-full max-w-6xl px-4 py-3">
           <Link href="/tableau-de-bord" aria-label="CM Management, tableau de bord">
             <Logo />

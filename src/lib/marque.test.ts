@@ -17,9 +17,12 @@ describe("marque : le nom affiché de l'agence", () => {
     expect(restes).toEqual([]);
   });
 
-  it("le logo affiche « CM Management » et le monogramme « CM »", () => {
+  // Logo « la maison » (18/10) : C et M séparés par un filet, dans le site et dans l'icône d'onglet.
+  it("le logo affiche « CM Management » et l'emblème C | M", () => {
     const logo = readFileSync(path.join(racine, "components/logo.tsx"), "utf8");
     expect(logo).toContain("CM Management");
-    expect(logo).toMatch(/>\s*CM\s*</);
+    expect(logo).toMatch(/>\s*C\s*<[\s\S]*<line[\s\S]*>\s*M\s*</);
+    const icone = readFileSync(path.join(racine, "app/icon.svg"), "utf8");
+    expect(icone).toMatch(/>C<[\s\S]*<line[\s\S]*>M</);
   });
 });

@@ -11,7 +11,7 @@ export async function MenuLateral() {
       <nav aria-label="Menu principal" className="flex-1 px-3 py-2">
         <LiensMenu liens={liensDuMenu(utilisateur)} />
       </nav>
-      <div className="grid gap-3 border-t border-foreground/10 px-5 py-4">
+      <div className="grid gap-3 border-t border-or/35 px-5 py-4">
         <div className="grid min-w-0">
           <p className="truncate font-medium" title={utilisateur.nom}>
             {utilisateur.nom}

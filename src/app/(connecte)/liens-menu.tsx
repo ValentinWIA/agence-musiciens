@@ -18,7 +18,7 @@ export function LiensMenu({ liens }: { liens: LienMenu[] }) {
               aria-current={actif ? "page" : undefined}
               className={
                 actif
-                  ? "block rounded-r-md border-l-2 border-primary bg-accent px-3 py-2 font-medium text-accent-foreground"
+                  ? "block rounded-r-md border-l-2 border-or bg-accent px-3 py-2 font-medium text-accent-foreground"
                   : "block rounded-r-md border-l-2 border-transparent px-3 py-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
               }
             >
