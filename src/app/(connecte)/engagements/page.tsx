@@ -124,45 +124,75 @@ async function ContenuEngagements({ searchParams }: { searchParams: Promise<Reco
                 : "Aucun engagement pour l'instant."}
           </p>
         ) : (
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Date</TableHead>
-                <TableHead>Musiciens</TableHead>
-                <TableHead>Lieu</TableHead>
-                <TableHead>Statut</TableHead>
-                <TableHead className="text-right">Cachet</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
+          <>
+            {/* Sur téléphone, une carte par engagement (choix D sur planche, 19/10) : date et statut en haut, sans défilement
+                de côté. Toute la carte est le lien. Le tableau reste à partir de 768 px. */}
+            <ul className="grid gap-2 md:hidden">
               {liste.map((e) => (
-                <TableRow key={e.id}>
-                  <TableCell>
-                    <Link href={`/engagements/${e.id}`} className="underline">
-                      {formaterDebut(e.debut, e.precisionDate, e.pays)}
-                    </Link>
-                    {/* Une demande, une option ou un contrat envoyé dont la date est passée : à régler ou à annuler.
-                        Sous la date, pour garder la colonne étroite sur téléphone. */}
-                    {STATUTS_A_REGLER.includes(e.statut) && dateDepassee(e, e.pays, maintenant) && (
-                      <span className="block text-xs text-muted-foreground">date passée</span>
-                    )}
-                  </TableCell>
-                  {/* Les musiciens avant le lieu : sur téléphone, on voit la date et la colonne suivante. */}
-                  <TableCell className="min-w-40 whitespace-normal">{e.musiciens.map((m) => `${m.nom} (${m.instrument})`).join(", ")}</TableCell>
-                  <TableCell className="min-w-48 whitespace-normal">
-                    {e.titre && <div className="font-medium">{e.titre}</div>}
-                    {e.lieu}, {e.ville}
-                  </TableCell>
-                  <TableCell>
-                    <BadgeStatut statut={e.statut} />
-                  </TableCell>
-                  <TableCell className="text-right whitespace-nowrap">
-                    {e.cachet === null ? "—" : formaterMontant(e.cachet, e.devise)}
-                  </TableCell>
-                </TableRow>
+                <li key={e.id}>
+                  <Link href={`/engagements/${e.id}`} className="grid gap-1 rounded-lg border bg-card p-3 shadow-sm">
+                    <div className="flex items-start justify-between gap-2">
+                      <span>
+                        <span className="font-medium">{formaterDebut(e.debut, e.precisionDate, e.pays)}</span>
+                        {STATUTS_A_REGLER.includes(e.statut) && dateDepassee(e, e.pays, maintenant) && (
+                          <span className="block text-xs text-muted-foreground">date passée</span>
+                        )}
+                      </span>
+                      <BadgeStatut statut={e.statut} />
+                    </div>
+                    <div className="text-sm">{e.musiciens.map((m) => `${m.nom} (${m.instrument})`).join(", ")}</div>
+                    <div className="text-sm text-muted-foreground">
+                      {e.titre && <span className="font-medium text-foreground">{e.titre} · </span>}
+                      {e.lieu}, {e.ville}
+                    </div>
+                    <div className="text-right text-sm font-medium">
+                      {e.cachet === null ? "—" : formaterMontant(e.cachet, e.devise)}
+                    </div>
+                  </Link>
+                </li>
               ))}
-            </TableBody>
-          </Table>
+            </ul>
+            <div className="hidden md:block">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Date</TableHead>
+                    <TableHead>Musiciens</TableHead>
+                    <TableHead>Lieu</TableHead>
+                    <TableHead>Statut</TableHead>
+                    <TableHead className="text-right">Cachet</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {liste.map((e) => (
+                    <TableRow key={e.id}>
+                      <TableCell>
+                        <Link href={`/engagements/${e.id}`} className="underline">
+                          {formaterDebut(e.debut, e.precisionDate, e.pays)}
+                        </Link>
+                        {/* Une demande, une option ou un contrat envoyé dont la date est passée : à régler ou à annuler.
+                            Sous la date, pour garder la colonne étroite. */}
+                        {STATUTS_A_REGLER.includes(e.statut) && dateDepassee(e, e.pays, maintenant) && (
+                          <span className="block text-xs text-muted-foreground">date passée</span>
+                        )}
+                      </TableCell>
+                      <TableCell className="min-w-40 whitespace-normal">{e.musiciens.map((m) => `${m.nom} (${m.instrument})`).join(", ")}</TableCell>
+                      <TableCell className="min-w-48 whitespace-normal">
+                        {e.titre && <div className="font-medium">{e.titre}</div>}
+                        {e.lieu}, {e.ville}
+                      </TableCell>
+                      <TableCell>
+                        <BadgeStatut statut={e.statut} />
+                      </TableCell>
+                      <TableCell className="text-right whitespace-nowrap">
+                        {e.cachet === null ? "—" : formaterMontant(e.cachet, e.devise)}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          </>
         )}
       </div>
     </>
