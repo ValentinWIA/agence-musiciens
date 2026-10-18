@@ -58,7 +58,7 @@ async function ContenuCourriers() {
               <TableHeader>
                 <TableRow>
                   <TableHead>Daté du</TableHead>
-                  <TableHead className="min-w-56">Expéditeur</TableHead>
+                  <TableHead className="min-w-44">Expéditeur</TableHead>
                   <TableHead>Référence</TableHead>
                   <TableHead className="text-right">Montant</TableHead>
                   <TableHead>Type</TableHead>
