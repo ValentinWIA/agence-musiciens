@@ -1,4 +1,5 @@
 import { count, countDistinct, max } from "drizzle-orm";
+import Link from "next/link";
 import { Suspense } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { db } from "@/db";
@@ -30,7 +31,12 @@ async function ContenuQuestions() {
         <CardDescription>
           Les 20 documents du flux (procédures, contrats, comptes rendus), une page par passage. Indexer calcule
           l&apos;empreinte de sens de chaque page ; une page dont le texte n&apos;a pas changé n&apos;est jamais
-          recalculée.
+          recalculée. Ce calcul est fait par une IA (Voyage AI, gratuite à ce volume) ; chaque indexation qui
+          recalcule au moins une page est un appel compté sur la page{" "}
+          <Link href="/couts" className="underline">
+            Coûts
+          </Link>
+          .
         </CardDescription>
       </CardHeader>
       <CardContent className="grid gap-4">
