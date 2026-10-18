@@ -10,6 +10,7 @@ import { APPELS_PAR_JOUR, formaterDollars, PLAFOND_MENSUEL } from "@/lib/couts-i
 import { MOIS_EN_COURS } from "@/lib/ia";
 import { verifierAdmin } from "@/lib/session";
 import { FormulaireTest } from "./formulaire";
+import { PAGE_LARGE } from "@/components/mise-en-page";
 
 const LIMITE = 20;
 
@@ -22,7 +23,7 @@ const RETOURS: Record<string, { href: string; libelle: string }> = {
 
 export default function PageCouts({ searchParams }: PageProps<"/couts">) {
   return (
-    <main className="mx-auto grid w-full max-w-5xl gap-6 p-4">
+    <main className={`${PAGE_LARGE} grid gap-6 py-4`}>
       <Suspense fallback={null}>
         <Retour searchParams={searchParams} />
       </Suspense>

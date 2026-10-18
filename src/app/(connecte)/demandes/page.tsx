@@ -12,6 +12,7 @@ import { formaterDuree } from "@/lib/dates";
 import { LIBELLES_DEMANDE, dateDemandePassee, estATraiter, formaterJourCourt as formaterJour, trierDemandes } from "@/lib/demandes";
 import { verifierAdmin } from "@/lib/session";
 import { DefilerVers } from "@/components/defiler-vers";
+import { PAGE_LARGE } from "@/components/mise-en-page";
 
 const LIMITE_MESSAGES = 100;
 
@@ -25,7 +26,7 @@ const schemaVue = z.object({
 
 export default function PageDemandes({ searchParams }: PageProps<"/demandes">) {
   return (
-    <main className="mx-auto grid w-full max-w-6xl gap-6 p-4">
+    <main className={`${PAGE_LARGE} grid gap-6 py-4`}>
       <div className="grid gap-1">
         <h1 className="font-logo text-4xl leading-tight">Demandes reçues</h1>
         <p className="text-sm text-muted-foreground">

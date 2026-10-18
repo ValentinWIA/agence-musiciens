@@ -12,11 +12,12 @@ import { cachetMoyenEnEuros, PASSES_AFFICHES, recapEngagements } from "@/lib/mus
 import { verifierSession } from "@/lib/session";
 import { SeptJours } from "../../calendrier/sept-jours";
 import { Portrait } from "../portrait";
+import { PAGE_LARGE } from "@/components/mise-en-page";
 
 export default function PageMusicien({ params, searchParams }: PageProps<"/musiciens/[id]">) {
   // grid-cols-1 : la colonne ne s'élargit pas à son contenu le plus large (débordement sur téléphone, 19/10).
   return (
-    <main className="mx-auto grid w-full max-w-6xl grid-cols-1 content-start gap-6 p-4 pt-10">
+    <main className={`${PAGE_LARGE} grid grid-cols-1 content-start gap-6 pt-10 pb-4`}>
       <Suspense fallback={<p className="text-muted-foreground">Chargement…</p>}>
         <FicheMusicien params={params} searchParams={searchParams} />
       </Suspense>

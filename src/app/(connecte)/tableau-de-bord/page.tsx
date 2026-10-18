@@ -9,10 +9,11 @@ import { CalendrierMois } from "../calendrier/calendrier-mois";
 import { AFaire } from "./a-faire";
 import { Indicateurs } from "./indicateurs";
 import { Revenus } from "./revenus";
+import { PAGE_LARGE } from "@/components/mise-en-page";
 
 export default function PageTableauDeBord({ searchParams }: PageProps<"/tableau-de-bord">) {
   return (
-    <main className="mx-auto grid w-full max-w-7xl content-start gap-6 p-4 pt-6 md:px-8">
+    <main className={`${PAGE_LARGE} grid content-start gap-6 pt-6 pb-4`}>
       <Suspense fallback={<p className="text-muted-foreground">Chargement…</p>}>
         <ContenuTableauDeBord searchParams={searchParams} />
       </Suspense>

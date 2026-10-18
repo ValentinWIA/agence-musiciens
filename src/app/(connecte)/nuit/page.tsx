@@ -10,6 +10,7 @@ import { jourLocal } from "@/lib/calendrier";
 import { nuitAProposer } from "@/lib/import-nuit";
 import { verifierAdmin } from "@/lib/session";
 import { FormulaireErreurTest, FormulaireImport, FormulaireRattrapage, FormulaireRecap } from "./formulaire";
+import { PAGE_LARGE } from "@/components/mise-en-page";
 
 const LIMITE = 100;
 
@@ -18,7 +19,7 @@ export const maxDuration = 300;
 
 export default function PageNuit() {
   return (
-    <main className="mx-auto grid w-full max-w-5xl gap-6 p-4">
+    <main className={`${PAGE_LARGE} grid gap-6 py-4`}>
       <Link href="/demandes" className="text-sm underline">
         ← Demandes reçues
       </Link>
