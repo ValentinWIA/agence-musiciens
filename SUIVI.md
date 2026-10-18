@@ -55,6 +55,8 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   (`demandes/defiler-vers.tsx` à reprendre). Branche à part.
   Puis : **boutons du mois sur le tableau de bord** (téléphone, agent) : « Mois précédent / Aujourd'hui / Mois
   suivant » trop gros, sur deux lignes → les réduire pour une seule ligne ; planche avant le code.
+  Puis : **harmoniser les pages** (demandé le 19/10) : même marge à gauche, titre à la même hauteur, mêmes polices et
+  tailles sur toutes les pages ; commencer par un relevé page par page (captures ordinateur et téléphone).
   Ensuite : n° 2 des reportés (heure « matin / après-midi / soir », heures de 5 en 5 min). Décidé le 19/10 : n° 3
   (`/couts` au menu) et n° 4 (Courriers + Demandes réunis) **abandonnés**. « Confirmer quand même » avec une raison :
   **déjà fait** (colonne `raison_conflit`), malgré les mentions « plus tard » plus bas.
