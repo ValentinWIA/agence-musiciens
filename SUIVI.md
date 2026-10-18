@@ -10,7 +10,7 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 
 ## État de reprise
 
-*Dernière mise à jour : 19 octobre 2026 (menu et fiche, PR n° 33 ; menu du téléphone, PR n° 34)*
+*Dernière mise à jour : 19 octobre 2026 (page Engagements, PR n° 35)*
 
 - **✅ Revenus de la saison** (19/10, branche `revenus`, **PR n° 32 fusionnée**, `e1dd3ec`). Carte « Revenus de la
   saison » en tête de la colonne droite du tableau de bord : total des cachets (le « chiffre d'affaires » : pas de
@@ -38,12 +38,16 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   `h-svh` dans `menu-telephone.tsx`. Geste validé en prévisualisation.
   **Reste** : geste en production. Branches Neon `preview/menu-telephone`, `preview/menu-et-fiche` et
   `preview/revenus` supprimées le 19/10.
-- **Prochaine demande : affichage de la page « Engagements »** (noté le 19/10) : filtres trop loin du haut du tableau,
-  bouton « Nouvel engagement » mal placé. Branche à part, planche avant le code.
+- **✅ Page « Engagements »** (19/10, branche `engagements-affichage`, **PR n° 35 fusionnée**, `b1e513d`) : bouton
+  « + Nouvel engagement » au-dessus des filtres, à droite (il tombait seul entre les filtres et le tableau et creusait
+  un vide) ; filtres à 12 px du tableau, cases étirées (`flex-auto`) à la largeur du tableau. Choisi sur planche.
+  Gestes validés en prévisualisation et en production le 19/10.
+  Branche Neon `preview/engagements-affichage` supprimée le 19/10.
+- **Prochaine demande : cartes d'engagements sur téléphone** (n° 8, demandée le 19/10) : une carte par engagement au
+  lieu du tableau sur téléphone. Branche à part, planche avant le code.
   Ensuite : n° 2 des reportés (heure « matin / après-midi / soir », heures de 5 en 5 min). Décidé le 19/10 : n° 3
-  (`/couts` au menu) et n° 4 (Courriers + Demandes réunis) **abandonnés** ; n° 8 (cartes sur téléphone) reste pour plus
-  tard. « Confirmer quand même » avec une raison : **déjà fait** (colonne `raison_conflit`), malgré les mentions
-  « plus tard » plus bas.
+  (`/couts` au menu) et n° 4 (Courriers + Demandes réunis) **abandonnés**. « Confirmer quand même » avec une raison :
+  **déjà fait** (colonne `raison_conflit`), malgré les mentions « plus tard » plus bas.
 
 
 - **Téléphone, tableau de bord (19/10)** : « Bonjour agent » et « agent » dans le menu → ancien cookie de session
