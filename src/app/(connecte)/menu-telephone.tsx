@@ -37,7 +37,8 @@ export function MenuTelephone({ children }: { children: React.ReactNode }) {
         aria-label="Menu"
         onClick={fermerSiBesoin}
         onClose={() => setOuvert(false)}
-        className="menu-telephone dark m-0 h-svh max-h-none w-72 max-w-[85vw] bg-background p-0 text-foreground shadow-xl"
+        // h-dvh et non h-svh : la hauteur suit la barre d'adresse repliée (vide en bas sur iPhone, 19/10).
+        className="menu-telephone dark m-0 h-dvh max-h-none w-72 max-w-[85vw] bg-background p-0 text-foreground shadow-xl"
       >
         <div className="flex h-full flex-col">
           <Button
