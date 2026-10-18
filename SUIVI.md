@@ -10,7 +10,7 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 
 ## État de reprise
 
-*Dernière mise à jour : 18 octobre 2026 (semaine 3 : **I1 à I3 en production**, PR n° 24 et 25 ; reste I4, I5, puis brouillon, I6, I7)*
+*Dernière mise à jour : 19 octobre 2026 (semaine 3 : **I1 à I5 en production**, PR n° 24 à 27 ; reste brouillon, I6, I7)*
 
 - **Semaine 2 — flux de nuit**, branche `flux-de-nuit` (depuis `main`, 17/10). Cadrage validé par l'humain le 17/10 :
   `docs/flux-de-nuit.md` (lu sur une vraie nuit : 15 événements dont 2 doublons ; créations sans musicien, sans heure,
@@ -227,10 +227,29 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   enregistré, fiche avec cadre « Réponse ». Retours en production → **PR n° 25** (`c8fa058`, branche
   `courriers-retouches`) : lien « Coûts » sur `/courriers` (il n'était que sur `/nuit`), colonne « Expéditeur » à
   `min-w-44` (14 rem écrasait « Classement »), validés en prévisualisation. Rien de cassé.
-  **Prochaine étape : I4 (indexation des 20 documents) puis I5 (questions en streaming avec citations)**, sur une
-  branche `documents` depuis `main`, après `/clear`. Avant I4 : vérifier sur le site de Voyage AI que l'offre est
-  gratuite sans carte bancaire (décision 2) ; sinon, en parler à l'humain avant d'agir. Les 20 documents se
-  téléchargent sans blocage (fait par Claude le 18/10 avec `curl` et `FLUX_DE_NUIT_CLE` de `.env.local`).
+  **I4 ✅** (19/10, branche `documents`, commits `1742234`, `4cd870d`, `b963fb6`) : Voyage vérifié (offre gratuite
+  sans carte : 3 requêtes et 10 000 jetons par minute ; 200 M de jetons offerts sur `voyage-4`). Idée écartée : envoyer
+  les 50 pages à Claude sans index — la fiche exige « découpage, embeddings, pgvector ». `src/lib/documents.ts` (une
+  page = un passage, empreinte SHA-256, 8 tests), `src/lib/indexation.ts` (documents lus sur le flux au moment
+  d'indexer, un seul appel à Voyage, compté sur `/couts` à 0 $), migration 0019 (extension `vector`, table `passages`,
+  jamais vidée par le jeu de données), bouton « Indexer les documents ». `VOYAGE_API_KEY` mise par l'humain
+  (Production et Preview). Retour au geste : chaque page qui appelle une IA le dit et mène à « Coûts ».
+  **PR n° 26 fusionnée le 19/10** (`32c7c67`).
+  **I5 ✅** (19/10, branche `questions`, commits `e4959c6`, `8b4af0a`, `10573e2`) : `src/lib/questions.ts` (consigne,
+  pages fournies comme résultats de recherche avec citations natives : l'API ne peut citer que ces pages ; tri des
+  sources citées ; 5 tests, 324 au total), `chercherPassages` (5 pages les plus proches, distance cosinus),
+  streaming dans `appelerModele` (fonction « question », Haiku 5.5), route `POST /api/questions` (agent seulement,
+  403 sinon ; une ligne JSON par message : étapes, texte, sources). Retours au geste : « Questions » ne disait rien à
+  l'agent → section renommée **« Documents »** (adresse `/questions` inchangée) ; aucun document visible → liste
+  dépliable des 20 documents et de leurs pages (sert aussi à vérifier une page citée). **PR n° 27 fusionnée le 19/10**
+  (`9477424`, migration 0019 jouée en production). **Gestes validés en production le 19/10** : indexation, question
+  sur la double validation (streaming, pages citées), question hors sujet → « aucune source citée », lignes sur
+  `/couts`. Le premier déploiement de la branche `questions` a échoué puis s'est relancé seul (cause non lue).
+  Adresse fixe d'une prévisualisation : `agence-musiciens-git-<branche>-valentin-4768.vercel.app` (la donner à
+  l'humain plutôt que l'adresse de chaque déploiement).
+  **Reste à vérifier** : le cron du 19/10 (6 h–7 h, heure de Paris) — ligne « cron » sur `/nuit`, récap reçu sans clic.
+  **Prochaine étape** : brouillon de réponse dans le cadre « Réponse » de la fiche courrier, puis I6 (analyse de la
+  nuit) et I7 (rendu), après `/clear`.
   **Après l'envoi de midi** : brouillon de réponse dans le cadre « Réponse » de la fiche courrier, puis I6 (analyse de
   la nuit) et I7 (rendu).
   Après chaque push, rattraper les nuits sur `/nuit` (le jeu de données vide les tables du flux).
@@ -246,9 +265,11 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   afficher les **revenus totaux de la saison en cours**. À trancher au cadrage : bornes de la saison (septembre à
   août ?), engagements comptés (confirmés, réalisés, payés ?), cachets en plusieurs devises.
 - ~~**Reporté** (noté le 18/10) : bouton « Nouvel engagement » au niveau des filtres~~ ✅ fait dans la passe « envoi ».
-- **Reporté** (noté le 18/10, demande à part avec son cadrage) : filtrer les engagements par programmateur (utile
-  pour une facturation globale).
-- **Reporté** (noté le 18/10) : rendre la page `/couts` plus visible (aujourd'hui : lien depuis `/nuit` seulement).
+- ~~**Reporté** : filtrer les engagements par programmateur~~ ✅ fait (P1, PR n° 23).
+- **Reporté** (noté le 18/10) : rendre la page `/couts` plus visible (liens depuis `/nuit`, `/courriers` et
+  « Documents » ; pas encore au menu).
+- **Piste notée le 19/10** (après la semaine 3, demande à part) : réunir « Courriers » et « Demandes reçues » dans une
+  seule section du menu (« Documents » reste à part, décidé par l'humain).
 - **Question notée le 18/10** (après la semaine 3) : une demande reçue devient un engagement au statut « demande »,
   pas « option ». Raison actuelle : le flux ne donne pas l'heure, et une option exige date et heure précises, durée et
   échéance (`src/lib/cycle-de-vie.ts`) ; poser une option, c'est s'engager auprès du programmateur (date tenue jusqu'à
