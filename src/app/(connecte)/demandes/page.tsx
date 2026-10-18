@@ -11,7 +11,7 @@ import { jourLocal } from "@/lib/calendrier";
 import { formaterDuree } from "@/lib/dates";
 import { LIBELLES_DEMANDE, dateDemandePassee, estATraiter, formaterJourCourt as formaterJour, trierDemandes } from "@/lib/demandes";
 import { verifierAdmin } from "@/lib/session";
-import { DefilerVers } from "./defiler-vers";
+import { DefilerVers } from "@/components/defiler-vers";
 
 const LIMITE_MESSAGES = 100;
 
@@ -116,7 +116,7 @@ async function ContenuDemandes({ searchParams }: { searchParams: Promise<Record<
           </TableHeader>
           <TableBody>
             {liste.map((d) => (
-              <TableRow key={d.id} id={`demande-${d.id}`} className={d.id === surlignee ? "bg-amber-100 shadow-[inset_4px_0_0_var(--color-amber-500)] hover:bg-amber-100" : undefined}>
+              <TableRow key={d.id} id={`demande-${d.id}`} className={d.id === surlignee ? "bg-amber-100! shadow-[inset_4px_0_0_var(--color-amber-500)]" : undefined}>
                 <TableCell>
                   <Link href={`/demandes/${d.id}${suite}`} className="underline">
                     {formaterJour(d.dateConcert)}
@@ -150,7 +150,7 @@ async function ContenuDemandes({ searchParams }: { searchParams: Promise<Record<
           </TableBody>
         </Table>
       )}
-      {surlignee && <DefilerVers id={`demande-${surlignee}`} />}
+      {surlignee && <DefilerVers ids={[`demande-${surlignee}`]} />}
 
       <Card>
         <CardHeader>
