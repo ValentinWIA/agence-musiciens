@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { BadgeStatut } from "@/components/badge-statut";
 import { Button } from "@/components/ui/button";
-import { formaterMontant } from "@/lib/argent";
+import { formaterMontantArrondi } from "@/lib/argent";
 import { formaterDebut } from "@/lib/dates";
 import { LIBELLES_STATUT, lireMusicien, type Statut } from "@/lib/engagements";
 import { lireTaux } from "@/lib/change";
@@ -93,9 +93,9 @@ async function FicheMusicien({
             <Chiffre
               valeur={
                 "parDevise" in cachet
-                  ? cachet.parDevise.map((m) => formaterMontant(m.moyenne, m.devise)).join(" · ")
+                  ? cachet.parDevise.map((m) => formaterMontantArrondi(m.moyenne, m.devise)).join(" · ")
                   : cachet.enEuros
-                    ? `${cachet.enEuros.converti ? "≈ " : ""}${formaterMontant(cachet.enEuros.moyenne, "EUR")}`
+                    ? `${cachet.enEuros.converti ? "≈ " : ""}${formaterMontantArrondi(cachet.enEuros.moyenne, "EUR")}`
                     : "—"
               }
               legende={
