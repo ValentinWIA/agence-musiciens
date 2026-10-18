@@ -1,5 +1,5 @@
 import { sql } from "drizzle-orm";
-import { boolean, date, doublePrecision, integer, jsonb, pgEnum, pgTable, primaryKey, text, timestamp, uniqueIndex, uuid } from "drizzle-orm/pg-core";
+import { boolean, date, doublePrecision, integer, jsonb, pgEnum, pgTable, primaryKey, text, timestamp, uniqueIndex, uuid, vector } from "drizzle-orm/pg-core";
 
 export const role = pgEnum("role", ["admin", "musicien"]);
 export const instrument = pgEnum("instrument", ["piano", "violon"]);
@@ -233,3 +233,20 @@ export const courriers = pgTable("courriers", {
   creePar: uuid("cree_par").references(() => utilisateurs.id, { onDelete: "set null" }),
   creeLe: timestamp("cree_le", { withTimezone: true }).notNull().defaultNow(),
 });
+
+// Une page des documents du flux et son embedding (docs/semaine-3.md, I4). Jamais vidée par le jeu de données :
+// l'empreinte évite de recalculer une page dont le texte n'a pas changé.
+export const passages = pgTable(
+  "passages",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    documentId: text("document_id").notNull(),
+    titre: text("titre").notNull(),
+    page: integer("page").notNull(), // à partir de 1
+    texte: text("texte").notNull(),
+    empreinte: text("empreinte").notNull(), // SHA-256 du titre et du texte
+    vecteur: vector("vecteur", { dimensions: 1024 }).notNull(), // voyage-4
+    indexeLe: timestamp("indexe_le", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [uniqueIndex("passages_document_page").on(t.documentId, t.page)],
+);
