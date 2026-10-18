@@ -68,7 +68,7 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   septembre, novembre, décembre les boutons descendaient, le calendrier changeait de forme d'un mois à l'autre.
   Ordinateur inchangé. Gestes validés en prévisualisation et en production le 19/10.
   Branches Neon `preview/retouches`, `preview/retour-engagements` et `preview/cartes-telephone` supprimées le 19/10.
-- **Prochaine demande : harmoniser les pages** (demandé le 19/10) : même marge à gauche, titre à la même hauteur, mêmes polices et
+- **🔄 Harmoniser les pages** (demandé le 19/10, branche `harmonisation`, relevé en cours) : même marge à gauche, titre à la même hauteur, mêmes polices et
   tailles sur toutes les pages ; commencer par un relevé page par page (captures ordinateur et téléphone).
   Ensuite : n° 2 des reportés (heure « matin / après-midi / soir », heures de 5 en 5 min). Décidé le 19/10 : n° 3
   (`/couts` au menu) et n° 4 (Courriers + Demandes réunis) **abandonnés**. « Confirmer quand même » avec une raison :
@@ -638,7 +638,8 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
     Gestes validés le 17/10 : 4 portraits en prévisualisation ; production rechargée par l'humain (`Portraits envoyés :
     4.`, 53 engagements : l'accès OIDC marche), 4 portraits en production ; `.env.production.local` et `.env.local`
     effacés. **PR n° 15 fusionnée le 17/10**, déploiement de production « Ready ». Rien de cassé.
-    **À retenir** : après chaque fusion, supprimer la branche `preview/<nom>` dans Neon (garder `main` et `vercel-dev`),
+    **À retenir** : après chaque fusion, supprimer la branche `preview/<nom>` dans Neon (garder `main` ; `vercel-dev` supprimée par erreur le 19/10 : le site local se branche désormais
+    sur la base de la prévisualisation en cours, `vercel env pull --environment=preview --git-branch=<branche>`),
     ou activer la suppression automatique des branches obsolètes dans l'intégration Neon–Vercel (à décider).
     `docs/flux-de-nuit.md` (non suivi) n'est pas de cette session : ne pas y toucher.
   - **Ordre décidé** (tout avant la semaine 2) : fiches musiciens (+ tuile « Nouvel engagement » retirée) →

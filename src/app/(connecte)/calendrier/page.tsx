@@ -1,10 +1,11 @@
 import { Suspense } from "react";
 import { verifierSession } from "@/lib/session";
 import { CalendrierMois } from "./calendrier-mois";
+import { PAGE_LARGE } from "@/components/mise-en-page";
 
 export default function PageCalendrier({ searchParams }: PageProps<"/calendrier">) {
   return (
-    <main className="mx-auto grid w-full max-w-6xl gap-6 p-4">
+    <main className={`${PAGE_LARGE} grid gap-6 py-4`}>
       <Suspense fallback={<p className="text-muted-foreground">Chargement…</p>}>
         <ContenuCalendrier searchParams={searchParams} />
       </Suspense>

@@ -10,10 +10,11 @@ import { LIBELLES_MODELE, type Modele } from "@/lib/couts-ia";
 import { LIBELLES_CLASSEMENT, type Classement } from "@/lib/courrier";
 import { verifierAdmin } from "@/lib/session";
 import { DepotCourrier } from "./depot";
+import { PAGE_LARGE } from "@/components/mise-en-page";
 
 export default function PageCourriers() {
   return (
-    <main className="mx-auto grid w-full max-w-5xl gap-6 p-4">
+    <main className={`${PAGE_LARGE} grid gap-6 py-4`}>
       <h1 className="font-logo text-4xl leading-tight">Courriers</h1>
       <Suspense fallback={<div className="h-96 animate-pulse rounded-md bg-muted" aria-label="Chargement" />}>
         <ContenuCourriers />

@@ -13,6 +13,7 @@ import { formaterDebut } from "@/lib/dates";
 import { LIBELLES_STATUT, listerEngagements, listerMusiciens, listerProgrammateurs, type Filtres, type Statut } from "@/lib/engagements";
 import { presenterProgrammateur } from "@/lib/programmateurs";
 import { verifierSession } from "@/lib/session";
+import { PAGE_LARGE } from "@/components/mise-en-page";
 
 // Les filtres viennent de l'adresse (?statut=option&periode=tous) : une valeur inconnue est simplement ignorée
 // (une ancienne adresse ?periode=passes revient donc à « En cours »).
@@ -26,7 +27,7 @@ const schemaFiltres = z.object({
 
 export default function PageEngagements({ searchParams }: PageProps<"/engagements">) {
   return (
-    <main className="mx-auto grid w-full max-w-6xl gap-4 p-4">
+    <main className={`${PAGE_LARGE} grid gap-4 py-4`}>
       <Suspense fallback={<ChargementListe />}>
         <ContenuEngagements searchParams={searchParams} />
       </Suspense>
