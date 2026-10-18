@@ -10,7 +10,7 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 
 ## État de reprise
 
-*Dernière mise à jour : 19 octobre 2026 (menu et fiche, PR n° 33)*
+*Dernière mise à jour : 19 octobre 2026 (menu et fiche, PR n° 33 ; menu du téléphone, PR n° 34)*
 
 - **✅ Revenus de la saison** (19/10, branche `revenus`, **PR n° 32 fusionnée**, `e1dd3ec`). Carte « Revenus de la
   saison » en tête de la colonne droite du tableau de bord : total des cachets (le « chiffre d'affaires » : pas de
@@ -32,7 +32,12 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   retiré pour l'agent (le mois est sur son tableau de bord), gardé pour le musicien ; page `/calendrier` inchangée
   (`src/lib/menu.ts`, 341 tests). Fiche musicien : répertoire sous la photo et les boutons sur ordinateur, en bas sur
   téléphone (même bloc affiché à l'une ou l'autre place, `md:`). Gestes validés en prévisualisation.
-  **Reste** : gestes en production ; supprimer les branches Neon `preview/menu-et-fiche` et `preview/revenus`.
+  Gestes validés en production le 19/10.
+- **✅ Menu du téléphone** (19/10, branche `menu-telephone`, **PR n° 34 fusionnée**, `bec4a2c`) : vide en bas du menu
+  sur iPhone (Chrome) à la première ouverture après défilement (barre d'adresse repliée) ; hauteur `h-dvh` au lieu de
+  `h-svh` dans `menu-telephone.tsx`. Geste validé en prévisualisation.
+  **Reste** : geste en production. Branches Neon `preview/menu-telephone`, `preview/menu-et-fiche` et
+  `preview/revenus` supprimées le 19/10.
 - **Prochaine demande : affichage de la page « Engagements »** (noté le 19/10) : filtres trop loin du haut du tableau,
   bouton « Nouvel engagement » mal placé. Branche à part, planche avant le code.
   Ensuite : n° 2 des reportés (heure « matin / après-midi / soir », heures de 5 en 5 min). Décidé le 19/10 : n° 3
