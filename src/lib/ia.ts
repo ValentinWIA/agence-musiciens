@@ -12,6 +12,7 @@ export const MODELE_PAR_FONCTION = {
   courrier: "claude-haiku-5-5",
   question: "claude-haiku-5-5",
   analyse: "claude-haiku-5-5",
+  brouillon: "claude-haiku-5-5",
 } as const satisfies Record<string, Modele>;
 export type FonctionIa = keyof typeof MODELE_PAR_FONCTION;
 

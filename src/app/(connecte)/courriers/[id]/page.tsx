@@ -10,6 +10,7 @@ import { formaterMontant } from "@/lib/argent";
 import { LIBELLES_MODELE, type Modele } from "@/lib/couts-ia";
 import { LIBELLES_CLASSEMENT, type Classement } from "@/lib/courrier";
 import { verifierAdmin } from "@/lib/session";
+import { ZoneReponse } from "./zone-reponse";
 
 export default function PageCourrier({ params }: PageProps<"/courriers/[id]">) {
   return (
@@ -75,13 +76,7 @@ async function FicheCourrier({ params }: { params: Promise<{ id: string }> }) {
             <dt className="text-muted-foreground">Objet</dt>
             <dd>{courrier.reference ? `Votre réservation ${courrier.reference}` : "Votre courrier"}</dd>
           </dl>
-          {/* Le brouillon proposé par l'IA viendra remplir cette zone (docs/semaine-3.md, I3). Rien n'est enregistré. */}
-          <textarea
-            aria-label="Réponse"
-            placeholder="Rédigez votre réponse ici, puis copiez-la dans votre messagerie (elle n'est pas enregistrée)."
-            className="min-h-48 w-full rounded-lg border border-input bg-transparent px-2.5 py-1.5 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
-          />
-          <p className="text-xs text-muted-foreground">Rédaction d&apos;un brouillon par l&apos;IA : en développement.</p>
+          <ZoneReponse key={courrier.id} courrierId={courrier.id} />
         </CardContent>
       </Card>
     </>
