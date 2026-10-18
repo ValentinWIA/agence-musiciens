@@ -70,10 +70,12 @@ async function Musiciens() {
             </Link>
           </p>
         ) : (
-          <ul className="grid gap-2">
+          // Sur téléphone, la carte prend toute la largeur : photos en grand, deux par ligne (retour du 19/10).
+          // Sur ordinateur, la colonne est étroite : liste compacte.
+          <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-1 lg:gap-2">
             {musiciens.map((m) => (
               <li key={m.id}>
-                <Link href={`/musiciens/${m.id}`} className="flex items-center gap-3 rounded-md p-1 hover:bg-muted">
+                <Link href={`/musiciens/${m.id}`} className="flex flex-col gap-2 rounded-md p-1 hover:bg-muted lg:flex-row lg:items-center lg:gap-3">
                   <Vignette nom={m.nom} photo={m.photo} />
                   <span className="grid leading-tight">
                     <span className="font-medium">{m.nom}</span>
@@ -97,10 +99,10 @@ function Vignette({ nom, photo }: { nom: string; photo: string | null }) {
   if (photo) {
     // <img> plutôt que next/image : la photo est servie par une route protégée (voir Portrait).
     // eslint-disable-next-line @next/next/no-img-element
-    return <img src={photo} alt="" className="aspect-[4/5] w-14 shrink-0 rounded-sm bg-accent object-cover" />;
+    return <img src={photo} alt="" className="aspect-[4/5] w-full shrink-0 rounded-sm bg-accent object-cover lg:w-14" />;
   }
   return (
-    <span aria-hidden className="grid aspect-[4/5] w-14 shrink-0 place-items-center rounded-sm bg-accent font-logo text-lg text-primary">
+    <span aria-hidden className="grid aspect-[4/5] w-full shrink-0 place-items-center rounded-sm bg-accent font-logo text-4xl text-primary lg:w-14 lg:text-lg">
       {initiales(nom)}
     </span>
   );
