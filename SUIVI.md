@@ -10,7 +10,7 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 
 ## État de reprise
 
-*Dernière mise à jour : 19 octobre 2026 (retouches groupées, PR n° 38)*
+*Dernière mise à jour : 19 octobre 2026 (même marge à gauche, PR n° 39 ; fin de la semaine 3)*
 
 - **✅ Revenus de la saison** (19/10, branche `revenus`, **PR n° 32 fusionnée**, `e1dd3ec`). Carte « Revenus de la
   saison » en tête de la colonne droite du tableau de bord : total des cachets (le « chiffre d'affaires » : pas de
@@ -68,9 +68,21 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   septembre, novembre, décembre les boutons descendaient, le calendrier changeait de forme d'un mois à l'autre.
   Ordinateur inchangé. Gestes validés en prévisualisation et en production le 19/10.
   Branches Neon `preview/retouches`, `preview/retour-engagements` et `preview/cartes-telephone` supprimées le 19/10.
-- **🔄 Harmoniser les pages** (demandé le 19/10, branche `harmonisation`, relevé en cours) : même marge à gauche, titre à la même hauteur, mêmes polices et
-  tailles sur toutes les pages ; commencer par un relevé page par page (captures ordinateur et téléphone).
-  Ensuite : n° 2 des reportés (heure « matin / après-midi / soir », heures de 5 en 5 min). Décidé le 19/10 : n° 3
+- **✅ Même marge à gauche** (19/10, branche `harmonisation`, **PR n° 39 fusionnée**, `5681399`). Relevé de 16 pages
+  (captures 1280 et 375 px, site local). Les 10 pages larges (tableau de bord, Engagements, Demandes reçues, Musiciens,
+  fiche musicien, Courriers, Documents, Calendrier, Journal, Coûts) commençaient 16, 24 ou 32 px après le menu : une
+  boîte commune `PAGE_LARGE` (`src/components/mise-en-page.ts`, `max-w-7xl px-4 md:px-6`) → **24 px** sur ordinateur
+  (choisi par l'humain), 16 px sur téléphone ; centrée au-delà d'environ 1520 px (même marge pour toutes). Écrans
+  d'erreur alignés. Fiches et formulaires (fiche engagement, nouveau, modifier, modifier musicien, fiche courrier) :
+  déjà identiques entre eux (`max-w-3xl`), inchangés ; Invitations à part (décidé). Police : déjà Playfair partout.
+  Gestes validés en prévisualisation et en production le 19/10. **Reste (optionnel)** : hauteur des titres (16 px
+  du haut en général, 24 px tableau de bord et Musiciens, plus bas pour Journal et fiche musicien) et nom de 48 px sur
+  la fiche musicien. Branche Neon `preview/harmonisation` supprimée le 19/10.
+  **Site local** : `vercel-dev` n'existe plus ; `vercel env pull .env.development.local --environment=preview
+  --git-branch=<branche> --yes` après un push (base de la prévisualisation). Les secrets « sensibles » arrivent vides :
+  mettre un `AUTH_SECRET` local au hasard ; session agent fabriquée avec `encode` d'Auth.js (script de captures, hors
+  dépôt). Supprimer le fichier à la fin.
+- **Semaine 3 terminée** (I1 à I7). Prochaine piste si le temps le permet : n° 2 des reportés (heure « matin / après-midi / soir », heures de 5 en 5 min). Décidé le 19/10 : n° 3
   (`/couts` au menu) et n° 4 (Courriers + Demandes réunis) **abandonnés**. « Confirmer quand même » avec une raison :
   **déjà fait** (colonne `raison_conflit`), malgré les mentions « plus tard » plus bas.
 
@@ -757,7 +769,7 @@ Un produit se construit par couches. Chaque couche répond à une question et s'
 | 5. Métier | Que fait le produit ? (engagements, cycle de vie, règles, API externe, courriels, pièces jointes) | 1 | ✅ (cycle de vie, conflit d'agenda, géocodage, jours fériés, devises, pièces jointes, fiches musiciens, calendrier) |
 | 6. Fiabilité | Comment sait-on que ça marche et que c'est sûr ? (tests, journaux, revue de sécurité, README) | 1 | ✅ (tests à chaque push, journaux, revue de sécurité `docs/securite.md`, README) |
 | 7. Automatisation | Que fait le produit tout seul, la nuit ? | 2 | 🔄 (import des nuits, rattrapage et cron faits ; récap, surveillance, boîte à faire) |
-| 8. Intelligence | Que comprend le produit ? (lecture de documents, recherche qui cite ses sources) | 3 | ⬜ |
+| 8. Intelligence | Que comprend le produit ? (lecture de documents, recherche qui cite ses sources) | 3 | ✅ (I1 à I7, 19/10) |
 | 9. Action | Qu'est-ce que le produit fait à notre place, sous contrôle ? (agent, serveur MCP) | 4 | ⬜ |
 | 10. Transmission | Quelqu'un d'autre peut-il le reprendre ? (passation, API pour les autres systèmes) | 5 | ⬜ |
 
