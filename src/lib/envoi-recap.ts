@@ -114,6 +114,8 @@ async function lireDonnees(depuis: Date, jour: string) {
       doublons: n.doublons,
       misDeCote: n.misDeCote,
       erreur: n.erreur,
+      analyse: n.analyse,
+      analyseErreur: n.analyseErreur,
     })),
     demandes: traites
       .filter((e) => e.type === "creation" && e.demande)

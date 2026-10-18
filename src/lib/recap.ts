@@ -58,7 +58,16 @@ export type DonneesRecap = {
   messagesInconnus: Message[];
   options: OptionPosee[]; // déjà choisies par optionsQuiExpirent
   impayes: ConcertPasse[]; // déjà choisis par cachetsImpayes
-  nuits: { nuitDu: Jour; etat: "reussie" | "en_echec"; recus: number; doublons: number; misDeCote: number; erreur: string | null }[];
+  nuits: {
+    nuitDu: Jour;
+    etat: "reussie" | "en_echec";
+    recus: number;
+    doublons: number;
+    misDeCote: number;
+    erreur: string | null;
+    analyse: string | null; // faite par l'IA pour la dernière nuit de chaque passage
+    analyseErreur: string | null;
+  }[];
   raisons: string[]; // des événements mis de côté
 };
 
@@ -118,6 +127,7 @@ export function composerRecap(d: DonneesRecap): { sujet: string; texte: string }
   const texte = [
     `Bonjour ${d.nomAgent},`,
     enBref.length ? `EN BREF\n${enBref.map((l) => `• ${l}`).join("\n")}` : "Rien de neuf cette nuit.",
+    analyses(d),
     aFaire,
     recuDuFlux,
     venuDuFlux ? `Traiter les demandes reçues : ${d.lienSite}/demandes` : null,
@@ -128,6 +138,17 @@ export function composerRecap(d: DonneesRecap): { sujet: string; texte: string }
     .filter((bloc) => bloc !== null)
     .join("\n\n");
   return { sujet, texte };
+}
+
+// Les analyses de l'IA, recopiées telles quelles ; la date seulement si plusieurs nuits ont été analysées.
+function analyses(d: DonneesRecap): string | null {
+  const analysees = d.nuits.filter((n) => n.analyse || n.analyseErreur);
+  if (!analysees.length) return null;
+  const lignes = analysees.map((n) => {
+    const texte = n.analyse ?? `indisponible (${n.analyseErreur}).`;
+    return analysees.length > 1 ? `Nuit du ${jourMois(n.nuitDu)} : ${texte}` : texte;
+  });
+  return `ANALYSE (IA, À RELIRE)\n${lignes.join("\n\n")}`;
 }
 
 // Les nuits réussies en une phrase ; une nuit en échec garde sa ligne, avec la raison.
