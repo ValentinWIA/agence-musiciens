@@ -5,6 +5,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { db } from "@/db";
 import { courriers } from "@/db/schema";
 import { formaterMontant } from "@/lib/argent";
+import { LIBELLES_MODELE, type Modele } from "@/lib/couts-ia";
 import { LIBELLES_CLASSEMENT, type Classement } from "@/lib/courrier";
 import { verifierAdmin } from "@/lib/session";
 import { DepotCourrier } from "./depot";
@@ -71,7 +72,7 @@ async function ContenuCourriers() {
                     <TableCell className="text-right">{c.montant === null ? "—" : formaterMontant(c.montant, "EUR")}</TableCell>
                     <TableCell>{c.typeDossier ?? "—"}</TableCell>
                     <TableCell>{LIBELLES_CLASSEMENT[c.classement as Classement] ?? c.classement}</TableCell>
-                    <TableCell>{c.modele === "claude-opus-5-5" ? "Opus 5.5" : "Haiku 5.5"}</TableCell>
+                    <TableCell>{LIBELLES_MODELE[c.modele as Modele] ?? c.modele}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>

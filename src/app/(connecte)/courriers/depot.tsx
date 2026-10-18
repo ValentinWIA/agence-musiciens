@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select";
+import { LIBELLES_MODELE, type Modele } from "@/lib/couts-ia";
 import { CHAMPS, CLASSEMENTS, LIBELLES_CHAMP, LIBELLES_CLASSEMENT, type ChampVerifie, type LectureVerifiee } from "@/lib/courrier";
 import { lireCourrier, validerCourrier, type EtatLecture, type EtatValidation } from "./actions";
 
@@ -36,10 +37,10 @@ export function DepotCourrier() {
             <Input id="fichier" name="fichier" type="file" accept=".txt,.pdf,text/plain,application/pdf" className="w-72" />
           </div>
           <div className="grid gap-2">
-            <Label htmlFor="modele">Modèle (provisoire, pour comparer)</Label>
+            <Label htmlFor="modele">Modèle</Label>
             <NativeSelect id="modele" name="modele" defaultValue="claude-haiku-5-5">
-              <NativeSelectOption value="claude-haiku-5-5">Haiku 5.5 (rapide, peu cher)</NativeSelectOption>
-              <NativeSelectOption value="claude-opus-5-5">Opus 5.5 (plus fort, 40 fois plus cher)</NativeSelectOption>
+              <NativeSelectOption value="claude-haiku-5-5">Haiku 5.5 (par défaut, ≈ 0,001 $)</NativeSelectOption>
+              <NativeSelectOption value="claude-sonnet-5-5">Sonnet 5.5 (courrier complexe, ≈ 0,015 $)</NativeSelectOption>
             </NativeSelect>
           </div>
         </div>
@@ -84,7 +85,7 @@ function Validation({ lecture, texte, modele }: { lecture: LectureVerifiee; text
       <div className="grid gap-1">
         <h2 className="font-logo text-2xl">Relisez avant de valider</h2>
         <p className="text-sm text-muted-foreground">
-          Lu par {modele === "claude-opus-5-5" ? "Opus 5.5" : "Haiku 5.5"}. Chaque champ cite l&apos;extrait du courrier
+          Lu par {LIBELLES_MODELE[modele as Modele] ?? modele}. Chaque champ cite l&apos;extrait du courrier
           qui le justifie ; le site vérifie que cet extrait existe.{" "}
           {aRelire > 0 ? `${aRelire} champ${aRelire > 1 ? "s" : ""} à relire : l'IA a peut-être inventé.` : ""} Rien
           n&apos;est enregistré avant « Valider ».

@@ -45,7 +45,7 @@ export async function appelerModele(
   fonction: FonctionIa,
   utilisateurId: string | null,
   requete: Omit<Anthropic.MessageCreateParamsNonStreaming, "model">,
-  modeleChoisi?: Modele, // provisoire : comparer Haiku et Opus sur les courriers (décision 1)
+  modeleChoisi?: Modele, // courriers : Haiku par défaut, Sonnet au choix de l'agent pour un courrier complexe
 ): Promise<ResultatIa> {
   const refus = await verifierLimites(utilisateurId);
   if (refus) {

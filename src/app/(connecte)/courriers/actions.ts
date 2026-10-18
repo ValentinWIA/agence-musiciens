@@ -15,9 +15,10 @@ import {
   verifierLecture,
   type LectureVerifiee,
 } from "@/lib/courrier";
-import { MODELES } from "@/lib/couts-ia";
 import { appelerModele, texteDe } from "@/lib/ia";
 import { verifierAdmin } from "@/lib/session";
+
+const MODELES_COURRIER = ["claude-haiku-5-5", "claude-sonnet-5-5"] as const;
 
 export type EtatLecture = { erreur?: string; lecture?: LectureVerifiee; texte?: string; modele?: string; lectures?: number };
 
@@ -26,7 +27,8 @@ export async function lireCourrier(etat: EtatLecture, formData: FormData): Promi
   const agent = await verifierAdmin("/courriers (lecture)");
   const texte = await texteDepose(formData);
   if ("erreur" in texte) return { erreur: texte.erreur };
-  const modele = z.enum(MODELES).catch("claude-haiku-5-5").parse(formData.get("modele"));
+  // Haiku suffit pour les 10 courriers du flux (décision 1, mesurée le 18/10) ; Sonnet pour un courrier complexe.
+  const modele = z.enum(MODELES_COURRIER).catch("claude-haiku-5-5").parse(formData.get("modele"));
 
   console.log(`Lecture d'un courrier demandée par ${agent.nom} (${texte.texte.length} caractères, ${modele})`);
   const resultat = await appelerModele(

@@ -2,13 +2,20 @@
 // Les coûts sont comptés en millionièmes de dollar (entiers) : Anthropic facture en dollars, au million de jetons,
 // donc un prix « 4 $ par million de jetons » vaut exactement 4 millionièmes de dollar par jeton.
 
-export const MODELES = ["claude-haiku-5-5", "claude-opus-5-5"] as const;
+export const MODELES = ["claude-haiku-5-5", "claude-sonnet-5-5", "claude-opus-5-5"] as const;
 export type Modele = (typeof MODELES)[number];
 
 // Dollars par million de jetons (tarifs Anthropic relevés le 18/10/2026).
 export const PRIX: Record<Modele, { entree: number; sortie: number }> = {
   "claude-haiku-5-5": { entree: 0.1, sortie: 0.5 },
+  "claude-sonnet-5-5": { entree: 2, sortie: 10 },
   "claude-opus-5-5": { entree: 4, sortie: 20 },
+};
+
+export const LIBELLES_MODELE: Record<Modele, string> = {
+  "claude-haiku-5-5": "Haiku 5.5",
+  "claude-sonnet-5-5": "Sonnet 5.5",
+  "claude-opus-5-5": "Opus 5.5",
 };
 
 export const APPELS_PAR_JOUR = 30; // par utilisateur : coupe une boucle ou un abus

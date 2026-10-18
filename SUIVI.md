@@ -205,7 +205,17 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   (`appels_ia`, jamais vidée par le jeu de données), page `/couts` (agent) avec « Tester l'IA », lien depuis `/nuit`.
   Clé `ANTHROPIC_API_KEY` (Production et Preview) et plafond de dépense dans la console : faits par l'humain.
   Geste validé en prévisualisation le 18/10 : page vide, test → « OK » et ligne comptée, lien sur `/nuit`, musicien
-  renvoyé. **Prochaine étape : I2 (lecture d'un courrier)**, même branche.
+  renvoyé.
+  **I2 ✅** (`e48a7f1`, `87e3a92`) : `src/lib/courrier.ts` (format imposé, consigne, vérification des extraits : extrait
+  présent dans le courrier, chiffres de la date et du montant écrits dans l'extrait, sinon « à relire » ; saisie en
+  centimes), 12 tests sur les 10 vrais courriers (`src/lib/courriers.flux.json`) avec des réponses fabriquées, 311 au
+  total ; migration 0017 (`courriers`) ; page `/courriers` (dépôt texte / `.txt` / `.pdf` par `unpdf`, champs à relire,
+  validation, liste), lien « Courriers » au menu de l'agent. Le classement est fait dans le même appel.
+  Retour au geste : signataire réduit au nom de famille → c'était la consigne (« nom seulement ») ; corrigée.
+  Gestes validés le 18/10 : COU-07 montant absent, COU-04 date absente, validation, recette → rien de vérifié,
+  coûts comptés, musicien renvoyé ; **les 10 courriers justes avec Haiku**. Décidé : **Haiku par défaut** (comparaison
+  avec Opus sautée : zéro erreur), **Sonnet 5.5 au choix** dans le menu pour un courrier complexe.
+  **Prochaine étape : I3 (brouillon de réponse)**, même branche.
   Après chaque push, rattraper les nuits sur `/nuit` (le jeu de données vide les tables du flux).
   Clé du flux recopiée dans Vercel (`FLUX_DE_NUIT_CLE`, Production et Preview) le 17/10.
   Domaine `valentinwalczak.com` (OVH, `contact@` déjà utilisé) : envoi par le sous-domaine `mail.` (tranche D).
