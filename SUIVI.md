@@ -67,8 +67,7 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   dimanche ; choix C sur planche). Premier essai (à côté du titre si la place le permet) refusé au geste : avec
   septembre, novembre, décembre les boutons descendaient, le calendrier changeait de forme d'un mois à l'autre.
   Ordinateur inchangé. Gestes validés en prévisualisation et en production le 19/10.
-  **Reste** : supprimer la branche Neon `preview/retouches` (et `preview/retour-engagements`, `preview/cartes-telephone`
-  si pas déjà fait).
+  Branches Neon `preview/retouches`, `preview/retour-engagements` et `preview/cartes-telephone` supprimées le 19/10.
 - **Prochaine demande : harmoniser les pages** (demandé le 19/10) : même marge à gauche, titre à la même hauteur, mêmes polices et
   tailles sur toutes les pages ; commencer par un relevé page par page (captures ordinateur et téléphone).
   Ensuite : n° 2 des reportés (heure « matin / après-midi / soir », heures de 5 en 5 min). Décidé le 19/10 : n° 3
