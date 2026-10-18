@@ -174,6 +174,10 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 - **Prochaine demande : filtre des engagements par programmateur** (rappelé par l'humain le 18/10), branche
   `filtre-programmateur` depuis `main`, court cadrage d'abord (engagements sans programmateur ? filtre dans l'adresse
   comme les autres ?). Puis **semaine 3 (IA)**.
+  **Cadrage validé le 18/10** : filtre pour l'agent seulement, à côté de « Musicien » ; tous les programmateurs
+  listés (« Nom — Structure ») ; `?programmateur=<id>` dans l'adresse, identifiant mal formé ignoré ; aucun
+  engagement sans programmateur (`programmateur_id` obligatoire). Hors périmètre : total des cachets, export, colonne
+  « Programmateur ». Une tranche **P1** ; preuve = geste en prévisualisation (pas de test ajouté, décidé).
 - **Semaine 3 — lecture préparatoire faite le 18/10** : 10 courriers (`/api/courriers?sujet=reservations`) lus ; pièges
   confirmés : COU-07 sans montant, COU-04 daté « la semaine dernière » ; références `RES-2024-589` (format différent
   des nuits, ne correspondent à aucune demande) ; contenu = réunions et salles, **ni date de concert ni programme** →
