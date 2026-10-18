@@ -33,7 +33,12 @@ async function ContenuCourriers() {
           <CardTitle>Déposer un courrier</CardTitle>
           <CardDescription>
             L&apos;IA lit le courrier et remplit les champs ; un champ absent du courrier reste vide. Vous relisez,
-            corrigez, puis enregistrez : rien n&apos;est enregistré ni envoyé sans vous.
+            corrigez, puis enregistrez : rien n&apos;est enregistré ni envoyé sans vous. Chaque lecture est un appel
+            à l&apos;IA, compté sur la page{" "}
+            <Link href="/couts" className="underline">
+              Coûts
+            </Link>
+            .
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -53,7 +58,7 @@ async function ContenuCourriers() {
               <TableHeader>
                 <TableRow>
                   <TableHead>Daté du</TableHead>
-                  <TableHead>Expéditeur</TableHead>
+                  <TableHead className="min-w-44">Expéditeur</TableHead>
                   <TableHead>Référence</TableHead>
                   <TableHead className="text-right">Montant</TableHead>
                   <TableHead>Type</TableHead>
