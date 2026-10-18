@@ -25,7 +25,7 @@ const schemaFiltres = z.object({
 
 export default function PageEngagements({ searchParams }: PageProps<"/engagements">) {
   return (
-    <main className="mx-auto grid w-full max-w-6xl gap-6 p-4">
+    <main className="mx-auto grid w-full max-w-6xl gap-4 p-4">
       <Suspense fallback={<ChargementListe />}>
         <ContenuEngagements searchParams={searchParams} />
       </Suspense>
@@ -52,114 +52,119 @@ async function ContenuEngagements({ searchParams }: { searchParams: Promise<Reco
   return (
     <>
       <h1 className="font-logo text-4xl leading-tight">Engagements</h1>
-      <form className="flex flex-wrap items-end gap-3" action="/engagements">
-        <NativeSelect name="statut" defaultValue={filtres.statut ?? ""} aria-label="Statut">
-          <NativeSelectOption value="">Tous les statuts</NativeSelectOption>
-          {Object.entries(LIBELLES_STATUT).map(([valeur, libelle]) => (
-            <NativeSelectOption key={valeur} value={valeur}>
-              {libelle}
-            </NativeSelectOption>
-          ))}
-        </NativeSelect>
-        {estAgent && (
-          <NativeSelect name="musicien" defaultValue={filtres.musicien ?? ""} aria-label="Musicien">
-            <NativeSelectOption value="">Tous les musiciens</NativeSelectOption>
-            {musiciens.map((m) => (
-              <NativeSelectOption key={m.id} value={m.id}>
-                {m.nom}
-              </NativeSelectOption>
-            ))}
-          </NativeSelect>
-        )}
-        {/* Regroupe ce qui concerne un même programmateur (facturation globale) ; « Nom — Structure » distingue les homonymes.
-            Largeur fixe : sinon la case prend celle du libellé le plus long (le nom entier reste lisible à l'ouverture). */}
-        {estAgent && (
-          <NativeSelect name="programmateur" defaultValue={filtres.programmateur ?? ""} aria-label="Programmateur" className="w-56">
-            <NativeSelectOption value="">Tous les programmateurs</NativeSelectOption>
-            {programmateurs.map((p) => (
-              <NativeSelectOption key={p.id} value={p.id}>
-                {presenterProgrammateur(p)}
-              </NativeSelectOption>
-            ))}
-          </NativeSelect>
-        )}
-        <NativeSelect name="periode" defaultValue={filtres.periode} aria-label="Période">
-          <NativeSelectOption value="en-cours">En cours</NativeSelectOption>
-          <NativeSelectOption value="tous">Tous</NativeSelectOption>
-        </NativeSelect>
-        <Input name="recherche" defaultValue={filtres.recherche} placeholder="Lieu, ville, titre…" className="w-48" />
-        <Button type="submit" variant="outline">
-          Filtrer
-        </Button>
-        {filtresActifs && (
-          <Link href={`/engagements?periode=${filtres.periode}`} className="text-sm underline">
-            Effacer les filtres
-          </Link>
-        )}
-        {/* Au niveau des filtres (reporté le 18/10), poussé à droite ; seul bouton noir : l'action principale. */}
-        {estAgent && (
-          <Button nativeButton={false} render={<Link href="/engagements/nouveau" />} className="ml-auto">
+      {/* Au-dessus des filtres (décidé le 18/10) : entre les filtres et le tableau, il creusait un vide. Seul bouton noir. */}
+      {estAgent && (
+        <div className="flex justify-end">
+          <Button nativeButton={false} render={<Link href="/engagements/nouveau" />}>
             + Nouvel engagement
           </Button>
-        )}
-      </form>
-
-      {statutHorsEnCours ? (
-        <p className="text-muted-foreground">
-          Aucun engagement en cours avec ce statut.{" "}
-          <Link href={`/engagements?${new URLSearchParams({ ...lienFiltres(filtres), periode: "tous" })}`} className="underline">
-            Voir dans Tous
-          </Link>
-        </p>
-      ) : liste.length === 0 ? (
-        <p className="text-muted-foreground">
-          {filtresActifs
-            ? `Aucun engagement${filtres.periode === "en-cours" ? " en cours" : ""} ne correspond à ces filtres.`
-            : filtres.periode === "en-cours"
-              ? "Aucun engagement en cours."
-              : "Aucun engagement pour l'instant."}
-        </p>
-      ) : (
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Date</TableHead>
-              <TableHead>Musiciens</TableHead>
-              <TableHead>Lieu</TableHead>
-              <TableHead>Statut</TableHead>
-              <TableHead className="text-right">Cachet</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {liste.map((e) => (
-              <TableRow key={e.id}>
-                <TableCell>
-                  <Link href={`/engagements/${e.id}`} className="underline">
-                    {formaterDebut(e.debut, e.precisionDate, e.pays)}
-                  </Link>
-                  {/* Une demande, une option ou un contrat envoyé dont la date est passée : à régler ou à annuler.
-                      Sous la date, pour garder la colonne étroite sur téléphone. */}
-                  {STATUTS_A_REGLER.includes(e.statut) && dateDepassee(e, e.pays, maintenant) && (
-                    <span className="block text-xs text-muted-foreground">date passée</span>
-                  )}
-                </TableCell>
-                {/* Les musiciens avant le lieu : sur téléphone, on voit la date et la colonne suivante. */}
-                <TableCell className="min-w-40 whitespace-normal">{e.musiciens.map((m) => `${m.nom} (${m.instrument})`).join(", ")}</TableCell>
-                <TableCell className="min-w-48 whitespace-normal">
-                  {e.titre && <div className="font-medium">{e.titre}</div>}
-                  {e.lieu}, {e.ville}
-                </TableCell>
-                <TableCell>
-                  <BadgeStatut statut={e.statut} />
-                </TableCell>
-                <TableCell className="text-right whitespace-nowrap">
-                  {e.cachet === null ? "—" : formaterMontant(e.cachet, e.devise)}
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+        </div>
       )}
+      {/* Filtres à 12 px du tableau, cases étirées (flex-auto) : la barre a la largeur du tableau. */}
+      <div className="grid gap-3">
+        <form className="flex flex-wrap items-end gap-3" action="/engagements">
+          <NativeSelect name="statut" defaultValue={filtres.statut ?? ""} aria-label="Statut" className="flex-auto">
+            <NativeSelectOption value="">Tous les statuts</NativeSelectOption>
+            {Object.entries(LIBELLES_STATUT).map(([valeur, libelle]) => (
+              <NativeSelectOption key={valeur} value={valeur}>
+                {libelle}
+              </NativeSelectOption>
+            ))}
+          </NativeSelect>
+          {estAgent && (
+            <NativeSelect name="musicien" defaultValue={filtres.musicien ?? ""} aria-label="Musicien" className="flex-auto">
+              <NativeSelectOption value="">Tous les musiciens</NativeSelectOption>
+              {musiciens.map((m) => (
+                <NativeSelectOption key={m.id} value={m.id}>
+                  {m.nom}
+                </NativeSelectOption>
+              ))}
+            </NativeSelect>
+          )}
+          {/* Regroupe ce qui concerne un même programmateur (facturation globale) ; « Nom — Structure » distingue les homonymes.
+              Largeur fixe : sinon la case prend celle du libellé le plus long (le nom entier reste lisible à l'ouverture). */}
+          {estAgent && (
+            <NativeSelect name="programmateur" defaultValue={filtres.programmateur ?? ""} aria-label="Programmateur" className="w-56 flex-auto">
+              <NativeSelectOption value="">Tous les programmateurs</NativeSelectOption>
+              {programmateurs.map((p) => (
+                <NativeSelectOption key={p.id} value={p.id}>
+                  {presenterProgrammateur(p)}
+                </NativeSelectOption>
+              ))}
+            </NativeSelect>
+          )}
+          <NativeSelect name="periode" defaultValue={filtres.periode} aria-label="Période" className="flex-auto">
+            <NativeSelectOption value="en-cours">En cours</NativeSelectOption>
+            <NativeSelectOption value="tous">Tous</NativeSelectOption>
+          </NativeSelect>
+          <Input name="recherche" defaultValue={filtres.recherche} placeholder="Lieu, ville, titre…" className="w-48 flex-auto" />
+          <Button type="submit" variant="outline" className="flex-auto">
+            Filtrer
+          </Button>
+          {filtresActifs && (
+            <Link href={`/engagements?periode=${filtres.periode}`} className="text-sm underline">
+              Effacer les filtres
+            </Link>
+          )}
+        </form>
+
+        {statutHorsEnCours ? (
+          <p className="text-muted-foreground">
+            Aucun engagement en cours avec ce statut.{" "}
+            <Link href={`/engagements?${new URLSearchParams({ ...lienFiltres(filtres), periode: "tous" })}`} className="underline">
+              Voir dans Tous
+            </Link>
+          </p>
+        ) : liste.length === 0 ? (
+          <p className="text-muted-foreground">
+            {filtresActifs
+              ? `Aucun engagement${filtres.periode === "en-cours" ? " en cours" : ""} ne correspond à ces filtres.`
+              : filtres.periode === "en-cours"
+                ? "Aucun engagement en cours."
+                : "Aucun engagement pour l'instant."}
+          </p>
+        ) : (
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Date</TableHead>
+                <TableHead>Musiciens</TableHead>
+                <TableHead>Lieu</TableHead>
+                <TableHead>Statut</TableHead>
+                <TableHead className="text-right">Cachet</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {liste.map((e) => (
+                <TableRow key={e.id}>
+                  <TableCell>
+                    <Link href={`/engagements/${e.id}`} className="underline">
+                      {formaterDebut(e.debut, e.precisionDate, e.pays)}
+                    </Link>
+                    {/* Une demande, une option ou un contrat envoyé dont la date est passée : à régler ou à annuler.
+                        Sous la date, pour garder la colonne étroite sur téléphone. */}
+                    {STATUTS_A_REGLER.includes(e.statut) && dateDepassee(e, e.pays, maintenant) && (
+                      <span className="block text-xs text-muted-foreground">date passée</span>
+                    )}
+                  </TableCell>
+                  {/* Les musiciens avant le lieu : sur téléphone, on voit la date et la colonne suivante. */}
+                  <TableCell className="min-w-40 whitespace-normal">{e.musiciens.map((m) => `${m.nom} (${m.instrument})`).join(", ")}</TableCell>
+                  <TableCell className="min-w-48 whitespace-normal">
+                    {e.titre && <div className="font-medium">{e.titre}</div>}
+                    {e.lieu}, {e.ville}
+                  </TableCell>
+                  <TableCell>
+                    <BadgeStatut statut={e.statut} />
+                  </TableCell>
+                  <TableCell className="text-right whitespace-nowrap">
+                    {e.cachet === null ? "—" : formaterMontant(e.cachet, e.devise)}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        )}
+      </div>
     </>
   );
 }
