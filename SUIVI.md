@@ -10,7 +10,7 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 
 ## État de reprise
 
-*Dernière mise à jour : 19 octobre 2026 (semaine 3 : **I1 à I6 et brouillon faits**, PR n° 24 à 29 ; I7 abandonné par l'humain)*
+*Dernière mise à jour : 19 octobre 2026 (semaine 3 : **I1 à I7 et brouillon faits**, PR n° 24 à 29 ; semaine 3 terminée)*
 
 - **Semaine 2 — flux de nuit**, branche `flux-de-nuit` (depuis `main`, 17/10). Cadrage validé par l'humain le 17/10 :
   `docs/flux-de-nuit.md` (lu sur une vraie nuit : 15 événements dont 2 doublons ; créations sans musicien, sans heure,
@@ -275,7 +275,8 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   **limite de branches de l'offre gratuite Neon atteinte**, l'intégration ne créait pas la base de la nouvelle branche ;
   l'humain a supprimé dans Neon les branches de prévisualisation des fonctionnalités fusionnées, puis « Redeploy ».
   **À refaire avant chaque nouvelle branche** si la liste est pleine (jamais la branche principale).
-  **I7 (rendu `docs/ia.md`) abandonné** par l'humain le 19/10.
+  **I7 ✅** (19/10, branche `rendu-ia`) : `docs/ia.md` — fonctions IA et erreurs visibles, coûts **estimés** (chiffres
+  réels sur `/couts`), récit de la panne Neon comme moment où l'IA a tourné en rond.
   **Prochaine étape** : semaine 4 (agent), après `/clear`.
   Après chaque push, rattraper les nuits sur `/nuit` (le jeu de données vide les tables du flux).
   Clé du flux recopiée dans Vercel (`FLUX_DE_NUIT_CLE`, Production et Preview) le 17/10.
