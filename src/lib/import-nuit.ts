@@ -3,14 +3,16 @@ import type { BatchItem } from "drizzle-orm/batch";
 import { db } from "@/db";
 import { demandesRecues, evenementsFlux, executions } from "@/db/schema";
 import { appelerFlux } from "./appel-flux";
+import { CONSIGNE, donneesDeLaNuit, lireAnalyse } from "./analyse-nuit";
 import { alerterPanne, signalerSansCourriel } from "./envoi-alerte";
+import { appelerModele, texteDe } from "./ia";
 import { jourLocal } from "./calendrier";
 import { bilanNuit, lireNuit, nuitsManquantes, prochaineNuit, type Compteurs, type EvenementLu } from "./flux";
 
 // Import d'une nuit du flux : verrou, appel, lecture, écriture en un seul bloc. Ne lève jamais d'erreur.
 
 export type ResultatImport =
-  | { ok: true; nuitDu: string; compteurs: Compteurs }
+  | { ok: true; nuitDu: string; compteurs: Compteurs; executionId: string; donnees: string }
   | { ok: false; nuitDu: string; erreur: string };
 
 const VERROU_PERIME = sql`now() - interval '5 minutes'`;
@@ -97,7 +99,7 @@ export async function importerNuit(nuitDu: string, declencheur: "cron" | "bouton
       `Import de la nuit du ${nuitDu} (${declencheur}) : ${compteurs.recus} reçus, ${compteurs.traites} traités, ` +
         `${compteurs.doublons} doublons, ${compteurs.misDeCote} mis de côté, ${appels} appel(s)`,
     );
-    return { ok: true, nuitDu, compteurs };
+    return { ok: true, nuitDu, compteurs, executionId, donnees: donneesDeLaNuit(nuitDu, compteurs, aEcrire) };
   } catch (e) {
     return await echouer(`écriture en base : ${origine(e).message}`);
   }
@@ -148,6 +150,29 @@ function effetSurLesDemandes(e: EvenementLu): BatchItem<"pg">[] {
   return [];
 }
 
+// Appelée après l'import, une fois la nuit écrite : une panne de l'IA ne peut pas faire échouer l'import.
+// Ne lève jamais d'erreur ; le texte ou la raison de l'échec est gardé sur l'exécution.
+export async function analyserNuit({ executionId, nuitDu, donnees }: { executionId: string; nuitDu: string; donnees: string }) {
+  try {
+    const resultat = await appelerModele("analyse", null, {
+      // La réflexion du modèle compte dans max_tokens : à 600, elle a tout pris et la réponse est arrivée vide.
+      max_tokens: 2000,
+      output_config: { effort: "low" },
+      system: CONSIGNE,
+      messages: [{ role: "user", content: donnees }],
+    });
+    const lue = resultat.ok ? lireAnalyse(texteDe(resultat.reponse)) : resultat;
+    await db
+      .update(executions)
+      .set(lue.ok ? { analyse: lue.analyse, analyseErreur: null } : { analyse: null, analyseErreur: lue.erreur })
+      .where(eq(executions.id, executionId));
+    if (lue.ok) console.log(`Analyse de la nuit du ${nuitDu} enregistrée`);
+    else console.warn(`Analyse de la nuit du ${nuitDu} non faite : ${lue.erreur}`);
+  } catch (e) {
+    console.warn(`Analyse de la nuit du ${nuitDu} non enregistrée : ${origine(e).message}`);
+  }
+}
+
 async function nuitsReussies(): Promise<Set<string>> {
   const reussies = await db
     .selectDistinct({ nuitDu: executions.nuitDu })
@@ -167,8 +192,9 @@ export type ResultatRattrapage = {
   echec?: { nuitDu: string; erreur: string };
 };
 
-// Une fonction Hobby est coupée à 300 s ; une nuit coûte au pire ~40 s (3 essais de 10 s, attentes, écriture).
-const BUDGET_MS = 200_000;
+// Une fonction Hobby est coupée à 300 s ; une nuit coûte au pire ~40 s (3 essais de 10 s, attentes, écriture),
+// et l'analyse de la dernière nuit jusqu'à ~120 s (60 s, un nouvel essai) : 150 + 40 + 120 < 300.
+const BUDGET_MS = 150_000;
 
 // Rattrapage : les nuits manquantes une à une, de la plus ancienne à celle du matin. S'arrête à la première nuit en
 // échec (flux en panne, import déjà en cours) ou à la fin du budget ; le passage suivant reprend où celui-ci s'arrête.
@@ -177,6 +203,7 @@ export async function rattraper(declencheur: "cron" | "bouton"): Promise<Resulta
   const nuits = nuitsManquantes(await nuitsReussies(), jourLocal(new Date(), "France"));
   const importees: string[] = [];
   let echec: ResultatRattrapage["echec"];
+  let derniere: Extract<ResultatImport, { ok: true }> | undefined;
   for (const nuitDu of nuits) {
     if (Date.now() - debut > BUDGET_MS) break;
     const resultat = await importerNuit(nuitDu, declencheur);
@@ -185,11 +212,14 @@ export async function rattraper(declencheur: "cron" | "bouton"): Promise<Resulta
       break;
     }
     importees.push(nuitDu);
+    derniere = resultat;
   }
   const restantes = nuits.length - importees.length;
   console.log(
     `Rattrapage (${declencheur}) : ${importees.length} nuit(s) importée(s), ${restantes} restante(s)` +
       (echec ? `, arrêté sur la nuit du ${echec.nuitDu}` : ""),
   );
+  // Une seule analyse par passage (la dernière nuit) : rattraper 28 nuits ne coûte pas 28 appels.
+  if (derniere) await analyserNuit(derniere);
   return { importees, restantes, echec };
 }

@@ -94,7 +94,7 @@ async function ContenuNuit() {
           <CardTitle>Exécutions</CardTitle>
           <CardDescription>
             Chaque passage coûte sa durée et ses appels au flux ; le détail des coûts, IA comprise, est sur la page{" "}
-            <Link href="/couts" className="underline">Coûts</Link>.
+            <Link href="/couts?depuis=nuit" className="underline">Coûts</Link>.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -117,8 +117,8 @@ async function ContenuNuit() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {liste.map((x) => (
-                  <TableRow key={x.id}>
+                {liste.map((x) => [
+                  <TableRow key={x.id} className={x.analyse || x.analyseErreur ? "border-b-0" : undefined}>
                     <TableCell>
                       {x.debutLe.toLocaleString("fr-FR", { timeZone: "Europe/Paris", dateStyle: "short", timeStyle: "medium" })}
                     </TableCell>
@@ -142,8 +142,16 @@ async function ContenuNuit() {
                         </p>
                       )}
                     </TableCell>
-                  </TableRow>
-                ))}
+                  </TableRow>,
+                  (x.analyse || x.analyseErreur) && (
+                    <TableRow key={`${x.id}-analyse`}>
+                      <TableCell colSpan={10} className="whitespace-normal pt-0 text-sm">
+                        <span className="font-medium">Analyse (IA, à relire) : </span>
+                        {x.analyse ?? <span className="text-muted-foreground">indisponible ({x.analyseErreur}).</span>}
+                      </TableCell>
+                    </TableRow>
+                  ),
+                ])}
               </TableBody>
             </Table>
           )}

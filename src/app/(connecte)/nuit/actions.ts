@@ -6,7 +6,7 @@ import { z } from "zod";
 import { jourLocal } from "@/lib/calendrier";
 import { PREMIERE_NUIT } from "@/lib/flux";
 import { envoyerRecap } from "@/lib/envoi-recap";
-import { importerNuit, nuitAProposer, rattraper } from "@/lib/import-nuit";
+import { analyserNuit, importerNuit, nuitAProposer, rattraper } from "@/lib/import-nuit";
 import { verifierAdmin } from "@/lib/session";
 
 export type EtatImport = { message?: string; reussi?: boolean; nuitProposee?: string };
@@ -23,6 +23,7 @@ export async function importerUneNuit(_etat: EtatImport, formData: FormData): Pr
 
   console.log(`Import demandé par ${agent.nom} : nuit du ${nuit.data}`);
   const resultat = await importerNuit(nuit.data, "bouton");
+  if (resultat.ok) await analyserNuit(resultat);
   refresh();
   const nuitProposee = await nuitAProposer();
   const nuitDu = formaterJour(nuit.data);

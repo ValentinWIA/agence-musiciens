@@ -50,7 +50,7 @@ function donnees(modif: Partial<DonneesRecap> = {}): DonneesRecap {
     messagesInconnus: [],
     options: [],
     impayes: [],
-    nuits: [{ nuitDu: aujourdhui, etat: "reussie", recus: 15, doublons: 2, misDeCote: 0, erreur: null }],
+    nuits: [{ nuitDu: aujourdhui, etat: "reussie", recus: 15, doublons: 2, misDeCote: 0, erreur: null, analyse: null, analyseErreur: null }],
     raisons: [],
     ...modif,
   };
@@ -140,9 +140,9 @@ describe("composerRecap", () => {
     const { sujet, texte } = composerRecap(
       donnees({
         nuits: [
-          { nuitDu: "2026-09-20", etat: "reussie", recus: 16, doublons: 2, misDeCote: 3, erreur: null },
-          { nuitDu: "2026-09-21", etat: "reussie", recus: 12, doublons: 2, misDeCote: 1, erreur: null },
-          { nuitDu: "2026-09-22", etat: "en_echec", recus: 0, doublons: 0, misDeCote: 0, erreur: "délai dépassé" },
+          { nuitDu: "2026-09-20", etat: "reussie", recus: 16, doublons: 2, misDeCote: 3, erreur: null, analyse: null, analyseErreur: null },
+          { nuitDu: "2026-09-21", etat: "reussie", recus: 12, doublons: 2, misDeCote: 1, erreur: null, analyse: null, analyseErreur: null },
+          { nuitDu: "2026-09-22", etat: "en_echec", recus: 0, doublons: 0, misDeCote: 0, erreur: "délai dépassé", analyse: null, analyseErreur: null },
         ],
         raisons: ["référence inconnue : RES-1", "référence inconnue : RES-2", "champ invalide : donnees.debut", "référence inconnue : RES-3"],
       }),
@@ -153,6 +153,17 @@ describe("composerRecap", () => {
     );
     expect(texte).toContain("Nuit du 22/09 : import en échec (délai dépassé), elle sera réessayée.");
     expect(texte).toContain("Détail des événements mis de côté : https://agence-musiciens.vercel.app/nuit");
+  });
+
+  it("analyse de l'IA après « En bref » ; sa panne est dite, sans bloquer le récap", () => {
+    const nuit = donnees().nuits[0];
+    const { texte } = composerRecap(donnees({ nuits: [{ ...nuit, analyse: "Deux demandes nouvelles à Lyon." }] }));
+    expect(texte).toContain("ANALYSE (IA, À RELIRE)\nDeux demandes nouvelles à Lyon.");
+    expect(texte.indexOf("ANALYSE")).toBeLessThan(texte.indexOf("IMPORT"));
+
+    const enPanne = composerRecap(donnees({ nuits: [{ ...nuit, analyseErreur: "l'IA n'a pas répondu à temps" }] }));
+    expect(enPanne.texte).toContain("ANALYSE (IA, À RELIRE)\nindisponible (l'IA n'a pas répondu à temps).");
+    expect(composerRecap(donnees()).texte).not.toContain("ANALYSE");
   });
 
   it("à faire : artistes d'abord, salle et ville, échéance, montant et jours écoulés", () => {
