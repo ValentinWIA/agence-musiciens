@@ -10,7 +10,7 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 
 ## État de reprise
 
-*Dernière mise à jour : 18 octobre 2026 (semaine 2 terminée ; **passe de design « envoi » en production**, PR n° 22)*
+*Dernière mise à jour : 18 octobre 2026 (semaine 3 : **I1 à I3 en production**, PR n° 24 et 25 ; reste I4, I5, puis brouillon, I6, I7)*
 
 - **Semaine 2 — flux de nuit**, branche `flux-de-nuit` (depuis `main`, 17/10). Cadrage validé par l'humain le 17/10 :
   `docs/flux-de-nuit.md` (lu sur une vraie nuit : 15 événements dont 2 doublons ; créations sans musicien, sans heure,
@@ -222,7 +222,17 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   brouillon par l'IA : en développement ». « Valider » renommé **« Enregistrer »** (pouvait se lire comme accepter
   la demande) avec la phrase « ne répond pas à l'expéditeur et ne modifie aucun engagement ». Gestes validés le
   18/10 en prévisualisation. **Le brouillon de réponse est à faire après l'envoi de midi.**
-  **Prochaine étape : PR de I1 à I3, fusion avec l'accord de l'humain, vérification en production**, puis I4 et I5.
+  **PR n° 24 fusionnée le 18/10** (`f6a6b39`, migrations 0016 à 0018 jouées en production). **Gestes validés en
+  production le 18/10** : menu « Courriers », « Tester l'IA » → « OK » compté sur `/couts`, COU-07 montant absent,
+  enregistré, fiche avec cadre « Réponse ». Retours en production → **PR n° 25** (`c8fa058`, branche
+  `courriers-retouches`) : lien « Coûts » sur `/courriers` (il n'était que sur `/nuit`), colonne « Expéditeur » à
+  `min-w-44` (14 rem écrasait « Classement »), validés en prévisualisation. Rien de cassé.
+  **Prochaine étape : I4 (indexation des 20 documents) puis I5 (questions en streaming avec citations)**, sur une
+  branche `documents` depuis `main`, après `/clear`. Avant I4 : vérifier sur le site de Voyage AI que l'offre est
+  gratuite sans carte bancaire (décision 2) ; sinon, en parler à l'humain avant d'agir. Les 20 documents se
+  téléchargent sans blocage (fait par Claude le 18/10 avec `curl` et `FLUX_DE_NUIT_CLE` de `.env.local`).
+  **Après l'envoi de midi** : brouillon de réponse dans le cadre « Réponse » de la fiche courrier, puis I6 (analyse de
+  la nuit) et I7 (rendu).
   Après chaque push, rattraper les nuits sur `/nuit` (le jeu de données vide les tables du flux).
   Clé du flux recopiée dans Vercel (`FLUX_DE_NUIT_CLE`, Production et Preview) le 17/10.
   Domaine `valentinwalczak.com` (OVH, `contact@` déjà utilisé) : envoi par le sous-domaine `mail.` (tranche D).
