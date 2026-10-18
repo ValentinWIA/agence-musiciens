@@ -54,7 +54,7 @@ async function ContenuEngagements({ searchParams }: { searchParams: Promise<Reco
   const maintenant = new Date();
   // La fiche reçoit les filtres de la liste, pour y revenir telle quelle.
   const versFiche = (id: string) => `/engagements/${id}?${new URLSearchParams({ liste: new URLSearchParams(lienFiltres(filtres)).toString() })}`;
-  const surligne = "bg-amber-100 shadow-[inset_4px_0_0_var(--color-amber-500)] hover:bg-amber-100";
+  const surligne = "bg-amber-100! shadow-[inset_4px_0_0_var(--color-amber-500)]";
 
   return (
     <>
