@@ -1,7 +1,8 @@
 // Panneau « À faire » du tableau de bord (docs/design.md, passe « envoi »). Logique pure : la lecture en base est
 // dans lecture-a-faire.ts. Factures à relancer et options qui expirent suivent les règles du récap (recap.ts).
 
-export const LIMITE_A_FAIRE = 5;
+// 10 lignes : la liste remplit le cadre (retour du 18/10, « Voir les 6 » sur un cadre à moitié vide).
+export const LIMITE_A_FAIRE = 10;
 
 // Une option attend son contrat : le geste suivant du cycle de vie. Le concert le plus proche d'abord.
 export function contratsAEnvoyer<T extends { statut: string; debut: Date }>(engagements: T[]): T[] {

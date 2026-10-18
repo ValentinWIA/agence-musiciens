@@ -134,5 +134,8 @@ Pushs groupés : V2 + V3, puis V4 + V5. Si le temps manque, V5 attend l'envoi (V
   colonnes qui s'empilent (trou sous la saison) ; petite photo décorative (texte de remplacement qui débordait) ;
   tuile « + Inviter un musicien » en fin de grille sur `/musiciens` (à la place du bouton) ; **liste dépliable des
   musiciens sous « Musiciens »** dans le menu de l'agent.
+- **Retours au geste de V6 (V7)** : lien « Invitations » retiré du menu (on invite par la tuile « + » de `/musiciens`,
+  la page `/invitations` reste) ; « À faire » montre jusqu'à **10 lignes** par liste (« Voir les 6 » sur un cadre à
+  moitié vide) ; photos de la liste des musiciens agrandies (56 px de large, format portrait).
 - **Filtre des engagements par programmateur** : rappelé par l'humain ; fonctionnalité, pas design → sa propre
   branche après la fusion de celle-ci.

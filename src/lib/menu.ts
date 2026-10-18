@@ -1,4 +1,5 @@
 // Liens du menu latéral. Ils ne protègent rien : chaque page revérifie les droits côté serveur.
+// Pas de lien « Invitations » (retiré le 18/10) : on invite depuis la tuile « + » de /musiciens.
 
 // sousLiens : la liste dépliable sous « Musiciens » (demandée le 18/10), une fiche par musicien.
 export type LienMenu = { href: string; libelle: string; sousLiens?: LienMenu[] };
@@ -18,7 +19,6 @@ export function liensDuMenu(
         libelle: "Musiciens",
         ...(musiciens.length > 0 && { sousLiens: musiciens.map((m) => ({ href: `/musiciens/${m.id}`, libelle: m.nom })) }),
       },
-      { href: "/invitations", libelle: "Invitations" },
     ];
   }
   // Le musicien n'a pas de tableau de bord : sa fiche est sa page d'accueil.

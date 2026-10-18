@@ -20,11 +20,11 @@ describe("contratsAEnvoyer", () => {
 });
 
 describe("premieres", () => {
-  it("coupe à 5 lignes et compte le reste", () => {
-    const { lignes, reste } = premieres([1, 2, 3, 4, 5, 6, 7]);
-    expect(lignes).toEqual([1, 2, 3, 4, 5]);
+  it("coupe à 10 lignes et compte le reste", () => {
+    const { lignes, reste } = premieres(Array.from({ length: 12 }, (_, i) => i + 1));
+    expect(lignes).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
     expect(reste).toBe(2);
-    expect(LIMITE_A_FAIRE).toBe(5);
+    expect(LIMITE_A_FAIRE).toBe(10);
   });
 
   it("liste courte : tout est montré, rien ne reste", () => {

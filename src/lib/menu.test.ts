@@ -5,14 +5,13 @@ const agent = { id: "a1", role: "admin" as const };
 const louis = { id: "m1", role: "musicien" as const };
 
 describe("liens du menu selon le rôle", () => {
-  it("donne à l'agent ses 6 pages, dans l'ordre (le journal des imports s'ouvre depuis les demandes)", () => {
+  it("donne à l'agent ses 5 pages, dans l'ordre (journal des imports depuis les demandes, invitations depuis les musiciens)", () => {
     expect(liensDuMenu(agent).map((l) => l.libelle)).toEqual([
       "Tableau de bord",
       "Engagements",
       "Demandes reçues",
       "Calendrier",
       "Musiciens",
-      "Invitations",
     ]);
   });
 

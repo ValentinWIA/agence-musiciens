@@ -70,7 +70,7 @@ async function Musiciens() {
             </Link>
           </p>
         ) : (
-          <ul className="grid gap-1">
+          <ul className="grid gap-2">
             {musiciens.map((m) => (
               <li key={m.id}>
                 <Link href={`/musiciens/${m.id}`} className="flex items-center gap-3 rounded-md p-1 hover:bg-muted">
@@ -97,10 +97,10 @@ function Vignette({ nom, photo }: { nom: string; photo: string | null }) {
   if (photo) {
     // <img> plutôt que next/image : la photo est servie par une route protégée (voir Portrait).
     // eslint-disable-next-line @next/next/no-img-element
-    return <img src={photo} alt="" className="size-10 shrink-0 rounded-sm bg-accent object-cover" />;
+    return <img src={photo} alt="" className="aspect-[4/5] w-14 shrink-0 rounded-sm bg-accent object-cover" />;
   }
   return (
-    <span aria-hidden className="grid size-10 shrink-0 place-items-center rounded-sm bg-accent font-logo text-sm text-primary">
+    <span aria-hidden className="grid aspect-[4/5] w-14 shrink-0 place-items-center rounded-sm bg-accent font-logo text-lg text-primary">
       {initiales(nom)}
     </span>
   );
