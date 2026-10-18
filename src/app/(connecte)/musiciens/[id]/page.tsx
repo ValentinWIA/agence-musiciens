@@ -7,6 +7,7 @@ import { formaterMontant } from "@/lib/argent";
 import { formaterDebut } from "@/lib/dates";
 import { LIBELLES_STATUT, lireMusicien, type Statut } from "@/lib/engagements";
 import { lireTaux } from "@/lib/change";
+import { libelleSaison, revenusDeLaSaison, saisonDe } from "@/lib/indicateurs";
 import { cachetMoyenEnEuros, PASSES_AFFICHES, recapEngagements } from "@/lib/musiciens";
 import { verifierSession } from "@/lib/session";
 import { SeptJours } from "../../calendrier/sept-jours";
@@ -39,6 +40,13 @@ async function FicheMusicien({
   // Taux lus seulement s'il y a un cachet en devise étrangère (même conversion que la fiche d'un engagement).
   const taux = musicien.engagements.some((e) => e.devise !== "EUR") ? await lireTaux() : null;
   const cachet = cachetMoyenEnEuros(musicien.engagements, taux);
+  // Même calcul que la carte du tableau de bord, limité à ce musicien.
+  const saison = saisonDe(new Date(), "France");
+  const revenus = revenusDeLaSaison(
+    musicien.engagements.map((e) => ({ ...e, musicienId: musicien.id })),
+    saison,
+    taux,
+  );
   const repertoire = musicien.repertoire?.split("\n") ?? [];
 
   return (
@@ -74,9 +82,17 @@ async function FicheMusicien({
             <p className="mt-2 whitespace-pre-line text-muted-foreground">{musicien.biographie ?? "Pas encore de biographie."}</p>
           </div>
 
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+          <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
             <Chiffre valeur={String(recap.aVenir.length)} legende="engagements à venir" />
             <Chiffre valeur={String(recap.passes.length)} legende="engagements passés" />
+            <Chiffre
+              valeur={
+                revenus.total.length === 0
+                  ? formaterMontant(0, "EUR")
+                  : (revenus.converti ? "≈ " : "") + revenus.total.map((m) => formaterMontant(m.unites, m.devise)).join(" · ")
+              }
+              legende={`revenus de la saison ${libelleSaison(saison)} (part du musicien)`}
+            />
             <Chiffre
               valeur={
                 "parDevise" in cachet
