@@ -22,9 +22,18 @@ export default function PageQuestions() {
 
 async function ContenuQuestions() {
   await verifierAdmin("/questions"); // un musicien ne voit jamais cette page
-  const [etat] = await db
-    .select({ passages: count(), documents: countDistinct(passages.documentId), dernier: max(passages.indexeLe) })
-    .from(passages);
+  const [[etat], pages] = await Promise.all([
+    db
+      .select({ passages: count(), documents: countDistinct(passages.documentId), dernier: max(passages.indexeLe) })
+      .from(passages),
+    db
+      .select({ documentId: passages.documentId, titre: passages.titre, page: passages.page, texte: passages.texte })
+      .from(passages)
+      .orderBy(passages.documentId, passages.page),
+  ]);
+  // Les pages regroupées par document, pour vérifier à la main une page citée par une réponse.
+  const documents = new Map<string, typeof pages>();
+  for (const p of pages) documents.set(p.documentId, [...(documents.get(p.documentId) ?? []), p]);
 
   return (
     <>
@@ -72,6 +81,28 @@ async function ContenuQuestions() {
             )}
           </p>
           <FormulaireIndexation />
+          {documents.size > 0 && (
+            <div className="grid gap-2">
+              {[...documents].map(([id, pagesDuDocument]) => (
+                <details key={id} className="rounded-md border px-3 py-2 text-sm">
+                  <summary className="cursor-pointer">
+                    <span className="font-medium">{pagesDuDocument[0].titre}</span>{" "}
+                    <span className="text-muted-foreground">
+                      — {id}, {pagesDuDocument.length} page{pagesDuDocument.length > 1 ? "s" : ""}
+                    </span>
+                  </summary>
+                  <div className="mt-3 grid gap-3">
+                    {pagesDuDocument.map((p) => (
+                      <div key={p.page} className="grid gap-1">
+                        <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Page {p.page}</p>
+                        <p className="whitespace-pre-line">{p.texte}</p>
+                      </div>
+                    ))}
+                  </div>
+                </details>
+              ))}
+            </div>
+          )}
         </CardContent>
       </Card>
     </>
