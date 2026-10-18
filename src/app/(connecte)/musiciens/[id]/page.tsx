@@ -76,7 +76,7 @@ async function FicheMusicien({
             Modifier la fiche
           </Button>
         </div>
-        <div className="grid min-w-0 gap-6">
+        <div className="grid min-w-0 grid-cols-1 gap-6">
           <div className="grid gap-1">
             <p className="text-xs tracking-[0.25em] text-muted-foreground uppercase">{musicien.instrument}</p>
             <h1 className="font-logo text-5xl leading-none">{musicien.nom}</h1>
@@ -211,7 +211,7 @@ function ListeEngagements({ liste, vide }: { liste: LigneEngagement[]; vide: str
 
 function Chiffre({ valeur, legende }: { valeur: string; legende: string }) {
   return (
-    <div className="rounded-lg border bg-card px-4 py-3">
+    <div className="flex flex-col items-center justify-center rounded-lg border bg-card px-4 py-3 text-center">
       <b className="block font-logo text-2xl leading-tight">{valeur}</b>
       <span className="text-xs text-muted-foreground">{legende}</span>
     </div>

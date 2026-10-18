@@ -16,7 +16,7 @@ export async function Revenus() {
 
   return (
     <Card>
-      <CardContent className="grid gap-3">
+      <CardContent className="grid justify-items-center gap-3 text-center">
         <h2 className="grid font-logo text-2xl">
           Revenus de la saison
           <span className="font-sans text-xs font-normal text-muted-foreground">{periodeSaison(saison)}</span>
@@ -29,7 +29,7 @@ export async function Revenus() {
               <span className="font-logo text-3xl leading-none tabular-nums">{formaterRevenus(total, converti)}</span>
               <span className="text-sm text-muted-foreground">total des cachets (confirmés, joués, facturés, payés)</span>
             </p>
-            <ul className="grid gap-1 text-sm">
+            <ul className="grid w-full gap-1 text-left text-sm">
               {classes.map((m) => (
                 <li key={m.id} className="flex items-baseline justify-between gap-2">
                   <Link href={`/musiciens/${m.id}`} className="truncate hover:underline">
