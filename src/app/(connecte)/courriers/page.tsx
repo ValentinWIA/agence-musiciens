@@ -33,7 +33,7 @@ async function ContenuCourriers() {
           <CardTitle>Déposer un courrier</CardTitle>
           <CardDescription>
             L&apos;IA lit le courrier et remplit les champs ; un champ absent du courrier reste vide. Vous relisez,
-            corrigez, puis validez : rien n&apos;est enregistré ni envoyé sans vous.
+            corrigez, puis enregistrez : rien n&apos;est enregistré ni envoyé sans vous.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -43,11 +43,11 @@ async function ContenuCourriers() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Courriers validés</CardTitle>
+          <CardTitle>Courriers enregistrés</CardTitle>
         </CardHeader>
         <CardContent>
           {liste.length === 0 ? (
-            <p className="text-sm text-muted-foreground">Aucun courrier validé pour l&apos;instant.</p>
+            <p className="text-sm text-muted-foreground">Aucun courrier enregistré pour l&apos;instant.</p>
           ) : (
             <Table>
               <TableHeader>

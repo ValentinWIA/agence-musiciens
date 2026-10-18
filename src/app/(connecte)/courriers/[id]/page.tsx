@@ -65,7 +65,7 @@ async function FicheCourrier({ params }: { params: Promise<{ id: string }> }) {
         <CardHeader>
           <CardTitle>Réponse</CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="grid gap-4">
           <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-2 text-sm">
             <dt className="text-muted-foreground">À</dt>
             <dd>
@@ -75,7 +75,13 @@ async function FicheCourrier({ params }: { params: Promise<{ id: string }> }) {
             <dt className="text-muted-foreground">Objet</dt>
             <dd>{courrier.reference ? `Votre réservation ${courrier.reference}` : "Votre courrier"}</dd>
           </dl>
-          {/* Emplacement du brouillon de réponse proposé par l'IA (docs/semaine-3.md, I3), prévu après l'envoi. */}
+          {/* Le brouillon proposé par l'IA viendra remplir cette zone (docs/semaine-3.md, I3). Rien n'est enregistré. */}
+          <textarea
+            aria-label="Réponse"
+            placeholder="Rédigez votre réponse ici, puis copiez-la dans votre messagerie (elle n'est pas enregistrée)."
+            className="min-h-48 w-full rounded-lg border border-input bg-transparent px-2.5 py-1.5 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+          />
+          <p className="text-xs text-muted-foreground">Rédaction d&apos;un brouillon par l&apos;IA : en développement.</p>
         </CardContent>
       </Card>
     </>

@@ -85,12 +85,12 @@ function Validation({ lecture, texte, modele }: { lecture: LectureVerifiee; text
       className="grid gap-4 rounded-lg border p-4"
     >
       <div className="grid gap-1">
-        <h2 className="font-logo text-2xl">Relisez avant de valider</h2>
+        <h2 className="font-logo text-2xl">Relisez avant d&apos;enregistrer</h2>
         <p className="text-sm text-muted-foreground">
           Lu par {LIBELLES_MODELE[modele as Modele] ?? modele}. Chaque champ cite l&apos;extrait du courrier
           qui le justifie ; le site vérifie que cet extrait existe.{" "}
           {aRelire > 0 ? `${aRelire} champ${aRelire > 1 ? "s" : ""} à relire : l'IA a peut-être inventé.` : ""} Rien
-          n&apos;est enregistré avant « Valider ».
+          n&apos;est enregistré avant « Enregistrer ».
         </p>
       </div>
       <input type="hidden" name="texte" value={texte} />
@@ -114,8 +114,11 @@ function Validation({ lecture, texte, modele }: { lecture: LectureVerifiee; text
         <textarea id="resume" name="resume" className={classeResume} defaultValue={lecture.resume} maxLength={500} />
       </div>
       <Button type="submit" disabled={enCours} className="w-fit">
-        {enCours ? "Enregistrement…" : "Valider"}
+        {enCours ? "Enregistrement…" : "Enregistrer"}
       </Button>
+      <p className="text-xs text-muted-foreground">
+        L&apos;enregistrement ne répond pas à l&apos;expéditeur et ne modifie aucun engagement.
+      </p>
       {etat.erreur && (
         <p role="alert" className="text-sm text-destructive">
           {etat.erreur}
