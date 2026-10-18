@@ -46,7 +46,8 @@ Règles :
 - N'utilise que ce qui est écrit dans le courrier. Ne devine rien, ne complète rien.
 - Pour chaque champ, donne la valeur et l'extrait du courrier qui la justifie, recopié mot pour mot.
 - Si l'information n'est pas écrite dans le courrier, mets valeur et extrait à null.
-- structure : l'organisme qui écrit. signataire : la personne qui signe (nom seulement).
+- structure : l'organisme qui écrit. signataire : la personne qui signe, prénom et nom tels qu'écrits, sans sa
+  fonction.
 - date : la date du courrier au format AAAA-MM-JJ, seulement si le jour, le mois et l'année sont écrits.
   Une expression relative (« la semaine dernière », « hier ») n'est pas une date : null.
 - reference : la référence citée en objet. typeDossier : le type de dossier indiqué.
