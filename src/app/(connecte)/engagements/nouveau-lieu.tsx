@@ -28,7 +28,7 @@ export function NouveauLieu({ fenetre, onCree }: Props) {
       aria-labelledby="titre-nouveau-lieu"
       className="m-auto w-[calc(100%-2rem)] max-w-lg rounded-lg border bg-background p-5 text-foreground backdrop:bg-black/50"
     >
-      <h2 id="titre-nouveau-lieu" className="mb-4 font-medium">
+      <h2 id="titre-nouveau-lieu" className="mb-4 font-logo text-2xl">
         Nouveau lieu
       </h2>
       <FormulaireLieu

@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { listerMusiciens } from "@/lib/engagements";
 import { liensDuMenu } from "@/lib/menu";
 import { verifierSession } from "@/lib/session";
 import { seDeconnecter } from "../actions";
@@ -6,12 +7,14 @@ import { LiensMenu } from "./liens-menu";
 
 export async function MenuLateral() {
   const utilisateur = await verifierSession();
+  // Seul l'agent a la liste dépliable des musiciens ; le musicien n'a que « Ma fiche ».
+  const musiciens = utilisateur.role === "admin" ? await listerMusiciens() : [];
   return (
     <>
       <nav aria-label="Menu principal" className="flex-1 px-3 py-2">
-        <LiensMenu liens={liensDuMenu(utilisateur)} />
+        <LiensMenu liens={liensDuMenu(utilisateur, musiciens)} />
       </nav>
-      <div className="grid gap-3 border-t border-foreground/10 px-5 py-4">
+      <div className="grid gap-3 border-t border-or/35 px-5 py-4">
         <div className="grid min-w-0">
           <p className="truncate font-medium" title={utilisateur.nom}>
             {utilisateur.nom}

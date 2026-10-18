@@ -37,7 +37,7 @@ export function MenuTelephone({ children }: { children: React.ReactNode }) {
         aria-label="Menu"
         onClick={fermerSiBesoin}
         onClose={() => setOuvert(false)}
-        className="menu-telephone m-0 h-svh max-h-none w-72 max-w-[85vw] bg-card p-0 text-foreground shadow-xl"
+        className="menu-telephone dark m-0 h-svh max-h-none w-72 max-w-[85vw] bg-background p-0 text-foreground shadow-xl"
       >
         <div className="flex h-full flex-col">
           <Button

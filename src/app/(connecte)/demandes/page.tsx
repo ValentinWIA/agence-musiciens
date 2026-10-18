@@ -27,7 +27,7 @@ export default function PageDemandes({ searchParams }: PageProps<"/demandes">) {
   return (
     <main className="mx-auto grid w-full max-w-6xl gap-6 p-4">
       <div className="grid gap-1">
-        <h1 className="text-2xl font-semibold">Demandes reçues</h1>
+        <h1 className="font-logo text-4xl leading-tight">Demandes reçues</h1>
         <p className="text-sm text-muted-foreground">
           Chaque nuit, les demandes des programmateurs arrivent ici. Ouvrez-en une pour lire ses messages, puis créez
           l&apos;engagement ou écartez-la.

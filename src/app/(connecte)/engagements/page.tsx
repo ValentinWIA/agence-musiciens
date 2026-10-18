@@ -48,14 +48,7 @@ async function ContenuEngagements({ searchParams }: { searchParams: Promise<Reco
 
   return (
     <>
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="text-2xl font-semibold">Engagements</h1>
-        {estAgent && (
-          <Button nativeButton={false} render={<Link href="/engagements/nouveau" />}>
-            + Nouvel engagement
-          </Button>
-        )}
-      </div>
+      <h1 className="font-logo text-4xl leading-tight">Engagements</h1>
       <form className="flex flex-wrap items-end gap-3" action="/engagements">
         <NativeSelect name="statut" defaultValue={filtres.statut ?? ""} aria-label="Statut">
           <NativeSelectOption value="">Tous les statuts</NativeSelectOption>
@@ -80,11 +73,19 @@ async function ContenuEngagements({ searchParams }: { searchParams: Promise<Reco
           <NativeSelectOption value="tous">Tous</NativeSelectOption>
         </NativeSelect>
         <Input name="recherche" defaultValue={filtres.recherche} placeholder="Lieu, ville, titre…" className="w-48" />
-        <Button type="submit">Filtrer</Button>
+        <Button type="submit" variant="outline">
+          Filtrer
+        </Button>
         {filtresActifs && (
           <Link href={`/engagements?periode=${filtres.periode}`} className="text-sm underline">
             Effacer les filtres
           </Link>
+        )}
+        {/* Au niveau des filtres (reporté le 18/10), poussé à droite ; seul bouton noir : l'action principale. */}
+        {estAgent && (
+          <Button nativeButton={false} render={<Link href="/engagements/nouveau" />} className="ml-auto">
+            + Nouvel engagement
+          </Button>
         )}
       </form>
 

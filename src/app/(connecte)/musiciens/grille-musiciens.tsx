@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Portrait } from "./portrait";
 
-// Grille des portraits, partagée par /musiciens et le tableau de bord de l'agent.
+// Grille des portraits de /musiciens (agent seulement), terminée par la tuile « + Inviter un musicien ».
 export function GrilleMusiciens({
   musiciens,
 }: {
@@ -35,6 +35,18 @@ export function GrilleMusiciens({
           </Link>
         </li>
       ))}
+      {/* Demandé le 18/10 : inviter depuis la grille, une tuile vide avec un « + », plutôt qu'un bouton à part. */}
+      <li>
+        <Link
+          href="/invitations"
+          className="grid h-full min-h-64 place-items-center content-center gap-2 rounded-xl border-2 border-dashed text-muted-foreground transition-colors hover:border-or hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none"
+        >
+          <span aria-hidden className="font-logo text-6xl leading-none">
+            +
+          </span>
+          <span className="font-medium">Inviter un musicien</span>
+        </Link>
+      </li>
     </ul>
   );
 }

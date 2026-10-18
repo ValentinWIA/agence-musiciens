@@ -5,14 +5,13 @@ const agent = { id: "a1", role: "admin" as const };
 const louis = { id: "m1", role: "musicien" as const };
 
 describe("liens du menu selon le rôle", () => {
-  it("donne à l'agent ses 6 pages, dans l'ordre (le journal des imports s'ouvre depuis les demandes)", () => {
+  it("donne à l'agent ses 5 pages, dans l'ordre (journal des imports depuis les demandes, invitations depuis les musiciens)", () => {
     expect(liensDuMenu(agent).map((l) => l.libelle)).toEqual([
       "Tableau de bord",
       "Engagements",
       "Demandes reçues",
       "Calendrier",
       "Musiciens",
-      "Invitations",
     ]);
   });
 
@@ -30,6 +29,29 @@ describe("liens du menu selon le rôle", () => {
     expect(adresses).not.toContain("/musiciens");
     expect(adresses).not.toContain("/tableau-de-bord");
     expect(adresses).not.toContain("/demandes");
+  });
+});
+
+describe("liste dépliable des musiciens", () => {
+  const musiciens = [
+    { id: "m1", nom: "Louis Martin" },
+    { id: "m2", nom: "Anna Petit" },
+  ];
+
+  it("donne à l'agent une fiche par musicien sous « Musiciens », dans l'ordre reçu", () => {
+    const lien = liensDuMenu(agent, musiciens).find((l) => l.href === "/musiciens");
+    expect(lien?.sousLiens).toEqual([
+      { href: "/musiciens/m1", libelle: "Louis Martin" },
+      { href: "/musiciens/m2", libelle: "Anna Petit" },
+    ]);
+  });
+
+  it("aucun musicien → pas de liste dépliable", () => {
+    expect(liensDuMenu(agent).find((l) => l.href === "/musiciens")?.sousLiens).toBeUndefined();
+  });
+
+  it("ne donne jamais la liste au musicien, même si on la lui passe", () => {
+    expect(liensDuMenu(louis, musiciens).some((l) => l.sousLiens)).toBe(false);
   });
 });
 

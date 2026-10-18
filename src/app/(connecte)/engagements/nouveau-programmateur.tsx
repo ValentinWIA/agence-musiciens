@@ -29,7 +29,7 @@ export function NouveauProgrammateur({ fenetre, nomPropose, onCree }: Props) {
       aria-labelledby="titre-nouveau-programmateur"
       className="m-auto w-[calc(100%-2rem)] max-w-lg rounded-lg border bg-background p-5 text-foreground backdrop:bg-black/50"
     >
-      <h2 id="titre-nouveau-programmateur" className="mb-4 font-medium">
+      <h2 id="titre-nouveau-programmateur" className="mb-4 font-logo text-2xl">
         Nouveau programmateur
       </h2>
       <FormulaireProgrammateur

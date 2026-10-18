@@ -17,41 +17,38 @@ function lienStatut(statut: Statut) {
 export async function Indicateurs() {
   const saison = saisonDe(new Date(), "France"); // la saison en cours, à l'heure de l'agence
   const { contrats, parStatut, total } = compterIndicateurs(await listerPourIndicateurs(), saison);
+  // À la verticale (retour de l'humain le 18/10) : une colonne étroite à côté du panneau « À faire ».
   return (
-    <section className="grid gap-4" aria-labelledby="titre-indicateurs">
-      <h2 id="titre-indicateurs" className="font-logo text-3xl">
-        Saison {libelleSaison(saison)}
-      </h2>
-      <Card>
-        <CardContent className="grid gap-4">
-          <p className="flex items-baseline gap-2">
-            <span className="font-logo text-5xl">{contrats}</span>
-            <span className="text-muted-foreground">{contrats > 1 ? "contrats" : "contrat"} cette saison</span>
-          </p>
-          {total === 0 ? (
-            <p className="text-sm text-muted-foreground">Aucun engagement cette saison.</p>
-          ) : (
-            <ol className="flex flex-wrap items-center gap-x-2 gap-y-3" aria-label="Engagements de la saison par statut">
-              {FRISE.map((statut, i) => (
-                <Fragment key={statut}>
-                  {i > 0 && (
-                    <li aria-hidden className="text-muted-foreground">
-                      →
-                    </li>
-                  )}
-                  <li>
-                    <PastilleStatut statut={statut} nombre={parStatut[statut]} />
+    <Card>
+      <CardContent className="grid content-start justify-items-center gap-4 text-center">
+        <h2 className="font-logo text-2xl">Saison {libelleSaison(saison)}</h2>
+        <p className="grid justify-items-center gap-1">
+          <span className="font-logo text-5xl leading-none">{contrats}</span>
+          <span className="text-muted-foreground">{contrats > 1 ? "contrats" : "contrat"} cette saison</span>
+        </p>
+        {total === 0 ? (
+          <p className="text-sm text-muted-foreground">Aucun engagement cette saison.</p>
+        ) : (
+          <ol className="grid justify-items-center gap-0.5" aria-label="Engagements de la saison par statut">
+            {FRISE.map((statut, i) => (
+              <Fragment key={statut}>
+                {i > 0 && (
+                  <li aria-hidden className="text-xs leading-none text-muted-foreground">
+                    ↓
                   </li>
-                </Fragment>
-              ))}
-              <li className="ml-auto">
-                <PastilleStatut statut="annule" nombre={parStatut.annule} />
-              </li>
-            </ol>
-          )}
-        </CardContent>
-      </Card>
-    </section>
+                )}
+                <li>
+                  <PastilleStatut statut={statut} nombre={parStatut[statut]} />
+                </li>
+              </Fragment>
+            ))}
+            <li className="mt-3 border-t px-6 pt-3">
+              <PastilleStatut statut="annule" nombre={parStatut.annule} />
+            </li>
+          </ol>
+        )}
+      </CardContent>
+    </Card>
   );
 }
 
@@ -61,8 +58,8 @@ function PastilleStatut({ statut, nombre }: { statut: Statut; nombre: number }) 
       href={lienStatut(statut)}
       className="flex items-center gap-1.5 rounded-md px-1 py-0.5 hover:bg-muted focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none"
     >
-      <span className="font-medium tabular-nums">{nombre}</span>
       <BadgeStatut statut={statut} />
+      <span className="font-medium tabular-nums">{nombre}</span>
     </Link>
   );
 }
