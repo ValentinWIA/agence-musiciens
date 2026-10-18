@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { contratsAEnvoyer, LIMITE_A_FAIRE, premieres } from "./a-faire";
+import { contratsAEnvoyer, LIMITE_A_FAIRE, premieres, repartirEnDeuxColonnes } from "./a-faire";
 
 const e = (id: string, statut: string, debut: string) => ({ id, statut, debut: new Date(debut) });
 
@@ -29,5 +29,31 @@ describe("premieres", () => {
 
   it("liste courte : tout est montré, rien ne reste", () => {
     expect(premieres([1, 2])).toEqual({ lignes: [1, 2], reste: 0 });
+  });
+});
+
+describe("repartirEnDeuxColonnes", () => {
+  const p = (b: { n: number }) => b.n;
+
+  it("la liste la plus longue seule d'un côté, les courtes ensemble de l'autre", () => {
+    const factures = { nom: "factures", n: 4 };
+    const contrats = { nom: "contrats", n: 10 };
+    const options = { nom: "options", n: 5 };
+    const demandes = { nom: "demandes", n: 3 };
+    const [g, d] = repartirEnDeuxColonnes([factures, contrats, options, demandes], p);
+    expect(g.map((b) => b.nom)).toEqual(["contrats"]);
+    expect(d.map((b) => b.nom)).toEqual(["factures", "options", "demandes"]);
+  });
+
+  it("garde l'ordre d'origine dans chaque colonne, et rien ne se perd", () => {
+    const blocs = [1, 2, 3, 4].map((n) => ({ n }));
+    const [g, d] = repartirEnDeuxColonnes(blocs, p);
+    expect([...g, ...d].length).toBe(4);
+    for (const col of [g, d]) expect(col.map((b) => b.n)).toEqual([...col.map((b) => b.n)].sort());
+    expect(Math.abs(g.reduce((t, b) => t + b.n, 0) - d.reduce((t, b) => t + b.n, 0))).toBeLessThanOrEqual(1);
+  });
+
+  it("aucune liste → deux colonnes vides", () => {
+    expect(repartirEnDeuxColonnes([], p)).toEqual([[], []]);
   });
 });

@@ -137,5 +137,7 @@ Pushs groupés : V2 + V3, puis V4 + V5. Si le temps manque, V5 attend l'envoi (V
 - **Retours au geste de V6 (V7)** : lien « Invitations » retiré du menu (on invite par la tuile « + » de `/musiciens`,
   la page `/invitations` reste) ; « À faire » montre jusqu'à **10 lignes** par liste (« Voir les 6 » sur un cadre à
   moitié vide) ; photos de la liste des musiciens agrandies (56 px de large, format portrait).
+- **Retour au geste de V7 (V8)** : colonnes de « À faire » déséquilibrées (rangées deux par deux) → listes réparties
+  selon leur longueur, la plus longue d'abord dans la colonne la plus courte (`repartirEnDeuxColonnes`, 3 tests).
 - **Filtre des engagements par programmateur** : rappelé par l'humain ; fonctionnalité, pas design → sa propre
   branche après la fusion de celle-ci.

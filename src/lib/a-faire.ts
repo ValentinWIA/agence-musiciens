@@ -13,3 +13,17 @@ export function contratsAEnvoyer<T extends { statut: string; debut: Date }>(enga
 export function premieres<T>(liste: T[], limite = LIMITE_A_FAIRE): { lignes: T[]; reste: number } {
   return { lignes: liste.slice(0, limite), reste: Math.max(0, liste.length - limite) };
 }
+
+// Range les listes en deux colonnes de hauteurs proches (retour du 18/10) : la plus lourde d'abord, chacune dans la
+// colonne la plus courte ; dans une colonne, l'ordre d'origine est gardé. poids = nombre de lignes affichées.
+export function repartirEnDeuxColonnes<T>(blocs: T[], poids: (b: T) => number): [T[], T[]] {
+  const hauteurs = [0, 0];
+  const colonneDe = new Map<number, number>();
+  const parPoids = blocs.map((b, i) => ({ i, p: poids(b) })).sort((a, b) => b.p - a.p || a.i - b.i);
+  for (const { i, p } of parPoids) {
+    const c = hauteurs[0] <= hauteurs[1] ? 0 : 1;
+    colonneDe.set(i, c);
+    hauteurs[c] += p;
+  }
+  return [blocs.filter((_, i) => colonneDe.get(i) === 0), blocs.filter((_, i) => colonneDe.get(i) === 1)];
+}

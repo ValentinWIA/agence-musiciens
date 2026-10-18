@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
-import { contratsAEnvoyer, premieres } from "@/lib/a-faire";
+import { contratsAEnvoyer, premieres, repartirEnDeuxColonnes } from "@/lib/a-faire";
 import { formaterMontant, type Devise } from "@/lib/argent";
 import { jourLocal } from "@/lib/calendrier";
 import { formaterJourCourt } from "@/lib/demandes";
@@ -26,29 +26,51 @@ export async function AFaire() {
   ).map((e) => ({ ...e, detail: `${e.ville} · ${e.expireLe < aujourdhui ? "échue le" : "expire le"} ${formaterJourCourt(e.expireLe)}` }));
 
   const rien = factures.length + contrats.length + options.length + demandes === 0;
+  // Chaque bloc et son poids (lignes affichées, plus l'intitulé) : les deux colonnes sont équilibrées par la hauteur.
+  const blocs = [
+    { cle: "factures", poids: poidsListe(factures), contenu: <Liste titre="Factures à relancer" lignes={factures} /> },
+    {
+      cle: "contrats",
+      poids: poidsListe(contrats),
+      contenu: <Liste titre="Contrats à envoyer" lignes={contrats} toutes="/engagements?statut=option&periode=tous" />,
+    },
+    { cle: "options", poids: poidsListe(options), contenu: <Liste titre="Options qui expirent" lignes={options} /> },
+    {
+      cle: "demandes",
+      poids: demandes > 0 ? 2 : 0,
+      contenu: demandes > 0 && (
+        <div className="grid gap-2">
+          <Intitule titre="Demandes reçues à traiter" nombre={demandes} />
+          <Link href="/demandes" className="text-sm underline">
+            Ouvrir les demandes reçues →
+          </Link>
+        </div>
+      ),
+    },
+  ].filter((b) => b.poids > 0);
+  const colonnes = repartirEnDeuxColonnes(blocs, (b) => b.poids);
   return (
     <Card>
       <CardContent className="grid gap-5">
         <h2 className="font-logo text-2xl">À faire</h2>
         {rien && <p className="text-sm text-muted-foreground">Rien à faire pour l&apos;instant.</p>}
-        {/* Deux colonnes (retour du 18/10) : sur toute la largeur, les lignes laissaient un grand vide au milieu. */}
+        {/* Deux colonnes (retours du 18/10) : sur toute la largeur, les lignes laissaient un grand vide au milieu ;
+            rangées deux par deux, une liste longue laissait sa voisine à moitié vide. */}
         <div className="grid items-start gap-x-8 gap-y-5 xl:grid-cols-2">
-          <Liste titre="Factures à relancer" lignes={factures} />
-          <Liste titre="Contrats à envoyer" lignes={contrats} toutes="/engagements?statut=option&periode=tous" />
-          <Liste titre="Options qui expirent" lignes={options} />
-          {demandes > 0 && (
-            <div className="grid gap-2">
-              <Intitule titre="Demandes reçues à traiter" nombre={demandes} />
-              <Link href="/demandes" className="text-sm underline">
-                Ouvrir les demandes reçues →
-              </Link>
+          {colonnes.map((colonne, i) => (
+            <div key={i} className="grid content-start gap-5">
+              {colonne.map((b) => (
+                <div key={b.cle}>{b.contenu}</div>
+              ))}
             </div>
-          )}
+          ))}
         </div>
       </CardContent>
     </Card>
   );
 }
+
+const poidsListe = (lignes: Ligne[]) => (lignes.length === 0 ? 0 : premieres(lignes).lignes.length + 2);
 
 // Une liste vide disparaît : le panneau ne montre que ce qui attend un geste.
 function Liste({ titre, lignes, toutes }: { titre: string; lignes: Ligne[]; toutes?: string }) {
