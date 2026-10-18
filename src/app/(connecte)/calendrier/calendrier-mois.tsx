@@ -46,12 +46,13 @@ export async function CalendrierMois({
 
   return (
     <section className="grid gap-4" aria-label="Calendrier">
-      <div className="flex flex-wrap items-center justify-between gap-3">
+      <div className="grid gap-3 md:flex md:flex-wrap md:items-center md:justify-between">
         <Titre className={Titre === "h1" ? "font-logo text-4xl leading-tight first-letter:uppercase" : "font-logo text-2xl first-letter:uppercase"}>
           {libelleMois(mois)}
         </Titre>
-        {/* Sur téléphone, flèches seules et petits boutons : les trois tiennent sur une ligne (choix B sur planche). */}
-        <nav className="flex flex-wrap gap-2" aria-label="Changer de mois">
+        {/* Sur téléphone, sous le titre quel que soit le mois : flèches seules et petits boutons, répartis sur la
+            largeur (← au-dessus de lundi, → au-dessus de dimanche ; choix sur planche). */}
+        <nav className="flex justify-between gap-2 md:flex-wrap md:justify-start" aria-label="Changer de mois">
           <Button
             variant="outline"
             className={PETIT_SUR_TELEPHONE}
