@@ -1,5 +1,5 @@
 import { sql } from "drizzle-orm";
-import { date, doublePrecision, integer, jsonb, pgEnum, pgTable, primaryKey, text, timestamp, uniqueIndex, uuid } from "drizzle-orm/pg-core";
+import { boolean, date, doublePrecision, integer, jsonb, pgEnum, pgTable, primaryKey, text, timestamp, uniqueIndex, uuid } from "drizzle-orm/pg-core";
 
 export const role = pgEnum("role", ["admin", "musicien"]);
 export const instrument = pgEnum("instrument", ["piano", "violon"]);
@@ -199,4 +199,20 @@ export const recaps = pgTable("recaps", {
   creeLe: timestamp("cree_le", { withTimezone: true }).notNull().defaultNow(),
   envoyeLe: timestamp("envoye_le", { withTimezone: true }), // vide tant que l'envoi est en cours
   destinataire: text("destinataire"),
+});
+
+// Chaque appel à l'IA, réussi ou non : sert aux limites (par jour, par mois) et à la page des coûts.
+// Jamais le texte envoyé ni la réponse : seulement ce qui se compte.
+export const appelsIa = pgTable("appels_ia", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  // Vide pour un appel sans utilisateur (analyse de la nuit par le cron).
+  utilisateurId: uuid("utilisateur_id").references(() => utilisateurs.id, { onDelete: "set null" }),
+  fonction: text("fonction").notNull(),
+  modele: text("modele").notNull(),
+  jetonsEntree: integer("jetons_entree").notNull(),
+  jetonsSortie: integer("jetons_sortie").notNull(),
+  cout: integer("cout").notNull(), // en millionièmes de dollar (src/lib/couts-ia.ts)
+  dureeMs: integer("duree_ms").notNull(),
+  reussi: boolean("reussi").notNull(),
+  creeLe: timestamp("cree_le", { withTimezone: true }).notNull().defaultNow(),
 });

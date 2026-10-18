@@ -12,6 +12,7 @@
     "donnees": "tsx scripts/jeu-de-donnees.ts"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.135.0",
     "@base-ui/react": "^1.9.0",
     "@neondatabase/serverless": "^1.2.0",
     "@sentry/nextjs": "11.7.0",
