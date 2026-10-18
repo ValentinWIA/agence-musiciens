@@ -275,7 +275,7 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   **limite de branches de l'offre gratuite Neon atteinte**, l'intégration ne créait pas la base de la nouvelle branche ;
   l'humain a supprimé dans Neon les branches de prévisualisation des fonctionnalités fusionnées, puis « Redeploy ».
   **À refaire avant chaque nouvelle branche** si la liste est pleine (jamais la branche principale).
-  **I7 ✅** (19/10, branche `rendu-ia`) : `docs/ia.html` (source) et `docs/ia.pdf` — fonctions IA et erreurs visibles, coûts **estimés** (chiffres
+  **I7 ✅** (19/10, branche `rendu-ia`) : `docs/ia.html` (source) et `docs/Agence Musiciens - Fonctions IA.pdf` — fonctions IA et erreurs visibles, coûts **estimés** (chiffres
   réels sur `/couts`), récit impersonnel de la panne Neon comme moment où l'IA a tourné en rond.
   **Prochaine étape** : semaine 4 (agent), après `/clear`.
   Après chaque push, rattraper les nuits sur `/nuit` (le jeu de données vide les tables du flux).
