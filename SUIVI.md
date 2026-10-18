@@ -10,7 +10,7 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 
 ## État de reprise
 
-*Dernière mise à jour : 19 octobre 2026 (semaine 3 : **I1 à I5 en production**, PR n° 24 à 27 ; reste brouillon, I6, I7)*
+*Dernière mise à jour : 19 octobre 2026 (semaine 3 : **I1 à I6 et brouillon faits**, PR n° 24 à 29 ; I7 abandonné par l'humain)*
 
 - **Semaine 2 — flux de nuit**, branche `flux-de-nuit` (depuis `main`, 17/10). Cadrage validé par l'humain le 17/10 :
   `docs/flux-de-nuit.md` (lu sur une vraie nuit : 15 événements dont 2 doublons ; créations sans musicien, sans heure,
@@ -247,11 +247,36 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   `/couts`. Le premier déploiement de la branche `questions` a échoué puis s'est relancé seul (cause non lue).
   Adresse fixe d'une prévisualisation : `agence-musiciens-git-<branche>-valentin-4768.vercel.app` (la donner à
   l'humain plutôt que l'adresse de chaque déploiement).
-  **Reste à vérifier** : le cron du 19/10 (6 h–7 h, heure de Paris) — ligne « cron » sur `/nuit`, récap reçu sans clic.
-  **Prochaine étape** : brouillon de réponse dans le cadre « Réponse » de la fiche courrier, puis I6 (analyse de la
-  nuit) et I7 (rendu), après `/clear`.
-  **Après l'envoi de midi** : brouillon de réponse dans le cadre « Réponse » de la fiche courrier, puis I6 (analyse de
-  la nuit) et I7 (rendu).
+  **I6 ✅** (19/10, branche `analyse-nuit`, commits `12e98e6` à `f4bd1a3`) : `src/lib/analyse-nuit.ts` (consigne,
+  données de la nuit entre `<donnees>`, « < » des messages neutralisé pour qu'un message piégé ne sorte pas des données,
+  réponse vide ou trop longue refusée ; 5 tests), fonction « analyse » (Haiku 5.5, 2000 jetons, effort bas). **Une seule
+  analyse par passage** (la dernière nuit importée par le cron, « Rattraper » ou « Importer la nuit ») : rattraper
+  28 nuits ne coûte qu'un appel. Faite après l'écriture de la nuit : une panne de l'IA ne fait jamais échouer l'import.
+  Migration 0020 (`executions.analyse`, `analyse_erreur` ; anciennes nuits sans analyse, assumé). « Analyse (IA, à
+  relire) » sous la nuit sur `/nuit`, bloc après « En bref » dans le récap (1 test, 330 au total). Budget du rattrapage
+  ramené à 150 s (place pour l'analyse dans les 300 s). Au 1er geste : « indisponible (réponse vide de l'IA) » — la
+  réflexion de Haiku comptait dans `max_tokens` (600) ; corrigé (2000, effort bas). Panne ainsi vue en vrai : nuit
+  importée, raison affichée, récap reçu. Retour au geste : **lien de retour sur `/couts`** (`?depuis=nuit|courriers|
+  questions` → « ← Journal des imports », « ← Courriers », « ← Documents »). Gestes validés en prévisualisation
+  (analyse jugée correcte, second rattrapage sans appel, ligne sur `/couts`). **PR n° 28 fusionnée le 19/10**
+  (`db6de68`, migration 0020 jouée en production) ; **gestes validés en production** : nuit importée et analysée,
+  retour depuis Coûts. La création et la fusion de PR par Claude sont bloquées par le garde-fou (« Merge Without
+  Review ») : l'humain lance `gh pr create … --fill` et `gh pr merge … --merge` avec `!`.
+  Remarque de l'humain : le flux (salles, rendez-vous) ne correspond pas vraiment au métier ; à écrire dans I7 comme
+  limite connue.
+  **Reste à vérifier le 20/10** : cron du matin (6 h–7 h, heure de Paris) → ligne « cron » avec analyse sur `/nuit`,
+  récap reçu sans clic avec le bloc « ANALYSE (IA, À RELIRE) ».
+  **Brouillon de réponse ✅** (19/10, branche `brouillon`, commit `3489034`) : bouton « Proposer un brouillon (IA) »
+  dans le cadre « Réponse » de la fiche courrier, texte en streaming (route `POST /api/courriers/[id]/brouillon`, agent
+  seulement, 403 sinon ; fonction « brouillon », Haiku 5.5), modifiable, « Copier », mention « rédigé par l'IA, à
+  relire » ; rien n'est enregistré ni envoyé. Consigne : ne rien inventer ni promettre, demander ce qui manque ; courrier
+  balisé comme donnée (`src/lib/brouillon.ts`, 1 test, 331 au total). Gestes validés en prévisualisation le 19/10.
+  **Panne au déploiement** : `url: undefined` à `drizzle-kit migrate` (aussi au 1er déploiement de `questions`) —
+  **limite de branches de l'offre gratuite Neon atteinte**, l'intégration ne créait pas la base de la nouvelle branche ;
+  l'humain a supprimé dans Neon les branches de prévisualisation des fonctionnalités fusionnées, puis « Redeploy ».
+  **À refaire avant chaque nouvelle branche** si la liste est pleine (jamais la branche principale).
+  **I7 (rendu `docs/ia.md`) abandonné** par l'humain le 19/10.
+  **Prochaine étape** : semaine 4 (agent), après `/clear`.
   Après chaque push, rattraper les nuits sur `/nuit` (le jeu de données vide les tables du flux).
   Clé du flux recopiée dans Vercel (`FLUX_DE_NUIT_CLE`, Production et Preview) le 17/10.
   Domaine `valentinwalczak.com` (OVH, `contact@` déjà utilisé) : envoi par le sous-domaine `mail.` (tranche D).
