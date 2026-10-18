@@ -192,6 +192,14 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   `GET /api/documents?sujet=reservations&id=DOC-reservations-NN`. Le garde-fou de Claude Code a refusé ces appels
   (pris pour des données personnelles) → c'est l'humain qui les lance avec `!` (commande dans la conversation du 18/10 :
   boucle `for n in $(seq -w 1 20)` vers le dossier temporaire de la session).
+  **Cadrage de la semaine 3 validé le 18/10** (branche `ia` depuis `main`) : `docs/semaine-3.md`. Les 20 documents
+  (50 pages) lus : 4 versions de la même procédure aux seuils différents, titres qui contredisent le contenu.
+  Décidé : extrait exact exigé pour chaque champ d'un courrier, vérifié par le code (sinon « à relire ») ; citations
+  natives de l'API pour les questions ; modèle **choisi sur mesure en I2** (Haiku 5.5 contre Opus 5.5 sur les 10
+  courriers) ; Voyage AI si gratuit ; fonctions IA pour l'agent seulement ; classer + brouillon (pas de résumé) ;
+  courrier enregistré après validation ; 30 appels par jour et plafond de 5 $ par mois ; analyse de nuit sur `/nuit`
+  et dans le récap. Plan I1 → I7 (section 7). **Prochaine étape : détail de I1 (socle)**, puis clé Anthropic créée
+  par l'humain avec un plafond de dépense dans la console.
   Après chaque push, rattraper les nuits sur `/nuit` (le jeu de données vide les tables du flux).
   Clé du flux recopiée dans Vercel (`FLUX_DE_NUIT_CLE`, Production et Preview) le 17/10.
   Domaine `valentinwalczak.com` (OVH, `contact@` déjà utilisé) : envoi par le sous-domaine `mail.` (tranche D).
