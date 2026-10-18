@@ -71,9 +71,10 @@ async function ContenuEngagements({ searchParams }: { searchParams: Promise<Reco
             ))}
           </NativeSelect>
         )}
-        {/* Regroupe ce qui concerne un même programmateur (facturation globale) ; « Nom — Structure » distingue les homonymes. */}
+        {/* Regroupe ce qui concerne un même programmateur (facturation globale) ; « Nom — Structure » distingue les homonymes.
+            Largeur fixe : sinon la case prend celle du libellé le plus long (le nom entier reste lisible à l'ouverture). */}
         {estAgent && (
-          <NativeSelect name="programmateur" defaultValue={filtres.programmateur ?? ""} aria-label="Programmateur">
+          <NativeSelect name="programmateur" defaultValue={filtres.programmateur ?? ""} aria-label="Programmateur" className="w-56">
             <NativeSelectOption value="">Tous les programmateurs</NativeSelectOption>
             {programmateurs.map((p) => (
               <NativeSelectOption key={p.id} value={p.id}>
