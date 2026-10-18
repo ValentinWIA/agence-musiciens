@@ -10,7 +10,34 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 
 ## État de reprise
 
-*Dernière mise à jour : 19 octobre 2026 (semaine 3 : **I1 à I7 et brouillon faits**, PR n° 24 à 29 ; semaine 3 terminée)*
+*Dernière mise à jour : 19 octobre 2026 (revenus de la saison, PR n° 32 ; semaine 3 terminée)*
+
+- **✅ Revenus de la saison** (19/10, branche `revenus`, **PR n° 32 fusionnée**, `e1dd3ec`). Carte « Revenus de la
+  saison » en tête de la colonne droite du tableau de bord : total des cachets (le « chiffre d'affaires » : pas de
+  commission en base, décidé) et part de chaque musicien, du plus gros au plus petit, 0 € compris. Même chiffre sur la
+  fiche du musicien (part du musicien). Règles reprises : saison septembre → août à l'heure du lieu ; confirmé, joué,
+  facturé, payé ; bénévole 0 €, « à définir » ignoré ; cachet à plusieurs partagé **à parts égales** (convention écrite à
+  l'écran ; répartition réelle = demande à part, colonne « part » dans `engagement_musiciens`) ; conversion au taux du
+  jour (« ≈ »), sinon un montant par devise. `revenusDeLaSaison`, `formaterRevenus`, `periodeSaison`
+  (`src/lib/indicateurs.ts`), `formaterMontantArrondi` (`src/lib/argent.ts`) ; 340 tests. Montants des revenus et
+  cachet moyen arrondis à l'euro (impayés de « À faire » gardent les centimes). « septembre 2026 – août 2027 » sous les
+  titres de saison. Retouches de la même branche : fiche sans débordement sur téléphone (grilles `grid-cols-1`, liste
+  des engagements en lignes au lieu d'un tableau, champ de fichier caché dans un bloc `relative` : il élargissait
+  « Modifier la fiche » et l'ajout de pièce) ; chiffres de la fiche en sous-grille + `lining-nums` (Playfair dessine des
+  chiffres elzéviriens) ; photos des musiciens en grand sur ordinateur aussi. Gestes validés en prévisualisation.
+  **Reste** : gestes en production (déploiement en cours au moment du `/clear`) ; supprimer la branche Neon
+  `preview/revenus`.
+- **Prochaine demande : branche `menu-et-fiche`** (créée en local depuis `main`, vide). Validé par l'humain le 19/10 :
+  a. menu de l'agent dans l'ordre Tableau de bord, Engagements, Demandes reçues, Musiciens (liste dépliable), Courriers,
+  Documents ; « Calendrier » retiré du menu de l'agent (le mois est sur le tableau de bord), **gardé** pour le musicien
+  (sa seule vue du mois) ; page `/calendrier` inchangée. Mettre à jour `src/lib/menu.test.ts`.
+  b. fiche musicien : le **répertoire** remonte sous la photo et les boutons (colonne gauche, ordinateur) ; les notes de
+  l'agent restent à droite ; sur téléphone, le répertoire reste en bas.
+  Ensuite : n° 2 des reportés (heure « matin / après-midi / soir », heures de 5 en 5 min). Décidé le 19/10 : n° 3
+  (`/couts` au menu) et n° 4 (Courriers + Demandes réunis) **abandonnés** ; n° 8 (cartes sur téléphone) reste pour plus
+  tard. « Confirmer quand même » avec une raison : **déjà fait** (colonne `raison_conflit`), malgré les mentions
+  « plus tard » plus bas.
+
 
 - **Téléphone, tableau de bord (19/10)** : « Bonjour agent » et « agent » dans le menu → ancien cookie de session
   (nom copié à la connexion, avant le renommage du 16/10) ; réglé par déconnexion / reconnexion, sans code.
