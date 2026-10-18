@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { compterIndicateurs, libelleSaison, revenusDeLaSaison, saisonDe, type EngagementCompte, type PartDeCachet } from "./indicateurs";
+import { compterIndicateurs, formaterRevenus, libelleSaison, periodeSaison, revenusDeLaSaison, saisonDe, type EngagementCompte, type PartDeCachet } from "./indicateurs";
 
 const saison = { debut: 2026 };
 
@@ -113,5 +113,20 @@ describe("revenusDeLaSaison", () => {
       { devise: "CHF", unites: 95000 },
     ]);
     expect(r.converti).toBe(false);
+  });
+});
+
+describe("affichage de la saison et des revenus", () => {
+  it("la période en clair, de septembre à août", () => {
+    expect(periodeSaison({ debut: 2026 })).toBe("septembre 2026 – août 2027");
+  });
+
+  it("revenus arrondis à l'euro, « ≈ » si converti, devises séparées sinon", () => {
+    const espaces = (t: string) => t.replace(/\s/g, " ");
+    expect(espaces(formaterRevenus([], false))).toBe("0 €");
+    expect(espaces(formaterRevenus([{ devise: "EUR", unites: 250049 }], true))).toBe("≈ 2 500 €");
+    expect(espaces(formaterRevenus([{ devise: "EUR", unites: 150000 }, { devise: "CHF", unites: 95000 }], false))).toBe(
+      "1 500 € · 950 CHF",
+    );
   });
 });

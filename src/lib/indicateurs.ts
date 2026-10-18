@@ -1,4 +1,4 @@
-import { DEVISES, type Devise } from "./argent";
+import { DEVISES, formaterMontantArrondi, type Devise } from "./argent";
 import { convertirEnEur, type Taux } from "./change";
 import { STATUTS_TENUS } from "./conflit";
 import { fuseauDuPays } from "./dates";
@@ -11,6 +11,11 @@ export type SaisonArtistique = { debut: number }; // la saison 2026-2027 a pour 
 
 export function libelleSaison(s: SaisonArtistique) {
   return `${s.debut}-${s.debut + 1}`;
+}
+
+// En petit sous le titre : « septembre 2026 – août 2027 ».
+export function periodeSaison(s: SaisonArtistique) {
+  return `septembre ${s.debut} – août ${s.debut + 1}`;
 }
 
 // À l'heure du lieu : « automne 2026 » est enregistré le 1er septembre à minuit à Paris, soit le 31 août en UTC.
@@ -89,4 +94,10 @@ export function revenusDeLaSaison(liste: PartDeCachet[], saison: SaisonArtistiqu
     parMusicien: Object.fromEntries([...parMusicien].map(([id, m]) => [id, enListe(m)])),
     converti,
   };
+}
+
+// « ≈ 2 500 € », ou « 1 500 € · 950 CHF » quand les taux manquent. Arrondi à l'unité : un total, pas une facture.
+export function formaterRevenus(montants: Montant[], converti: boolean) {
+  if (montants.length === 0) return formaterMontantArrondi(0, "EUR");
+  return (converti ? "≈ " : "") + montants.map((m) => formaterMontantArrondi(m.unites, m.devise)).join(" · ");
 }

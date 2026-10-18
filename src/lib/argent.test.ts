@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { formaterMontant, versSaisie, versUniteMinimale } from "./argent";
+import { formaterMontant, formaterMontantArrondi, versSaisie, versUniteMinimale } from "./argent";
 
 describe("conversion des montants saisis", () => {
   it("convertit des euros avec virgule ou point (cas normal)", () => {
@@ -43,5 +43,14 @@ describe("montant remis dans le formulaire de modification", () => {
   it("rend un concert bénévole « 0,00 » (et pas vide) et les yens sans centimes", () => {
     expect(versSaisie(0, "EUR")).toBe("0,00");
     expect(versSaisie(300000, "JPY")).toBe("300000");
+  });
+});
+
+describe("formaterMontantArrondi", () => {
+  it("arrondit à l'euro, sans centimes", () => {
+    expect(formaterMontantArrondi(125050, "EUR").replace(/\s/g, " ")).toBe("1 251 €");
+    expect(formaterMontantArrondi(125049, "EUR").replace(/\s/g, " ")).toBe("1 250 €");
+    expect(formaterMontantArrondi(0, "EUR").replace(/\s/g, " ")).toBe("0 €");
+    expect(formaterMontantArrondi(300000, "JPY").replace(/\s/g, " ")).toBe("300 000 JPY");
   });
 });

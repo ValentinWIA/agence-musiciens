@@ -7,7 +7,7 @@ import { formaterMontant } from "@/lib/argent";
 import { formaterDebut } from "@/lib/dates";
 import { LIBELLES_STATUT, lireMusicien, type Statut } from "@/lib/engagements";
 import { lireTaux } from "@/lib/change";
-import { libelleSaison, revenusDeLaSaison, saisonDe } from "@/lib/indicateurs";
+import { formaterRevenus, periodeSaison, revenusDeLaSaison, saisonDe } from "@/lib/indicateurs";
 import { cachetMoyenEnEuros, PASSES_AFFICHES, recapEngagements } from "@/lib/musiciens";
 import { verifierSession } from "@/lib/session";
 import { SeptJours } from "../../calendrier/sept-jours";
@@ -86,12 +86,8 @@ async function FicheMusicien({
             <Chiffre valeur={String(recap.aVenir.length)} legende="engagements à venir" />
             <Chiffre valeur={String(recap.passes.length)} legende="engagements passés" />
             <Chiffre
-              valeur={
-                revenus.total.length === 0
-                  ? formaterMontant(0, "EUR")
-                  : (revenus.converti ? "≈ " : "") + revenus.total.map((m) => formaterMontant(m.unites, m.devise)).join(" · ")
-              }
-              legende={`revenus de la saison ${libelleSaison(saison)} (part du musicien)`}
+              valeur={formaterRevenus(revenus.total, revenus.converti)}
+              legende={`revenus de la saison (${periodeSaison(saison)}), part du musicien`}
             />
             <Chiffre
               valeur={
