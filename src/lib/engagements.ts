@@ -93,6 +93,26 @@ export async function listerPourIndicateurs() {
     .innerJoin(lieux, eq(engagements.lieuId, lieux.id));
 }
 
+// Pour les revenus du tableau de bord : une ligne par musicien de chaque engagement tenu. Le nombre de musiciens
+// d'un engagement se compte sur ces mêmes lignes (le cachet est partagé entre eux).
+export async function listerPartsDeCachets() {
+  const lignes = await db
+    .select({
+      engagementId: engagements.id,
+      musicienId: engagementMusiciens.musicienId,
+      statut: engagements.statut,
+      debut: engagements.debut,
+      pays: lieux.pays,
+      cachet: engagements.cachet,
+      devise: engagements.devise,
+    })
+    .from(engagements)
+    .innerJoin(lieux, eq(engagements.lieuId, lieux.id))
+    .innerJoin(engagementMusiciens, eq(engagementMusiciens.engagementId, engagements.id))
+    .where(inArray(engagements.statut, STATUTS_TENUS));
+  return lignes.map((l) => ({ ...l, nombreMusiciens: lignes.filter((x) => x.engagementId === l.engagementId).length }));
+}
+
 // Pour le calendrier : les engagements non annulés qui commencent entre deux instants, avec leurs musiciens.
 // Même règle de visibilité que la liste : un musicien ne reçoit que les siens.
 export async function listerPourCalendrier(lecteur: Lecteur, depuis: Date, jusqua: Date) {

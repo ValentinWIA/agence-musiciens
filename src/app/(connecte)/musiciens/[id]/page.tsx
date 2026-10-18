@@ -3,18 +3,20 @@ import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { BadgeStatut } from "@/components/badge-statut";
 import { Button } from "@/components/ui/button";
-import { formaterMontant } from "@/lib/argent";
+import { formaterMontantArrondi } from "@/lib/argent";
 import { formaterDebut } from "@/lib/dates";
 import { LIBELLES_STATUT, lireMusicien, type Statut } from "@/lib/engagements";
 import { lireTaux } from "@/lib/change";
+import { formaterRevenus, periodeSaison, revenusDeLaSaison, saisonDe } from "@/lib/indicateurs";
 import { cachetMoyenEnEuros, PASSES_AFFICHES, recapEngagements } from "@/lib/musiciens";
 import { verifierSession } from "@/lib/session";
 import { SeptJours } from "../../calendrier/sept-jours";
 import { Portrait } from "../portrait";
 
 export default function PageMusicien({ params, searchParams }: PageProps<"/musiciens/[id]">) {
+  // grid-cols-1 : la colonne ne s'élargit pas à son contenu le plus large (débordement sur téléphone, 19/10).
   return (
-    <main className="mx-auto grid w-full max-w-6xl content-start gap-6 p-4 pt-10">
+    <main className="mx-auto grid w-full max-w-6xl grid-cols-1 content-start gap-6 p-4 pt-10">
       <Suspense fallback={<p className="text-muted-foreground">Chargement…</p>}>
         <FicheMusicien params={params} searchParams={searchParams} />
       </Suspense>
@@ -39,6 +41,13 @@ async function FicheMusicien({
   // Taux lus seulement s'il y a un cachet en devise étrangère (même conversion que la fiche d'un engagement).
   const taux = musicien.engagements.some((e) => e.devise !== "EUR") ? await lireTaux() : null;
   const cachet = cachetMoyenEnEuros(musicien.engagements, taux);
+  // Même calcul que la carte du tableau de bord, limité à ce musicien.
+  const saison = saisonDe(new Date(), "France");
+  const revenus = revenusDeLaSaison(
+    musicien.engagements.map((e) => ({ ...e, musicienId: musicien.id })),
+    saison,
+    taux,
+  );
   const repertoire = musicien.repertoire?.split("\n") ?? [];
 
   return (
@@ -55,8 +64,8 @@ async function FicheMusicien({
       )}
       {/* Pour le musicien seulement : l'agent a le mois entier sur son tableau de bord. */}
       {!estAgent && <SeptJours lecteur={utilisateur} />}
-      <div className="grid items-start gap-10 md:grid-cols-[280px_1fr]">
-        <div className="grid max-w-[280px] gap-4">
+      <div className="grid grid-cols-1 items-start gap-10 md:grid-cols-[280px_minmax(0,1fr)]">
+        <div className="grid w-full max-w-[280px] gap-4 justify-self-center md:justify-self-start">
           <Portrait nom={musicien.nom} photo={musicien.photo} className="rounded-xl border" />
           {estAgent && (
             <Button nativeButton={false} render={<Link href={`/engagements/nouveau?musicien=${musicien.id}`} />}>
@@ -67,30 +76,40 @@ async function FicheMusicien({
             Modifier la fiche
           </Button>
         </div>
-        <div className="grid gap-6">
+        <div className="grid min-w-0 grid-cols-1 gap-6">
           <div className="grid gap-1">
             <p className="text-xs tracking-[0.25em] text-muted-foreground uppercase">{musicien.instrument}</p>
             <h1 className="font-logo text-5xl leading-none">{musicien.nom}</h1>
             <p className="mt-2 whitespace-pre-line text-muted-foreground">{musicien.biographie ?? "Pas encore de biographie."}</p>
           </div>
 
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-            <Chiffre valeur={String(recap.aVenir.length)} legende="engagements à venir" />
-            <Chiffre valeur={String(recap.passes.length)} legende="engagements passés" />
-            <Chiffre
-              valeur={
-                "parDevise" in cachet
-                  ? cachet.parDevise.map((m) => formaterMontant(m.moyenne, m.devise)).join(" · ")
-                  : cachet.enEuros
-                    ? `${cachet.enEuros.converti ? "≈ " : ""}${formaterMontant(cachet.enEuros.moyenne, "EUR")}`
-                    : "—"
-              }
-              legende={
-                "enEuros" in cachet && cachet.enEuros?.converti && taux
-                  ? `cachet moyen (part du musicien), converti au taux BCE du ${taux.date.split("-").reverse().join("/")}`
-                  : "cachet moyen (part du musicien)"
-              }
-            />
+          {/* Légendes courtes et de même longueur, précisions dans la note dessous : les cartes restent équilibrées. */}
+          <div className="grid gap-2">
+            <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+              <Chiffre valeur={String(recap.aVenir.length)} legende="engagements à venir" />
+              <Chiffre valeur={String(recap.passes.length)} legende="engagements passés" />
+              <Chiffre
+                valeur={formaterRevenus(revenus.total, revenus.converti)}
+                legende="revenus de la saison"
+              />
+              <Chiffre
+                valeur={
+                  "parDevise" in cachet
+                    ? cachet.parDevise.map((m) => formaterMontantArrondi(m.moyenne, m.devise)).join(" · ")
+                    : cachet.enEuros
+                      ? `${cachet.enEuros.converti ? "≈ " : ""}${formaterMontantArrondi(cachet.enEuros.moyenne, "EUR")}`
+                      : "—"
+                }
+                legende="cachet moyen"
+              />
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Saison : {periodeSaison(saison)}. Revenus et cachet moyen : part du musicien, un cachet à plusieurs étant
+              partagé à parts égales.
+              {(revenus.converti || ("enEuros" in cachet && cachet.enEuros?.converti)) &&
+                taux &&
+                ` Converti au taux BCE du ${taux.date.split("-").reverse().join("/")}.`}
+            </p>
           </div>
 
           {estAgent && (
@@ -124,7 +143,7 @@ async function FicheMusicien({
                 )}
               </Bloc>
               <Bloc titre="Par statut">
-                <ul className="flex flex-wrap gap-2 text-sm">
+                <ul className="flex flex-wrap justify-center gap-2 text-sm">
                   {(Object.keys(LIBELLES_STATUT) as Statut[])
                     .filter((s) => recap.parStatut[s])
                     .map((s) => (
@@ -175,31 +194,33 @@ type LigneEngagement = {
 function ListeEngagements({ liste, vide }: { liste: LigneEngagement[]; vide: string }) {
   if (liste.length === 0) return <p className="text-sm text-muted-foreground italic">{vide}</p>;
   return (
-    <table className="w-full text-sm">
-      <tbody>
-        {liste.map((e) => (
-          <tr key={e.id} className="border-t first:border-t-0">
-            <td className="py-2 pr-3 whitespace-nowrap">{formaterDebut(e.debut, e.precisionDate, e.pays)}</td>
-            <td className="py-2 pr-3">
-              <Link href={`/engagements/${e.id}`} className="underline">
-                {e.titre ? `${e.titre} — ` : ""}
-                {e.lieu}, {e.ville}
-              </Link>
-            </td>
-            <td className="py-2 text-right">
-              <BadgeStatut statut={e.statut} />
-            </td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
+    // Une ligne par engagement sur ordinateur ; sur téléphone, date et statut en haut, lieu dessous
+    // (un tableau ne rétrécit pas : les pastilles débordaient, 19/10).
+    <ul className="text-sm">
+      {liste.map((e) => (
+        <li key={e.id} className="grid grid-cols-[1fr_auto] items-center gap-x-3 gap-y-0.5 border-t py-2 first:border-t-0 sm:grid-cols-[auto_1fr_auto]">
+          <span className="whitespace-nowrap">{formaterDebut(e.debut, e.precisionDate, e.pays)}</span>
+          <Link href={`/engagements/${e.id}`} className="col-span-2 row-start-2 min-w-0 break-words underline sm:col-span-1 sm:row-start-auto">
+            {e.titre ? `${e.titre} — ` : ""}
+            {e.lieu}, {e.ville}
+          </Link>
+          <span className="col-start-2 row-start-1 justify-self-end sm:col-start-3">
+            <BadgeStatut statut={e.statut} />
+          </span>
+        </li>
+      ))}
+    </ul>
   );
 }
 
 function Chiffre({ valeur, legende }: { valeur: string; legende: string }) {
   return (
-    <div className="rounded-lg border bg-card px-4 py-3">
-      <b className="block font-logo text-2xl leading-tight">{valeur}</b>
+    // Sous-grille : les cartes partagent les lignes de la grille parente (chiffres sur une même ligne, légendes sur
+    // la suivante), donc chiffres et légendes restent alignés d'une carte à l'autre quelle que soit la longueur du texte.
+    <div className="row-span-2 grid grid-rows-subgrid justify-items-center gap-y-1 rounded-lg border bg-card px-4 py-3 text-center">
+      {/* Chiffres « de titrage » : Playfair dessine par défaut des chiffres elzéviriens (3 et 5 descendent, 1 et 2
+          restent petits), qui ne s'alignent jamais d'une carte à l'autre. */}
+      <b className="self-end font-logo text-2xl leading-tight lining-nums tabular-nums">{valeur}</b>
       <span className="text-xs text-muted-foreground">{legende}</span>
     </div>
   );

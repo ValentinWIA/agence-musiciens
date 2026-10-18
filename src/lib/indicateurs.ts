@@ -1,3 +1,6 @@
+import { DEVISES, formaterMontantArrondi, type Devise } from "./argent";
+import { convertirEnEur, type Taux } from "./change";
+import { STATUTS_TENUS } from "./conflit";
 import { fuseauDuPays } from "./dates";
 import { LIBELLES_STATUT, type Statut } from "./engagements";
 
@@ -8,6 +11,11 @@ export type SaisonArtistique = { debut: number }; // la saison 2026-2027 a pour 
 
 export function libelleSaison(s: SaisonArtistique) {
   return `${s.debut}-${s.debut + 1}`;
+}
+
+// En petit sous le titre : « septembre 2026 – août 2027 ».
+export function periodeSaison(s: SaisonArtistique) {
+  return `septembre ${s.debut} – août ${s.debut + 1}`;
 }
 
 // À l'heure du lieu : « automne 2026 » est enregistré le 1er septembre à minuit à Paris, soit le 31 août en UTC.
@@ -37,4 +45,59 @@ export function compterIndicateurs(liste: EngagementCompte[], saison: SaisonArti
     if (STATUTS_CONTRAT.includes(e.statut)) contrats++;
   }
   return { contrats, parStatut, total };
+}
+
+// Revenus de la saison : une ligne par musicien d'un engagement, avec le nombre de musiciens pour partager le cachet.
+// Comptés comme le cachet moyen : engagements tenus, bénévole (0) compris, cachet « à définir » (null) exclu.
+// Le total de l'agence est la somme des parts, donc la somme des cachets.
+export type PartDeCachet = EngagementCompte & {
+  musicienId: string;
+  nombreMusiciens: number;
+  cachet: number | null;
+  devise: Devise;
+};
+
+export type Montant = { devise: Devise; unites: number };
+
+export type Revenus = {
+  total: Montant[];
+  parMusicien: Record<string, Montant[]>;
+  converti: boolean; // au moins un cachet en devise étrangère converti en euros : afficher « ≈ »
+};
+
+// Avec les taux, tout est converti en euros (taux du jour, comme sur les fiches) ; sans taux, un montant par devise :
+// jamais des francs suisses comptés comme des euros. Arrondi à l'unité une seule fois, à la fin.
+export function revenusDeLaSaison(liste: PartDeCachet[], saison: SaisonArtistique, taux: Taux | null): Revenus {
+  const total = new Map<Devise, number>();
+  const parMusicien = new Map<string, Map<Devise, number>>();
+  let converti = false;
+  for (const e of liste) {
+    if (!STATUTS_TENUS.includes(e.statut) || e.cachet === null || e.nombreMusiciens < 1) continue;
+    if (saisonDe(e.debut, e.pays).debut !== saison.debut) continue;
+    let devise = e.devise;
+    let unites = e.cachet;
+    if (devise !== "EUR" && taux) {
+      unites = convertirEnEur(unites, devise, taux);
+      devise = "EUR";
+      converti = true;
+    }
+    const part = unites / e.nombreMusiciens;
+    total.set(devise, (total.get(devise) ?? 0) + part);
+    const sienne = parMusicien.get(e.musicienId) ?? new Map<Devise, number>();
+    sienne.set(devise, (sienne.get(devise) ?? 0) + part);
+    parMusicien.set(e.musicienId, sienne);
+  }
+  const enListe = (m: Map<Devise, number>): Montant[] =>
+    DEVISES.filter((d) => m.has(d)).map((devise) => ({ devise, unites: Math.round(m.get(devise)!) }));
+  return {
+    total: enListe(total),
+    parMusicien: Object.fromEntries([...parMusicien].map(([id, m]) => [id, enListe(m)])),
+    converti,
+  };
+}
+
+// « ≈ 2 500 € », ou « 1 500 € · 950 CHF » quand les taux manquent. Arrondi à l'unité : un total, pas une facture.
+export function formaterRevenus(montants: Montant[], converti: boolean) {
+  if (montants.length === 0) return formaterMontantArrondi(0, "EUR");
+  return (converti ? "≈ " : "") + montants.map((m) => formaterMontantArrondi(m.unites, m.devise)).join(" · ");
 }

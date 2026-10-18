@@ -3,7 +3,7 @@ import { Fragment } from "react";
 import { BadgeStatut } from "@/components/badge-statut";
 import { Card, CardContent } from "@/components/ui/card";
 import { listerPourIndicateurs, type Statut } from "@/lib/engagements";
-import { compterIndicateurs, libelleSaison, saisonDe } from "@/lib/indicateurs";
+import { compterIndicateurs, libelleSaison, periodeSaison, saisonDe } from "@/lib/indicateurs";
 
 // L'ordre du cycle de vie ; « annulé » est à part, hors de la frise.
 const FRISE: Statut[] = ["demande", "option", "contrat_envoye", "confirme", "joue", "facture", "paye"];
@@ -21,7 +21,10 @@ export async function Indicateurs() {
   return (
     <Card>
       <CardContent className="grid content-start justify-items-center gap-4 text-center">
-        <h2 className="font-logo text-2xl">Saison {libelleSaison(saison)}</h2>
+        <h2 className="grid font-logo text-2xl">
+          Saison {libelleSaison(saison)}
+          <span className="font-sans text-xs font-normal text-muted-foreground">{periodeSaison(saison)}</span>
+        </h2>
         <p className="grid justify-items-center gap-1">
           <span className="font-logo text-5xl leading-none">{contrats}</span>
           <span className="text-muted-foreground">{contrats > 1 ? "contrats" : "contrat"} cette saison</span>

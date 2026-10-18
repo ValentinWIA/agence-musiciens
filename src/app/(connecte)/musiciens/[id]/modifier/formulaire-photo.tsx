@@ -41,7 +41,9 @@ export function FormulairePhoto({ id, nom, photo }: { id: string; nom: string; p
           <input type="hidden" name="id" value={id} />
           <span className="text-sm font-medium">Photo (JPEG, PNG ou WebP, 2 Mo au plus)</span>
           {/* Champ natif caché (son bouton ne se renomme pas) mais envoyé avec le formulaire. */}
-          <div className="flex flex-wrap items-center gap-2">
+          {/* relative : le champ caché garde w-full ; sans ancêtre positionné, il prendrait la largeur de l'écran
+              à partir de sa place et élargirait la page (zone vide à droite sur téléphone, 19/10). */}
+          <div className="relative flex flex-wrap items-center gap-2">
             <Input
               id="photo"
               name="photo"

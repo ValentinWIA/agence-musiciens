@@ -29,6 +29,16 @@ export function formaterMontant(unites: number, devise: Devise): string {
   }).format(unites / 10 ** decimales);
 }
 
+// 125050, "EUR" → « 1 251 € » : pour les totaux, où les centimes n'apportent rien.
+export function formaterMontantArrondi(unites: number, devise: Devise): string {
+  return new Intl.NumberFormat("fr-FR", {
+    style: "currency",
+    currency: devise,
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  }).format(unites / 10 ** DECIMALES[devise]);
+}
+
 // 125010, "EUR" → « 1250,10 » : le montant tel qu'on le retape dans le formulaire (sans espace ni symbole).
 export function versSaisie(unites: number, devise: Devise): string {
   const decimales = DECIMALES[devise];
