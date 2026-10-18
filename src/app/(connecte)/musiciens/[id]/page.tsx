@@ -14,8 +14,9 @@ import { SeptJours } from "../../calendrier/sept-jours";
 import { Portrait } from "../portrait";
 
 export default function PageMusicien({ params, searchParams }: PageProps<"/musiciens/[id]">) {
+  // grid-cols-1 : la colonne ne s'élargit pas à son contenu le plus large (débordement sur téléphone, 19/10).
   return (
-    <main className="mx-auto grid w-full max-w-6xl content-start gap-6 p-4 pt-10">
+    <main className="mx-auto grid w-full max-w-6xl grid-cols-1 content-start gap-6 p-4 pt-10">
       <Suspense fallback={<p className="text-muted-foreground">Chargement…</p>}>
         <FicheMusicien params={params} searchParams={searchParams} />
       </Suspense>
@@ -63,8 +64,8 @@ async function FicheMusicien({
       )}
       {/* Pour le musicien seulement : l'agent a le mois entier sur son tableau de bord. */}
       {!estAgent && <SeptJours lecteur={utilisateur} />}
-      <div className="grid items-start gap-10 md:grid-cols-[280px_1fr]">
-        <div className="grid max-w-[280px] gap-4">
+      <div className="grid grid-cols-1 items-start gap-10 md:grid-cols-[280px_minmax(0,1fr)]">
+        <div className="grid w-full max-w-[280px] gap-4 justify-self-center md:justify-self-start">
           <Portrait nom={musicien.nom} photo={musicien.photo} className="rounded-xl border" />
           {estAgent && (
             <Button nativeButton={false} render={<Link href={`/engagements/nouveau?musicien=${musicien.id}`} />}>
@@ -75,7 +76,7 @@ async function FicheMusicien({
             Modifier la fiche
           </Button>
         </div>
-        <div className="grid gap-6">
+        <div className="grid min-w-0 gap-6">
           <div className="grid gap-1">
             <p className="text-xs tracking-[0.25em] text-muted-foreground uppercase">{musicien.instrument}</p>
             <h1 className="font-logo text-5xl leading-none">{musicien.nom}</h1>
