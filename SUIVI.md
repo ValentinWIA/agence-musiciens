@@ -10,7 +10,7 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 
 ## État de reprise
 
-*Dernière mise à jour : 19 octobre 2026 (revenus de la saison, PR n° 32 ; semaine 3 terminée)*
+*Dernière mise à jour : 19 octobre 2026 (menu et fiche, PR n° 33)*
 
 - **✅ Revenus de la saison** (19/10, branche `revenus`, **PR n° 32 fusionnée**, `e1dd3ec`). Carte « Revenus de la
   saison » en tête de la colonne droite du tableau de bord : total des cachets (le « chiffre d'affaires » : pas de
@@ -27,14 +27,14 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   chiffres elzéviriens) ; photos des musiciens en grand sur ordinateur aussi. Gestes validés en prévisualisation.
   **Reste** : gestes en production (déploiement en cours au moment du `/clear`) ; supprimer la branche Neon
   `preview/revenus`.
-- **Prochaine demande : branche `menu-et-fiche`** (créée en local depuis `main`, vide). Validé par l'humain le 19/10 :
-  a. menu de l'agent dans l'ordre Tableau de bord, Engagements, Demandes reçues, Musiciens (liste dépliable), Courriers,
-  Documents ; « Calendrier » retiré du menu de l'agent (le mois est sur le tableau de bord), **gardé** pour le musicien
-  (sa seule vue du mois) ; page `/calendrier` inchangée. Mettre à jour `src/lib/menu.test.ts`.
-  b. fiche musicien : le **répertoire** remonte sous la photo et les boutons (colonne gauche, ordinateur) ; les notes de
-  l'agent restent à droite ; sur téléphone, le répertoire reste en bas.
-  **À reprendre (noté le 19/10)** : affichage de la page « Engagements » : filtres trop loin du haut du tableau,
-  bouton « Nouvel engagement » mal placé. Demande à part, avec sa branche et une planche avant le code.
+- **✅ Menu et fiche** (19/10, branche `menu-et-fiche`, **PR n° 33 fusionnée**, `9789251`). Menu de l'agent :
+  Tableau de bord, Engagements, Demandes reçues, Musiciens (liste dépliable), Courriers, Documents ; « Calendrier »
+  retiré pour l'agent (le mois est sur son tableau de bord), gardé pour le musicien ; page `/calendrier` inchangée
+  (`src/lib/menu.ts`, 341 tests). Fiche musicien : répertoire sous la photo et les boutons sur ordinateur, en bas sur
+  téléphone (même bloc affiché à l'une ou l'autre place, `md:`). Gestes validés en prévisualisation.
+  **Reste** : gestes en production ; supprimer les branches Neon `preview/menu-et-fiche` et `preview/revenus`.
+- **Prochaine demande : affichage de la page « Engagements »** (noté le 19/10) : filtres trop loin du haut du tableau,
+  bouton « Nouvel engagement » mal placé. Branche à part, planche avant le code.
   Ensuite : n° 2 des reportés (heure « matin / après-midi / soir », heures de 5 en 5 min). Décidé le 19/10 : n° 3
   (`/couts` au menu) et n° 4 (Courriers + Demandes réunis) **abandonnés** ; n° 8 (cartes sur téléphone) reste pour plus
   tard. « Confirmer quand même » avec une raison : **déjà fait** (colonne `raison_conflit`), malgré les mentions
