@@ -12,6 +12,11 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 
 *Dernière mise à jour : 19 octobre 2026 (semaine 3 : **I1 à I7 et brouillon faits**, PR n° 24 à 29 ; semaine 3 terminée)*
 
+- **Téléphone, tableau de bord (19/10)** : « Bonjour agent » et « agent » dans le menu → ancien cookie de session
+  (nom copié à la connexion, avant le renommage du 16/10) ; réglé par déconnexion / reconnexion, sans code.
+  ✅ Photos des musiciens trop petites → **PR n° 31 fusionnée** (`b6536ca`) : sur téléphone 2 par ligne (3 sur
+  tablette), photo en pleine largeur, nom dessous ; ordinateur inchangé. Gestes validés en prévisualisation.
+
 - **Semaine 2 — flux de nuit**, branche `flux-de-nuit` (depuis `main`, 17/10). Cadrage validé par l'humain le 17/10 :
   `docs/flux-de-nuit.md` (lu sur une vraie nuit : 15 événements dont 2 doublons ; créations sans musicien, sans heure,
   sans cachet). Décidé : boîte « Demandes reçues » (l'agent en fait un engagement), statuts du flux sans effet sur
