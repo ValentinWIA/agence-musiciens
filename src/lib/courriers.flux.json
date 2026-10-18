@@ -1,0 +1,46 @@
+{
+  "sujet": "reservations",
+  "nombre": 10,
+  "courriers": [
+    {
+      "id": "COU-reservations-01",
+      "texte": "Cabinet Roche\n74 chemin des Vignes, Lyon\n\nLe 21 mars 2026\n\nObjet : réservation RES-2024-589\n\nMadame, Monsieur,\n\nNous serons douze au lieu de six, la salle est-elle assez grande ? Le montant concerné est de 5 250,11 euros. Il s'agit d'un dossier de type permanence.\n\nJe reste à votre disposition pour tout complément.\n\nCordialement,\nMaëlle Fournier\nChef d'équipe, Cabinet Roche"
+    },
+    {
+      "id": "COU-reservations-02",
+      "texte": "Boulangerie Pain d'Orge\n21 avenue Jean-Jaurès, Rennes\n\nLe 30 mai 2026\n\nObjet : réservation RES-2026-603\n\nMadame, Monsieur,\n\nMerci d'annuler la réservation de jeudi, la réunion est reportée. Le montant concerné est de 2 961,45 euros. Il s'agit d'un dossier de type intervention.\n\nJe reste à votre disposition pour tout complément.\n\nCordialement,\nZoé Lefèvre\nAssistante de direction, Boulangerie Pain d'Orge"
+    },
+    {
+      "id": "COU-reservations-03",
+      "texte": "Transports Ferrand\n98 place du Marché, Bordeaux\n\nLe 18 février 2026\n\nObjet : réservation RES-2025-222\n\nMadame, Monsieur,\n\nMerci d'annuler la réservation de jeudi, la réunion est reportée. Le montant concerné est de 5 207,78 euros. Il s'agit d'un dossier de type permanence.\n\nJe reste à votre disposition pour tout complément.\n\nCordialement,\nChloé Dubois\nChef d'équipe, Transports Ferrand"
+    },
+    {
+      "id": "COU-reservations-04",
+      "texte": "Boulangerie Pain d'Orge\n11 rue des Lilas, Dijon\n\nLe la semaine dernière\n\nObjet : réservation RES-2025-273\n\nMadame, Monsieur,\n\nNous serons douze au lieu de six, la salle est-elle assez grande ? Le montant concerné est de 5 953,85 euros. Il s'agit d'un dossier de type intervention.\n\nJe reste à votre disposition pour tout complément.\n\nCordialement,\nCamille Lefèvre\nResponsable achats, Boulangerie Pain d'Orge"
+    },
+    {
+      "id": "COU-reservations-05",
+      "texte": "Studio Kairos\n99 place du Marché, Rennes\n\nLe 11 avril 2026\n\nObjet : réservation RES-2026-702\n\nMadame, Monsieur,\n\nMerci d'annuler la réservation de jeudi, la réunion est reportée. Le montant concerné est de 5 774,89 euros. Il s'agit d'un dossier de type salle.\n\nJe reste à votre disposition pour tout complément.\n\nCordialement,\nJules Lefèvre\nGérant, Studio Kairos"
+    },
+    {
+      "id": "COU-reservations-06",
+      "texte": "SAS Lumen\n29 rue des Lilas, Grenoble\n\nLe 15 janvier 2026\n\nObjet : réservation RES-2026-413\n\nMadame, Monsieur,\n\nMerci d'annuler la réservation de jeudi, la réunion est reportée. Le montant concerné est de 502,62 euros. Il s'agit d'un dossier de type salle.\n\nJe reste à votre disposition pour tout complément.\n\nCordialement,\nSacha Garcia\nAssistante de direction, SAS Lumen"
+    },
+    {
+      "id": "COU-reservations-07",
+      "texte": "Atelier Brune\n10 avenue Jean-Jaurès, Rennes\n\nLe 24 août 2025\n\nObjet : réservation RES-2024-169\n\nMadame, Monsieur,\n\nMerci d'annuler la réservation de jeudi, la réunion est reportée. Il s'agit d'un dossier de type permanence.\n\nJe reste à votre disposition pour tout complément.\n\nCordialement,\nRayan Durand\nGérant, Atelier Brune"
+    },
+    {
+      "id": "COU-reservations-08",
+      "texte": "Atelier Brune\n79 boulevard Carnot, Lyon\n\nLe 12 mai 2026\n\nObjet : réservation RES-2025-098\n\nMadame, Monsieur,\n\nNous serons douze au lieu de six, la salle est-elle assez grande ? Le montant concerné est de 5 984,45 euros. Il s'agit d'un dossier de type intervention.\n\nJe reste à votre disposition pour tout complément.\n\nCordialement,\nZoé Martin\nGérant, Atelier Brune"
+    },
+    {
+      "id": "COU-reservations-09",
+      "texte": "SAS Lumen\n71 rue des Lilas, Angers\n\nLe 16 août 2026\n\nObjet : réservation RES-2024-156\n\nMadame, Monsieur,\n\nPouvez-vous décaler ma réservation d'une heure ? Un imprévu. Le montant concerné est de 2 732,31 euros. Il s'agit d'un dossier de type permanence.\n\nJe reste à votre disposition pour tout complément.\n\nCordialement,\nCamille Mercier\nGérant, SAS Lumen"
+    },
+    {
+      "id": "COU-reservations-10",
+      "texte": "Garage Sorel\n40 impasse du Moulin, Tours\n\nLe 11 octobre 2025\n\nObjet : réservation RES-2024-318\n\nMadame, Monsieur,\n\nNous serons douze au lieu de six, la salle est-elle assez grande ? Le montant concerné est de 3 423,46 euros. Il s'agit d'un dossier de type permanence.\n\nJe reste à votre disposition pour tout complément.\n\nCordialement,\nRayan Martin\nGérant, Garage Sorel"
+    }
+  ]
+}

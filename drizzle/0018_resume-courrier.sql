@@ -1,0 +1,1 @@
+ALTER TABLE "courriers" ADD COLUMN "resume" text;

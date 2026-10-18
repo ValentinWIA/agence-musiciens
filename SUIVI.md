@@ -192,6 +192,37 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   `GET /api/documents?sujet=reservations&id=DOC-reservations-NN`. Le garde-fou de Claude Code a refusé ces appels
   (pris pour des données personnelles) → c'est l'humain qui les lance avec `!` (commande dans la conversation du 18/10 :
   boucle `for n in $(seq -w 1 20)` vers le dossier temporaire de la session).
+  **Cadrage de la semaine 3 validé le 18/10** (branche `ia` depuis `main`) : `docs/semaine-3.md`. Les 20 documents
+  (50 pages) lus : 4 versions de la même procédure aux seuils différents, titres qui contredisent le contenu.
+  Décidé : extrait exact exigé pour chaque champ d'un courrier, vérifié par le code (sinon « à relire ») ; citations
+  natives de l'API pour les questions ; modèle **choisi sur mesure en I2** (Haiku 5.5 contre Opus 5.5 sur les 10
+  courriers) ; Voyage AI si gratuit ; fonctions IA pour l'agent seulement ; classer + brouillon (pas de résumé) ;
+  courrier enregistré après validation ; 30 appels par jour et plafond de 5 $ par mois ; analyse de nuit sur `/nuit`
+  et dans le récap. Plan I1 → I7 (section 7). Consigne de l'humain : **strict nécessaire, au plus simple**.
+  **I1 ✅** (`8ea3074`) : `@anthropic-ai/sdk`, `src/lib/couts-ia.ts` (prix en millionièmes de dollar, 30 appels par
+  jour, plafond 5 $ par mois, 6 tests, 299 au total), `src/lib/ia.ts` (seul appel à Claude, `server-only`, limites
+  vérifiées avant, appel enregistré même en échec, Sentry au plafond, 60 s et un nouvel essai au plus), migration 0016
+  (`appels_ia`, jamais vidée par le jeu de données), page `/couts` (agent) avec « Tester l'IA », lien depuis `/nuit`.
+  Clé `ANTHROPIC_API_KEY` (Production et Preview) et plafond de dépense dans la console : faits par l'humain.
+  Geste validé en prévisualisation le 18/10 : page vide, test → « OK » et ligne comptée, lien sur `/nuit`, musicien
+  renvoyé.
+  **I2 ✅** (`e48a7f1`, `87e3a92`) : `src/lib/courrier.ts` (format imposé, consigne, vérification des extraits : extrait
+  présent dans le courrier, chiffres de la date et du montant écrits dans l'extrait, sinon « à relire » ; saisie en
+  centimes), 12 tests sur les 10 vrais courriers (`src/lib/courriers.flux.json`) avec des réponses fabriquées, 311 au
+  total ; migration 0017 (`courriers`) ; page `/courriers` (dépôt texte / `.txt` / `.pdf` par `unpdf`, champs à relire,
+  validation, liste), lien « Courriers » au menu de l'agent. Le classement est fait dans le même appel.
+  Retour au geste : signataire réduit au nom de famille → c'était la consigne (« nom seulement ») ; corrigée.
+  Gestes validés le 18/10 : COU-07 montant absent, COU-04 date absente, validation, recette → rien de vérifié,
+  coûts comptés, musicien renvoyé ; **les 10 courriers justes avec Haiku**. Décidé : **Haiku par défaut** (comparaison
+  avec Opus sautée : zéro erreur), **Sonnet 5.5 au choix** dans le menu pour un courrier complexe.
+  **I3 ✅ (résumé à la place du brouillon)** (`68512cd` à `058eb4e`) : décidé le 18/10 faute de temps ; le résumé
+  (une phrase, même appel que la lecture, migration 0018 `courriers.resume`) remplit l'exigence « deux sur trois »
+  avec le classement ; le streaming exigé est fait en I5. Fiche `/courriers/[id]` (champs, résumé, texte, « Courrier
+  introuvable ») avec un cadre « Réponse » : zone de texte à remplir à la main, non enregistrée, « Rédaction d'un
+  brouillon par l'IA : en développement ». « Valider » renommé **« Enregistrer »** (pouvait se lire comme accepter
+  la demande) avec la phrase « ne répond pas à l'expéditeur et ne modifie aucun engagement ». Gestes validés le
+  18/10 en prévisualisation. **Le brouillon de réponse est à faire après l'envoi de midi.**
+  **Prochaine étape : PR de I1 à I3, fusion avec l'accord de l'humain, vérification en production**, puis I4 et I5.
   Après chaque push, rattraper les nuits sur `/nuit` (le jeu de données vide les tables du flux).
   Clé du flux recopiée dans Vercel (`FLUX_DE_NUIT_CLE`, Production et Preview) le 17/10.
   Domaine `valentinwalczak.com` (OVH, `contact@` déjà utilisé) : envoi par le sous-domaine `mail.` (tranche D).
@@ -207,6 +238,13 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 - ~~**Reporté** (noté le 18/10) : bouton « Nouvel engagement » au niveau des filtres~~ ✅ fait dans la passe « envoi ».
 - **Reporté** (noté le 18/10, demande à part avec son cadrage) : filtrer les engagements par programmateur (utile
   pour une facturation globale).
+- **Reporté** (noté le 18/10) : rendre la page `/couts` plus visible (aujourd'hui : lien depuis `/nuit` seulement).
+- **Question notée le 18/10** (après la semaine 3) : une demande reçue devient un engagement au statut « demande »,
+  pas « option ». Raison actuelle : le flux ne donne pas l'heure, et une option exige date et heure précises, durée et
+  échéance (`src/lib/cycle-de-vie.ts`) ; poser une option, c'est s'engager auprès du programmateur (date tenue jusqu'à
+  l'échéance, relance au récap), ce que l'agent fait après avoir vérifié la disponibilité du musicien. Piste si
+  l'agent pose souvent l'option tout de suite : une case « poser l'option dès la création » (heure et échéance
+  saisies) dans le formulaire de création depuis une demande, plutôt qu'un changement de règle.
 
 - **Fait** : cadrage (SPEC), comptes, squelette Next.js, dépôt GitHub public, site en ligne
   (https://agence-musiciens.vercel.app), région `fra1`, base Neon reliée à Vercel.

@@ -13,6 +13,7 @@ export function liensDuMenu(
       { href: "/tableau-de-bord", libelle: "Tableau de bord" },
       { href: "/engagements", libelle: "Engagements" },
       { href: "/demandes", libelle: "Demandes reçues" },
+      { href: "/courriers", libelle: "Courriers" },
       { href: "/calendrier", libelle: "Calendrier" },
       {
         href: "/musiciens",

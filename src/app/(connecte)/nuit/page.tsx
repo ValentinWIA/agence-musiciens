@@ -93,8 +93,8 @@ async function ContenuNuit() {
         <CardHeader>
           <CardTitle>Exécutions</CardTitle>
           <CardDescription>
-            Coût : 0 € (offres gratuites de Vercel, Neon et Resend ; un courriel par jour pour le récap). Chaque
-            passage coûte sa durée et ses appels au flux.
+            Chaque passage coûte sa durée et ses appels au flux ; le détail des coûts, IA comprise, est sur la page{" "}
+            <Link href="/couts" className="underline">Coûts</Link>.
           </CardDescription>
         </CardHeader>
         <CardContent>
