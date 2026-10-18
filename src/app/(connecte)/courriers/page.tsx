@@ -1,4 +1,5 @@
 import { desc } from "drizzle-orm";
+import Link from "next/link";
 import { Suspense } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -65,7 +66,9 @@ async function ContenuCourriers() {
                   <TableRow key={c.id}>
                     <TableCell>{c.dateCourrier ? new Date(`${c.dateCourrier}T12:00:00Z`).toLocaleDateString("fr-FR") : "—"}</TableCell>
                     <TableCell className="whitespace-normal">
-                      {c.structure ?? "—"}
+                      <Link href={`/courriers/${c.id}`} className="underline">
+                        {c.structure ?? "expéditeur inconnu"}
+                      </Link>
                       {c.signataire && <span className="block text-xs text-muted-foreground">{c.signataire}</span>}
                     </TableCell>
                     <TableCell>{c.reference ?? "—"}</TableCell>
