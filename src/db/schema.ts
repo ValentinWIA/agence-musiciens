@@ -228,6 +228,7 @@ export const courriers = pgTable("courriers", {
   montant: integer("montant"), // en centimes d'euro
   typeDossier: text("type_dossier"),
   classement: text("classement").notNull(), // = CLASSEMENTS (src/lib/courrier.ts)
+  resume: text("resume"), // une phrase, proposée par l'IA puis relue par l'agent
   modele: text("modele").notNull(), // le modèle qui l'a lu
   creePar: uuid("cree_par").references(() => utilisateurs.id, { onDelete: "set null" }),
   creeLe: timestamp("cree_le", { withTimezone: true }).notNull().defaultNow(),

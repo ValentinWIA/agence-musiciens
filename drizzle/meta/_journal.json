@@ -127,6 +127,13 @@
       "when": 1792288759691,
       "tag": "0017_courriers",
       "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1792290197947,
+      "tag": "0018_resume-courrier",
+      "breakpoints": true
     }
   ]
 }

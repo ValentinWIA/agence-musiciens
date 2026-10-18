@@ -13,6 +13,8 @@ import { lireCourrier, validerCourrier, type EtatLecture, type EtatValidation } 
 const classeZoneTexte =
   "min-h-48 w-full rounded-lg border border-input bg-transparent px-2.5 py-1.5 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50";
 
+const classeResume = classeZoneTexte.replace("min-h-48", "min-h-16");
+
 export function DepotCourrier() {
   const [etat, lire, enLecture] = useActionState<EtatLecture, FormData>(lireCourrier, {});
 
@@ -106,6 +108,10 @@ function Validation({ lecture, texte, modele }: { lecture: LectureVerifiee; text
           ))}
         </NativeSelect>
         <p className="text-xs text-muted-foreground">Proposé par l&apos;IA : {lecture.classement.raison}</p>
+      </div>
+      <div className="grid gap-2">
+        <Label htmlFor="resume">Résumé (proposé par l&apos;IA, à relire)</Label>
+        <textarea id="resume" name="resume" className={classeResume} defaultValue={lecture.resume} maxLength={500} />
       </div>
       <Button type="submit" disabled={enCours} className="w-fit">
         {enCours ? "Enregistrement…" : "Valider"}

@@ -71,7 +71,10 @@ async function ContenuCourriers() {
                     <TableCell>{c.reference ?? "—"}</TableCell>
                     <TableCell className="text-right">{c.montant === null ? "—" : formaterMontant(c.montant, "EUR")}</TableCell>
                     <TableCell>{c.typeDossier ?? "—"}</TableCell>
-                    <TableCell>{LIBELLES_CLASSEMENT[c.classement as Classement] ?? c.classement}</TableCell>
+                    <TableCell className="whitespace-normal">
+                      {LIBELLES_CLASSEMENT[c.classement as Classement] ?? c.classement}
+                      {c.resume && <span className="block text-xs text-muted-foreground">{c.resume}</span>}
+                    </TableCell>
                     <TableCell>{LIBELLES_MODELE[c.modele as Modele] ?? c.modele}</TableCell>
                   </TableRow>
                 ))}

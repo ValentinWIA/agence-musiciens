@@ -14,6 +14,7 @@ const lectureCou01: Lecture = {
   montant: { valeur: "5250.11", extrait: "Le montant concerné est de 5 250,11 euros" },
   typeDossier: { valeur: "permanence", extrait: "Il s'agit d'un dossier de type permanence" },
   classement: { valeur: "changement", raison: "Passage de six à douze personnes." },
+  resume: "Le Cabinet Roche demande si la salle convient pour douze personnes au lieu de six.",
 };
 
 describe("vérification d'une lecture", () => {
@@ -89,6 +90,7 @@ describe("saisie validée par l'agent", () => {
     montant: "5 250,11",
     typeDossier: "permanence",
     classement: "changement",
+    resume: "",
   };
 
   it("garde le montant en centimes et vide les champs laissés vides", () => {
@@ -96,6 +98,7 @@ describe("saisie validée par l'agent", () => {
     expect(r.montant).toBe(525011);
     expect(r.signataire).toBeNull();
     expect(r.date).toBeNull();
+    expect(r.resume).toBeNull();
   });
 
   it("refuse un montant illisible", () => {

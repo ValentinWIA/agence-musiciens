@@ -123,7 +123,7 @@ Ordre : ce que la démo exige d'abord (courrier, question, coût), puis le reste
 |---|---|---|
 | **I1 socle** | SDK Anthropic, `src/lib/ia.ts` (serveur seulement), migration `appels_ia`, `src/lib/couts-ia.ts` (prix, coût, quota, plafond), page `/couts`, bouton « Tester l'IA » | tests du calcul et des limites ; geste : un appel de test apparaît sur `/couts` avec son coût |
 | **I2 lecture d'un courrier** | `src/lib/courrier.ts` (schéma, vérification des extraits), dépôt, champs à relire, validation, migration `courriers` | tests sur les 10 courriers avec des réponses de modèle fabriquées (dont une inventée) ; geste : COU-07 sans montant, COU-04 sans date, un courrier inconnu |
-| **I3 classement et brouillon** | classement dans l'appel de lecture, brouillon en streaming sur la fiche | geste : brouillon qui s'écrit, copié, rien envoyé |
+| **I3 résumé** (remplace le brouillon, décidé le 18/10) | une phrase de résumé dans l'appel de lecture, relue et enregistrée avec le courrier | geste : résumé affiché, modifiable, enregistré |
 | **I4 indexation** | extension `vector`, table `passages`, Voyage, découpage par page, empreintes, bouton « Indexer les documents » | tests du découpage et des empreintes ; geste : 50 passages, second clic → « 0 recalculé » |
 | **I5 questions** | recherche des 5 passages, route en streaming avec citations, page `/questions` | geste : question sur le seuil de double validation → versions et pages citées ; question hors sujet → « aucune source » |
 | **I6 analyse de la nuit** | appel après l'import (cron et bouton), colonne `executions.analyse`, paragraphe sur `/nuit` et dans le récap | geste : nuit rattrapée → analyse affichée ; panne de l'IA simulée → nuit importée quand même |
@@ -139,7 +139,9 @@ vérifiée en production avant la suivante.
 2. **Embeddings : Voyage AI**, à condition que ce soit gratuit pour notre volume ; vérifié sur leur site avant I4
    (carte bancaire exigée → on en reparle avant d'agir).
 3. **Fonctions IA réservées à l'agent** ; les musiciens n'y ont pas accès (vérifié côté serveur).
-4. **Classer + brouillon de réponse** ; pas de résumé (un courrier de cinq lignes n'en a pas besoin).
+4. **Classer + résumer**, dans le même appel que la lecture. *(Décidé d'abord : classer + brouillon ; changé le
+   18/10 pour gagner du temps : le résumé remplit l'exigence « deux sur trois » sans appel, page ni route de plus.
+   Le streaming exigé par la fiche est fait en I5.)*
 5. **Courrier enregistré après validation** par l'agent (table `courriers`, liste et fiche sur `/courriers`).
 6. **Limites** : 30 appels par utilisateur et par jour (coupe une boucle ou un abus) ; **plafond de 5 $ par mois**
    dans le produit (protège la dépense), plus le plafond réglé dans la console Anthropic.
