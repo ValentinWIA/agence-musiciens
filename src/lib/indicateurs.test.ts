@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { compterIndicateurs, libelleSaison, saisonDe, type EngagementCompte } from "./indicateurs";
+import { compterIndicateurs, libelleSaison, revenusDeLaSaison, saisonDe, type EngagementCompte, type PartDeCachet } from "./indicateurs";
 
 const saison = { debut: 2026 };
 
@@ -51,5 +51,67 @@ describe("compterIndicateurs", () => {
     );
     expect(r.contrats).toBe(1);
     expect(r.parStatut.confirme).toBe(1);
+  });
+});
+
+describe("revenusDeLaSaison", () => {
+  // 1 € = 0,95 CHF : 950 CHF valent 1 000 €.
+  const taux = { date: "2026-10-16", rates: { CHF: 0.95, USD: 1.1, GBP: 0.85, JPY: 160 } };
+
+  function part(modif: Partial<PartDeCachet> = {}): PartDeCachet {
+    return { ...engagement(), musicienId: "anna", nombreMusiciens: 1, cachet: 150000, devise: "EUR", ...modif };
+  }
+
+  it("aucun cachet : total vide, aucun musicien", () => {
+    expect(revenusDeLaSaison([], saison, taux)).toEqual({ total: [], parMusicien: {}, converti: false });
+  });
+
+  it("un duo : le cachet est partagé, le total compte le cachet une fois", () => {
+    const r = revenusDeLaSaison(
+      [part({ nombreMusiciens: 2 }), part({ musicienId: "louis", nombreMusiciens: 2 })],
+      saison,
+      taux,
+    );
+    expect(r.total).toEqual([{ devise: "EUR", unites: 150000 }]);
+    expect(r.parMusicien.anna).toEqual([{ devise: "EUR", unites: 75000 }]);
+    expect(r.parMusicien.louis).toEqual([{ devise: "EUR", unites: 75000 }]);
+  });
+
+  it("seuls les engagements tenus comptent ; bénévole compté à 0 ; « à définir » ignoré", () => {
+    const r = revenusDeLaSaison(
+      [
+        part({ statut: "demande" }),
+        part({ statut: "option" }),
+        part({ statut: "contrat_envoye" }),
+        part({ statut: "annule" }),
+        part({ statut: "joue", cachet: null }),
+        part({ musicienId: "louis", statut: "paye", cachet: 0 }),
+        part({ statut: "facture", cachet: 100000 }),
+      ],
+      saison,
+      taux,
+    );
+    expect(r.total).toEqual([{ devise: "EUR", unites: 100000 }]);
+    expect(r.parMusicien.louis).toEqual([{ devise: "EUR", unites: 0 }]);
+  });
+
+  it("un concert d'une autre saison n'est pas compté", () => {
+    const r = revenusDeLaSaison([part({ debut: new Date("2026-06-15T19:00:00Z") })], saison, taux);
+    expect(r.total).toEqual([]);
+  });
+
+  it("avec les taux : les francs suisses sont convertis en euros", () => {
+    const r = revenusDeLaSaison([part({ cachet: 95000, devise: "CHF" }), part()], saison, taux);
+    expect(r.total).toEqual([{ devise: "EUR", unites: 250000 }]);
+    expect(r.converti).toBe(true);
+  });
+
+  it("sans taux : un montant par devise, jamais additionnés", () => {
+    const r = revenusDeLaSaison([part({ cachet: 95000, devise: "CHF" }), part()], saison, null);
+    expect(r.parMusicien.anna).toEqual([
+      { devise: "EUR", unites: 150000 },
+      { devise: "CHF", unites: 95000 },
+    ]);
+    expect(r.converti).toBe(false);
   });
 });
