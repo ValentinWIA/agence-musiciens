@@ -87,7 +87,7 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   seulement ; « les 10 courriers du flux à lire d'un clic » du cadrage n'avait pas été fait). Lecture du flux puis
   vraie boîte (réception et envoi par Resend : adresse `…@<id>.resend.app`, relève par bouton, `In-Reply-To`)
   cadrées puis **abandonnées par l'humain** au profit de ces deux boutons. Gestes validés en prévisualisation.
-  **Reste** : gestes en production ; supprimer la branche Neon `preview/boutons-fictifs`.
+  Gestes validés en production le 19/10. **Reste** : supprimer la branche Neon `preview/boutons-fictifs`.
 - **Semaine 3 terminée** (I1 à I7). **Prochaine demande : heures de 5 en 5 minutes** (décidé le 19/10, branche
   `heures-5-min`) : `step={300}` sur le champ heure (`formulaire-engagement.tsx`) ; refus côté serveur d'une minute
   non multiple de 5 (`saisieDate`, `engagements/saisie.ts`) avec message ; test ; prévisualisation et geste (iPhone :
