@@ -78,7 +78,12 @@ export function ZoneReponse({ courrierId }: { courrierId: string }) {
         <Button type="button" onClick={copier} disabled={enCours || !reponse}>
           {copie ? "Copié" : "Copier"}
         </Button>
+        {/* Bouton fictif (décidé le 19/10) : l'envoi par courriel n'est pas branché. */}
+        <Button type="button" disabled title="En développement">
+          Envoyer au destinataire
+        </Button>
       </div>
+      <p className="text-xs text-muted-foreground">Envoi au destinataire : en développement.</p>
     </div>
   );
 }

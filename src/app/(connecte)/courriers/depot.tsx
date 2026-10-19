@@ -46,9 +46,16 @@ export function DepotCourrier() {
             </NativeSelect>
           </div>
         </div>
-        <Button type="submit" disabled={enLecture} className="w-fit">
-          {enLecture ? "Lecture du courrier par l'IA…" : "Lire le courrier"}
-        </Button>
+        <div className="flex flex-wrap items-center gap-3">
+          <Button type="submit" disabled={enLecture} className="w-fit">
+            {enLecture ? "Lecture du courrier par l'IA…" : "Lire le courrier"}
+          </Button>
+          {/* Bouton fictif (décidé le 19/10) : la réception des courriels n'est pas branchée. */}
+          <Button type="button" variant="outline" disabled title="En développement">
+            Importer les mails
+          </Button>
+          <span className="text-xs text-muted-foreground">Import des mails : en développement.</span>
+        </div>
         {etat.erreur && (
           <p role="alert" className="text-sm text-destructive">
             {etat.erreur}
