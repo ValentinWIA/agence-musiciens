@@ -10,7 +10,7 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 
 ## État de reprise
 
-*Dernière mise à jour : 19 octobre 2026 (même marge à gauche, PR n° 39 ; fin de la semaine 3)*
+*Dernière mise à jour : 19 octobre 2026 (boutons fictifs des courriers, PR n° 40)*
 
 - **✅ Revenus de la saison** (19/10, branche `revenus`, **PR n° 32 fusionnée**, `e1dd3ec`). Carte « Revenus de la
   saison » en tête de la colonne droite du tableau de bord : total des cachets (le « chiffre d'affaires » : pas de
@@ -81,6 +81,13 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   --git-branch=<branche> --yes` après un push (base de la prévisualisation). Les secrets « sensibles » arrivent vides :
   mettre un `AUTH_SECRET` local au hasard ; session agent fabriquée avec `encode` d'Auth.js (script de captures, hors
   dépôt). Supprimer le fichier à la fin.
+- **✅ Boutons fictifs des courriers** (19/10, branche `boutons-fictifs`, **PR n° 40 fusionnée**, `e15061d`) :
+  « Importer les mails » (dépôt de `/courriers`) et « Envoyer au destinataire » (cadre « Réponse » de la fiche),
+  désactivés, mention « en développement ». Origine : les courriers ne viennent pas du flux de nuit (dépôt à la main
+  seulement ; « les 10 courriers du flux à lire d'un clic » du cadrage n'avait pas été fait). Lecture du flux puis
+  vraie boîte (réception et envoi par Resend : adresse `…@<id>.resend.app`, relève par bouton, `In-Reply-To`)
+  cadrées puis **abandonnées par l'humain** au profit de ces deux boutons. Gestes validés en prévisualisation.
+  **Reste** : gestes en production ; supprimer la branche Neon `preview/boutons-fictifs`.
 - **Semaine 3 terminée** (I1 à I7). **Prochaine demande : heures de 5 en 5 minutes** (décidé le 19/10, branche
   `heures-5-min`) : `step={300}` sur le champ heure (`formulaire-engagement.tsx`) ; refus côté serveur d'une minute
   non multiple de 5 (`saisieDate`, `engagements/saisie.ts`) avec message ; test ; prévisualisation et geste (iPhone :
