@@ -386,6 +386,13 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 - ~~**Reporté** : filtrer les engagements par programmateur~~ ✅ fait (P1, PR n° 23).
 - **Reporté** (noté le 18/10) : rendre la page `/couts` plus visible (liens depuis `/nuit`, `/courriers` et
   « Documents » ; pas encore au menu).
+- **Piste notée le 19/10** (demande à part, après les heures de 5 en 5) : ouvrir un engagement dans un **volet** sur
+  la page « Engagements » au lieu d'une page nouvelle. À trancher au cadrage : volet sur téléphone (plein écran ?),
+  adresse partageable de la fiche (route interceptée de Next.js), modifier depuis le volet.
+- **Question notée le 19/10** : chaque page est relue dans la base à chaque visite, le navigateur ne garde rien.
+  Voulu jusqu'ici (pages dynamiques : données toujours à jour, droits vérifiés à chaque requête). Piste si la lenteur
+  gêne : garder les pages quelques secondes côté navigateur (`staleTimes`) ou mettre en cache côté serveur
+  (`"use cache"`, vidé à chaque modification). À mesurer avant de choisir.
 - **Piste notée le 19/10** (après la semaine 3, demande à part) : réunir « Courriers » et « Demandes reçues » dans une
   seule section du menu (« Documents » reste à part, décidé par l'humain).
 - **Question notée le 18/10** (après la semaine 3) : une demande reçue devient un engagement au statut « demande »,
