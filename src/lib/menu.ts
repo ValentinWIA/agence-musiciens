@@ -20,6 +20,7 @@ export function liensDuMenu(
       },
       { href: "/courriers", libelle: "Courriers" },
       { href: "/questions", libelle: "Documents" },
+      { href: "/assistant", libelle: "Assistant" },
       // Pas de « Calendrier » pour l'agent (retiré le 19/10) : le mois est sur son tableau de bord.
     ];
   }

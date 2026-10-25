@@ -12,12 +12,17 @@ import { MODELE_PAR_FONCTION, verifierLimites } from "./ia";
 // Le même pour la page /assistant et pour le serveur MCP. Ne lève jamais d'erreur.
 
 export type ResultatAgent =
-  | { ok: true; executionId: string; etat: EtatAgent; reponse: string | null; erreur: string | null; tours: number; cout: number }
+  | { ok: true; executionId: string; etat: EtatAgent; reponse: string | null; erreur: string | null; tours: number; cout: number; dureeMs: number }
   | { ok: false; erreur: string };
 
 const SERVEUR = "agence"; // les outils s'appellent mcp__agence__<nom> pour le SDK
 
-export async function executerAgent(utilisateur: Utilisateur, porte: "page" | "mcp", demande: string): Promise<ResultatAgent> {
+export async function executerAgent(
+  utilisateur: Utilisateur,
+  porte: "page" | "mcp",
+  demande: string,
+  surEtape?: (etape: Etape) => void,
+): Promise<ResultatAgent> {
   if (utilisateur.role !== "admin") {
     console.warn(`Accès refusé : ${utilisateur.nom} (musicien) sur l'agent`);
     return { ok: false, erreur: "Réservé à l'agent." };
@@ -52,7 +57,7 @@ export async function executerAgent(utilisateur: Utilisateur, porte: "page" | "m
 
   const journal: Etape[] = [];
   const modele = MODELE_PAR_FONCTION.agent;
-  const outils = outilsDeLecture(utilisateur, journal);
+  const outils = outilsDeLecture(utilisateur, journal, surEtape);
   const debut = Date.now();
   const arret = new AbortController();
   let coupeeParLaDuree = false;
@@ -128,5 +133,5 @@ export async function executerAgent(utilisateur: Utilisateur, porte: "page" | "m
   console.log(
     `Agent (${porte}) pour ${utilisateur.nom} : ${etat}, ${tours} tours, ${journal.length} appels d'outils, ${dollars.toFixed(4)} $, ${dureeMs} ms`,
   );
-  return { ok: true, executionId, etat, reponse, erreur, tours, cout };
+  return { ok: true, executionId, etat, reponse, erreur, tours, cout, dureeMs };
 }

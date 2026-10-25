@@ -19,6 +19,7 @@ const RETOURS: Record<string, { href: string; libelle: string }> = {
   nuit: { href: "/nuit", libelle: "Journal des imports" },
   courriers: { href: "/courriers", libelle: "Courriers" },
   questions: { href: "/questions", libelle: "Documents" },
+  assistant: { href: "/assistant", libelle: "Assistant" },
 };
 
 export default function PageCouts({ searchParams }: PageProps<"/couts">) {

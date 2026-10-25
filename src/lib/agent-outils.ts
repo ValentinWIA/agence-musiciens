@@ -41,7 +41,8 @@ async function trouverMusicien(nom: string): Promise<{ id: string; nom: string }
     : `Plusieurs musiciens correspondent à « ${nom} » : ${trouves.map((m) => m.nom).join(", ")}. Précisez.`;
 }
 
-export function outilsDeLecture(utilisateur: Utilisateur, journal: Etape[]) {
+// surEtape : prévient la page à chaque outil appelé (ce qui se passe pendant l'appel).
+export function outilsDeLecture(utilisateur: Utilisateur, journal: Etape[], surEtape?: (etape: Etape) => void) {
   // Chaque outil passe par ici : le rôle est revérifié (le modèle ne choisit pas ses droits) et l'appel est noté.
   const garde =
     <A,>(nom: string, faire: (args: A) => Promise<Resultat>) =>
@@ -58,7 +59,9 @@ export function outilsDeLecture(utilisateur: Utilisateur, journal: Etape[]) {
           resultat = refus("L'outil a échoué (base indisponible ?). Réessayez plus tard.");
         }
       }
-      journal.push({ outil: nom, entree: args, sortie: (resultat.isError ? "refus : " : "") + resumeSortie(resultat.content[0].text) });
+      const etape = { outil: nom, entree: args, sortie: (resultat.isError ? "refus : " : "") + resumeSortie(resultat.content[0].text) };
+      journal.push(etape);
+      surEtape?.(etape);
       return resultat;
     };
   const lecture = { annotations: { readOnlyHint: true } };
