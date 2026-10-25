@@ -10,6 +10,8 @@ import { LIBELLES_ETAT_AGENT, MAX_DOLLARS, MAX_SECONDES, MAX_TOURS } from "@/lib
 import { formaterDollars } from "@/lib/couts-ia";
 import { verifierAdmin } from "@/lib/session";
 import { FormulaireAssistant } from "./formulaire-assistant";
+import { TexteAvecLiens } from "@/components/texte-avec-liens";
+import { origineDuSite } from "@/lib/origine";
 
 const LIMITE_JOURNAL = 20;
 
@@ -47,7 +49,7 @@ async function ContenuAssistant() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <FormulaireAssistant />
+          <FormulaireAssistant origine={origineDuSite()} />
         </CardContent>
       </Card>
       <Card>
@@ -85,7 +87,11 @@ async function ContenuAssistant() {
                     <p className="whitespace-pre-line text-xs text-muted-foreground">{e.sortie}</p>
                   </div>
                 ))}
-                {x.reponse && <p className="whitespace-pre-line border-l-2 border-primary pl-3">{x.reponse}</p>}
+                {x.reponse && (
+                  <p className="whitespace-pre-line border-l-2 border-primary pl-3">
+                    <TexteAvecLiens texte={x.reponse} origine={origineDuSite()} />
+                  </p>
+                )}
                 {x.erreur && <p className="text-destructive">{x.erreur}</p>}
               </div>
             </details>

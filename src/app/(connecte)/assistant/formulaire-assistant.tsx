@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { TexteAvecLiens } from "@/components/texte-avec-liens";
 import { DEMANDE_MAX, LIBELLES_ETAT_AGENT, type EtatAgent } from "@/lib/agent-regles";
 import { formaterDollars } from "@/lib/couts-ia";
 
@@ -12,7 +13,7 @@ type Message = { etape?: { outil: string; refus: boolean }; resultat?: Resultat;
 
 const EXEMPLES = ["Quelles options faut-il relancer cette semaine ?", "Quels cachets sont impayés ?", "Inès est-elle libre le 8 mai 2027 ?"];
 
-export function FormulaireAssistant() {
+export function FormulaireAssistant({ origine }: { origine: string }) {
   const router = useRouter();
   const [demande, setDemande] = useState("");
   const [enCours, setEnCours] = useState(false);
@@ -115,7 +116,11 @@ export function FormulaireAssistant() {
       {resultat && (
         <div className="grid gap-3 rounded-md border p-4">
           <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Réponse (IA, à relire)</p>
-          {resultat.reponse && <p className="whitespace-pre-line text-sm">{resultat.reponse}</p>}
+          {resultat.reponse && (
+            <p className="whitespace-pre-line text-sm">
+              <TexteAvecLiens texte={resultat.reponse} origine={origine} />
+            </p>
+          )}
           {resultat.etat !== "terminee" && (
             <p role="alert" className="text-sm text-destructive">
               Demande {LIBELLES_ETAT_AGENT[resultat.etat]}

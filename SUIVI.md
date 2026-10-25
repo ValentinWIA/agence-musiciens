@@ -417,6 +417,9 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 - ~~**Reporté** : filtrer les engagements par programmateur~~ ✅ fait (P1, PR n° 23).
 - **Reporté** (noté le 18/10) : rendre la page `/couts` plus visible (liens depuis `/nuit`, `/courriers` et
   « Documents » ; pas encore au menu).
+- **Idée du 25/10 (demande à part, après la semaine 4)** : l'assistant présent **sur chaque page**, en bas à droite
+  comme un « chatbot » (petite vignette sur téléphone), au lieu de la seule page `/assistant`. À cadrer : la page en
+  cours donnée comme contexte ? le journal reste sur `/assistant` ? une seule exécution à la fois (verrou) déjà acquise.
 - **Retours du 25/10, à faire après A4 (retouches groupées)** : (1) **fiche musicien sur téléphone** : la liste des
   engagements ne s'affiche plus correctement (non touchée par la branche `agent` : sans doute déjà en production) ;
   (2) **création d'un lieu** : « Chercher l'adresse » ne remplit pas l'adresse (numéro et rue), il faut la recopier.
