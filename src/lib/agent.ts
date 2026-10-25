@@ -4,7 +4,7 @@ import { createSdkMcpServer, query } from "@anthropic-ai/claude-agent-sdk";
 import { and, eq, lt, sql } from "drizzle-orm";
 import { db } from "@/db";
 import { appelsIa, executionsAgent } from "@/db/schema";
-import { outilsDeLecture, type Etape, type Utilisateur } from "./agent-outils";
+import { outilsDeLAgent, type Etape, type Utilisateur } from "./agent-outils";
 import { CONSIGNE, dollarsEnMillioniemes, etatFinal, MAX_DOLLARS, MAX_SECONDES, MAX_TOURS, VERROU_PERIME_MINUTES, type EtatAgent } from "./agent-regles";
 import { MODELE_PAR_FONCTION, verifierLimites } from "./ia";
 
@@ -57,7 +57,7 @@ export async function executerAgent(
 
   const journal: Etape[] = [];
   const modele = MODELE_PAR_FONCTION.agent;
-  const outils = outilsDeLecture(utilisateur, journal, surEtape);
+  const outils = outilsDeLAgent(utilisateur, demande, journal, surEtape);
   const debut = Date.now();
   const arret = new AbortController();
   let coupeeParLaDuree = false;

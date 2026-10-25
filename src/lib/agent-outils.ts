@@ -3,18 +3,21 @@ import { tool } from "@anthropic-ai/claude-agent-sdk";
 import { and, asc, desc, eq } from "drizzle-orm";
 import { z } from "zod";
 import { db } from "@/db";
-import { courriers, demandesRecues, evenementsFlux } from "@/db/schema";
-import { enDonnees, resumeSortie } from "./agent-regles";
+import { courriers, demandesRecues, evenementsFlux, lieux, programmateurs, utilisateurs } from "@/db/schema";
+import { lireFormulaire } from "@/app/(connecte)/engagements/saisie";
+import { ajouterALaNote, enDonnees, heureDansDemande, musicienNomme, NOTE_MAX, resumeSortie } from "./agent-regles";
 import { formaterMontant, type Devise } from "./argent";
 import { ajouterJours, jourLocal } from "./calendrier";
 import { formaterDebut } from "./dates";
-import { estATraiter, ligneHistorique, trierDemandes } from "./demandes";
+import { DEJA_TRAITEE, ecrireEngagement } from "./creation-engagement";
+import { estATraiter, ligneHistorique, programmateursDeMemeNom, trierDemandes } from "./demandes";
 import { LIBELLES_STATUT, lireEngagement, listerEngagements, listerMusiciens, type Statut } from "./engagements";
 import { lireEngagementsASuivre } from "./lecture-a-faire";
+import { NOTES_AGENT_MAX } from "./musiciens";
 import { cachetsImpayes, optionsQuiExpirent } from "./recap";
 
-// Les outils de lecture de l'agent (docs/semaine-4.md, section 3). Écrits une fois : la page /assistant et le
-// serveur MCP s'en servent. Chaque appel revérifie le rôle et s'inscrit au journal de l'exécution.
+// Les outils de l'agent (docs/semaine-4.md, section 3) : lecture, et deux actions sans risque. Écrits une fois : la
+// page /assistant et le serveur MCP s'en servent. Chaque appel revérifie le rôle et s'inscrit au journal.
 
 export type Utilisateur = { id: string; nom: string; role: "admin" | "musicien" };
 export type Etape = { outil: string; entree: unknown; sortie: string };
@@ -41,8 +44,9 @@ async function trouverMusicien(nom: string): Promise<{ id: string; nom: string }
     : `Plusieurs musiciens correspondent à « ${nom} » : ${trouves.map((m) => m.nom).join(", ")}. Précisez.`;
 }
 
+// demande : ce qu'a écrit l'agente ; les actions y vérifient l'heure et les musiciens (le modèle ne les invente pas).
 // surEtape : prévient la page à chaque outil appelé (ce qui se passe pendant l'appel).
-export function outilsDeLecture(utilisateur: Utilisateur, journal: Etape[], surEtape?: (etape: Etape) => void) {
+export function outilsDeLAgent(utilisateur: Utilisateur, demande: string, journal: Etape[], surEtape?: (etape: Etape) => void) {
   // Chaque outil passe par ici : le rôle est revérifié (le modèle ne choisit pas ses droits) et l'appel est noté.
   const garde =
     <A,>(nom: string, faire: (args: A) => Promise<Resultat>) =>
@@ -65,6 +69,7 @@ export function outilsDeLecture(utilisateur: Utilisateur, journal: Etape[], surE
       return resultat;
     };
   const lecture = { annotations: { readOnlyHint: true } };
+  const action = { annotations: { readOnlyHint: false, destructiveHint: false } };
 
   return [
     tool(
@@ -227,6 +232,83 @@ export function outilsDeLecture(utilisateur: Utilisateur, journal: Etape[], surE
         );
       }),
       lecture,
+    ),
+    tool(
+      "ajouter_note",
+      "Action : ajoute une remarque datée aux notes privées de l'agente sur la fiche d'un musicien (nom). " +
+        "Seulement si l'agente le demande.",
+      { musicien: z.string().max(100), note: z.string().max(NOTE_MAX) },
+      garde("ajouter_note", async ({ musicien, note }) => {
+        const m = await trouverMusicien(musicien);
+        if (typeof m === "string") return refus(m);
+        if (!musicienNomme(m.nom, demande)) return refus(`Refusé : votre demande ne nomme pas ${m.nom}.`);
+        const [fiche] = await db.select({ notes: utilisateurs.notesAgent }).from(utilisateurs).where(eq(utilisateurs.id, m.id));
+        const suite = ajouterALaNote(fiche?.notes ?? null, note, jourLocal(new Date(), "France"), NOTES_AGENT_MAX);
+        if ("erreur" in suite) return refus(suite.erreur);
+        await db.update(utilisateurs).set({ notesAgent: suite.notes }).where(eq(utilisateurs.id, m.id));
+        console.log(`Assistant : note ajoutée sur la fiche de ${m.nom} pour ${utilisateur.nom}`);
+        return texte(`Note ajoutée sur la fiche de ${m.nom} : /musiciens/${m.id}`);
+      }),
+      action,
+    ),
+    tool(
+      "creer_engagement_depuis_demande",
+      "Action : crée l'engagement (statut « demande ») d'une demande reçue, par son id. Exige l'heure (HH:MM) et les " +
+        "musiciens (noms, un ou deux), tels que l'agente les a écrits dans sa demande : ne les devine jamais, demande-les. " +
+        "La date, la durée, le lieu et le programmateur viennent de la demande reçue.",
+      {
+        demandeId: z.string().uuid(),
+        heure: z.string().regex(/^\d{2}:\d{2}$/),
+        musiciens: z.array(z.string().max(100)).min(1).max(2),
+      },
+      garde("creer_engagement_depuis_demande", async ({ demandeId, heure, musiciens }) => {
+        // Garde-fous : l'heure et chaque musicien doivent figurer dans ce qu'a écrit l'agente.
+        if (!heureDansDemande(heure, demande)) {
+          return refus(`Refusé : l'heure ${heure} n'est pas écrite dans votre demande. Précisez l'heure du concert.`);
+        }
+        const ids: string[] = [];
+        for (const nom of musiciens) {
+          const m = await trouverMusicien(nom);
+          if (typeof m === "string") return refus(m);
+          if (!musicienNomme(m.nom, demande)) return refus(`Refusé : votre demande ne nomme pas ${m.nom}.`);
+          ids.push(m.id);
+        }
+
+        const [d] = await db.select().from(demandesRecues).where(eq(demandesRecues.id, demandeId));
+        if (!d) return refus(`Demande reçue introuvable (id ${demandeId}).`);
+        if (!estATraiter(d)) return refus(DEJA_TRAITEE);
+        const formulaire = `/engagements/nouveau?demande=${d.id}`;
+        // Le flux ne donne que des noms : on ne crée ni lieu ni programmateur, on les retrouve ou on renvoie au formulaire.
+        const [lieuxConnus, programmateursConnus] = await Promise.all([
+          db.select({ id: lieux.id, nom: lieux.nom }).from(lieux),
+          db.select({ id: programmateurs.id, nom: programmateurs.nom }).from(programmateurs),
+        ]);
+        const lieu = programmateursDeMemeNom(d.lieu, lieuxConnus);
+        const programmateur = programmateursDeMemeNom(d.programmateur, programmateursConnus);
+        if (lieu.length !== 1 || programmateur.length !== 1) {
+          const manque = lieu.length !== 1 ? `le lieu « ${d.lieu} »` : `le programmateur « ${d.programmateur} »`;
+          return refus(`Refusé : ${manque} n'est pas (ou pas une seule fois) dans le produit. Créez l'engagement depuis le formulaire : ${formulaire}`);
+        }
+
+        // Même lecture que le formulaire : date passée, durée, musiciens, tout est revérifié de la même façon.
+        const champs = new FormData();
+        for (const [cle, valeur] of Object.entries({
+          titre: "", precision: "jour", jour: d.dateConcert, heure, mois: "", saison: "", annee: "",
+          duree: String(d.dureeMinutes), lieuId: lieu[0].id, programmateurId: programmateur[0].id,
+          cachet: "", devise: "EUR", programme: "", notes: `Créé par l'assistant depuis la demande ${d.reference}.`,
+        })) champs.set(cle, valeur);
+        for (const id of ids) champs.append("musiciens", id);
+        const lu = await lireFormulaire(champs);
+        if (!lu.saisie) {
+          const raisons = Object.values(lu.erreurs).flat().join(" ");
+          return refus(`Refusé : ${raisons} Créez l'engagement depuis le formulaire : ${formulaire}`);
+        }
+        const ecrit = await ecrireEngagement(lu.saisie, { id: d.id });
+        if ("erreur" in ecrit) return refus(ecrit.erreur);
+        console.log(`Engagement créé : ${ecrit.id} (depuis la demande ${d.reference}, par l'assistant) pour ${utilisateur.nom}`);
+        return texte(`Engagement créé au statut « demande » : /engagements/${ecrit.id}`);
+      }),
+      action,
     ),
   ];
 }

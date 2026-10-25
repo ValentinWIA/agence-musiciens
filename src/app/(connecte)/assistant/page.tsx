@@ -35,7 +35,9 @@ async function ContenuAssistant() {
           <CardTitle>Demander à l&apos;assistant</CardTitle>
           <CardDescription>
             L&apos;assistant (une IA) lit les engagements, les demandes reçues et les courriers pour répondre ou
-            préparer. Il n&apos;envoie rien et ne supprime rien. Il peut se tromper : relisez sa réponse. Chaque
+            préparer. Si vous le lui demandez, il ajoute une note sur la fiche d&apos;un musicien ou crée l&apos;engagement
+            d&apos;une demande reçue (heure et musiciens écrits dans votre demande). Il n&apos;envoie rien et ne supprime
+            rien. Il peut se tromper : relisez sa réponse. Chaque
             demande s&apos;arrête après {MAX_TOURS} tours, {MAX_DOLLARS.toLocaleString("fr-FR")} $ ou {MAX_SECONDES} s,
             et compte sur la page{" "}
             <Link href="/couts?depuis=assistant" className="underline">
