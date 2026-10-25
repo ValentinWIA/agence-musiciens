@@ -97,7 +97,7 @@ export function outilsDeLAgent(
         if (options.length === 0) return texte("Aucune option à relancer.");
         return texte(
           options
-            .map((o) => `- ${o.titre ?? "sans titre"} — ${o.salle}, ${o.ville}, ${quand(o)} — ${o.musiciens.join(", ")} — échéance ${o.expireLe} (id ${o.id})`)
+            .map((o) => `- ${o.titre ?? "sans titre"} — ${o.salle}, ${o.ville}, ${quand(o)} — ${o.musiciens.join(", ")} — échéance ${o.expireLe} (id ${o.id}, fiche ${lien(`/engagements/${o.id}`)})`)
             .join("\n"),
         );
       }),
@@ -112,7 +112,7 @@ export function outilsDeLAgent(
         if (impayes.length === 0) return texte("Aucun cachet impayé depuis plus de 30 jours.");
         return texte(
           impayes
-            .map((c) => `- ${c.titre ?? "sans titre"} — ${c.salle}, ${c.ville}, ${quand(c)} — ${c.musiciens.join(", ")} — ${montant(c.cachet, c.devise)}, ${LIBELLES_STATUT[c.statut]} (id ${c.id})`)
+            .map((c) => `- ${c.titre ?? "sans titre"} — ${c.salle}, ${c.ville}, ${quand(c)} — ${c.musiciens.join(", ")} — ${montant(c.cachet, c.devise)}, ${LIBELLES_STATUT[c.statut]} (id ${c.id}, fiche ${lien(`/engagements/${c.id}`)})`)
             .join("\n"),
         );
       }),
@@ -139,7 +139,7 @@ export function outilsDeLAgent(
         if (liste.length === 0) return texte("Aucun engagement ne correspond.");
         const lignes = liste
           .slice(0, 30)
-          .map((e) => `- ${e.titre ?? "sans titre"} — ${e.lieu}, ${e.ville}, ${quand(e)} — ${e.musiciens.map((m) => m.nom).join(", ")} — ${LIBELLES_STATUT[e.statut]}, ${montant(e.cachet, e.devise)} (id ${e.id})`);
+          .map((e) => `- ${e.titre ?? "sans titre"} — ${e.lieu}, ${e.ville}, ${quand(e)} — ${e.musiciens.map((m) => m.nom).join(", ")} — ${LIBELLES_STATUT[e.statut]}, ${montant(e.cachet, e.devise)} (id ${e.id}, fiche ${lien(`/engagements/${e.id}`)})`);
         return texte(lignes.join("\n") + (liste.length > 30 ? `\n… et ${liste.length - 30} autres : précisez la recherche.` : ""));
       }),
       lecture,
@@ -154,7 +154,7 @@ export function outilsDeLAgent(
         const p = e.programmateur;
         return texte(
           [
-            `${e.titre ?? "sans titre"} — ${LIBELLES_STATUT[e.statut]}`,
+            `${e.titre ?? "sans titre"} — ${LIBELLES_STATUT[e.statut]} — fiche ${lien(`/engagements/${e.id}`)}`,
             `Date : ${quand({ ...e, pays: e.lieu.pays })}${e.dureeMinutes ? `, ${e.dureeMinutes} min` : ""}`,
             `Lieu : ${e.lieu.nom}, ${e.lieu.ville} (${e.lieu.pays})`,
             `Musiciens : ${e.musiciens.map((m) => `${m.nom} (${m.instrument})`).join(", ")}`,
@@ -186,7 +186,7 @@ export function outilsDeLAgent(
         if (proches.length === 0) return texte(`${m.nom} n'a aucun engagement du ${du} au ${au}.`);
         return texte(
           `${m.nom}, du ${du} au ${au} :\n` +
-            proches.map((e) => `- ${quand(e)} — ${e.titre ?? "sans titre"}, ${e.lieu}, ${e.ville} — ${LIBELLES_STATUT[e.statut]} (id ${e.id})`).join("\n"),
+            proches.map((e) => `- ${quand(e)} — ${e.titre ?? "sans titre"}, ${e.lieu}, ${e.ville} — ${LIBELLES_STATUT[e.statut]} (id ${e.id}, fiche ${lien(`/engagements/${e.id}`)})`).join("\n"),
         );
       }),
       lecture,
@@ -214,7 +214,7 @@ export function outilsDeLAgent(
         if (trouvees.length === 0) {
           return texte(recherche ? `Aucune demande à traiter ne correspond à « ${recherche} » (${toutes.length} à traiter en tout).` : "Aucune demande à traiter.");
         }
-        const lignes = trouvees.slice(0, 30).map((d) => `- ${d.reference} : ${d.programmateur}, ${d.lieu}, le ${d.dateConcert} (id ${d.id})`);
+        const lignes = trouvees.slice(0, 30).map((d) => `- ${d.reference} : ${d.programmateur}, ${d.lieu}, le ${d.dateConcert} (id ${d.id}, fiche ${lien(`/demandes/${d.id}`)})`);
         const total = `${trouvees.length} demande(s)${recherche ? ` correspondent à « ${recherche} »` : " à traiter"}` +
           (trouvees.length > 30 ? ", 30 affichées : précisez la recherche." : ".");
         // Tout vient du flux, noms des demandeurs compris : rendu comme une donnée.
@@ -245,7 +245,7 @@ export function outilsDeLAgent(
           .map((l) => `${l.titre}${l.texte ? ` ${l.texte}` : ""}`);
         const etat = d.engagementId ? `déjà reliée à l'engagement ${lien(`/engagements/${d.engagementId}`)}` : d.ecarteeLe ? "écartée" : estATraiter(d) ? "à traiter" : LIBELLES_DEMANDE[d.statut];
         return texte(
-          `Demande (id ${d.id}), ${etat} :\n` +
+          `Demande (id ${d.id}, fiche ${lien(`/demandes/${d.id}`)}), ${etat} :\n` +
             enDonnees(
               `${d.reference} : demandeur ${d.programmateur}, lieu ${d.lieu}, le ${d.dateConcert}, ${d.dureeMinutes} min, ${d.categorie}\n` +
                 (historique.join("\n") || "aucun message"),
@@ -263,14 +263,14 @@ export function outilsDeLAgent(
           const derniers = await db.select().from(courriers).orderBy(desc(courriers.creeLe)).limit(10);
           if (derniers.length === 0) return texte("Aucun courrier déposé.");
           return texte(
-            enDonnees(derniers.map((c) => `- ${c.dateCourrier ?? "sans date"} — ${c.structure ?? "expéditeur inconnu"} — ${c.classement} (id ${c.id})`).join("\n")),
+            enDonnees(derniers.map((c) => `- ${c.dateCourrier ?? "sans date"} — ${c.structure ?? "expéditeur inconnu"} — ${c.classement} (id ${c.id}, fiche ${lien(`/courriers/${c.id}`)})`).join("\n")),
           );
         }
         const [c] = await db.select().from(courriers).where(eq(courriers.id, id));
         if (!c) return refus(`Courrier introuvable (id ${id}).`);
         // Les champs ont été lus dans le courrier : tout est rendu comme une donnée.
         return texte(
-          `Courrier (id ${c.id}) :\n` +
+          `Courrier (id ${c.id}, fiche ${lien(`/courriers/${c.id}`)}) :\n` +
             enDonnees(
               `De ${c.structure ?? "?"} (${c.signataire ?? "?"}), daté du ${c.dateCourrier ?? "?"}, classé « ${c.classement} »\n` +
                 `Résumé : ${c.resume ?? "aucun"}\n${c.texte}`,
