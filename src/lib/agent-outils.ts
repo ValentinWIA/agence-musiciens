@@ -14,6 +14,7 @@ import { estATraiter, LIBELLES_DEMANDE, ligneHistorique, programmateursDeMemeNom
 import { LIBELLES_STATUT, lireEngagement, listerEngagements, listerMusiciens, type Statut } from "./engagements";
 import { lireEngagementsASuivre } from "./lecture-a-faire";
 import { NOTES_AGENT_MAX } from "./musiciens";
+import { origineDuSite } from "./origine";
 import { cachetsImpayes, optionsQuiExpirent } from "./recap";
 
 // Les outils de l'agent (docs/semaine-4.md, section 3) : lecture, et deux actions sans risque. Écrits une fois : la
@@ -26,6 +27,8 @@ type Resultat = { content: { type: "text"; text: string }[]; isError?: boolean }
 const texte = (t: string): Resultat => ({ content: [{ type: "text", text: t }] });
 const refus = (t: string): Resultat => ({ content: [{ type: "text", text: t }], isError: true });
 
+// Adresse complète, à copier telle quelle dans la barre d'adresse (retour du 25/10).
+const lien = (chemin: string) => `${origineDuSite()}${chemin}`;
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const STATUTS = Object.keys(LIBELLES_STATUT) as [Statut, ...Statut[]];
 const quand = (e: { debut: Date; precisionDate?: "jour" | "mois" | "saison"; pays: string }) =>
@@ -232,7 +235,7 @@ export function outilsDeLAgent(utilisateur: Utilisateur, demande: string, journa
           .map((e) => ligneHistorique(e.type, e.brut))
           .filter((l) => l !== null)
           .map((l) => `${l.titre}${l.texte ? ` ${l.texte}` : ""}`);
-        const etat = d.engagementId ? `déjà reliée à l'engagement /engagements/${d.engagementId}` : d.ecarteeLe ? "écartée" : estATraiter(d) ? "à traiter" : LIBELLES_DEMANDE[d.statut];
+        const etat = d.engagementId ? `déjà reliée à l'engagement ${lien(`/engagements/${d.engagementId}`)}` : d.ecarteeLe ? "écartée" : estATraiter(d) ? "à traiter" : LIBELLES_DEMANDE[d.statut];
         return texte(
           `Demande (id ${d.id}), ${etat} :\n` +
             enDonnees(
@@ -282,7 +285,7 @@ export function outilsDeLAgent(utilisateur: Utilisateur, demande: string, journa
         if ("erreur" in suite) return refus(suite.erreur);
         await db.update(utilisateurs).set({ notesAgent: suite.notes }).where(eq(utilisateurs.id, m.id));
         console.log(`Assistant : note ajoutée sur la fiche de ${m.nom} pour ${utilisateur.nom}`);
-        return texte(`Note ajoutée sur la fiche de ${m.nom} : /musiciens/${m.id}`);
+        return texte(`Note ajoutée sur la fiche de ${m.nom} : ${lien(`/musiciens/${m.id}`)}`);
       }),
       action,
     ),
@@ -312,7 +315,7 @@ export function outilsDeLAgent(utilisateur: Utilisateur, demande: string, journa
         const [d] = await db.select().from(demandesRecues).where(eq(demandesRecues.id, demandeId));
         if (!d) return refus(`Demande reçue introuvable (id ${demandeId}).`);
         if (!estATraiter(d)) return refus(DEJA_TRAITEE);
-        const formulaire = `/engagements/nouveau?demande=${d.id}`;
+        const formulaire = lien(`/engagements/nouveau?demande=${d.id}`);
         // Le flux ne donne que des noms : on ne crée ni lieu ni programmateur, on les retrouve ou on renvoie au formulaire.
         const [lieuxConnus, programmateursConnus] = await Promise.all([
           db.select({ id: lieux.id, nom: lieux.nom }).from(lieux),
@@ -341,7 +344,7 @@ export function outilsDeLAgent(utilisateur: Utilisateur, demande: string, journa
         const ecrit = await ecrireEngagement(lu.saisie, { id: d.id });
         if ("erreur" in ecrit) return refus(ecrit.erreur);
         console.log(`Engagement créé : ${ecrit.id} (depuis la demande ${d.reference}, par l'assistant) pour ${utilisateur.nom}`);
-        return texte(`Engagement créé au statut « demande » : /engagements/${ecrit.id}`);
+        return texte(`Engagement créé au statut « demande » : ${lien(`/engagements/${ecrit.id}`)}`);
       }),
       action,
     ),
