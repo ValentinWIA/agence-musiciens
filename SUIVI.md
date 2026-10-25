@@ -116,6 +116,18 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   référence, et confond les musiciens de l'agence avec les demandeurs du flux. Causes : `demandes_a_traiter` ne
   montrait que 20 demandes sur bien plus après le rattrapage, sans recherche ; aucun outil ne listait les musiciens.
   Garde-fou : recherche dans les demandes, `lire_demande`, `lister_musiciens`, vocabulaire dans la consigne.
+  Gestes A4a validés après correction (création réussie, deuxième fois refusée, formulaire inchangé).
+  **A4b** (`57aacd4`) : `proposer_relance` (option, joué ou facturé seulement ; destinataire lu en base ; ligne « en
+  attente » dans `propositions`, migration 0022, rien n'est envoyé), page « À valider » (texte modifiable, Envoyer /
+  Refuser, ligne marquée avant l'envoi → un seul envoi à deux onglets, `.test` → validée non envoyée, échec Resend →
+  remise en attente). Gestes validés le 25/10, dont **un vrai envoi reçu** (adresse de l'humain mise en SQL sur un
+  programmateur de `preview/agent` ; à refaire après chaque push).
+  Retours au geste, faits : adresses complètes puis liens cliquables **vers notre site seulement** (`src/lib/liens.ts`,
+  un lien d'un message piégé reste du texte), libellé « Accéder à la fiche / au formulaire », lien de la fiche pour
+  chaque engagement / demande / courrier cité, « À valider (n) » rangé **sous « Assistant »** (choisi parmi 4),
+  `?depuis=assistant` → « ← Assistant » sur les fiches engagement, demande et courrier. **Limite IA : 100 appels par
+  jour** (30 atteinte pendant les gestes ; décidé par l'humain le 25/10 ; plafond de 5 $ par mois inchangé). 368 tests.
+  **Prochaine tranche : A5** (serveur MCP).
   **Message piégé** du flux : introuvable au 25/10 (vérifié par l'humain), à surveiller à chaque import.
 - **✅ Cron du matin vérifié** (25/10, l'humain) : le récap arrive chaque matin sans clic. Les « reste à vérifier »
   des 18, 19 et 20/10 plus bas sont donc levés.
