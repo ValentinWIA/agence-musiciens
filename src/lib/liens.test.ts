@@ -4,11 +4,14 @@ import { decouperLiens } from "./liens";
 const SITE = "https://agence-musiciens.vercel.app";
 
 describe("decouperLiens", () => {
-  it("rend cliquable une adresse de notre site, sans la ponctuation qui la suit", () => {
+  it("rend cliquable une adresse de notre site sous un libellé, sans la ponctuation qui la suit", () => {
     expect(decouperLiens(`Créé : ${SITE}/engagements/abc.`, SITE)).toEqual([
       { texte: "Créé : " },
-      { texte: `${SITE}/engagements/abc`, lien: `${SITE}/engagements/abc` },
+      { texte: "Accéder à la fiche", lien: `${SITE}/engagements/abc` },
       { texte: "." },
+    ]);
+    expect(decouperLiens(`${SITE}/engagements/nouveau?demande=x`, SITE)).toEqual([
+      { texte: "Accéder au formulaire", lien: `${SITE}/engagements/nouveau?demande=x` },
     ]);
   });
 

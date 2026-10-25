@@ -6,7 +6,7 @@ export function TexteAvecLiens({ texte, origine }: { texte: string; origine: str
     <>
       {decouperLiens(texte, origine).map((m, i) =>
         m.lien ? (
-          <a key={i} href={m.lien} className="break-all underline">
+          <a key={i} href={m.lien} className="font-medium underline">
             {m.texte}
           </a>
         ) : (
