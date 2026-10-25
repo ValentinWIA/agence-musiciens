@@ -104,7 +104,11 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   règles pures `src/lib/agent-regles.ts` (7 tests, 348 au total). Gestes validés en prévisualisation le 25/10 : cachets impayés, Inès le 8 mai 2027 (récital
   de Gaveau cité), journal et étapes dans Neon, musicien refusé, ligne « agent » sur `/couts` ; verrou : refus avec deux
   demandes différentes (deux onglets sur la **même** adresse : Chrome attend la première réponse avant d'envoyer la
-  seconde, le verrou n'a rien à refuser). **Prochaine tranche : A3** (page `/assistant`).
+  seconde, le verrou n'a rien à refuser). **A3** (`e1105a0`) : page `/assistant` (saisie, exemples, outils affichés
+  pendant l'appel, réponse « IA, à relire », état / tours / coût / durée, journal des 20 dernières demandes dépliable),
+  route `POST /api/agent` en streaming (la route d'essai est supprimée), lien « Assistant » au menu de l'agent,
+  retour depuis `/couts`. Gestes validés en prévisualisation le 25/10 (dont occupé, téléphone, Louis renvoyé).
+  **Prochaine tranche : A4** (actions, `propositions`, `/validations`).
   **Message piégé** du flux : introuvable au 25/10 (vérifié par l'humain), à surveiller à chaque import.
 - **✅ Cron du matin vérifié** (25/10, l'humain) : le récap arrive chaque matin sans clic. Les « reste à vérifier »
   des 18, 19 et 20/10 plus bas sont donc levés.
