@@ -406,8 +406,9 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 - ~~**Reporté** : filtrer les engagements par programmateur~~ ✅ fait (P1, PR n° 23).
 - **Reporté** (noté le 18/10) : rendre la page `/couts` plus visible (liens depuis `/nuit`, `/courriers` et
   « Documents » ; pas encore au menu).
-- **Piste notée le 19/10** (demande à part, après les heures de 5 en 5) : ouvrir un engagement dans un **volet** sur
-  la page « Engagements » au lieu d'une page nouvelle. À trancher au cadrage : volet sur téléphone (plein écran ?),
+- **Piste notée le 19/10, redemandée le 25/10** (demande à part, après la semaine 4) : ouvrir un engagement **et une
+  demande reçue** dans un **volet** (par-dessus ou à côté du tableau) sur les pages « Engagements » et « Demandes
+  reçues », au lieu d'une page nouvelle. À trancher au cadrage : volet sur téléphone (plein écran ?),
   adresse partageable de la fiche (route interceptée de Next.js), modifier depuis le volet.
 - **Question notée le 19/10** : chaque page est relue dans la base à chaque visite, le navigateur ne garde rien.
   Voulu jusqu'ici (pages dynamiques : données toujours à jour, droits vérifiés à chaque requête). Piste si la lenteur
