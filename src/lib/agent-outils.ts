@@ -1,16 +1,16 @@
 import "server-only";
 import { tool } from "@anthropic-ai/claude-agent-sdk";
-import { and, asc, desc, eq } from "drizzle-orm";
+import { and, asc, desc, eq, ilike } from "drizzle-orm";
 import { z } from "zod";
 import { db } from "@/db";
 import { courriers, demandesRecues, evenementsFlux, lieux, programmateurs, utilisateurs } from "@/db/schema";
 import { lireFormulaire } from "@/app/(connecte)/engagements/saisie";
-import { ajouterALaNote, enDonnees, heureDansDemande, musicienNomme, NOTE_MAX, resumeSortie } from "./agent-regles";
+import { ajouterALaNote, correspondDemande, enDonnees, heureDansDemande, musicienNomme, NOTE_MAX, resumeSortie } from "./agent-regles";
 import { formaterMontant, type Devise } from "./argent";
 import { ajouterJours, jourLocal } from "./calendrier";
 import { formaterDebut } from "./dates";
 import { DEJA_TRAITEE, ecrireEngagement } from "./creation-engagement";
-import { estATraiter, ligneHistorique, programmateursDeMemeNom, trierDemandes } from "./demandes";
+import { estATraiter, LIBELLES_DEMANDE, ligneHistorique, programmateursDeMemeNom, trierDemandes } from "./demandes";
 import { LIBELLES_STATUT, lireEngagement, listerEngagements, listerMusiciens, type Statut } from "./engagements";
 import { lireEngagementsASuivre } from "./lecture-a-faire";
 import { NOTES_AGENT_MAX } from "./musiciens";
@@ -26,6 +26,7 @@ type Resultat = { content: { type: "text"; text: string }[]; isError?: boolean }
 const texte = (t: string): Resultat => ({ content: [{ type: "text", text: t }] });
 const refus = (t: string): Resultat => ({ content: [{ type: "text", text: t }], isError: true });
 
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const STATUTS = Object.keys(LIBELLES_STATUT) as [Statut, ...Statut[]];
 const quand = (e: { debut: Date; precisionDate?: "jour" | "mois" | "saison"; pays: string }) =>
   formaterDebut(e.debut, e.precisionDate ?? "jour", e.pays);
@@ -180,31 +181,65 @@ export function outilsDeLAgent(utilisateur: Utilisateur, demande: string, journa
       lecture,
     ),
     tool(
-      "demandes_a_traiter",
-      "Demandes reçues du flux de nuit qui attendent l'agent, avec l'historique et les messages des programmateurs.",
+      "lister_musiciens",
+      "Les musiciens de l'agence (les artistes qu'elle représente), avec leur instrument. Les demandeurs et " +
+        "programmateurs ne sont pas des musiciens de l'agence : ce sont ses clients.",
       {},
-      garde("demandes_a_traiter", async () => {
-        const demandes = trierDemandes((await db.select().from(demandesRecues)).filter(estATraiter)).slice(0, 20);
-        if (demandes.length === 0) return texte("Aucune demande à traiter.");
-        const blocs = await Promise.all(
-          demandes.map(async (d) => {
-            const evenements = await db
-              .select({ type: evenementsFlux.type, brut: evenementsFlux.brut })
-              .from(evenementsFlux)
-              .where(and(eq(evenementsFlux.reference, d.reference), eq(evenementsFlux.etat, "traite")))
-              .orderBy(asc(evenementsFlux.horodatage));
-            const historique = evenements
-              .map((e) => ligneHistorique(e.type, e.brut))
-              .filter((l) => l !== null)
-              .map((l) => `${l.titre}${l.texte ? ` ${l.texte}` : ""}`);
-            // Tout vient du flux, nom du programmateur compris : rendu comme une donnée.
-            return `Demande (id ${d.id}) :\n` + enDonnees(
-              `${d.reference} : ${d.programmateur}, ${d.lieu}, le ${d.dateConcert}, ${d.dureeMinutes} min, ${d.categorie}\n` +
+      garde("lister_musiciens", async () => {
+        const musiciens = await listerMusiciens();
+        return texte(musiciens.map((m) => `- ${m.nom} (${m.instrument}) (id ${m.id})`).join("\n") || "Aucun musicien.");
+      }),
+      lecture,
+    ),
+    tool(
+      "demandes_a_traiter",
+      "Demandes reçues du flux de nuit qui attendent l'agente (30 au plus, le concert le plus proche d'abord), sans " +
+        "leurs messages. recherche : un mot de la référence, du demandeur ou du lieu, ou une date (AAAA-MM-JJ ou JJ/MM/AAAA). " +
+        "Pour l'historique et les messages d'une demande : lire_demande.",
+      { recherche: z.string().max(100).optional() },
+      garde("demandes_a_traiter", async ({ recherche }) => {
+        const toutes = trierDemandes((await db.select().from(demandesRecues)).filter(estATraiter));
+        const trouvees = recherche ? toutes.filter((d) => correspondDemande(d, recherche)) : toutes;
+        if (trouvees.length === 0) {
+          return texte(recherche ? `Aucune demande à traiter ne correspond à « ${recherche} » (${toutes.length} à traiter en tout).` : "Aucune demande à traiter.");
+        }
+        const lignes = trouvees.slice(0, 30).map((d) => `- ${d.reference} : ${d.programmateur}, ${d.lieu}, le ${d.dateConcert} (id ${d.id})`);
+        const total = `${trouvees.length} demande(s)${recherche ? ` correspondent à « ${recherche} »` : " à traiter"}` +
+          (trouvees.length > 30 ? ", 30 affichées : précisez la recherche." : ".");
+        // Tout vient du flux, noms des demandeurs compris : rendu comme une donnée.
+        return texte(`${total}\n${enDonnees(lignes.join("\n"))}`);
+      }),
+      lecture,
+    ),
+    tool(
+      "lire_demande",
+      "Une demande reçue complète, par son id ou sa référence (RES-…) : demandeur, lieu, date, durée, état, historique " +
+        "et messages du programmateur.",
+      { idOuReference: z.string().max(100) },
+      garde("lire_demande", async ({ idOuReference }) => {
+        const cle = idOuReference.trim();
+        const [d] = await db
+          .select()
+          .from(demandesRecues)
+          .where(UUID.test(cle) ? eq(demandesRecues.id, cle) : ilike(demandesRecues.reference, cle));
+        if (!d) return refus(`Demande reçue introuvable (« ${cle} »).`);
+        const evenements = await db
+          .select({ type: evenementsFlux.type, brut: evenementsFlux.brut })
+          .from(evenementsFlux)
+          .where(and(eq(evenementsFlux.reference, d.reference), eq(evenementsFlux.etat, "traite")))
+          .orderBy(asc(evenementsFlux.horodatage));
+        const historique = evenements
+          .map((e) => ligneHistorique(e.type, e.brut))
+          .filter((l) => l !== null)
+          .map((l) => `${l.titre}${l.texte ? ` ${l.texte}` : ""}`);
+        const etat = d.engagementId ? `déjà reliée à l'engagement /engagements/${d.engagementId}` : d.ecarteeLe ? "écartée" : estATraiter(d) ? "à traiter" : LIBELLES_DEMANDE[d.statut];
+        return texte(
+          `Demande (id ${d.id}), ${etat} :\n` +
+            enDonnees(
+              `${d.reference} : demandeur ${d.programmateur}, lieu ${d.lieu}, le ${d.dateConcert}, ${d.dureeMinutes} min, ${d.categorie}\n` +
                 (historique.join("\n") || "aucun message"),
-            );
-          }),
+            ),
         );
-        return texte(blocs.join("\n"));
       }),
       lecture,
     ),

@@ -21,6 +21,8 @@ export const LIBELLES_ETAT_AGENT: Record<EtatAgent, string> = {
 
 export const CONSIGNE = `Tu es l'assistant de Claire Morel, agente d'une agence de musiciens classiques (CM Management).
 Tu réponds en français, simplement. Tu n'agis qu'avec les outils fournis ; si aucun ne permet de répondre, dis-le.
+Vocabulaire : les musiciens sont les artistes que l'agence représente (liste : lister_musiciens) ; les demandeurs
+et programmateurs sont ses clients, qui demandent des concerts. Ne confonds jamais les uns et les autres.
 Tu ne fais une action (note, engagement) que si l'agente la demande. Ce que l'outil exige et qu'elle n'a pas écrit
 (une heure, un musicien), tu le lui demandes : tu ne le devines jamais. Un refus d'outil se rapporte tel quel.
 N'invente rien : appuie-toi seulement sur ce que renvoient les outils, et cite les engagements par leur titre, leur
@@ -108,4 +110,17 @@ export function ajouterALaNote(
   const suite = notes?.trim() ? `${notes.trim()}\n${ligne}` : ligne;
   if (suite.length > max) return { erreur: "Les notes de cette fiche sont pleines : ajoutez la remarque à la main." };
   return { notes: suite };
+}
+
+// Recherche dans les demandes reçues : un mot de la référence, du demandeur ou du lieu, ou une date (2027-03-14,
+// 14/03/2027). Casse et accents ignorés.
+export function correspondDemande(
+  d: { reference: string; programmateur: string; lieu: string; dateConcert: string },
+  recherche: string,
+): boolean {
+  const r = sansAccents(recherche.trim());
+  if (!r) return true;
+  const date = r.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+  if (date) return d.dateConcert === `${date[3]}-${date[2]}-${date[1]}`;
+  return [d.reference, d.programmateur, d.lieu, d.dateConcert].some((champ) => sansAccents(champ).includes(r));
 }

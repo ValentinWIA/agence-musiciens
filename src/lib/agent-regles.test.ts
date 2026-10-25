@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   ajouterALaNote,
+  correspondDemande,
   dollarsEnMillioniemes,
   enDonnees,
   etatFinal,
@@ -107,5 +108,25 @@ describe("ajouterALaNote", () => {
     expect(ajouterALaNote(null, " ", "2026-10-25", 2000)).toEqual({ erreur: "Note vide." });
     expect("erreur" in ajouterALaNote(null, "x".repeat(301), "2026-10-25", 2000)).toBe(true);
     expect("erreur" in ajouterALaNote("x".repeat(1990), "encore une", "2026-10-25", 2000)).toBe(true);
+  });
+});
+
+describe("correspondDemande (l'assistant retrouve une demande précise)", () => {
+  const d = { reference: "RES-20260923-04", programmateur: "Louise Moreau", lieu: "Salle Océane", dateConcert: "2027-03-14" };
+
+  it("trouve par la référence, le demandeur ou le lieu, sans tenir compte de la casse ni des accents", () => {
+    expect(correspondDemande(d, "res-20260923-04")).toBe(true);
+    expect(correspondDemande(d, "moreau")).toBe(true);
+    expect(correspondDemande(d, "oceane")).toBe(true);
+  });
+
+  it("trouve par la date, écrite à la française ou en AAAA-MM-JJ", () => {
+    expect(correspondDemande(d, "14/03/2027")).toBe(true);
+    expect(correspondDemande(d, "2027-03-14")).toBe(true);
+    expect(correspondDemande(d, "15/03/2027")).toBe(false);
+  });
+
+  it("ne trouve pas ce qui n'y est pas", () => {
+    expect(correspondDemande(d, "Gaveau")).toBe(false);
   });
 });

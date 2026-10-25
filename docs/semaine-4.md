@@ -31,7 +31,9 @@ Les mêmes outils servent aux deux portes (page `/assistant` et serveur MCP) : �
 | `chercher_engagements` | lecture | liste filtrée (musicien, statut, période) | `listerEngagements` |
 | `lire_engagement` | lecture | fiche : date, lieu, musiciens, programmateur et son e-mail, cachet, statut | fiche engagement |
 | `disponibilite` | lecture | conflits d'agenda d'un musicien à une date | `conflit.ts` |
-| `demandes_a_traiter` | lecture | demandes reçues à traiter, **avec leurs messages** | `demandes.ts` |
+| `lister_musiciens` | lecture | les musiciens de l'agence et leur instrument (ajouté le 25/10, dérive n° 1) | `listerMusiciens` |
+| `demandes_a_traiter` | lecture | demandes reçues à traiter, avec une recherche (référence, demandeur, lieu, date), 30 au plus | `demandes.ts` |
+| `lire_demande` | lecture | une demande par id ou référence, **avec ses messages** (ajouté le 25/10, dérive n° 1) | `demandes.ts` |
 | `lire_courrier` | lecture | un courrier déposé et ses champs | `courriers` |
 | `ajouter_note` | **action sans risque** | ajoute une ligne datée aux notes privées de l'agent sur la fiche d'un musicien | `notes_agent` |
 | `creer_engagement_depuis_demande` | **action sans risque** | crée l'engagement au statut « demande », relié à la demande | création depuis une demande (N5e) |
