@@ -88,6 +88,17 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   vraie boîte (réception et envoi par Resend : adresse `…@<id>.resend.app`, relève par bouton, `In-Reply-To`)
   cadrées puis **abandonnées par l'humain** au profit de ces deux boutons. Gestes validés en prévisualisation.
   Gestes validés en production le 19/10. **Reste** : supprimer la branche Neon `preview/boutons-fictifs`.
+- **🔄 Semaine 4 — agent** (branche `agent`, depuis le 25/10). Mission validée par l'humain le 25/10 :
+  `docs/semaine-4.md` (relances d'abord, puis demandes reçues ; 7 outils de lecture, 3 actions ; envoi toujours mis en
+  attente sur `/validations` ; pas d'outil de suppression ; 10 tours, 0,20 $, 120 s ; Haiku). Décidé : adresse de
+  l'humain sur un programmateur pour la démo d'envoi ; plafond mensuel inchangé (5 $). Consigne : strict nécessaire.
+  **A0 ✅** (`b09a20f`, `68623c6`). **A1 ✅** (essai) : `@anthropic-ai/claude-agent-sdk` 0.3.310 fixé ; route provisoire
+  `/api/agent/essai` (agent seulement, un outil `options_qui_expirent`, `tools: []`, 3 tours, 0,05 $, 120 s, `/tmp`
+  comme dossier de travail). Le SDK lance un programme `claude` de **292 Mo** sous Linux (limite normale d'une
+  fonction : 250 Mo) : emporté par `outputFileTracingIncludes`, chemin donné par `pathToClaudeCodeExecutable` ;
+  la construction est passée sans réglage (« grandes fonctions » Vercel actives sur le projet ; sinon variable
+  `VERCEL_SUPPORT_LARGE_FUNCTIONS=1`). Geste validé en prévisualisation le 25/10 : réponse en français, outil appelé.
+  **Prochaine tranche : A2** (outils de lecture, journal, budget, verrou).
 - **✅ Cron du matin vérifié** (25/10, l'humain) : le récap arrive chaque matin sans clic. Les « reste à vérifier »
   des 18, 19 et 20/10 plus bas sont donc levés.
 - **Semaine 3 terminée** (I1 à I7). **Prochaine demande : semaine 4 (agent)** (proposé le 25/10) ; heures de 5 en 5 minutes après la semaine 4 (décidé le 19/10, branche
