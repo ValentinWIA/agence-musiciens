@@ -5,7 +5,7 @@ const agent = { id: "a1", role: "admin" as const };
 const louis = { id: "m1", role: "musicien" as const };
 
 describe("liens du menu selon le rôle", () => {
-  it("donne à l'agent ses 8 pages, dans l'ordre (journal des imports depuis les demandes, invitations depuis les musiciens)", () => {
+  it("donne à l'agent ses 7 pages, dans l'ordre (journal des imports depuis les demandes, invitations depuis les musiciens)", () => {
     expect(liensDuMenu(agent).map((l) => l.libelle)).toEqual([
       "Tableau de bord",
       "Engagements",
@@ -14,8 +14,14 @@ describe("liens du menu selon le rôle", () => {
       "Courriers",
       "Documents",
       "Assistant",
-      "À valider",
     ]);
+  });
+
+  it("range « À valider » sous « Assistant », toujours visible, avec le nombre en attente", () => {
+    const assistant = (n?: number) => liensDuMenu(agent, [], n).find((l) => l.href === "/assistant")!;
+    expect(assistant().toujoursOuvert).toBe(true);
+    expect(assistant().sousLiens).toEqual([{ href: "/validations", libelle: "À valider" }]);
+    expect(assistant(2).sousLiens).toEqual([{ href: "/validations", libelle: "À valider (2)" }]);
   });
 
   it("ne met pas le calendrier dans le menu de l'agent (le mois est sur son tableau de bord)", () => {

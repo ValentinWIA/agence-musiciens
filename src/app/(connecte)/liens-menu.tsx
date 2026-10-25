@@ -39,7 +39,8 @@ function LienSimple({ lien, actif }: { lien: LienMenu; actif: boolean }) {
 // « Musiciens » mène toujours à la page générale ; la flèche déplie les fiches (demandé le 18/10).
 // Dépliée d'office sur une page de musicien, pour voir où l'on est.
 function LienDepliable({ lien, sousLiens, chemin }: { lien: LienMenu; sousLiens: LienMenu[]; chemin: string }) {
-  const [ouvert, setOuvert] = useState(() => chemin.startsWith(`${lien.href}/`));
+  const [deplie, setOuvert] = useState(() => chemin.startsWith(`${lien.href}/`));
+  const ouvert = lien.toujoursOuvert || deplie;
   const idListe = `sous-liens-${lien.href.slice(1)}`;
   return (
     <li>
@@ -47,16 +48,18 @@ function LienDepliable({ lien, sousLiens, chemin }: { lien: LienMenu; sousLiens:
         <div className="min-w-0 flex-1">
           <LienSimple lien={lien} actif={chemin === lien.href} />
         </div>
-        <button
-          type="button"
-          aria-expanded={ouvert}
-          aria-controls={idListe}
-          aria-label={ouvert ? `Replier la liste des ${lien.libelle.toLowerCase()}` : `Déplier la liste des ${lien.libelle.toLowerCase()}`}
-          onClick={() => setOuvert(!ouvert)}
-          className="grid w-9 place-items-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none"
-        >
-          <ChevronDown aria-hidden className={`size-4 transition-transform ${ouvert ? "rotate-180" : ""}`} />
-        </button>
+        {!lien.toujoursOuvert && (
+          <button
+            type="button"
+            aria-expanded={ouvert}
+            aria-controls={idListe}
+            aria-label={ouvert ? `Replier la liste des ${lien.libelle.toLowerCase()}` : `Déplier la liste des ${lien.libelle.toLowerCase()}`}
+            onClick={() => setOuvert(!ouvert)}
+            className="grid w-9 place-items-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none"
+          >
+            <ChevronDown aria-hidden className={`size-4 transition-transform ${ouvert ? "rotate-180" : ""}`} />
+          </button>
+        )}
       </div>
       {ouvert && (
         <ul id={idListe} className="mt-1 ml-3 grid gap-0.5 border-l border-or/35 pl-2 text-sm">
