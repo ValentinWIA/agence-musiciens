@@ -108,7 +108,14 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   pendant l'appel, réponse « IA, à relire », état / tours / coût / durée, journal des 20 dernières demandes dépliable),
   route `POST /api/agent` en streaming (la route d'essai est supprimée), lien « Assistant » au menu de l'agent,
   retour depuis `/couts`. Gestes validés en prévisualisation le 25/10 (dont occupé, téléphone, Louis renvoyé).
-  **Prochaine tranche : A4** (actions, `propositions`, `/validations`).
+  **A4 coupée en deux** (25/10) : **A4a** création d'engagement depuis une demande et note sur la fiche (option **B**
+  choisie par l'humain : garde-fous vérifiés par le code, heure et musiciens écrits dans la demande de l'agente, lieu
+  et programmateur déjà connus sinon renvoi au formulaire ; création partagée `src/lib/creation-engagement.ts`) ;
+  **A4b** relances, `propositions`, `/validations`. A4a poussée (`f3a1958`) ; gestes 1 à 3 validés le 25/10.
+  **Dérive n° 1 observée au geste 4 (25/10, pour A7)** : l'assistant ne retrouve pas une demande, même par sa
+  référence, et confond les musiciens de l'agence avec les demandeurs du flux. Causes : `demandes_a_traiter` ne
+  montrait que 20 demandes sur bien plus après le rattrapage, sans recherche ; aucun outil ne listait les musiciens.
+  Garde-fou : recherche dans les demandes, `lire_demande`, `lister_musiciens`, vocabulaire dans la consigne.
   **Message piégé** du flux : introuvable au 25/10 (vérifié par l'humain), à surveiller à chaque import.
 - **✅ Cron du matin vérifié** (25/10, l'humain) : le récap arrive chaque matin sans clic. Les « reste à vérifier »
   des 18, 19 et 20/10 plus bas sont donc levés.
@@ -410,6 +417,9 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 - ~~**Reporté** : filtrer les engagements par programmateur~~ ✅ fait (P1, PR n° 23).
 - **Reporté** (noté le 18/10) : rendre la page `/couts` plus visible (liens depuis `/nuit`, `/courriers` et
   « Documents » ; pas encore au menu).
+- **Retours du 25/10, à faire après A4 (retouches groupées)** : (1) **fiche musicien sur téléphone** : la liste des
+  engagements ne s'affiche plus correctement (non touchée par la branche `agent` : sans doute déjà en production) ;
+  (2) **création d'un lieu** : « Chercher l'adresse » ne remplit pas l'adresse (numéro et rue), il faut la recopier.
 - **Piste notée le 19/10, redemandée le 25/10** (demande à part, après la semaine 4) : ouvrir un engagement **et une
   demande reçue** dans un **volet** (par-dessus ou à côté du tableau) sur les pages « Engagements » et « Demandes
   reçues », au lieu d'une page nouvelle. À trancher au cadrage : volet sur téléphone (plein écran ?),
