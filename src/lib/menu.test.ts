@@ -5,7 +5,7 @@ const agent = { id: "a1", role: "admin" as const };
 const louis = { id: "m1", role: "musicien" as const };
 
 describe("liens du menu selon le rôle", () => {
-  it("donne à l'agent ses 7 pages, dans l'ordre (journal des imports depuis les demandes, invitations depuis les musiciens)", () => {
+  it("donne à l'agent ses 8 pages, dans l'ordre (journal des imports depuis les demandes, invitations depuis les musiciens)", () => {
     expect(liensDuMenu(agent).map((l) => l.libelle)).toEqual([
       "Tableau de bord",
       "Engagements",
@@ -14,6 +14,7 @@ describe("liens du menu selon le rôle", () => {
       "Courriers",
       "Documents",
       "Assistant",
+      "À valider",
     ]);
   });
 
@@ -38,6 +39,7 @@ describe("liens du menu selon le rôle", () => {
     expect(adresses).not.toContain("/demandes");
     expect(adresses).not.toContain("/courriers");
     expect(adresses).not.toContain("/assistant");
+    expect(adresses).not.toContain("/validations");
   });
 });
 

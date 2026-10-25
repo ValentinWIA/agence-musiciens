@@ -57,7 +57,7 @@ export async function executerAgent(
 
   const journal: Etape[] = [];
   const modele = MODELE_PAR_FONCTION.agent;
-  const outils = outilsDeLAgent(utilisateur, demande, journal, surEtape);
+  const outils = outilsDeLAgent(utilisateur, demande, executionId, journal, surEtape);
   const debut = Date.now();
   const arret = new AbortController();
   let coupeeParLaDuree = false;

@@ -3,7 +3,7 @@ import { tool } from "@anthropic-ai/claude-agent-sdk";
 import { and, asc, desc, eq, ilike } from "drizzle-orm";
 import { z } from "zod";
 import { db } from "@/db";
-import { courriers, demandesRecues, evenementsFlux, lieux, programmateurs, utilisateurs } from "@/db/schema";
+import { courriers, demandesRecues, evenementsFlux, lieux, programmateurs, propositions, utilisateurs } from "@/db/schema";
 import { lireFormulaire } from "@/app/(connecte)/engagements/saisie";
 import { ajouterALaNote, correspondDemande, enDonnees, heureDansDemande, musicienNomme, NOTE_MAX, resumeSortie } from "./agent-regles";
 import { formaterMontant, type Devise } from "./argent";
@@ -15,6 +15,7 @@ import { LIBELLES_STATUT, lireEngagement, listerEngagements, listerMusiciens, ty
 import { lireEngagementsASuivre } from "./lecture-a-faire";
 import { NOTES_AGENT_MAX } from "./musiciens";
 import { origineDuSite } from "./origine";
+import { motifRelance, SUJET_MAX, TEXTE_MAX, verifierCourriel } from "./propositions";
 import { cachetsImpayes, optionsQuiExpirent } from "./recap";
 
 // Les outils de l'agent (docs/semaine-4.md, section 3) : lecture, et deux actions sans risque. Écrits une fois : la
@@ -50,7 +51,14 @@ async function trouverMusicien(nom: string): Promise<{ id: string; nom: string }
 
 // demande : ce qu'a écrit l'agente ; les actions y vérifient l'heure et les musiciens (le modèle ne les invente pas).
 // surEtape : prévient la page à chaque outil appelé (ce qui se passe pendant l'appel).
-export function outilsDeLAgent(utilisateur: Utilisateur, demande: string, journal: Etape[], surEtape?: (etape: Etape) => void) {
+// executionId : l'exécution en cours, à laquelle une relance proposée est rattachée.
+export function outilsDeLAgent(
+  utilisateur: Utilisateur,
+  demande: string,
+  executionId: string | null,
+  journal: Etape[],
+  surEtape?: (etape: Etape) => void,
+) {
   // Chaque outil passe par ici : le rôle est revérifié (le modèle ne choisit pas ses droits) et l'appel est noté.
   const garde =
     <A,>(nom: string, faire: (args: A) => Promise<Resultat>) =>
@@ -345,6 +353,33 @@ export function outilsDeLAgent(utilisateur: Utilisateur, demande: string, journa
         if ("erreur" in ecrit) return refus(ecrit.erreur);
         console.log(`Engagement créé : ${ecrit.id} (depuis la demande ${d.reference}, par l'assistant) pour ${utilisateur.nom}`);
         return texte(`Engagement créé au statut « demande » : ${lien(`/engagements/${ecrit.id}`)}`);
+      }),
+      action,
+    ),
+    tool(
+      "proposer_relance",
+      "Action : prépare un courriel de relance au programmateur d'un engagement (id), pour une option à confirmer ou " +
+        "un cachet impayé. N'envoie rien : le courriel attend la validation de l'agente sur la page À valider. " +
+        "Le destinataire est lu dans le produit. Un courriel par engagement.",
+      { engagementId: z.string().uuid(), sujet: z.string().max(SUJET_MAX), texte: z.string().max(TEXTE_MAX) },
+      garde("proposer_relance", async ({ engagementId, sujet, texte: corps }) => {
+        const e = await lireEngagement(utilisateur, engagementId);
+        if (!e) return refus(`Engagement introuvable (id ${engagementId}).`);
+        const motif = motifRelance(e.statut);
+        if (!motif) return refus(`Refusé : un engagement « ${LIBELLES_STATUT[e.statut]} » n'appelle pas de relance.`);
+        const courriel = verifierCourriel({ sujet, texte: corps });
+        if ("erreur" in courriel) return refus(courriel.erreur);
+        const objet = `${motif} — ${e.titre ?? "sans titre"}, ${e.lieu.nom}, ${quand({ ...e, pays: e.lieu.pays })}`;
+        await db.insert(propositions).values({
+          executionId,
+          engagementId: e.id,
+          objet,
+          destinataire: e.programmateur.email,
+          destinataireNom: e.programmateur.nom,
+          ...courriel,
+        });
+        console.log(`Assistant : relance proposée (${objet}) pour ${utilisateur.nom}`);
+        return texte(`Relance proposée à ${e.programmateur.nom}, rien n'est parti : à valider sur ${lien("/validations")}`);
       }),
       action,
     ),
