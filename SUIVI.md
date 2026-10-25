@@ -101,7 +101,10 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   **A2** (`ad4a766`) : `executions_agent` (migration 0021, verrou par index unique partiel, libéré après 3 min),
   7 outils de lecture (`src/lib/agent-outils.ts`, rôle revérifié, flux et courriers entre `<donnees>`), moteur
   `src/lib/agent.ts` (limites de la semaine 3, 10 tours, 0,20 $, 120 s, coût dans `appels_ia` fonction « agent »),
-  règles pures `src/lib/agent-regles.ts` (7 tests, 348 au total). Gestes en prévisualisation : en cours (25/10).
+  règles pures `src/lib/agent-regles.ts` (7 tests, 348 au total). Gestes validés en prévisualisation le 25/10 : cachets impayés, Inès le 8 mai 2027 (récital
+  de Gaveau cité), journal et étapes dans Neon, musicien refusé, ligne « agent » sur `/couts` ; verrou : refus avec deux
+  demandes différentes (deux onglets sur la **même** adresse : Chrome attend la première réponse avant d'envoyer la
+  seconde, le verrou n'a rien à refuser). **Prochaine tranche : A3** (page `/assistant`).
   **Message piégé** du flux : introuvable au 25/10 (vérifié par l'humain), à surveiller à chaque import.
 - **✅ Cron du matin vérifié** (25/10, l'humain) : le récap arrive chaque matin sans clic. Les « reste à vérifier »
   des 18, 19 et 20/10 plus bas sont donc levés.
