@@ -10,7 +10,7 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 
 ## État de reprise
 
-*Dernière mise à jour : 19 octobre 2026 (boutons fictifs des courriers, PR n° 40)*
+*Dernière mise à jour : 25 octobre 2026 (cron vérifié, semaines 1 à 3 closes, cadrage de la semaine 4 proposé)*
 
 - **✅ Revenus de la saison** (19/10, branche `revenus`, **PR n° 32 fusionnée**, `e1dd3ec`). Carte « Revenus de la
   saison » en tête de la colonne droite du tableau de bord : total des cachets (le « chiffre d'affaires » : pas de
@@ -88,7 +88,9 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   vraie boîte (réception et envoi par Resend : adresse `…@<id>.resend.app`, relève par bouton, `In-Reply-To`)
   cadrées puis **abandonnées par l'humain** au profit de ces deux boutons. Gestes validés en prévisualisation.
   Gestes validés en production le 19/10. **Reste** : supprimer la branche Neon `preview/boutons-fictifs`.
-- **Semaine 3 terminée** (I1 à I7). **Prochaine demande : heures de 5 en 5 minutes** (décidé le 19/10, branche
+- **✅ Cron du matin vérifié** (25/10, l'humain) : le récap arrive chaque matin sans clic. Les « reste à vérifier »
+  des 18, 19 et 20/10 plus bas sont donc levés.
+- **Semaine 3 terminée** (I1 à I7). **Prochaine demande : semaine 4 (agent)** (proposé le 25/10) ; heures de 5 en 5 minutes après la semaine 4 (décidé le 19/10, branche
   `heures-5-min`) : `step={300}` sur le champ heure (`formulaire-engagement.tsx`) ; refus côté serveur d'une minute
   non multiple de 5 (`saisieDate`, `engagements/saisie.ts`) avec message ; test ; prévisualisation et geste (iPhone :
   la roue peut garder toutes les minutes, le refus suffit). **« Matin / après-midi / soir » : pas prévu**, amélioration
@@ -787,7 +789,7 @@ Un produit se construit par couches. Chaque couche répond à une question et s'
 | 4. Identité et droits | Qui est connecté, et qu'a-t-il le droit de faire ? | 1 | ✅ (connexion, invitations, rôles, réinitialisation, refus d'accès journalisés) |
 | 5. Métier | Que fait le produit ? (engagements, cycle de vie, règles, API externe, courriels, pièces jointes) | 1 | ✅ (cycle de vie, conflit d'agenda, géocodage, jours fériés, devises, pièces jointes, fiches musiciens, calendrier) |
 | 6. Fiabilité | Comment sait-on que ça marche et que c'est sûr ? (tests, journaux, revue de sécurité, README) | 1 | ✅ (tests à chaque push, journaux, revue de sécurité `docs/securite.md`, README) |
-| 7. Automatisation | Que fait le produit tout seul, la nuit ? | 2 | 🔄 (import des nuits, rattrapage et cron faits ; récap, surveillance, boîte à faire) |
+| 7. Automatisation | Que fait le produit tout seul, la nuit ? | 2 | ✅ (import des nuits, rattrapage, cron, récap reçu chaque matin sans clic, surveillance, demandes reçues) |
 | 8. Intelligence | Que comprend le produit ? (lecture de documents, recherche qui cite ses sources) | 3 | ✅ (I1 à I7, 19/10) |
 | 9. Action | Qu'est-ce que le produit fait à notre place, sous contrôle ? (agent, serveur MCP) | 4 | ⬜ |
 | 10. Transmission | Quelqu'un d'autre peut-il le reprendre ? (passation, API pour les autres systèmes) | 5 | ⬜ |
@@ -810,7 +812,7 @@ Un produit se construit par couches. Chaque couche répond à une question et s'
 | Tâche | État | À quoi ça sert |
 |---|---|---|
 | Créer les comptes GitHub, Vercel, Neon, Resend, Sentry | ✅ | Chaque service est une pièce du produit (voir le glossaire) |
-| Créer le compte UptimeRobot | ⬜ | La sonde de surveillance, branchée en semaine 2 |
+| Créer le compte UptimeRobot | ✅ (18/10, S4) | La sonde de surveillance, branchée en semaine 2 |
 | Créer le projet Neon (région Francfort) | ✅ | La base de données du produit |
 | Publier le dépôt GitHub `ValentinWIA/agence-musiciens` (public) | ✅ | Le code est sauvegardé, versionné, partageable avec le formateur et le repreneur de la semaine 5 |
 | Importer le dépôt dans Vercel | ✅ | Chaque push déclenche un déploiement automatique |
