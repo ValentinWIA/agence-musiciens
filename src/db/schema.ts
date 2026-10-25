@@ -11,6 +11,9 @@ export const statutDemande = pgEnum("statut_demande", ["demandee", "confirmee", 
 export const declencheur = pgEnum("declencheur", ["cron", "bouton"]);
 export const etatExecution = pgEnum("etat_execution", ["en_cours", "reussie", "en_echec"]);
 export const etatEvenement = pgEnum("etat_evenement", ["traite", "doublon", "mis_de_cote"]);
+export const porteAgent = pgEnum("porte_agent", ["page", "mcp"]);
+// = ETATS_AGENT (src/lib/agent-regles.ts)
+export const etatAgent = pgEnum("etat_agent", ["en_cours", "terminee", "arretee_tours", "arretee_budget", "arretee_duree", "en_echec"]);
 
 // L'agent (admin) et les musiciens. Les programmateurs n'ont pas de compte.
 export const utilisateurs = pgTable("utilisateurs", {
@@ -253,3 +256,24 @@ export const passages = pgTable(
   },
   (t) => [uniqueIndex("passages_document_page").on(t.documentId, t.page)],
 );
+
+// Une demande faite à l'agent et son journal (docs/semaine-4.md, section 7). Jamais vidée par le jeu de données :
+// c'est le journal qu'on relit après les scénarios et qu'on montre à la démo.
+export const executionsAgent = pgTable("executions_agent", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  utilisateurId: uuid("utilisateur_id").references(() => utilisateurs.id, { onDelete: "set null" }),
+  porte: porteAgent("porte").notNull(),
+  demande: text("demande").notNull(),
+  etat: etatAgent("etat").notNull().default("en_cours"),
+  debutLe: timestamp("debut_le", { withTimezone: true }).notNull().defaultNow(),
+  finLe: timestamp("fin_le", { withTimezone: true }),
+  tours: integer("tours"),
+  cout: integer("cout"), // en millionièmes de dollar, estimé par le SDK
+  reponse: text("reponse"),
+  erreur: text("erreur"),
+  // Chaque appel d'outil : son nom, ce qu'on lui a demandé, un résumé de ce qu'il a renvoyé (ou son refus).
+  etapes: jsonb("etapes").$type<{ outil: string; entree: unknown; sortie: string }[]>().notNull().default([]),
+}, (t) => [
+  // Verrou : une seule exécution de l'agent à la fois (deux demandes ne travaillent jamais sur le même dossier).
+  uniqueIndex("un_seul_agent_en_cours").on(t.etat).where(sql`${t.etat} = 'en_cours'`),
+]);
