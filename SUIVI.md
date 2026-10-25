@@ -98,7 +98,11 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   fonction : 250 Mo) : emporté par `outputFileTracingIncludes`, chemin donné par `pathToClaudeCodeExecutable` ;
   la construction est passée sans réglage (« grandes fonctions » Vercel actives sur le projet ; sinon variable
   `VERCEL_SUPPORT_LARGE_FUNCTIONS=1`). Geste validé en prévisualisation le 25/10 : réponse en français, outil appelé.
-  **Prochaine tranche : A2** (outils de lecture, journal, budget, verrou).
+  **A2** (`ad4a766`) : `executions_agent` (migration 0021, verrou par index unique partiel, libéré après 3 min),
+  7 outils de lecture (`src/lib/agent-outils.ts`, rôle revérifié, flux et courriers entre `<donnees>`), moteur
+  `src/lib/agent.ts` (limites de la semaine 3, 10 tours, 0,20 $, 120 s, coût dans `appels_ia` fonction « agent »),
+  règles pures `src/lib/agent-regles.ts` (7 tests, 348 au total). Gestes en prévisualisation : en cours (25/10).
+  **Message piégé** du flux : introuvable au 25/10 (vérifié par l'humain), à surveiller à chaque import.
 - **✅ Cron du matin vérifié** (25/10, l'humain) : le récap arrive chaque matin sans clic. Les « reste à vérifier »
   des 18, 19 et 20/10 plus bas sont donc levés.
 - **Semaine 3 terminée** (I1 à I7). **Prochaine demande : semaine 4 (agent)** (proposé le 25/10) ; heures de 5 en 5 minutes après la semaine 4 (décidé le 19/10, branche

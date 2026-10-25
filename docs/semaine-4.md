@@ -109,7 +109,7 @@ ailleurs : même trompé, l'agent n'a ni suppression, ni envoi sans validation, 
 
 ## 10. Décisions (25/10) et question ouverte
 
-1. **Le message piégé** (ouvert) : il arrive par le flux, dans un message entrant. Il faut le trouver (sur `/demandes`, onglet
+1. **Le message piégé** (ouvert ; **introuvable au 25/10** d'après l'humain, à surveiller à chaque import) : il arrive par le flux, dans un message entrant. Il faut le trouver (sur `/demandes`, onglet
    « Toutes », ou dans les nuits déjà importées) avant A6.
 2. **Envoi réel à la démo** : les adresses `.test` ne reçoivent rien. Pour montrer un vrai courriel parti après
    validation, mettre ton adresse sur un programmateur (en SQL dans Neon, production) ? Sinon, la ligne « validée, non
