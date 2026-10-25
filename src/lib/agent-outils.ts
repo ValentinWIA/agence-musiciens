@@ -52,11 +52,13 @@ async function trouverMusicien(nom: string): Promise<{ id: string; nom: string }
 }
 
 // demande : ce qu'a écrit l'agente ; les actions y vérifient l'heure et les musiciens (le modèle ne les invente pas).
+// null par le serveur MCP, qui ne voit pas ce qu'on a tapé dans Claude Code : c'est alors Claude Code qui montre les
+// paramètres de chaque action et demande l'autorisation (docs/semaine-4.md, A5). Les autres garde-fous restent.
 // surEtape : prévient la page à chaque outil appelé (ce qui se passe pendant l'appel).
 // executionId : l'exécution en cours, à laquelle une relance proposée est rattachée.
 export function outilsDeLAgent(
   utilisateur: Utilisateur,
-  demande: string,
+  demande: string | null,
   executionId: string | null,
   journal: Etape[],
   surEtape?: (etape: Etape) => void,
@@ -289,7 +291,7 @@ export function outilsDeLAgent(
       garde("ajouter_note", async ({ musicien, note }) => {
         const m = await trouverMusicien(musicien);
         if (typeof m === "string") return refus(m);
-        if (!musicienNomme(m.nom, demande)) return refus(`Refusé : votre demande ne nomme pas ${m.nom}.`);
+        if (demande !== null && !musicienNomme(m.nom, demande)) return refus(`Refusé : votre demande ne nomme pas ${m.nom}.`);
         const [fiche] = await db.select({ notes: utilisateurs.notesAgent }).from(utilisateurs).where(eq(utilisateurs.id, m.id));
         const suite = ajouterALaNote(fiche?.notes ?? null, note, jourLocal(new Date(), "France"), NOTES_AGENT_MAX);
         if ("erreur" in suite) return refus(suite.erreur);
@@ -311,14 +313,14 @@ export function outilsDeLAgent(
       },
       garde("creer_engagement_depuis_demande", async ({ demandeId, heure, musiciens }) => {
         // Garde-fous : l'heure et chaque musicien doivent figurer dans ce qu'a écrit l'agente.
-        if (!heureDansDemande(heure, demande)) {
+        if (demande !== null && !heureDansDemande(heure, demande)) {
           return refus(`Refusé : l'heure ${heure} n'est pas écrite dans votre demande. Précisez l'heure du concert.`);
         }
         const ids: string[] = [];
         for (const nom of musiciens) {
           const m = await trouverMusicien(nom);
           if (typeof m === "string") return refus(m);
-          if (!musicienNomme(m.nom, demande)) return refus(`Refusé : votre demande ne nomme pas ${m.nom}.`);
+          if (demande !== null && !musicienNomme(m.nom, demande)) return refus(`Refusé : votre demande ne nomme pas ${m.nom}.`);
           ids.push(m.id);
         }
 

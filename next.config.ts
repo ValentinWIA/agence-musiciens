@@ -14,7 +14,6 @@ const nextConfig: NextConfig = {
   serverExternalPackages: ["@anthropic-ai/claude-agent-sdk"],
   outputFileTracingIncludes: {
     "/api/agent": ["./node_modules/@anthropic-ai/claude-agent-sdk-linux-x64/**"],
-    "/api/mcp": ["./node_modules/@anthropic-ai/claude-agent-sdk-linux-x64/**"],
   },
   experimental: {
     // Pièces jointes : 4 Mo de PDF plus le formulaire (1 Mo par défaut ; Vercel plafonne de toute façon à 4,5 Mo).
