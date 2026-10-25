@@ -1,6 +1,6 @@
 # Semaine 4 — l'agent qui agit dans le produit (mission)
 
-*Proposition du 25/10/2026, à corriger par l'humain avant toute ligne de code. Consigne : **strict nécessaire, au
+*Mission validée par l'humain le 25/10/2026 (décisions en section 10). Consigne : **strict nécessaire, au
 plus simple** (comme la semaine 3). Plan en tranches A0 → A8 (section 9) ; chaque tranche est détaillée et validée
 avant d'être codée.*
 
@@ -107,12 +107,12 @@ ailleurs : même trompé, l'agent n'a ni suppression, ni envoi sans validation, 
 | **A7** | 20 scénarios rejoués (script), journaux lus, une dérive observée, un garde-fou ajouté | `docs/scenarios-agent.md` |
 | **A8** | Rendus : mission, journaux, dérive et garde-fou, coût ; le bogue caché (enveloppe) ; la passation (README, conventions, inventaire des clés, lancement en dix minutes) | relus par l'humain |
 
-## 10. Questions à trancher
+## 10. Décisions (25/10) et question ouverte
 
-1. **Le message piégé** : il arrive par le flux, dans un message entrant. Il faut le trouver (sur `/demandes`, onglet
+1. **Le message piégé** (ouvert) : il arrive par le flux, dans un message entrant. Il faut le trouver (sur `/demandes`, onglet
    « Toutes », ou dans les nuits déjà importées) avant A6.
 2. **Envoi réel à la démo** : les adresses `.test` ne reçoivent rien. Pour montrer un vrai courriel parti après
    validation, mettre ton adresse sur un programmateur (en SQL dans Neon, production) ? Sinon, la ligne « validée, non
-   envoyée (adresse fictive) » suffit à la fiche.
+   envoyée (adresse fictive) » suffit à la fiche. **Décidé : l'adresse de l'humain sur un programmateur.**
 3. **Plafond mensuel** : 5 $ partagés avec la semaine 3. Avec Haiku, les 20 scénarios coûtent quelques centimes ; à
-   relever seulement si l'on passe à Sonnet.
+   relever seulement si l'on passe à Sonnet. **Décidé : plafond inchangé.**
