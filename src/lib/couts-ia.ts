@@ -18,7 +18,7 @@ export const LIBELLES_MODELE: Record<Modele, string> = {
   "claude-opus-5-5": "Opus 5.5",
 };
 
-export const APPELS_PAR_JOUR = 30; // par utilisateur : coupe une boucle ou un abus
+export const APPELS_PAR_JOUR = 100; // par utilisateur : coupe une boucle ou un abus (30 jusqu'au 25/10 : trop bas pour l'agent et ses scénarios)
 export const PLAFOND_MENSUEL = 5_000_000; // 5 $, en millionièmes : protège la dépense
 
 export function coutAppel(modele: Modele, jetonsEntree: number, jetonsSortie: number): number {

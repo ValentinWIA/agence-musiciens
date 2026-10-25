@@ -1,5 +1,6 @@
 import { eq } from "drizzle-orm";
 import Link from "next/link";
+import { LienAssistant } from "@/components/lien-assistant";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { z } from "zod";
@@ -12,17 +13,23 @@ import { LIBELLES_CLASSEMENT, type Classement } from "@/lib/courrier";
 import { verifierAdmin } from "@/lib/session";
 import { ZoneReponse } from "./zone-reponse";
 
-export default function PageCourrier({ params }: PageProps<"/courriers/[id]">) {
+export default function PageCourrier({ params, searchParams }: PageProps<"/courriers/[id]">) {
   return (
     <main className="mx-auto grid w-full max-w-3xl gap-6 p-4">
       <Suspense fallback={<div className="h-64 animate-pulse rounded-md bg-muted" aria-label="Chargement" />}>
-        <FicheCourrier params={params} />
+        <FicheCourrier params={params} searchParams={searchParams} />
       </Suspense>
     </main>
   );
 }
 
-async function FicheCourrier({ params }: { params: Promise<{ id: string }> }) {
+async function FicheCourrier({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ id: string }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
   await verifierAdmin("/courriers"); // un musicien ne voit jamais un courrier
   const id = z.uuid().safeParse((await params).id);
   if (!id.success) notFound();
@@ -42,9 +49,13 @@ async function FicheCourrier({ params }: { params: Promise<{ id: string }> }) {
 
   return (
     <>
-      <Link href="/courriers" className="text-sm underline">
-        ← Courriers
-      </Link>
+      {(await searchParams).depuis === "assistant" ? (
+        <LienAssistant />
+      ) : (
+        <Link href="/courriers" className="text-sm underline">
+          ← Courriers
+        </Link>
+      )}
       <Card>
         <CardHeader>
           <CardTitle>Courrier de {courrier.structure ?? "expéditeur inconnu"}</CardTitle>

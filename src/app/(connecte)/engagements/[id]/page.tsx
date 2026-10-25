@@ -16,6 +16,7 @@ import { lireAgendaPourConfirmer, lireEngagement, lirePiecesJointes } from "@/li
 import { formaterTaille, LIBELLES_TYPE_PIECE } from "@/lib/pieces-jointes";
 import { optionARelancer } from "@/lib/recap";
 import { verifierSession } from "@/lib/session";
+import { LienAssistant } from "@/components/lien-assistant";
 import { BoutonsStatut } from "./boutons-statut";
 import { AjoutPiece } from "./pieces/ajout-piece";
 import { SupprimerPiece } from "./pieces/supprimer-piece";
@@ -42,7 +43,8 @@ async function LienRetour({
   params: Promise<{ id: string }>;
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
-  const { liste } = await searchParams;
+  const { liste, depuis } = await searchParams;
+  if (depuis === "assistant") return <LienAssistant />;
   const retour = new URLSearchParams(typeof liste === "string" ? liste : "");
   retour.set("ici", (await params).id);
   return (

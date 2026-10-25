@@ -1,5 +1,6 @@
 import { eq } from "drizzle-orm";
 import Link from "next/link";
+import { LienAssistant } from "@/components/lien-assistant";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { z } from "zod";
@@ -41,14 +42,18 @@ async function FicheDemande({
   const historique = await lireHistorique(demande.reference);
   const passee = dateDemandePassee(demande.dateConcert, jourLocal(new Date(), "France"));
   // Retour à l'onglet d'où l'on vient (?vue=toutes), la liste déroulée jusqu'à cette demande.
-  const { vue } = await searchParams;
+  const { vue, depuis } = await searchParams;
   const retour = `/demandes?${vue === "toutes" ? "vue=toutes&" : ""}ici=${demande.id}`;
 
   return (
     <>
-      <Link href={retour} className="text-sm underline">
-        ← Demandes reçues
-      </Link>
+      {depuis === "assistant" ? (
+        <LienAssistant />
+      ) : (
+        <Link href={retour} className="text-sm underline">
+          ← Demandes reçues
+        </Link>
+      )}
       <Card>
         <CardHeader>
           <CardTitle>Demande de {demande.programmateur}</CardTitle>

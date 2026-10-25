@@ -20,7 +20,7 @@ describe("limites", () => {
   });
 
   it("refuse le 31ᵉ appel de la journée", () => {
-    expect(refusAppel({ appelsDuJour: APPELS_PAR_JOUR, depenseDuMois: 0 })).toMatch(/30 appels .* par jour/);
+    expect(refusAppel({ appelsDuJour: APPELS_PAR_JOUR, depenseDuMois: 0 })).toMatch(/100 appels .* par jour/);
   });
 
   it("refuse dès que le plafond du mois est atteint, et le dit avant la limite du jour", () => {
