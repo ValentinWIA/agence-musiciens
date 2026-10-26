@@ -7,7 +7,7 @@ export function ReponseAssistant({ texte, origine }: { texte: string; origine: s
   const { corps, bilan } = separerBilan(texte);
   return (
     <div className="grid gap-4">
-      <div className="grid max-w-prose gap-3 text-[15px] leading-relaxed">
+      <div className="grid gap-3 text-[15px] leading-relaxed">
         {blocs(corps).map((b, i) =>
           b.liste ? (
             <Liste key={i} numerotee={b.numerotee}>
