@@ -10,7 +10,7 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 
 ## État de reprise
 
-*Dernière mise à jour : 26 octobre 2026 (suite de la réponse précédente en production, PR n° 46 ; prochaine étape : retouches fiche musicien / adresse du lieu)*
+*Dernière mise à jour : 26 octobre 2026 (adresse d'un nouveau lieu remplie, PR n° 47 ; semaine 4 prête à l'envoi, volet reporté après)*
 
 - **✅ Revenus de la saison** (19/10, branche `revenus`, **PR n° 32 fusionnée**, `e1dd3ec`). Carte « Revenus de la
   saison » en tête de la colonne droite du tableau de bord : total des cachets (le « chiffre d'affaires » : pas de
@@ -232,8 +232,15 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   prévisualisation (« relance 1 et 3 » → ces deux-là dans « À valider » ; question sans rapport normale ; journal).
   Production déployée (`/api/sante` ok, `/api/agent` refuse sans session). **À vérifier en production** : numéros
   1, 2, 3 d'une liste d'options.
-  **REPRISE ICI** : (1) **retouches** fiche musicien sur téléphone et « Chercher l'adresse » d'un lieu ; (2) **volet**
-  engagements / demandes reçues. Restent aussi : remplacer le secret de contournement Vercel ; A8c (en dernier).
+  **✅ Adresse d'un nouveau lieu** (26/10, branche `retouches-fiche-lieu`, **PR n° 47 fusionnée**, `2e02fb5`) :
+  choisir une proposition de « Chercher l'adresse » remplit « Adresse (numéro et rue) » et « Ville » (`name` et `city`
+  du service de l'IGN ; une commune seule ne remplit que la ville ; `src/lib/geocodage.ts`, `nouveau-lieu.tsx`).
+  398 tests. Geste validé en prévisualisation ; production déployée (`/api/sante` ok).
+  Fiche musicien sur téléphone (retour du 25/10) : **plus de problème constaté** par l'humain, rien fait.
+  Secret de contournement Vercel : **déjà remplacé** (l'humain, 26/10). Supprimer un lieu : pas dans le produit, SQL
+  donné à l'humain si besoin (lieu non utilisé par un engagement) ; décidé de ne rien faire.
+  **REPRISE ICI** : semaine 4 prête à l'envoi. Mis de côté par l'humain le 26/10 : A8c, relecture du README, message
+  piégé. Après l'envoi : **volet** engagements / demandes reçues (cadrage à faire), heures de 5 en 5 minutes.
   Après la semaine 4 (notés) : retouches fiche musicien sur téléphone et adresse du lieu ; volet engagements /
   demandes ; assistant sur chaque page ; heures de 5 en 5 minutes.
   **Message piégé** du flux : introuvable au 25/10 (vérifié par l'humain), à surveiller à chaque import.
