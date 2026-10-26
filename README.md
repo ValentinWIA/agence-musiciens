@@ -228,8 +228,8 @@ Pour faire tourner le produit sur sa machine, avec sa propre base. Il faut Node 
 7. **Vérifier** : `npm test` (376 tests, une seconde ; ils ne touchent pas la base et ne demandent aucune clé).
 
 `npm ci` signale des « install scripts » non approuvés (esbuild, fsevents, unrs-resolver) : sans effet, les tests et
-la construction passent. `npm run build` peut s'arrêter une fois sur un avertissement de sécurité de Next.js
-(« SecurityFatalError ») : relancer la même commande.
+la construction passent. Si `npm run build` s'arrête sur « SecurityFatalError », Next.js a une faille connue : le
+mettre à jour (`npm audit` dit vers quelle version), sur une branche à part.
 
 Pour une **copie en ligne**, à son nom : importer le dépôt dans Vercel (région `fra1`), ajouter l'intégration Neon
 et le stockage Blob depuis l'onglet Storage, ranger les autres clés, déployer. Les migrations sont jouées par

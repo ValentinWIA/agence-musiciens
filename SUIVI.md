@@ -10,7 +10,7 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 
 ## État de reprise
 
-*Dernière mise à jour : 26 octobre 2026 (semaine 4 : A0 à A7 faites, dérive n° 3 trouvée et corrigée par les scénarios ; prochaine étape A8)*
+*Dernière mise à jour : 26 octobre 2026 (semaine 4 : A0 à A8b faites, Next.js corrigé en production ; prochaine étape : fusion de `agent`)*
 
 - **✅ Revenus de la saison** (19/10, branche `revenus`, **PR n° 32 fusionnée**, `e1dd3ec`). Carte « Revenus de la
   saison » en tête de la colonne droite du tableau de bord : total des cachets (le « chiffre d'affaires » : pas de
@@ -167,11 +167,23 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   création et doublon prouvés par les gestes de A4a) ; scénario 15 refusé par le modèle (refus du code couvert par le
   test `motifRelance`). 376 tests. Push du 26/10 : jeu de données remis à zéro sur `preview/agent` (demandes vides
   jusqu'au prochain import, adresse de l'humain retirée du programmateur).
-  **REPRISE ICI** : **A8** (rendus : mission, journaux, dérive et garde-fou, coût ; bogue
-  caché dans une enveloppe ; passation : README, conventions, inventaire des clés dont `MCP_JETON` et le secret de
-  contournement, lancement en dix minutes), puis PR `agent` → `main` (fusion par l'humain avec `!`), migrations
-  0021 à 0023 jouées en production, `MCP_JETON` en Production, serveur MCP de production branché dans Claude Code
-  (sans contournement : la production n'est pas protégée par Vercel), gestes en production.
+  **A8a ✅** (26/10, `7add3a1`) : `docs/rendus-semaine-4.md`, où est chaque rendu de la fiche, avec le coût (0,031 $
+  les 20 scénarios, 0,0016 $ par demande, ≈ 0,30 $ par mois estimé, 0 $ par MCP, plafond 5 $).
+  **A8b ✅** (26/10, `2c82403`) : README à jour (semaines 2 à 4, schéma, documents), **inventaire des 12 clés** (rôle,
+  origine, remplacement, ce qui casse sans elle ; secret de contournement et jeton dans Claude Code à part),
+  **lancement en dix minutes** (Neon gratuit, 4 clés) ; `AGENTS.md` : garde-fous de l'agent dans le code, inventaire
+  tenu à jour. Essai sur une copie neuve : `npm ci`, 376 tests et construction passent sans clé ; migrations et jeu
+  de données ne lisaient pas `.env.local` → commandes avec `--env-file`. **Non essayé** : les étapes avec une vraie
+  base (décidé : laissé au repreneur de la semaine 5, qui note ce qui manque). README non relu par l'humain (manque de
+  temps ; relecture à faire si possible avant de rendre).
+  **✅ Sécurité Next.js** (26/10, branche `securite-next`, **PR n° 41 fusionnée**, `57a37a6`) : 16.4.0 → 16.4.3
+  (trois failles connues, dont deux critiques : exécution de code sur le serveur sans connexion), découvert pendant
+  l'essai de A8b (la construction s'arrêtait une fois sur deux). `main` reporté dans `agent`. Fusion faite par
+  l'humain (geste en prévisualisation non confirmé à l'écrit) ; production vérifiée par `/api/sante`. **Reste** : supprimer la branche Neon `preview/securite-next`.
+  **REPRISE ICI** : PR `agent` → `main` (fusion par l'humain avec `!`), migrations 0021 à 0023 jouées en production,
+  `MCP_JETON` en Production, serveur MCP de production branché dans Claude Code (sans contournement : la production
+  n'est pas protégée par Vercel), gestes en production ; remplacer le secret de contournement passé par le chat le
+  25/10. Puis **A8c** (en dernier, rien n'est noté dans le dépôt).
   Après la semaine 4 (notés) : retouches fiche musicien sur téléphone et adresse du lieu ; volet engagements /
   demandes ; assistant sur chaque page ; heures de 5 en 5 minutes.
   **Message piégé** du flux : introuvable au 25/10 (vérifié par l'humain), à surveiller à chaque import.
