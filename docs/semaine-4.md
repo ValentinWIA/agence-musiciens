@@ -118,3 +118,24 @@ ailleurs : même trompé, l'agent n'a ni suppression, ni envoi sans validation, 
    envoyée (adresse fictive) » suffit à la fiche. **Décidé : l'adresse de l'humain sur un programmateur.**
 3. **Plafond mensuel** : 5 $ partagés avec la semaine 3. Avec Haiku, les 20 scénarios coûtent quelques centimes ; à
    relever seulement si l'on passe à Sonnet. **Décidé : plafond inchangé.**
+
+## 11. Assistant sur chaque page (cadrage validé le 26/10, branche `assistant-partout`)
+
+*Décidé le 26/10 : « le produit doit toujours avoir l'air fini ». Apparence choisie sur planche : **variante E**.*
+
+1. **Bulle** ronde or (icône de dialogue) en bas à droite de toutes les pages après connexion, **agent seulement**
+   (un musicien ne la voit pas ; `/api/agent` le refuse de toute façon). Cachée sur `/assistant`.
+2. **Ordinateur** : panneau de 400 px en bas à droite, bandeau noir avec l'emblème ; il reste ouvert quand on suit un
+   lien. **Téléphone** : volet qui monte du bas, à la hauteur de son contenu (85 % de l'écran au plus), page assombrie
+   derrière ; toucher le voile ou ✕ le ferme ; il se ferme quand on suit un lien.
+3. **Même formulaire** que `/assistant` (un seul composant), même route, mêmes garde-fous. Une question, une réponse :
+   pas de fil, pas de mémoire. La réponse reste affichée d'une page à l'autre, jusqu'à une nouvelle question.
+4. **Contenu allégé** dans le panneau : réponse, puis « Fait » seulement s'il n'est pas vide, et « À valider » (ambre,
+   lien vers `/validations`) s'il y a une proposition. « Lu », coût et durée restent dans l'historique de `/assistant`
+   (la sortie vérifiable de la section 5 ne change pas : l'agent écrit toujours ses trois listes).
+5. **Page ouverte comme contexte** (tranche T2) : l'adresse de la page est envoyée, vérifiée par le serveur et donnée au
+   modèle comme une indication (« ne sert que si la demande y renvoie ») ; on peut demander autre chose que la page.
+6. **Hors périmètre** : fil de discussion, mémoire, historique dans la bulle, bulle déplaçable, bulle des musiciens.
+
+Tranches : **T1** bulle et panneau (captures 375 / 430 / 1100 px, geste) ; **T2** page ouverte comme contexte (test de
+la phrase envoyée ; geste : sur la fiche A, relance demandée pour B → « À valider » concerne B).

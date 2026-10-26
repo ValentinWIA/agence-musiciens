@@ -10,7 +10,7 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 
 ## État de reprise
 
-*Dernière mise à jour : 26 octobre 2026 (semaine 4 fusionnée et vérifiée en production, PR n° 42 ; en cours : retouches de l'agent, branche `retouches-agent`)*
+*Dernière mise à jour : 26 octobre 2026 (semaine 4 en production, PR n° 42 à 44 ; prochaine étape : assistant sur chaque page, cadrage d'abord)*
 
 - **✅ Revenus de la saison** (19/10, branche `revenus`, **PR n° 32 fusionnée**, `e1dd3ec`). Carte « Revenus de la
   saison » en tête de la colonne droite du tableau de bord : total des cachets (le « chiffre d'affaires » : pas de
@@ -189,7 +189,7 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   **Reste** : remplacer le secret de contournement Vercel (passé par le chat le 25/10, réaffiché le 26/10) ;
   supprimer les branches Neon `preview/agent` et `preview/securite-next` ; envoi réel à l'adresse de l'humain (si
   voulu pour la démo : adresse sur un programmateur, en SQL dans Neon, production) ; **A8c** (en dernier).
-  **🔄 Retouches de l'agent** (26/10, branche `retouches-agent`, retours de l'humain après les gestes en production,
+  **✅ Retouches de l'agent** (26/10, branche `retouches-agent`, **PR n° 43 fusionnée**, `cc7349c` ; retours de l'humain après les gestes en production,
   cadrages validés) : (1) **journal de `/assistant`** trop technique pour servir au quotidien → résumé des actions sur
   chaque ligne (« 1 relance en attente », « lecture seule »…), réponse d'abord, outils sous « Détail technique »,
   lien vers `/validations` ; (2) **relance refusée irrécupérable** → « Remettre en attente » sur une proposition
@@ -203,6 +203,16 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   cadrage chacune, dans cet ordre : (1) **assistant sur chaque page** (vignette en bas à droite, reprend la mise en
   forme A) ; (2) **retouches** fiche musicien sur téléphone et « Chercher l'adresse » d'un lieu ; (3) **volet**
   engagements / demandes reçues. Avant chaque branche : vider les branches Neon fusionnées.
+  Réponse : liste collée à sa phrase d'annonce séparée (lecture ligne par ligne), montants et heures insécables ;
+  387 tests. **Correctif** (branche `correctif-reponse`, **PR n° 44 fusionnée**, `4a23664`) : `max-w-prose` coupait le
+  texte au milieu de la carte → toute la largeur. Gestes validés en prévisualisation ; production déployée
+  (`/api/sante` ok). **À vérifier en production** : réponse avec liste, toute la largeur, liens « Fiche → ».
+  Constaté : sur une prévisualisation, les anciennes réponses (base copiée de la production) gardent leurs adresses
+  de production en clair — voulu (seules les adresses du site visité deviennent des liens, `src/lib/liens.ts`).
+  **REPRISE ICI** : (1) assistant sur chaque page — cadrage en dix lignes à faire valider avant tout code (page en
+  cours comme contexte ? sort de `/assistant` ? téléphone ? une exécution à la fois, verrou déjà acquis) ; puis (2)
+  retouches fiche musicien / adresse du lieu ; (3) volet. Restent aussi : remplacer le secret de contournement Vercel ;
+  supprimer les branches Neon `preview/retouches-agent` et `preview/correctif-reponse` ; A8c (en dernier).
   Après la semaine 4 (notés) : retouches fiche musicien sur téléphone et adresse du lieu ; volet engagements /
   demandes ; assistant sur chaque page ; heures de 5 en 5 minutes.
   **Message piégé** du flux : introuvable au 25/10 (vérifié par l'humain), à surveiller à chaque import.

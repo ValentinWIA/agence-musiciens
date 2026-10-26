@@ -1,9 +1,11 @@
+import Link from "next/link";
 import { decouperLiens } from "@/lib/liens";
 import { blocs, segments, separerBilan, type Segment } from "@/lib/reponse-assistant";
 
 // La réponse de l'assistant mise en forme (variante A, choisie le 26/10) : gras et listes rendus, liens courts, et le
 // bilan Lu / Fait / Proposé en trois cases. Seules les adresses de notre site sont cliquables (src/lib/liens.ts).
-export function ReponseAssistant({ texte, origine }: { texte: string; origine: string }) {
+// Compacte (bulle de chaque page) : seulement ce qui demande l'attention, « Fait » et « À valider », s'ils ne sont pas vides.
+export function ReponseAssistant({ texte, origine, compacte = false }: { texte: string; origine: string; compacte?: boolean }) {
   const { corps, bilan } = separerBilan(texte);
   return (
     <div className="grid gap-4">
@@ -24,7 +26,42 @@ export function ReponseAssistant({ texte, origine }: { texte: string; origine: s
           ),
         )}
       </div>
-      {bilan && (
+      {bilan && compacte && (bilan.fait.length > 0 || bilan.propose.length > 0) && (
+        <div className="grid gap-1.5 border-t pt-3 text-sm leading-relaxed">
+          {bilan.fait.length > 0 && (
+            <div className="rounded-md bg-muted px-3 py-1.5">
+              <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Fait</p>
+              {bilan.fait.map((e, j) => (
+                <p key={j}>
+                  <Ligne morceaux={segments(e)} origine={origine} />
+                </p>
+              ))}
+            </div>
+          )}
+          {bilan.propose.length > 0 && (
+            <div className="rounded-md bg-amber-100 px-3 py-1.5">
+              <p className="text-xs font-medium uppercase tracking-wide">
+                À valider
+                {/* Un lien seulement si l'agent n'en a pas déjà écrit un vers « À valider ». */}
+                {!bilan.propose.some((e) => e.includes("/validations")) && (
+                  <>
+                    {" · "}
+                    <Link href="/validations" className="font-medium normal-case tracking-normal underline decoration-or underline-offset-4">
+                      Voir →
+                    </Link>
+                  </>
+                )}
+              </p>
+              {bilan.propose.map((e, j) => (
+                <p key={j}>
+                  <Ligne morceaux={segments(e)} origine={origine} />
+                </p>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+      {bilan && !compacte && (
         <div className="grid gap-2 border-t pt-4 sm:grid-cols-3">
           {(
             [
@@ -65,9 +102,10 @@ function Ligne({ morceaux, origine }: { morceaux: Segment[]; origine: string }) 
       {morceaux.map((s, i) => {
         const contenu = decouperLiens(s.texte, origine).map((m, j) =>
           m.lien ? (
-            <a key={j} href={m.lien} className="whitespace-nowrap font-medium underline decoration-or underline-offset-4 hover:bg-or/15">
+            // Le chemin seul, par Link : on change de page sans recharger, la bulle garde sa réponse.
+            <Link key={j} href={m.lien.slice(origine.length)} className="whitespace-nowrap font-medium underline decoration-or underline-offset-4 hover:bg-or/15">
               {m.texte}
-            </a>
+            </Link>
           ) : (
             <span key={j}>{m.texte}</span>
           ),
