@@ -10,7 +10,7 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 
 ## État de reprise
 
-*Dernière mise à jour : 26 octobre 2026 (semaine 4 : A0 à A8b faites, Next.js corrigé en production ; prochaine étape : fusion de `agent`)*
+*Dernière mise à jour : 26 octobre 2026 (semaine 4 fusionnée et vérifiée en production, PR n° 42 ; en cours : retouches de l'agent, branche `retouches-agent`)*
 
 - **✅ Revenus de la saison** (19/10, branche `revenus`, **PR n° 32 fusionnée**, `e1dd3ec`). Carte « Revenus de la
   saison » en tête de la colonne droite du tableau de bord : total des cachets (le « chiffre d'affaires » : pas de
@@ -180,10 +180,20 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   (trois failles connues, dont deux critiques : exécution de code sur le serveur sans connexion), découvert pendant
   l'essai de A8b (la construction s'arrêtait une fois sur deux). `main` reporté dans `agent`. Fusion faite par
   l'humain (geste en prévisualisation non confirmé à l'écrit) ; production vérifiée par `/api/sante`. **Reste** : supprimer la branche Neon `preview/securite-next`.
-  **REPRISE ICI** : PR `agent` → `main` (fusion par l'humain avec `!`), migrations 0021 à 0023 jouées en production,
-  `MCP_JETON` en Production, serveur MCP de production branché dans Claude Code (sans contournement : la production
-  n'est pas protégée par Vercel), gestes en production ; remplacer le secret de contournement passé par le chat le
-  25/10. Puis **A8c** (en dernier, rien n'est noté dans le dépôt).
+  **✅ Fusion** (26/10, **PR n° 42 fusionnée**, `01f1533`) : production déployée, migrations 0021 à 0023 jouées
+  (`/api/sante` ok ; `/assistant`, `/validations` renvoient vers l'accueil sans connexion ; `/api/mcp` sans jeton → 401).
+  `MCP_JETON` de production (jeton neuf, différent de la prévisualisation) dans Vercel ; serveur MCP de production
+  branché dans Claude Code (`cm-management`, sans contournement) : `lister_musiciens` lit la base de production.
+  Gestes validés en production par l'humain : `/assistant` (réponse, trois listes, journal), relance « en attente »,
+  refus sur `/validations`, ligne « agent » sur `/couts`.
+  **Reste** : remplacer le secret de contournement Vercel (passé par le chat le 25/10, réaffiché le 26/10) ;
+  supprimer les branches Neon `preview/agent` et `preview/securite-next` ; envoi réel à l'adresse de l'humain (si
+  voulu pour la démo : adresse sur un programmateur, en SQL dans Neon, production) ; **A8c** (en dernier).
+  **🔄 Retouches de l'agent** (26/10, branche `retouches-agent`, retours de l'humain après les gestes en production,
+  cadrages validés) : (1) **journal de `/assistant`** trop technique pour servir au quotidien → résumé des actions sur
+  chaque ligne (« 1 relance en attente », « lecture seule »…), réponse d'abord, outils sous « Détail technique »,
+  lien vers `/validations` ; (2) **relance refusée irrécupérable** → « Remettre en attente » sur une proposition
+  refusée (refus si une autre relance attend déjà pour l'engagement ; envoyées et adresses fictives exclues).
   Après la semaine 4 (notés) : retouches fiche musicien sur téléphone et adresse du lieu ; volet engagements /
   demandes ; assistant sur chaque page ; heures de 5 en 5 minutes.
   **Message piégé** du flux : introuvable au 25/10 (vérifié par l'humain), à surveiller à chaque import.
