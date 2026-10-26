@@ -168,3 +168,22 @@ export const APPELS_PAR_DEMANDE_MAX = 20;
 export function appelsAtteints(appelsDejaFaits: number): boolean {
   return appelsDejaFaits >= APPELS_PAR_DEMANDE_MAX;
 }
+
+// Ce qu'une demande a changé, pour le journal (retour du 26/10 : la liste des outils ne dit pas ce qui a été fait).
+// Seules les actions comptent ; un outil refusé a sa sortie qui commence par « refus : ».
+const LIBELLES_ACTION: Record<(typeof OUTILS_D_ACTION)[number], [string, string]> = {
+  proposer_relance: ["relance en attente", "relances en attente"],
+  creer_engagement_depuis_demande: ["engagement créé", "engagements créés"],
+  ajouter_note: ["note ajoutée", "notes ajoutées"],
+};
+
+export function resumeActions(etapes: { outil: string; sortie: string }[]): string {
+  const parties: string[] = [];
+  for (const [outil, [un, plusieurs]] of Object.entries(LIBELLES_ACTION)) {
+    const n = etapes.filter((e) => e.outil === outil && !e.sortie.startsWith("refus")).length;
+    if (n > 0) parties.push(`${n} ${n > 1 ? plusieurs : un}`);
+  }
+  const refusees = etapes.filter((e) => (OUTILS_D_ACTION as readonly string[]).includes(e.outil) && e.sortie.startsWith("refus")).length;
+  if (refusees > 0) parties.push(`${refusees} action${refusees > 1 ? "s" : ""} refusée${refusees > 1 ? "s" : ""}`);
+  return parties.length > 0 ? parties.join(" · ") : "lecture seule";
+}
