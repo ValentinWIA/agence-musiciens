@@ -1,6 +1,6 @@
 "use client";
 
-import { startTransition, useActionState } from "react";
+import { startTransition, useActionState, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,16 +15,87 @@ const classeZoneTexte =
 
 const classeResume = classeZoneTexte.replace("min-h-48", "min-h-16");
 
-export function DepotCourrier() {
+const MODELES = [
+  { valeur: "claude-haiku-5-5", libelle: "Haiku 5.5 (par défaut, ≈ 0,001 $)" },
+  { valeur: "claude-sonnet-5-5", libelle: "Sonnet 5.5 (courrier complexe, ≈ 0,015 $)" },
+];
+
+function ChoixModele({ modele, setModele }: { modele: string; setModele: (m: string) => void }) {
+  return (
+    <div className="flex items-center gap-2">
+      <Label htmlFor="modele" className="text-xs font-normal text-muted-foreground">
+        Lecture par
+      </Label>
+      <NativeSelect id="modele" size="sm" value={modele} onChange={(e) => setModele(e.target.value)}>
+        {MODELES.map((m) => (
+          <NativeSelectOption key={m.valeur} value={m.valeur}>
+            {m.libelle}
+          </NativeSelectOption>
+        ))}
+      </NativeSelect>
+    </div>
+  );
+}
+
+// Le courriel ouvert à droite de la boîte (variante A, 26/10) : on le lit, puis « Faire lire par l'IA » ; la relecture
+// prend la place du bouton. Le serveur relit le texte du courriel en base (seul son identifiant est envoyé).
+export function LectureCourriel({ courriel }: { courriel: { id: string; objet: string; expediteur: string; date: string | null; texte: string } }) {
   const [etat, lire, enLecture] = useActionState<EtatLecture, FormData>(lireCourrier, {});
+  const [modele, setModele] = useState(MODELES[0].valeur);
+  const lu = etat.lecture && etat.texte && etat.modele;
 
   return (
-    <div className="grid gap-6">
+    <>
+      <div className="grid gap-1 border-b pb-3">
+        <h2 className="font-logo text-2xl leading-tight">{courriel.objet}</h2>
+        <p className="text-sm break-words text-muted-foreground">
+          {courriel.expediteur}
+          {courriel.date && ` · ${courriel.date}`}
+        </p>
+      </div>
+      <p className={`text-sm whitespace-pre-line ${lu ? "max-h-40 overflow-y-auto text-muted-foreground" : ""}`}>{courriel.texte}</p>
+      {lu ? (
+        <Validation key={etat.lectures} lecture={etat.lecture!} texte={etat.texte!} modele={etat.modele!} courriel={courriel.id} />
+      ) : (
+        <div className="flex flex-wrap items-center gap-4">
+          <Button
+            type="button"
+            disabled={enLecture}
+            onClick={() => {
+              const donnees = new FormData();
+              donnees.set("courriel", courriel.id);
+              donnees.set("modele", modele);
+              startTransition(() => lire(donnees));
+            }}
+          >
+            {enLecture ? "Lecture par l'IA…" : "Faire lire par l'IA"}
+          </Button>
+          <ChoixModele modele={modele} setModele={setModele} />
+        </div>
+      )}
+      {etat.erreur && (
+        <p role="alert" className="text-sm text-destructive">
+          {etat.erreur}
+        </p>
+      )}
+    </>
+  );
+}
+
+// « + Coller un texte ou un PDF » : le dépôt d'avant, à droite de la boîte (téléphone, courrier papier scanné).
+export function SaisieManuelle() {
+  const [etat, lire, enLecture] = useActionState<EtatLecture, FormData>(lireCourrier, {});
+  const [modele, setModele] = useState(MODELES[0].valeur);
+
+  return (
+    <>
+      <h2 className="border-b pb-3 font-logo text-2xl leading-tight">Coller un texte ou déposer un PDF</h2>
       <form
         // Envoi sans la remise à zéro automatique de React : elle viderait le texte collé après un refus.
         onSubmit={(e) => {
           e.preventDefault();
           const donnees = new FormData(e.currentTarget);
+          donnees.set("modele", modele);
           startTransition(() => lire(donnees));
         }}
         className="grid gap-4"
@@ -33,28 +104,15 @@ export function DepotCourrier() {
           <Label htmlFor="texte">Texte du courrier</Label>
           <textarea id="texte" name="texte" className={classeZoneTexte} placeholder="Collez ici le texte du courrier…" />
         </div>
-        <div className="flex flex-wrap items-end gap-4">
-          <div className="grid gap-2">
-            <Label htmlFor="fichier">ou un fichier (.txt ou .pdf, 2 Mo au plus)</Label>
-            <Input id="fichier" name="fichier" type="file" accept=".txt,.pdf,text/plain,application/pdf" className="w-72" />
-          </div>
-          <div className="grid gap-2">
-            <Label htmlFor="modele">Modèle</Label>
-            <NativeSelect id="modele" name="modele" defaultValue="claude-haiku-5-5">
-              <NativeSelectOption value="claude-haiku-5-5">Haiku 5.5 (par défaut, ≈ 0,001 $)</NativeSelectOption>
-              <NativeSelectOption value="claude-sonnet-5-5">Sonnet 5.5 (courrier complexe, ≈ 0,015 $)</NativeSelectOption>
-            </NativeSelect>
-          </div>
+        <div className="grid gap-2">
+          <Label htmlFor="fichier">ou un fichier (.txt ou .pdf, 2 Mo au plus)</Label>
+          <Input id="fichier" name="fichier" type="file" accept=".txt,.pdf,text/plain,application/pdf" className="w-72 max-w-full" />
         </div>
-        <div className="flex flex-wrap items-center gap-3">
+        <div className="flex flex-wrap items-center gap-4">
           <Button type="submit" disabled={enLecture} className="w-fit">
             {enLecture ? "Lecture du courrier par l'IA…" : "Lire le courrier"}
           </Button>
-          {/* Bouton fictif (décidé le 19/10) : la réception des courriels n'est pas branchée. */}
-          <Button type="button" variant="outline" disabled title="En développement">
-            Importer les mails
-          </Button>
-          <span className="text-xs text-muted-foreground">Import des mails : en développement.</span>
+          <ChoixModele modele={modele} setModele={setModele} />
         </div>
         {etat.erreur && (
           <p role="alert" className="text-sm text-destructive">
@@ -62,23 +120,22 @@ export function DepotCourrier() {
           </p>
         )}
       </form>
-
       {etat.lecture && etat.texte && etat.modele && (
         // Une nouvelle lecture remplace entièrement le formulaire de la précédente.
         <Validation key={etat.lectures} lecture={etat.lecture} texte={etat.texte} modele={etat.modele} />
       )}
-    </div>
+    </>
   );
 }
 
-function Validation({ lecture, texte, modele }: { lecture: LectureVerifiee; texte: string; modele: string }) {
+function Validation({ lecture, texte, modele, courriel }: { lecture: LectureVerifiee; texte: string; modele: string; courriel?: string }) {
   const [etat, valider, enCours] = useActionState<EtatValidation, FormData>(validerCourrier, {});
   const aRelire = CHAMPS.filter((c) => lecture[c].etat === "a_relire").length;
 
   if (etat.reussi) {
     return (
       <p role="status" className="text-sm">
-        Courrier enregistré : il apparaît dans la liste ci-dessous.
+        Courrier enregistré : il est dans l&apos;onglet « Enregistrés ».
       </p>
     );
   }
@@ -102,6 +159,7 @@ function Validation({ lecture, texte, modele }: { lecture: LectureVerifiee; text
       </div>
       <input type="hidden" name="texte" value={texte} />
       <input type="hidden" name="modele" value={modele} />
+      {courriel && <input type="hidden" name="courriel" value={courriel} />}
       {CHAMPS.map((nom) => (
         <ChampLu key={nom} nom={nom} libelle={LIBELLES_CHAMP[nom]} champ={lecture[nom]} />
       ))}
