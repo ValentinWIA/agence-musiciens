@@ -20,8 +20,15 @@ export function BulleAssistant({ origine }: { origine: string }) {
     if (!ouvert) return;
     if (ordinateur()) panneau.current?.querySelector("textarea")?.focus(); // sur téléphone, pas de clavier d'office
     const echap = (e: KeyboardEvent) => e.key === "Escape" && setOuvert(false);
+    // Sur ordinateur, un clic hors du panneau le ferme (retour du 26/10) ; le clic agit aussi sur la page.
+    // Sur téléphone, c'est le voile qui reçoit le toucher.
+    const dehors = (e: PointerEvent) => ordinateur() && !panneau.current?.contains(e.target as Node) && setOuvert(false);
     document.addEventListener("keydown", echap);
-    return () => document.removeEventListener("keydown", echap);
+    document.addEventListener("pointerdown", dehors);
+    return () => {
+      document.removeEventListener("keydown", echap);
+      document.removeEventListener("pointerdown", dehors);
+    };
   }, [ouvert]);
 
   if (chemin.startsWith("/assistant")) return null; // la page elle-même a le formulaire
@@ -38,9 +45,17 @@ export function BulleAssistant({ origine }: { origine: string }) {
           <MessageCircle className="size-6" />
         </button>
       )}
-      {/* Voile du téléphone : la page reste visible au-dessus du volet ; le toucher ferme. cursor-pointer : sans lui,
-          Safari sur iPhone ne transmet pas le toucher d'un simple bloc (retour du 26/10). */}
-      {ouvert && <div aria-hidden onClick={() => setOuvert(false)} className="fixed inset-0 z-40 cursor-pointer bg-black/35 md:hidden" />}
+      {/* Voile du téléphone : la page reste visible au-dessus du volet ; le toucher ferme. Un bouton et non un bloc :
+          Safari sur iPhone transmet toujours le toucher d'un bouton (retour du 26/10 : rien ne se passait). */}
+      {ouvert && (
+        <button
+          type="button"
+          tabIndex={-1}
+          aria-label="Fermer l'assistant"
+          onClick={() => setOuvert(false)}
+          className="fixed inset-0 z-40 cursor-pointer bg-black/35 md:hidden"
+        />
+      )}
       <div
         ref={panneau}
         role="dialog"
