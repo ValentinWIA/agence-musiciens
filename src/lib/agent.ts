@@ -3,9 +3,20 @@ import path from "node:path";
 import { createSdkMcpServer, query } from "@anthropic-ai/claude-agent-sdk";
 import { and, eq, lt, sql } from "drizzle-orm";
 import { db } from "@/db";
-import { appelsIa, executionsAgent } from "@/db/schema";
+import { appelsIa, executionsAgent, utilisateurs } from "@/db/schema";
 import { outilsDeLAgent, type Etape, type Utilisateur } from "./agent-outils";
-import { CONSIGNE, dollarsEnMillioniemes, etatFinal, MAX_DOLLARS, MAX_SECONDES, MAX_TOURS, VERROU_PERIME_MINUTES, type EtatAgent } from "./agent-regles";
+import {
+  avecPageOuverte,
+  CONSIGNE,
+  dollarsEnMillioniemes,
+  etatFinal,
+  MAX_DOLLARS,
+  MAX_SECONDES,
+  MAX_TOURS,
+  VERROU_PERIME_MINUTES,
+  type EtatAgent,
+  type PageOuverte,
+} from "./agent-regles";
 import { MODELE_PAR_FONCTION, verifierLimites } from "./ia";
 
 // Le moteur de l'agent (docs/semaine-4.md, sections 2 à 8) : limites, verrou, SDK d'agents, journal, coût.
@@ -22,6 +33,7 @@ export async function executerAgent(
   porte: "page" | "mcp",
   demande: string,
   surEtape?: (etape: Etape) => void,
+  page: PageOuverte | null = null, // bulle de chaque page seulement
 ): Promise<ResultatAgent> {
   if (utilisateur.role !== "admin") {
     console.warn(`Accès refusé : ${utilisateur.nom} (musicien) sur l'agent`);
@@ -43,7 +55,8 @@ export async function executerAgent(
   try {
     [{ id: executionId }] = await db
       .insert(executionsAgent)
-      .values({ utilisateurId: utilisateur.id, porte, demande })
+      // Au journal, la demande et la page qui l'accompagnait : ce que le modèle a reçu se relit.
+      .values({ utilisateurId: utilisateur.id, porte, demande: page ? `${demande}\n(page ouverte : ${page.chemin})` : demande })
       .returning({ id: executionsAgent.id });
   } catch (e) {
     // 23505 : l'index « un seul agent en cours » refuse la ligne.
@@ -56,6 +69,10 @@ export async function executerAgent(
   }
 
   const journal: Etape[] = [];
+  const nomMusicien =
+    page?.type === "musicien"
+      ? ((await db.select({ nom: utilisateurs.nom }).from(utilisateurs).where(eq(utilisateurs.id, page.id)).catch(() => []))[0]?.nom ?? null)
+      : null;
   const modele = MODELE_PAR_FONCTION.agent;
   const outils = outilsDeLAgent(utilisateur, demande, executionId, journal, surEtape);
   const debut = Date.now();
@@ -75,7 +92,7 @@ export async function executerAgent(
   let jetonsSortie = 0;
   try {
     for await (const message of query({
-      prompt: demande,
+      prompt: avecPageOuverte(demande, page, nomMusicien),
       options: {
         model: modele,
         systemPrompt: CONSIGNE,

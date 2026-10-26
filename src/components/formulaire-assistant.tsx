@@ -1,11 +1,11 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { ReponseAssistant } from "@/components/reponse-assistant";
-import { DEMANDE_MAX, LIBELLES_ETAT_AGENT, type EtatAgent } from "@/lib/agent-regles";
+import { DEMANDE_MAX, LIBELLES_ETAT_AGENT, LIBELLES_PAGE, lirePageOuverte, type EtatAgent } from "@/lib/agent-regles";
 import { formaterDollars } from "@/lib/couts-ia";
 import { relireCompteurs } from "@/app/(connecte)/compteur";
 
@@ -22,6 +22,9 @@ const EXEMPLES = [
 // docs/semaine-4.md section 11 : deux exemples courts, compteur près de la limite seulement, réponse allégée).
 export function FormulaireAssistant({ origine, compact = false }: { origine: string; compact?: boolean }) {
   const router = useRouter();
+  // Dans la bulle, la fiche ouverte accompagne la demande (T2) ; sur /assistant, aucune.
+  const chemin = usePathname(); // toujours appelé : un hook ne se met pas sous condition
+  const page = compact ? lirePageOuverte(chemin) : null;
   const [demande, setDemande] = useState("");
   const [enCours, setEnCours] = useState(false);
   const [etapes, setEtapes] = useState<{ outil: string; refus: boolean; alerte: boolean }[]>([]);
@@ -38,7 +41,7 @@ export function FormulaireAssistant({ origine, compact = false }: { origine: str
       const res = await fetch("/api/agent", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ demande }),
+        body: JSON.stringify({ demande, page: page?.chemin }),
       });
       if (!res.ok || !res.body) {
         const corps = await res.json().catch(() => null);
@@ -73,6 +76,12 @@ export function FormulaireAssistant({ origine, compact = false }: { origine: str
   return (
     <div className="grid gap-4">
       <form onSubmit={envoyer} className="grid gap-3">
+        {page && (
+          <p className="flex items-center gap-2 text-xs text-muted-foreground">
+            <span aria-hidden className="size-1.5 rounded-full bg-or" />
+            Page ouverte : {LIBELLES_PAGE[page.type]}
+          </p>
+        )}
         <Label htmlFor={compact ? "demande-bulle" : "demande"} className={compact ? "sr-only" : undefined}>
           Votre demande
         </Label>

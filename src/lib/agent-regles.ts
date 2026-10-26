@@ -62,6 +62,45 @@ export function dollarsEnMillioniemes(dollars: number): number {
   return Math.round(dollars * 1_000_000);
 }
 
+// La page ouverte quand l'agente écrit dans la bulle (docs/semaine-4.md section 11, T2) : une fiche seulement,
+// reconnue par son adresse ; tout le reste est ignoré. C'est une indication : on peut demander autre chose.
+const FICHES = { engagements: "engagement", demandes: "demande", courriers: "courrier", musiciens: "musicien" } as const;
+export type PageOuverte = { type: (typeof FICHES)[keyof typeof FICHES]; id: string; chemin: string };
+export const LIBELLES_PAGE: Record<PageOuverte["type"], string> = {
+  engagement: "fiche d'un engagement",
+  demande: "fiche d'une demande reçue",
+  courrier: "un courrier",
+  musicien: "fiche d'un musicien",
+};
+
+export function lirePageOuverte(chemin: unknown): PageOuverte | null {
+  if (typeof chemin !== "string") return null;
+  const m = /^\/(engagements|demandes|courriers|musiciens)\/([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})$/i.exec(chemin);
+  return m ? { type: FICHES[m[1] as keyof typeof FICHES], id: m[2], chemin } : null;
+}
+
+// Ce que reçoit le modèle : la page en indication, puis la demande. nomMusicien : lu en base pour une fiche musicien
+// (ajouter_note attend un nom) ; sans lui, la page n'est pas donnée.
+export function avecPageOuverte(demande: string, page: PageOuverte | null, nomMusicien?: string | null): string {
+  const quoi = !page
+    ? null
+    : page.type === "engagement"
+      ? `la fiche de l'engagement ${page.id} (outil lire_engagement)`
+      : page.type === "demande"
+        ? `la demande reçue ${page.id} (outil lire_demande)`
+        : page.type === "courrier"
+          ? `le courrier ${page.id} (outil lire_courrier)`
+          : nomMusicien
+            ? `la fiche du musicien ${nomMusicien}`
+            : null;
+  if (!quoi) return demande;
+  return (
+    `Page ouverte par l'agente pendant qu'elle écrit : ${quoi}. Elle ne sert que si la demande y renvoie (« celui-ci », ` +
+    `« cette demande », « ce musicien », « ici ») ; si la demande nomme un autre engagement, une autre demande ou un autre ` +
+    `musicien, c'est celui-là qu'il faut traiter.\n\nDemande : ${demande}`
+  );
+}
+
 export function verifierDemande(saisie: unknown): { demande: string } | { erreur: string } {
   const demande = typeof saisie === "string" ? saisie.trim() : "";
   if (!demande) return { erreur: "Écrivez une demande." };

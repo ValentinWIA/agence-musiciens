@@ -1,6 +1,6 @@
 import { auth } from "@/auth";
 import { executerAgent } from "@/lib/agent";
-import { verifierDemande } from "@/lib/agent-regles";
+import { lirePageOuverte, verifierDemande } from "@/lib/agent-regles";
 
 // Une demande à l'assistant (docs/semaine-4.md, tranche A3). Réponse en streaming, une ligne JSON par message :
 // { etape } à chaque outil appelé, puis { resultat } ou { erreur }.
@@ -18,6 +18,8 @@ export async function POST(requete: Request) {
   const corps: unknown = await requete.json().catch(() => null);
   const lu = verifierDemande((corps as { demande?: unknown } | null)?.demande);
   if ("erreur" in lu) return Response.json(lu, { status: 400 });
+  // La page ouverte (bulle) : seulement une fiche du site, reconnue par son adresse ; tout autre texte est ignoré.
+  const page = lirePageOuverte((corps as { page?: unknown }).page);
 
   const encodeur = new TextEncoder();
   const flux = new ReadableStream({
@@ -26,6 +28,7 @@ export async function POST(requete: Request) {
       try {
         const resultat = await executerAgent({ id, nom, role }, "page", lu.demande, (etape) =>
           envoyer({ etape: { outil: etape.outil, refus: etape.sortie.startsWith("refus : "), alerte: etape.alerte === true } }),
+          page,
         );
         envoyer(resultat.ok ? { resultat } : { erreur: resultat.erreur });
       } finally {
