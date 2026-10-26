@@ -11,6 +11,11 @@ export const statutDemande = pgEnum("statut_demande", ["demandee", "confirmee", 
 export const declencheur = pgEnum("declencheur", ["cron", "bouton"]);
 export const etatExecution = pgEnum("etat_execution", ["en_cours", "reussie", "en_echec"]);
 export const etatEvenement = pgEnum("etat_evenement", ["traite", "doublon", "mis_de_cote"]);
+export const porteAgent = pgEnum("porte_agent", ["page", "mcp"]);
+// = ETATS_AGENT (src/lib/agent-regles.ts)
+export const etatAgent = pgEnum("etat_agent", ["en_cours", "terminee", "arretee_tours", "arretee_budget", "arretee_duree", "en_echec"]);
+// = ETATS_PROPOSITION (src/lib/propositions.ts)
+export const etatProposition = pgEnum("etat_proposition", ["en_attente", "envoi_en_cours", "envoyee", "non_envoyee", "refusee"]);
 
 // L'agent (admin) et les musiciens. Les programmateurs n'ont pas de compte.
 export const utilisateurs = pgTable("utilisateurs", {
@@ -253,3 +258,48 @@ export const passages = pgTable(
   },
   (t) => [uniqueIndex("passages_document_page").on(t.documentId, t.page)],
 );
+
+// Une demande faite à l'agent et son journal (docs/semaine-4.md, section 7). Jamais vidée par le jeu de données :
+// c'est le journal qu'on relit après les scénarios et qu'on montre à la démo.
+export const executionsAgent = pgTable("executions_agent", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  utilisateurId: uuid("utilisateur_id").references(() => utilisateurs.id, { onDelete: "set null" }),
+  porte: porteAgent("porte").notNull(),
+  demande: text("demande").notNull(),
+  etat: etatAgent("etat").notNull().default("en_cours"),
+  debutLe: timestamp("debut_le", { withTimezone: true }).notNull().defaultNow(),
+  finLe: timestamp("fin_le", { withTimezone: true }),
+  tours: integer("tours"),
+  cout: integer("cout"), // en millionièmes de dollar, estimé par le SDK
+  reponse: text("reponse"),
+  erreur: text("erreur"),
+  // Chaque appel d'outil : son nom, ce qu'on lui a demandé, un résumé de ce qu'il a renvoyé (ou son refus).
+  etapes: jsonb("etapes").$type<{ outil: string; entree: unknown; sortie: string; alerte?: true }[]>().notNull().default([]),
+}, (t) => [
+  // Verrou : une seule exécution de l'agent à la fois (deux demandes ne travaillent jamais sur le même dossier).
+  uniqueIndex("un_seul_agent_en_cours").on(t.etat).where(sql`${t.etat} = 'en_cours'`),
+]);
+
+// Un courriel préparé par l'assistant, qui attend la décision de l'agente sur /validations (docs/semaine-4.md,
+// section 6). L'assistant ne sait qu'écrire cette ligne : seul « Envoyer » fait partir le courriel.
+export const propositions = pgTable("propositions", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  executionId: uuid("execution_id").references(() => executionsAgent.id, { onDelete: "set null" }),
+  // Engagement supprimé (rechargement du jeu de données) : la proposition et sa décision restent.
+  engagementId: uuid("engagement_id").references(() => engagements.id, { onDelete: "set null" }),
+  objet: text("objet").notNull(), // ce que la relance concerne, recopié : « Option — Récital, Salle Pleyel, 14 mars 2027 »
+  destinataire: text("destinataire").notNull(), // l'e-mail du programmateur, lu en base (jamais écrit par le modèle)
+  destinataireNom: text("destinataire_nom").notNull(),
+  sujet: text("sujet").notNull(),
+  texte: text("texte").notNull(), // celui qui part : modifié par l'agente s'il l'a corrigé
+  etat: etatProposition("etat").notNull().default("en_attente"),
+  erreur: text("erreur"), // dernier échec d'envoi
+  creeLe: timestamp("cree_le", { withTimezone: true }).notNull().defaultNow(),
+  decideLe: timestamp("decide_le", { withTimezone: true }),
+  decidePar: uuid("decide_par").references(() => utilisateurs.id, { onDelete: "set null" }),
+}, (t) => [
+  // Une seule relance en attente par engagement (dérive n° 2) : la base refuse la seconde, même simultanée.
+  uniqueIndex("une_relance_en_attente_par_engagement")
+    .on(t.engagementId)
+    .where(sql`${t.etat} in ('en_attente', 'envoi_en_cours')`),
+]);

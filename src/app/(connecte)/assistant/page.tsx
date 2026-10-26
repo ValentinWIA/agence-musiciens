@@ -1,0 +1,143 @@
+import { desc, sql } from "drizzle-orm";
+import Link from "next/link";
+import { Suspense } from "react";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { PAGE_LARGE } from "@/components/mise-en-page";
+import { db } from "@/db";
+import { executionsAgent } from "@/db/schema";
+import { LIBELLES_ETAT_AGENT, MAX_DOLLARS, MAX_SECONDES, MAX_TOURS, OUTILS_D_ACTION } from "@/lib/agent-regles";
+import { formaterDollars } from "@/lib/couts-ia";
+import { verifierAdmin } from "@/lib/session";
+import { FormulaireAssistant } from "./formulaire-assistant";
+import { TexteAvecLiens } from "@/components/texte-avec-liens";
+import { origineDuSite } from "@/lib/origine";
+
+const LIMITE_JOURNAL = 50; // 20 jusqu'au 26/10 : une rafale de 24 appels par MCP cachait ses premières actions
+
+export default function PageAssistant({ searchParams }: PageProps<"/assistant">) {
+  return (
+    <main className={`${PAGE_LARGE} grid gap-6 py-4`}>
+      <h1 className="font-logo text-4xl leading-tight">Assistant</h1>
+      <Suspense fallback={<div className="h-48 animate-pulse rounded-md bg-muted" aria-label="Chargement" />}>
+        <ContenuAssistant searchParams={searchParams} />
+      </Suspense>
+    </main>
+  );
+}
+
+async function ContenuAssistant({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
+  await verifierAdmin("/assistant"); // un musicien ne voit jamais cette page
+  // « Actions seulement » : les demandes où un outil d'action a été appelé (retour du 26/10).
+  const actionsSeulement = (await searchParams).vue === "actions";
+  const executions = await db
+    .select()
+    .from(executionsAgent)
+    .where(
+      actionsSeulement
+        ? sql`exists (select 1 from jsonb_array_elements(${executionsAgent.etapes}) e where e->>'outil' in (${sql.join(
+            OUTILS_D_ACTION.map((o) => sql`${o}`),
+            sql`, `,
+          )}))`
+        : undefined,
+    )
+    .orderBy(desc(executionsAgent.debutLe))
+    .limit(LIMITE_JOURNAL);
+
+  return (
+    <>
+      <Card>
+        <CardHeader>
+          <CardTitle>Demander à l&apos;assistant</CardTitle>
+          <CardDescription>
+            L&apos;assistant (une IA) lit les engagements, les demandes reçues et les courriers pour répondre ou
+            préparer. Si vous le lui demandez, il ajoute une note sur la fiche d&apos;un musicien ou crée l&apos;engagement
+            d&apos;une demande reçue (heure et musiciens écrits dans votre demande). Il n&apos;envoie rien et ne supprime
+            rien. Il peut se tromper : relisez sa réponse. Chaque
+            demande s&apos;arrête après {MAX_TOURS} tours, {MAX_DOLLARS.toLocaleString("fr-FR")} $ ou {MAX_SECONDES} s,
+            et compte sur la page{" "}
+            <Link href="/couts?depuis=assistant" className="underline">
+              Coûts
+            </Link>
+            .
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <FormulaireAssistant origine={origineDuSite()} />
+        </CardContent>
+      </Card>
+      <Card>
+        <CardHeader>
+          <CardTitle>Journal</CardTitle>
+          <CardDescription>
+            Les {LIMITE_JOURNAL} dernières demandes et, pour chacune, les outils appelés et ce qu&apos;ils ont renvoyé.
+            Par MCP, chaque appel d&apos;outil est une ligne.
+          </CardDescription>
+          <p className="text-sm">
+            {actionsSeulement ? (
+              <Link href="/assistant" className="underline">
+                Toutes les demandes
+              </Link>
+            ) : (
+              <span className="font-medium">Toutes les demandes</span>
+            )}
+            {" · "}
+            {actionsSeulement ? (
+              <span className="font-medium">Actions seulement</span>
+            ) : (
+              <Link href="/assistant?vue=actions" className="underline">
+                Actions seulement
+              </Link>
+            )}
+          </p>
+        </CardHeader>
+        <CardContent className="grid gap-2">
+          {executions.length === 0 && (
+            <p className="text-sm text-muted-foreground">{actionsSeulement ? "Aucune action pour l'instant." : "Aucune demande pour l'instant."}</p>
+          )}
+          {executions.map((x) => (
+            <details key={x.id} className="rounded-md border px-3 py-2 text-sm">
+              <summary className="cursor-pointer">
+                <span className="text-muted-foreground">
+                  {x.debutLe.toLocaleString("fr-FR", { timeZone: "Europe/Paris", dateStyle: "short", timeStyle: "short" })}
+                  {x.porte === "mcp" && " · MCP"}
+                </span>{" "}
+                « {x.demande.length > 80 ? `${x.demande.slice(0, 80)}…` : x.demande} »{" "}
+                <Badge variant={x.etat === "terminee" ? "secondary" : x.etat === "en_cours" ? "outline" : "destructive"}>
+                  {LIBELLES_ETAT_AGENT[x.etat]}
+                </Badge>{" "}
+                <span className="text-muted-foreground">
+                  {x.etapes.length} outil{x.etapes.length > 1 ? "s" : ""}
+                  {x.etapes.some((e) => e.alerte) && <span className="text-orange-700 dark:text-orange-400"> · ⚠ consigne signalée</span>}
+                  {x.cout !== null && ` · ${formaterDollars(x.cout)}`}
+                  {x.finLe && ` · ${Math.round((x.finLe.getTime() - x.debutLe.getTime()) / 1000)} s`}
+                </span>
+              </summary>
+              <div className="mt-3 grid gap-3">
+                {x.etapes.map((e, i) => (
+                  <div key={i} className="grid gap-1">
+                    <p className="font-mono text-xs">
+                      {i + 1}. {e.outil} {JSON.stringify(e.entree)}
+                    </p>
+                    {e.alerte && (
+                      <p className="text-xs font-medium text-orange-700 dark:text-orange-400">
+                        ⚠ Consigne possible dans les données : à ne pas suivre (voir la réponse et les outils appelés ensuite).
+                      </p>
+                    )}
+                    <p className="whitespace-pre-line text-xs text-muted-foreground">{e.sortie}</p>
+                  </div>
+                ))}
+                {x.reponse && (
+                  <p className="whitespace-pre-line border-l-2 border-primary pl-3">
+                    <TexteAvecLiens texte={x.reponse} origine={origineDuSite()} />
+                  </p>
+                )}
+                {x.erreur && <p className="text-destructive">{x.erreur}</p>}
+              </div>
+            </details>
+          ))}
+        </CardContent>
+      </Card>
+    </>
+  );
+}

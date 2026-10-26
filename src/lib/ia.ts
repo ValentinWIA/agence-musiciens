@@ -13,6 +13,7 @@ export const MODELE_PAR_FONCTION = {
   question: "claude-haiku-5-5",
   analyse: "claude-haiku-5-5",
   brouillon: "claude-haiku-5-5",
+  agent: "claude-haiku-5-5", // appelé par le SDK d'agents (src/lib/agent.ts), compté ici comme les autres
 } as const satisfies Record<string, Modele>;
 export type FonctionIa = keyof typeof MODELE_PAR_FONCTION;
 
@@ -24,7 +25,8 @@ export async function depenseDuMois(): Promise<number> {
   return Number(total ?? 0);
 }
 
-async function verifierLimites(utilisateurId: string | null): Promise<string | null> {
+// Aussi appelée par l'agent, qui passe par le SDK d'agents et non par appelerModele.
+export async function verifierLimites(utilisateurId: string | null): Promise<string | null> {
   const [depense, [{ appels }]] = await Promise.all([
     depenseDuMois(),
     db

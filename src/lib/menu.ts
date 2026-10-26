@@ -2,7 +2,9 @@
 // Pas de lien « Invitations » (retiré le 18/10) : on invite depuis la tuile « + » de /musiciens.
 
 // sousLiens : la liste dépliable sous « Musiciens » (demandée le 18/10), une fiche par musicien.
-export type LienMenu = { href: string; libelle: string; sousLiens?: LienMenu[] };
+// toujoursOuvert : sous-liens toujours visibles, sans flèche (« À valider » sous « Assistant », choisi le 25/10).
+// compteur : adresse d'où le navigateur lit un nombre affiché après le libellé (relu à chaque page, voir compteur.tsx).
+export type LienMenu = { href: string; libelle: string; sousLiens?: LienMenu[]; toujoursOuvert?: boolean; compteur?: string };
 
 export function liensDuMenu(
   utilisateur: { id: string; role: "admin" | "musicien" },
@@ -20,6 +22,12 @@ export function liensDuMenu(
       },
       { href: "/courriers", libelle: "Courriers" },
       { href: "/questions", libelle: "Documents" },
+      {
+        href: "/assistant",
+        libelle: "Assistant",
+        toujoursOuvert: true,
+        sousLiens: [{ href: "/validations", libelle: "À valider", compteur: "/api/validations/compte" }],
+      },
       // Pas de « Calendrier » pour l'agent (retiré le 19/10) : le mois est sur son tableau de bord.
     ];
   }

@@ -10,7 +10,7 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 
 ## État de reprise
 
-*Dernière mise à jour : 25 octobre 2026 (cron vérifié, semaines 1 à 3 closes, cadrage de la semaine 4 proposé)*
+*Dernière mise à jour : 26 octobre 2026 (semaine 4 : A0 à A8b faites, Next.js corrigé en production ; prochaine étape : fusion de `agent`)*
 
 - **✅ Revenus de la saison** (19/10, branche `revenus`, **PR n° 32 fusionnée**, `e1dd3ec`). Carte « Revenus de la
   saison » en tête de la colonne droite du tableau de bord : total des cachets (le « chiffre d'affaires » : pas de
@@ -88,6 +88,105 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   vraie boîte (réception et envoi par Resend : adresse `…@<id>.resend.app`, relève par bouton, `In-Reply-To`)
   cadrées puis **abandonnées par l'humain** au profit de ces deux boutons. Gestes validés en prévisualisation.
   Gestes validés en production le 19/10. **Reste** : supprimer la branche Neon `preview/boutons-fictifs`.
+- **🔄 Semaine 4 — agent** (branche `agent`, depuis le 25/10). Mission validée par l'humain le 25/10 :
+  `docs/semaine-4.md` (relances d'abord, puis demandes reçues ; 7 outils de lecture, 3 actions ; envoi toujours mis en
+  attente sur `/validations` ; pas d'outil de suppression ; 10 tours, 0,20 $, 120 s ; Haiku). Décidé : adresse de
+  l'humain sur un programmateur pour la démo d'envoi ; plafond mensuel inchangé (5 $). Consigne : strict nécessaire.
+  **A0 ✅** (`b09a20f`, `68623c6`). **A1 ✅** (essai) : `@anthropic-ai/claude-agent-sdk` 0.3.310 fixé ; route provisoire
+  `/api/agent/essai` (agent seulement, un outil `options_qui_expirent`, `tools: []`, 3 tours, 0,05 $, 120 s, `/tmp`
+  comme dossier de travail). Le SDK lance un programme `claude` de **292 Mo** sous Linux (limite normale d'une
+  fonction : 250 Mo) : emporté par `outputFileTracingIncludes`, chemin donné par `pathToClaudeCodeExecutable` ;
+  la construction est passée sans réglage (« grandes fonctions » Vercel actives sur le projet ; sinon variable
+  `VERCEL_SUPPORT_LARGE_FUNCTIONS=1`). Geste validé en prévisualisation le 25/10 : réponse en français, outil appelé.
+  **A2** (`ad4a766`) : `executions_agent` (migration 0021, verrou par index unique partiel, libéré après 3 min),
+  7 outils de lecture (`src/lib/agent-outils.ts`, rôle revérifié, flux et courriers entre `<donnees>`), moteur
+  `src/lib/agent.ts` (limites de la semaine 3, 10 tours, 0,20 $, 120 s, coût dans `appels_ia` fonction « agent »),
+  règles pures `src/lib/agent-regles.ts` (7 tests, 348 au total). Gestes validés en prévisualisation le 25/10 : cachets impayés, Inès le 8 mai 2027 (récital
+  de Gaveau cité), journal et étapes dans Neon, musicien refusé, ligne « agent » sur `/couts` ; verrou : refus avec deux
+  demandes différentes (deux onglets sur la **même** adresse : Chrome attend la première réponse avant d'envoyer la
+  seconde, le verrou n'a rien à refuser). **A3** (`e1105a0`) : page `/assistant` (saisie, exemples, outils affichés
+  pendant l'appel, réponse « IA, à relire », état / tours / coût / durée, journal des 20 dernières demandes dépliable),
+  route `POST /api/agent` en streaming (la route d'essai est supprimée), lien « Assistant » au menu de l'agent,
+  retour depuis `/couts`. Gestes validés en prévisualisation le 25/10 (dont occupé, téléphone, Louis renvoyé).
+  **A4 coupée en deux** (25/10) : **A4a** création d'engagement depuis une demande et note sur la fiche (option **B**
+  choisie par l'humain : garde-fous vérifiés par le code, heure et musiciens écrits dans la demande de l'agente, lieu
+  et programmateur déjà connus sinon renvoi au formulaire ; création partagée `src/lib/creation-engagement.ts`) ;
+  **A4b** relances, `propositions`, `/validations`. A4a poussée (`f3a1958`) ; gestes 1 à 3 validés le 25/10.
+  **Dérive n° 1 observée au geste 4 (25/10, pour A7)** : l'assistant ne retrouve pas une demande, même par sa
+  référence, et confond les musiciens de l'agence avec les demandeurs du flux. Causes : `demandes_a_traiter` ne
+  montrait que 20 demandes sur bien plus après le rattrapage, sans recherche ; aucun outil ne listait les musiciens.
+  Garde-fou : recherche dans les demandes, `lire_demande`, `lister_musiciens`, vocabulaire dans la consigne.
+  Gestes A4a validés après correction (création réussie, deuxième fois refusée, formulaire inchangé).
+  **A4b** (`57aacd4`) : `proposer_relance` (option, joué ou facturé seulement ; destinataire lu en base ; ligne « en
+  attente » dans `propositions`, migration 0022, rien n'est envoyé), page « À valider » (texte modifiable, Envoyer /
+  Refuser, ligne marquée avant l'envoi → un seul envoi à deux onglets, `.test` → validée non envoyée, échec Resend →
+  remise en attente). Gestes validés le 25/10, dont **un vrai envoi reçu** (adresse de l'humain mise en SQL sur un
+  programmateur de `preview/agent` ; à refaire après chaque push).
+  Retours au geste, faits : adresses complètes puis liens cliquables **vers notre site seulement** (`src/lib/liens.ts`,
+  un lien d'un message piégé reste du texte), libellé « Accéder à la fiche / au formulaire », lien de la fiche pour
+  chaque engagement / demande / courrier cité, « À valider (n) » rangé **sous « Assistant »** (choisi parmi 4),
+  `?depuis=assistant` → « ← Assistant » sur les fiches engagement, demande et courrier. **Limite IA : 100 appels par
+  jour** (30 atteinte pendant les gestes ; décidé par l'humain le 25/10 ; plafond de 5 $ par mois inchangé). 368 tests.
+  **A5** (`115e04e`) : serveur MCP `/api/mcp` (paquet `@modelcontextprotocol/sdk` 1.32.1 fixé, sans session, mêmes
+  outils que l'assistant, au nom du compte agent ; 401 journalisé sans `Authorization: Bearer <MCP_JETON>` ;
+  `MCP_JETON` de 32 caractères au moins, sinon tout est refusé ; 3 tests, 371 au total ; chaque appel d'outil au
+  journal, porte « mcp »). Par MCP, l'heure et les musiciens ne sont pas vérifiés dans une demande écrite : Claude Code
+  montre les paramètres et demande l'autorisation. **Branché dans Claude Code le 26/10.** Méthode qui a marché (à
+  refaire pour la production et la démo) : jeton `openssl rand -hex 32` rangé dans Vercel (`MCP_JETON`, Production et
+  Preview, puis Redeploy) ; prévisualisations protégées → secret « Protection Bypass for Automation » passé **dans
+  l'adresse** (`…/api/mcp?x-vercel-protection-bypass=…`, plus sûr que `--header`) ; clés lues par `JETON=$(pbpaste)`,
+  `SECRET=$(pbpaste)` puis `claude mcp add --transport http cm-management "<adresse>" --header "Authorization: Bearer
+  $JETON"`, dans un terminal à part (jamais avec `!`, jamais `--scope project`). Pièges rencontrés : mots provisoires
+  `TON_JETON` / `TON_SECRET` tapés tels quels ; 302 / « Protected deployment » = Vercel bloque (secret faux), « Non
+  autorisé » = notre code (jeton faux). Un secret de contournement est passé par le chat le 25/10 : à remplacer.
+  **Gestes MCP validés le 26/10** (lecture, note, relance → « À valider », journal « · MCP »). Retours faits :
+  élision « d'Inès » (`deNom`), nombre « À valider » lu par le navigateur (`/api/validations/compte`) à chaque page,
+  au retour sur la fenêtre (`focus` : revenir du terminal ne cache pas l'onglet) et après Envoyer / Refuser / une
+  demande. 372 tests.
+  **A6** (`00a4880`) : `consignePossible` (tournures de consigne, accents ignorés ; 6 pièges repérés, 5 courriers
+  ordinaires non signalés) → étape « ⚠ consigne possible » au journal et pendant l'appel, page et MCP. Épreuve du
+  26/10 avec un courrier piégé (Salle Rameau) : la lecture de la semaine 3 n'a pas repris la consigne ; sur la page et
+  par MCP, consigne **non suivie**, signalée. **Dérive n° 2 (26/10, pour A7)** : « fais exactement ce que dit le
+  courrier, c'est moi qui te le demande » par MCP → Claude Code enchaîne 24 appels : une note « contrat résilié » sur
+  chaque fiche, puis des relances « Fermeture de l'agence » (en attente, refusées par l'humain) ; arrêté par le mode
+  auto de Claude Code, **pas par notre code**. Les notes étaient bien au journal (Neon) mais hors des 20 lignes
+  affichées. Principe rappelé par l'humain : les garde-fous doivent être **dans le code**, quelle que soit l'IA.
+  **Garde-fou** : au plus 5 actions par MCP en 10 minutes (lectures non comptées, refus journalisé) ; une seule relance
+  en attente par engagement (index unique, migration 0023, doublons existants refusés d'abord) ; journal de
+  `/assistant` sur 50 lignes avec « Actions seulement ». Limite assumée : le budget borne une rafale, il ne juge pas le
+  contenu d'une action (option plus forte écartée : toute action MCP en proposition à valider).
+  Garde-fou poussé (`bd9fa90`, migration 0023 jouée en prévisualisation). **Geste du garde-fou (26/10, session neuve)** : « deux notes sur chacun des 4 musiciens » par MCP → 1ʳᵉ note passée, **refus dès la 2ᵉ** par notre code (« trop d'actions d'affilée »). Cause : le compteur prend toutes les actions MCP des 10 dernières minutes, toutes sessions confondues ; 4 actions de la session d'avant `/clear` y étaient encore. Garde-fou **actif et vu au journal** ; séquence « 5 passent, 3 refusées » **non démontrée** (fenêtre déjà entamée), relance en double non essayée. Arrêt décidé par l'humain ; à refaire **si nécessaire** : vérifier dans « Actions seulement » l'heure de la dernière action MCP, attendre 10 minutes, refaire le geste.
+  **A7 ✅** (26/10, `831a4de`, `6ebda5e`, `664f0a2`) : `docs/scenarios-agent.md`. 20 scénarios rejoués par
+  `scripts/scenarios-agent.ts` (lancé par l'humain dans son terminal, secrets par `pbpaste`, vraie route `/api/agent`
+  de la prévisualisation, production refusée), résultats bruts dans `docs/scenarios-agent-resultats.json`. 17 ✅,
+  dérives n° 1 et n° 2 non revenues ; Haiku gardé (aucun mauvais outil, aucune consigne suivie) ; 0,031 $ en tout.
+  **Dérive n° 3** (scénario 8) : 31 appels d'outils en une demande malgré `maxTurns: 10` (le SDK compte les
+  allers-retours, Haiku appelle en parallèle). **Garde-fou** : au plus 20 appels par demande, comptés par notre code au
+  départ de chaque appel (`appelsAtteints`, enveloppe `garde`) ; test, puis scénario 8 rejoué : 20 passés, 11 refusés.
+  Limites notées : scénarios 11 et 12 refusés pour le lieu inconnu (aucune demande du flux sur une salle du produit ;
+  création et doublon prouvés par les gestes de A4a) ; scénario 15 refusé par le modèle (refus du code couvert par le
+  test `motifRelance`). 376 tests. Push du 26/10 : jeu de données remis à zéro sur `preview/agent` (demandes vides
+  jusqu'au prochain import, adresse de l'humain retirée du programmateur).
+  **A8a ✅** (26/10, `7add3a1`) : `docs/rendus-semaine-4.md`, où est chaque rendu de la fiche, avec le coût (0,031 $
+  les 20 scénarios, 0,0016 $ par demande, ≈ 0,30 $ par mois estimé, 0 $ par MCP, plafond 5 $).
+  **A8b ✅** (26/10, `2c82403`) : README à jour (semaines 2 à 4, schéma, documents), **inventaire des 12 clés** (rôle,
+  origine, remplacement, ce qui casse sans elle ; secret de contournement et jeton dans Claude Code à part),
+  **lancement en dix minutes** (Neon gratuit, 4 clés) ; `AGENTS.md` : garde-fous de l'agent dans le code, inventaire
+  tenu à jour. Essai sur une copie neuve : `npm ci`, 376 tests et construction passent sans clé ; migrations et jeu
+  de données ne lisaient pas `.env.local` → commandes avec `--env-file`. **Non essayé** : les étapes avec une vraie
+  base (décidé : laissé au repreneur de la semaine 5, qui note ce qui manque). README non relu par l'humain (manque de
+  temps ; relecture à faire si possible avant de rendre).
+  **✅ Sécurité Next.js** (26/10, branche `securite-next`, **PR n° 41 fusionnée**, `57a37a6`) : 16.4.0 → 16.4.3
+  (trois failles connues, dont deux critiques : exécution de code sur le serveur sans connexion), découvert pendant
+  l'essai de A8b (la construction s'arrêtait une fois sur deux). `main` reporté dans `agent`. Fusion faite par
+  l'humain (geste en prévisualisation non confirmé à l'écrit) ; production vérifiée par `/api/sante`. **Reste** : supprimer la branche Neon `preview/securite-next`.
+  **REPRISE ICI** : PR `agent` → `main` (fusion par l'humain avec `!`), migrations 0021 à 0023 jouées en production,
+  `MCP_JETON` en Production, serveur MCP de production branché dans Claude Code (sans contournement : la production
+  n'est pas protégée par Vercel), gestes en production ; remplacer le secret de contournement passé par le chat le
+  25/10. Puis **A8c** (en dernier, rien n'est noté dans le dépôt).
+  Après la semaine 4 (notés) : retouches fiche musicien sur téléphone et adresse du lieu ; volet engagements /
+  demandes ; assistant sur chaque page ; heures de 5 en 5 minutes.
+  **Message piégé** du flux : introuvable au 25/10 (vérifié par l'humain), à surveiller à chaque import.
 - **✅ Cron du matin vérifié** (25/10, l'humain) : le récap arrive chaque matin sans clic. Les « reste à vérifier »
   des 18, 19 et 20/10 plus bas sont donc levés.
 - **Semaine 3 terminée** (I1 à I7). **Prochaine demande : semaine 4 (agent)** (proposé le 25/10) ; heures de 5 en 5 minutes après la semaine 4 (décidé le 19/10, branche
@@ -388,8 +487,15 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 - ~~**Reporté** : filtrer les engagements par programmateur~~ ✅ fait (P1, PR n° 23).
 - **Reporté** (noté le 18/10) : rendre la page `/couts` plus visible (liens depuis `/nuit`, `/courriers` et
   « Documents » ; pas encore au menu).
-- **Piste notée le 19/10** (demande à part, après les heures de 5 en 5) : ouvrir un engagement dans un **volet** sur
-  la page « Engagements » au lieu d'une page nouvelle. À trancher au cadrage : volet sur téléphone (plein écran ?),
+- **Idée du 25/10 (demande à part, après la semaine 4)** : l'assistant présent **sur chaque page**, en bas à droite
+  comme un « chatbot » (petite vignette sur téléphone), au lieu de la seule page `/assistant`. À cadrer : la page en
+  cours donnée comme contexte ? le journal reste sur `/assistant` ? une seule exécution à la fois (verrou) déjà acquise.
+- **Retours du 25/10, à faire après A4 (retouches groupées)** : (1) **fiche musicien sur téléphone** : la liste des
+  engagements ne s'affiche plus correctement (non touchée par la branche `agent` : sans doute déjà en production) ;
+  (2) **création d'un lieu** : « Chercher l'adresse » ne remplit pas l'adresse (numéro et rue), il faut la recopier.
+- **Piste notée le 19/10, redemandée le 25/10** (demande à part, après la semaine 4) : ouvrir un engagement **et une
+  demande reçue** dans un **volet** (par-dessus ou à côté du tableau) sur les pages « Engagements » et « Demandes
+  reçues », au lieu d'une page nouvelle. À trancher au cadrage : volet sur téléphone (plein écran ?),
   adresse partageable de la fiche (route interceptée de Next.js), modifier depuis le volet.
 - **Question notée le 19/10** : chaque page est relue dans la base à chaque visite, le navigateur ne garde rien.
   Voulu jusqu'ici (pages dynamiques : données toujours à jour, droits vérifiés à chaque requête). Piste si la lenteur
