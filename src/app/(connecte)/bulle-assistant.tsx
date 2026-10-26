@@ -38,8 +38,9 @@ export function BulleAssistant({ origine }: { origine: string }) {
           <MessageCircle className="size-6" />
         </button>
       )}
-      {/* Voile du téléphone : la page reste visible au-dessus du volet ; le toucher ferme. */}
-      {ouvert && <div aria-hidden onClick={() => setOuvert(false)} className="fixed inset-0 z-40 bg-black/35 md:hidden" />}
+      {/* Voile du téléphone : la page reste visible au-dessus du volet ; le toucher ferme. cursor-pointer : sans lui,
+          Safari sur iPhone ne transmet pas le toucher d'un simple bloc (retour du 26/10). */}
+      {ouvert && <div aria-hidden onClick={() => setOuvert(false)} className="fixed inset-0 z-40 cursor-pointer bg-black/35 md:hidden" />}
       <div
         ref={panneau}
         role="dialog"
