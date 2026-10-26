@@ -5,7 +5,7 @@ import { relireCompteurs } from "../compteur";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { SUJET_MAX, TEXTE_MAX } from "@/lib/propositions";
-import { envoyerProposition, refuserProposition, type EtatDecision } from "./actions";
+import { envoyerProposition, refuserProposition, remettreEnAttente, type EtatDecision } from "./actions";
 
 type Proposition = { id: string; sujet: string; texte: string };
 
@@ -53,6 +53,28 @@ export function CartePropositionFormulaire({ proposition }: { proposition: Propo
         <p role="alert" className="text-sm text-destructive">
           {erreur}
         </p>
+      )}
+    </form>
+  );
+}
+
+export function BoutonRemettreEnAttente({ id }: { id: string }) {
+  const [etat, remettre, enCours] = useActionState<EtatDecision, FormData>(remettreEnAttente, {});
+  const premier = useRef(true);
+  useEffect(() => {
+    if (premier.current) premier.current = false;
+    else relireCompteurs();
+  }, [etat]);
+  return (
+    <form action={remettre} className="flex flex-wrap items-center gap-3">
+      <input type="hidden" name="id" value={id} />
+      <Button type="submit" variant="outline" size="sm" disabled={enCours}>
+        {enCours ? "Remise…" : "Remettre en attente"}
+      </Button>
+      {etat.erreur && (
+        <span role="alert" className="text-sm text-destructive">
+          {etat.erreur}
+        </span>
       )}
     </form>
   );

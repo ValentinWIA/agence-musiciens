@@ -56,3 +56,25 @@ export async function refuserProposition(_etat: EtatDecision, formData: FormData
   refresh();
   return {};
 }
+
+// « Remettre en attente » : seule une relance refusée revient (condition dans la requête, comme « Envoyer »). Si une
+// autre relance attend déjà pour le même engagement, l'index « une relance en attente par engagement » refuse.
+export async function remettreEnAttente(_etat: EtatDecision, formData: FormData): Promise<EtatDecision> {
+  const agent = await verifierAdmin("/validations (remettre en attente)");
+  const id = z.uuid().safeParse(formData.get("id"));
+  if (!id.success) return { erreur: "Proposition introuvable." };
+  try {
+    const [p] = await db
+      .update(propositions)
+      .set({ etat: "en_attente", decideLe: null, decidePar: null, erreur: null })
+      .where(and(eq(propositions.id, id.data), eq(propositions.etat, "refusee")))
+      .returning({ objet: propositions.objet });
+    if (!p) return { erreur: "Seule une relance refusée peut revenir en attente." };
+    console.log(`Relance remise en attente (${p.objet}) par ${agent.nom}`);
+  } catch (erreur) {
+    if ((erreur as { cause?: { code?: string } })?.cause?.code !== "23505") throw erreur;
+    return { erreur: "Une relance attend déjà pour cet engagement : décidez-la d'abord." };
+  }
+  refresh();
+  return {};
+}
