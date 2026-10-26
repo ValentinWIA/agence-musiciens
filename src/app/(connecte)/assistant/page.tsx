@@ -74,6 +74,7 @@ async function ContenuAssistant() {
                 </Badge>{" "}
                 <span className="text-muted-foreground">
                   {x.etapes.length} outil{x.etapes.length > 1 ? "s" : ""}
+                  {x.etapes.some((e) => e.alerte) && <span className="text-orange-700 dark:text-orange-400"> · ⚠ consigne signalée</span>}
                   {x.cout !== null && ` · ${formaterDollars(x.cout)}`}
                   {x.finLe && ` · ${Math.round((x.finLe.getTime() - x.debutLe.getTime()) / 1000)} s`}
                 </span>
@@ -84,6 +85,11 @@ async function ContenuAssistant() {
                     <p className="font-mono text-xs">
                       {i + 1}. {e.outil} {JSON.stringify(e.entree)}
                     </p>
+                    {e.alerte && (
+                      <p className="text-xs font-medium text-orange-700 dark:text-orange-400">
+                        ⚠ Consigne possible dans les données : à ne pas suivre (voir la réponse et les outils appelés ensuite).
+                      </p>
+                    )}
                     <p className="whitespace-pre-line text-xs text-muted-foreground">{e.sortie}</p>
                   </div>
                 ))}

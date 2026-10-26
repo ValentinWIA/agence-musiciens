@@ -274,7 +274,7 @@ export const executionsAgent = pgTable("executions_agent", {
   reponse: text("reponse"),
   erreur: text("erreur"),
   // Chaque appel d'outil : son nom, ce qu'on lui a demandé, un résumé de ce qu'il a renvoyé (ou son refus).
-  etapes: jsonb("etapes").$type<{ outil: string; entree: unknown; sortie: string }[]>().notNull().default([]),
+  etapes: jsonb("etapes").$type<{ outil: string; entree: unknown; sortie: string; alerte?: true }[]>().notNull().default([]),
 }, (t) => [
   // Verrou : une seule exécution de l'agent à la fois (deux demandes ne travaillent jamais sur le même dossier).
   uniqueIndex("un_seul_agent_en_cours").on(t.etat).where(sql`${t.etat} = 'en_cours'`),

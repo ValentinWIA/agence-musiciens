@@ -10,7 +10,7 @@ import { formaterDollars } from "@/lib/couts-ia";
 import { relireCompteurs } from "../compteur";
 
 type Resultat = { etat: EtatAgent; reponse: string | null; erreur: string | null; tours: number; cout: number; dureeMs: number };
-type Message = { etape?: { outil: string; refus: boolean }; resultat?: Resultat; erreur?: string };
+type Message = { etape?: { outil: string; refus: boolean; alerte: boolean }; resultat?: Resultat; erreur?: string };
 
 const EXEMPLES = ["Quelles options faut-il relancer cette semaine ?", "Quels cachets sont impayés ?", "Inès est-elle libre le 8 mai 2027 ?"];
 
@@ -18,7 +18,7 @@ export function FormulaireAssistant({ origine }: { origine: string }) {
   const router = useRouter();
   const [demande, setDemande] = useState("");
   const [enCours, setEnCours] = useState(false);
-  const [etapes, setEtapes] = useState<{ outil: string; refus: boolean }[]>([]);
+  const [etapes, setEtapes] = useState<{ outil: string; refus: boolean; alerte: boolean }[]>([]);
   const [resultat, setResultat] = useState<Resultat | null>(null);
   const [erreur, setErreur] = useState<string | null>(null);
 
@@ -104,6 +104,7 @@ export function FormulaireAssistant({ origine }: { origine: string }) {
           {etapes.map((e, i) => (
             <li key={i} className={e.refus ? "text-destructive" : undefined}>
               {e.refus ? "✗" : "✓"} {e.outil}
+              {e.alerte && <span className="text-orange-700 dark:text-orange-400"> · ⚠ consigne possible dans les données (non suivie)</span>}
             </li>
           ))}
           {enCours && <li className="animate-pulse">L&apos;assistant travaille…</li>}

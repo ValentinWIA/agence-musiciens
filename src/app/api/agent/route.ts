@@ -25,7 +25,7 @@ export async function POST(requete: Request) {
       const envoyer = (message: object) => controleur.enqueue(encodeur.encode(`${JSON.stringify(message)}\n`));
       try {
         const resultat = await executerAgent({ id, nom, role }, "page", lu.demande, (etape) =>
-          envoyer({ etape: { outil: etape.outil, refus: etape.sortie.startsWith("refus : ") } }),
+          envoyer({ etape: { outil: etape.outil, refus: etape.sortie.startsWith("refus : "), alerte: etape.alerte === true } }),
         );
         envoyer(resultat.ok ? { resultat } : { erreur: resultat.erreur });
       } finally {

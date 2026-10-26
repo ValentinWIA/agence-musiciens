@@ -132,3 +132,21 @@ export function correspondDemande(
 export function deNom(nom: string): string {
   return /^[aeiouyàâäéèêëîïôöùûü]/i.test(nom.trim()) ? `d'${nom.trim()}` : `de ${nom.trim()}`;
 }
+
+// Une tournure de consigne dans ce que renvoie un outil (message du flux, courrier…) : l'étape est signalée au
+// journal (A6), pour montrer que la consigne a été vue et pas suivie. Le signalement n'empêche rien : ce qui protège,
+// c'est qu'aucun outil ne supprime ni n'envoie, et que les actions exigent ce que l'agente a écrit.
+const TOURNURES_DE_CONSIGNE = [
+  /\b(ignore[sz]?|oublie[sz]?|ne tiens? pas compte de)\b.{0,30}\b(consignes?|instructions?|regles?|ordres?)\b/,
+  /\b(tu dois|vous devez|tu vas|il faut que tu)\b.{0,15}\b(maintenant|desormais|immediatement)\b/,
+  /\b(note|message|instruction)s? (a|pour) l'?(assistant|ia|agent|intelligence artificielle)\b/,
+  /\ba l'attention de l'?(assistant|ia|agent)\b/,
+  /\b(supprime[sz]?|efface[sz]?|detruis|detruisez)\b.{0,20}\b(tous|toutes|les|la|le|l')/,
+  /\b(envoie[sz]?|transfere[sz]?|transmets|transmettez)\b.{0,60}\b(a tous|a toutes|a l'adresse|vers l'adresse)\b/,
+  /\b(prompt|system|en tant qu'ia|nouvelles? consignes?)\b/,
+];
+
+export function consignePossible(texte: string): boolean {
+  const t = sansAccents(texte).replace(/[’`]/g, "'").replace(/\s+/g, " ");
+  return TOURNURES_DE_CONSIGNE.some((motif) => motif.test(t));
+}

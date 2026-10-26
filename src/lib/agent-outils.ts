@@ -5,7 +5,7 @@ import { z } from "zod";
 import { db } from "@/db";
 import { courriers, demandesRecues, evenementsFlux, lieux, programmateurs, propositions, utilisateurs } from "@/db/schema";
 import { lireFormulaire } from "@/app/(connecte)/engagements/saisie";
-import { ajouterALaNote, correspondDemande, deNom, enDonnees, heureDansDemande, musicienNomme, NOTE_MAX, resumeSortie } from "./agent-regles";
+import { ajouterALaNote, consignePossible, correspondDemande, deNom, enDonnees, heureDansDemande, musicienNomme, NOTE_MAX, resumeSortie } from "./agent-regles";
 import { formaterMontant, type Devise } from "./argent";
 import { ajouterJours, jourLocal } from "./calendrier";
 import { formaterDebut } from "./dates";
@@ -22,7 +22,8 @@ import { cachetsImpayes, optionsQuiExpirent } from "./recap";
 // page /assistant et le serveur MCP s'en servent. Chaque appel revérifie le rôle et s'inscrit au journal.
 
 export type Utilisateur = { id: string; nom: string; role: "admin" | "musicien" };
-export type Etape = { outil: string; entree: unknown; sortie: string };
+// alerte : une tournure de consigne dans ce que l'outil a renvoyé (A6), signalée au journal.
+export type Etape = { outil: string; entree: unknown; sortie: string; alerte?: true };
 
 type Resultat = { content: { type: "text"; text: string }[]; isError?: boolean };
 const texte = (t: string): Resultat => ({ content: [{ type: "text", text: t }] });
@@ -79,7 +80,11 @@ export function outilsDeLAgent(
           resultat = refus("L'outil a échoué (base indisponible ?). Réessayez plus tard.");
         }
       }
-      const etape = { outil: nom, entree: args, sortie: (resultat.isError ? "refus : " : "") + resumeSortie(resultat.content[0].text) };
+      const etape: Etape = { outil: nom, entree: args, sortie: (resultat.isError ? "refus : " : "") + resumeSortie(resultat.content[0].text) };
+      if (consignePossible(resultat.content[0].text)) {
+        etape.alerte = true;
+        console.warn(`Assistant : consigne possible dans le résultat de ${nom} (signalée au journal)`);
+      }
       journal.push(etape);
       surEtape?.(etape);
       return resultat;
