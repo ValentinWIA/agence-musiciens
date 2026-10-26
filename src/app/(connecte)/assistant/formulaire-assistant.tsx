@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { TexteAvecLiens } from "@/components/texte-avec-liens";
+import { ReponseAssistant } from "@/components/reponse-assistant";
 import { DEMANDE_MAX, LIBELLES_ETAT_AGENT, type EtatAgent } from "@/lib/agent-regles";
 import { formaterDollars } from "@/lib/couts-ia";
 import { relireCompteurs } from "../compteur";
@@ -117,23 +117,20 @@ export function FormulaireAssistant({ origine }: { origine: string }) {
       )}
 
       {resultat && (
-        <div className="grid gap-3 rounded-md border p-4">
-          <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Réponse (IA, à relire)</p>
-          {resultat.reponse && (
-            <p className="whitespace-pre-line text-sm">
-              <TexteAvecLiens texte={resultat.reponse} origine={origine} />
-            </p>
-          )}
+        <div className="grid gap-4 rounded-lg border bg-card p-5">
+          <div className="flex flex-wrap items-baseline justify-between gap-2 text-xs text-muted-foreground">
+            <span className="font-medium uppercase tracking-wide">Réponse de l&apos;assistant · IA, à relire</span>
+            <span>
+              {LIBELLES_ETAT_AGENT[resultat.etat]} · {Math.round(resultat.dureeMs / 1000)} s · {formaterDollars(resultat.cout)}
+            </span>
+          </div>
+          {resultat.reponse && <ReponseAssistant texte={resultat.reponse} origine={origine} />}
           {resultat.etat !== "terminee" && (
             <p role="alert" className="text-sm text-destructive">
               Demande {LIBELLES_ETAT_AGENT[resultat.etat]}
-              {resultat.erreur && ` (${resultat.erreur})`}. Ce qu&apos;il a eu le temps de faire est dans le journal.
+              {resultat.erreur && ` (${resultat.erreur})`}. Ce qu&apos;il a eu le temps de faire est dans l&apos;historique.
             </p>
           )}
-          <p className="text-xs text-muted-foreground">
-            {LIBELLES_ETAT_AGENT[resultat.etat]} · {resultat.tours} tour{resultat.tours > 1 ? "s" : ""} ·{" "}
-            {formaterDollars(resultat.cout)} · {Math.round(resultat.dureeMs / 1000)} s
-          </p>
         </div>
       )}
     </div>

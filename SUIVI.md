@@ -194,6 +194,15 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   chaque ligne (« 1 relance en attente », « lecture seule »…), réponse d'abord, outils sous « Détail technique »,
   lien vers `/validations` ; (2) **relance refusée irrécupérable** → « Remettre en attente » sur une proposition
   refusée (refus si une autre relance attend déjà pour l'engagement ; envoyées et adresses fictives exclues).
+  Gestes 1 et 2 validés en prévisualisation. Puis, retour de l'humain (« pas joli, ça ne fait pas fini ») : planche de
+  trois variantes, **A choisie** (réponse mise en forme : gras et listes rendus, liens courts « Fiche → », bilan
+  Lu / Fait / Proposé en trois cases ; « Journal » renommé **« Historique des demandes »**, une ligne par demande avec
+  pastille de couleur, réponse au clic, « Détail technique » replié). `src/lib/reponse-assistant.ts` (testé),
+  `src/components/reponse-assistant.tsx`, `assistant/historique-demandes.tsx`. Photographié à 1100, 375 et 430 px.
+  **Décidé le 26/10 : « le produit doit toujours avoir l'air fini »** → entrent dans la semaine 4, une branche et un
+  cadrage chacune, dans cet ordre : (1) **assistant sur chaque page** (vignette en bas à droite, reprend la mise en
+  forme A) ; (2) **retouches** fiche musicien sur téléphone et « Chercher l'adresse » d'un lieu ; (3) **volet**
+  engagements / demandes reçues. Avant chaque branche : vider les branches Neon fusionnées.
   Après la semaine 4 (notés) : retouches fiche musicien sur téléphone et adresse du lieu ; volet engagements /
   demandes ; assistant sur chaque page ; heures de 5 en 5 minutes.
   **Message piégé** du flux : introuvable au 25/10 (vérifié par l'humain), à surveiller à chaque import.
