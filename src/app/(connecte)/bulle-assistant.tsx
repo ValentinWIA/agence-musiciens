@@ -51,7 +51,8 @@ export function BulleAssistant({ origine }: { origine: string }) {
       >
         <div className="dark flex shrink-0 items-center justify-between border-b border-or/35 bg-background px-4 py-2.5 text-foreground">
           <span className="flex items-center gap-2">
-            <Embleme className="size-8" />
+            {/* 34 px et 2 px plus bas : C|M de la hauteur du « A » d'« Assistant », sur la même ligne (mesuré le 26/10). */}
+            <Embleme className="size-[34px] translate-y-0.5" />
             <span className="font-logo text-lg">Assistant</span>
           </span>
           <button type="button" aria-label="Fermer l'assistant" onClick={() => setOuvert(false)} className="rounded-md p-1.5 opacity-80 hover:opacity-100">
