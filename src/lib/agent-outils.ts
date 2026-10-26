@@ -8,6 +8,8 @@ import { lireFormulaire } from "@/app/(connecte)/engagements/saisie";
 import {
   ACTIONS_MCP_MAX,
   ajouterALaNote,
+  APPELS_PAR_DEMANDE_MAX,
+  appelsAtteints,
   budgetActionsAtteint,
   consignePossible,
   correspondDemande,
@@ -96,14 +98,24 @@ export function outilsDeLAgent(
   journal: Etape[],
   surEtape?: (etape: Etape) => void,
 ) {
+  // Compté au départ de chaque appel, avant toute attente : des appels lancés en parallèle sont tous comptés.
+  let appelsLances = 0;
   // Chaque outil passe par ici : le rôle est revérifié (le modèle ne choisit pas ses droits) et l'appel est noté.
   const garde =
     <A,>(nom: string, faire: (args: A) => Promise<Resultat>) =>
     async (args: A): Promise<Resultat> => {
       let resultat: Resultat;
+      const dejaLances = appelsLances++;
       if (utilisateur.role !== "admin") {
         console.warn(`Accès refusé : ${utilisateur.nom} (musicien) sur l'outil ${nom} de l'agent`);
         resultat = refus("Refusé : réservé à l'agent de l'agence.");
+      } else if (executionId !== null && appelsAtteints(dejaLances)) {
+        // Dérive n° 3 : sur la page, une seule demande ne lance pas plus de 20 appels, en parallèle ou non.
+        console.warn(`Assistant : outil ${nom} refusé (plus de ${APPELS_PAR_DEMANDE_MAX} appels pour une seule demande)`);
+        resultat = refus(
+          `Refusé : plus de ${APPELS_PAR_DEMANDE_MAX} appels d'outils pour une seule demande. ` +
+            "Réponds avec ce que tu as déjà lu et propose de continuer par une demande plus précise.",
+        );
       } else if (demande === null && estAction(nom) && budgetActionsAtteint(await actionsMcpRecentes())) {
         // Dérive n° 2 : par MCP, une rafale d'actions est coupée ici, quelle que soit l'IA qui appelle.
         console.warn(`Assistant : action ${nom} refusée par MCP (budget de ${ACTIONS_MCP_MAX} actions en ${FENETRE_ACTIONS_MINUTES} min atteint)`);

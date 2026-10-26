@@ -2,6 +2,8 @@ import { describe, expect, it } from "vitest";
 import {
   ACTIONS_MCP_MAX,
   ajouterALaNote,
+  APPELS_PAR_DEMANDE_MAX,
+  appelsAtteints,
   budgetActionsAtteint,
   consignePossible,
   correspondDemande,
@@ -176,5 +178,14 @@ describe("budgetActionsAtteint (dérive n° 2 : la rafale par MCP est coupée)",
     expect(budgetActionsAtteint(ACTIONS_MCP_MAX - 1)).toBe(false);
     expect(budgetActionsAtteint(ACTIONS_MCP_MAX)).toBe(true);
     expect(budgetActionsAtteint(23)).toBe(true);
+  });
+});
+
+describe("appelsAtteints (dérive n° 3 : au plus 20 appels d'outils par demande)", () => {
+  it("laisse passer les 20 premiers appels, refuse le 21ᵉ", () => {
+    expect(appelsAtteints(0)).toBe(false);
+    expect(appelsAtteints(APPELS_PAR_DEMANDE_MAX - 1)).toBe(false);
+    expect(appelsAtteints(APPELS_PAR_DEMANDE_MAX)).toBe(true);
+    expect(appelsAtteints(31)).toBe(true);
   });
 });

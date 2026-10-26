@@ -160,3 +160,11 @@ export const OUTILS_D_ACTION = ["ajouter_note", "creer_engagement_depuis_demande
 export function budgetActionsAtteint(actionsRecentes: number): boolean {
   return actionsRecentes >= ACTIONS_MCP_MAX;
 }
+
+// Appels d'outils par demande (dérive n° 3, 26/10) : « 10 tours » est une option du SDK qui compte les allers-retours
+// avec le modèle, pas les appels ; lancés en parallèle, 31 lectures y ont tenu. Le plafond est compté ici, par notre code.
+export const APPELS_PAR_DEMANDE_MAX = 20;
+
+export function appelsAtteints(appelsDejaFaits: number): boolean {
+  return appelsDejaFaits >= APPELS_PAR_DEMANDE_MAX;
+}
