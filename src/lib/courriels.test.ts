@@ -53,6 +53,10 @@ describe("lecture d'un .eml", () => {
     expect(extraireCourriel({ text: "Bonjour" })).toMatchObject({ objet: "(sans objet)", expediteur: "expéditeur inconnu" });
   });
 
+  it("htmlEnTexte décode les accents écrits en entités", () => {
+    expect(htmlEnTexte("ao&ucirc;t : 1&nbsp;800&nbsp;&euro;, &agrave; r&eacute;gler &#233; &#xE9; &inconnu;")).toBe("août : 1 800 €, à régler é é &inconnu;");
+  });
+
   it("htmlEnTexte retire scripts et styles", () => {
     expect(htmlEnTexte("<script>alert(1)</script>a<br>b")).toBe("a\nb");
   });

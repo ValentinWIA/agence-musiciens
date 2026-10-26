@@ -19,6 +19,13 @@ export type EmlLu = {
 
 export type CourrielImporte = { messageId: string | null; expediteur: string; objet: string; date: string | null; texte: string };
 
+// Les entités nommées courantes en français (les autres restent telles quelles ; &amp; en dernier, sans boucle).
+const ENTITES: Record<string, string> = {
+  nbsp: " ", lt: "<", gt: ">", quot: '"', apos: "'", amp: "&", euro: "€", laquo: "«", raquo: "»", rsquo: "’", hellip: "…",
+  agrave: "à", acirc: "â", eacute: "é", egrave: "è", ecirc: "ê", euml: "ë", icirc: "î", iuml: "ï", ocirc: "ô",
+  ugrave: "ù", ucirc: "û", uuml: "ü", ccedil: "ç", oelig: "œ", Eacute: "É", Agrave: "À", Ccedil: "Ç",
+};
+
 // Un courriel en HTML seulement : le texte sans balises, paragraphes et sauts de ligne gardés.
 export function htmlEnTexte(html: string): string {
   return html
@@ -26,12 +33,9 @@ export function htmlEnTexte(html: string): string {
     .replace(/<br\s*\/?>/gi, "\n")
     .replace(/<\/(p|div|li|tr|h\d)>/gi, "\n")
     .replace(/<[^>]+>/g, "")
-    .replace(/&nbsp;/g, " ")
-    .replace(/&lt;/g, "<")
-    .replace(/&gt;/g, ">")
-    .replace(/&quot;/g, '"')
-    .replace(/&#39;/g, "'")
-    .replace(/&amp;/g, "&")
+    .replace(/&#(\d+);/g, (_, n) => String.fromCodePoint(Number(n)))
+    .replace(/&#x([0-9a-f]+);/gi, (_, n) => String.fromCodePoint(parseInt(n, 16)))
+    .replace(/&([a-z]+);/gi, (tout, nom: string) => ENTITES[nom] ?? tout)
     .replace(/[ \t]+\n/g, "\n")
     .replace(/\n{3,}/g, "\n\n")
     .trim();
