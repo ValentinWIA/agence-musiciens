@@ -10,7 +10,7 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 
 ## État de reprise
 
-*Dernière mise à jour : 26 octobre 2026 (semaine 4 en production, PR n° 42 à 44 ; prochaine étape : assistant sur chaque page, cadrage d'abord)*
+*Dernière mise à jour : 26 octobre 2026 (assistant sur chaque page en production, PR n° 45 ; prochaine étape : suite de la réponse précédente, branche `suite-de-demande`)*
 
 - **✅ Revenus de la saison** (19/10, branche `revenus`, **PR n° 32 fusionnée**, `e1dd3ec`). Carte « Revenus de la
   saison » en tête de la colonne droite du tableau de bord : total des cachets (le « chiffre d'affaires » : pas de
@@ -209,9 +209,24 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   (`/api/sante` ok). **À vérifier en production** : réponse avec liste, toute la largeur, liens « Fiche → ».
   Constaté : sur une prévisualisation, les anciennes réponses (base copiée de la production) gardent leurs adresses
   de production en clair — voulu (seules les adresses du site visité deviennent des liens, `src/lib/liens.ts`).
-  **REPRISE ICI** : (1) assistant sur chaque page — cadrage en dix lignes à faire valider avant tout code (page en
-  cours comme contexte ? sort de `/assistant` ? téléphone ? une exécution à la fois, verrou déjà acquis) ; puis (2)
-  retouches fiche musicien / adresse du lieu ; (3) volet. Restent aussi : remplacer le secret de contournement Vercel ;
+  **✅ Assistant sur chaque page** (26/10, branche `assistant-partout`, **PR n° 45 fusionnée**, `ece31fb` ; cadrage :
+  `docs/semaine-4.md` section 11, planche, **variante E**). Bulle or en bas à droite (agent seulement, rôle lu côté
+  serveur ; cachée sur `/assistant`) ; panneau de 400 px sur ordinateur, volet du bas sur téléphone (85 % au plus).
+  Même formulaire que `/assistant` (`src/components/formulaire-assistant.tsx`), compact : réponse, puis « Fait » et
+  « À valider » s'ils ne sont pas vides (« Lu », coût, durée dans l'historique). Liens de la réponse en `Link` : la
+  bulle garde sa réponse d'une page à l'autre. **T2** : la fiche ouverte (engagement, demande, courrier, musicien,
+  `lirePageOuverte`) accompagne la demande comme une indication ; garde-fous des actions sur les seuls mots de
+  l'agente ; journal « (page ouverte : …) ». 390 tests. Retours au geste, faits : C|M aligné (34 px, 2 px plus bas,
+  mesuré) ; fermer : clic hors du panneau (ordinateur), toucher le voile ou **le bandeau noir** (bouton : Safari sur
+  iPhone ignore le toucher d'un simple bloc). Gestes validés en prévisualisation (ordinateur et iPhone, dont « relance
+  celui-ci » et relance d'un autre engagement depuis une fiche). Production déployée (`/api/sante` ok, `/api/agent`
+  refuse sans session). **À vérifier en production** : la bulle sur une fiche. Méthode utile : page d'essai temporaire
+  + script Chrome (DevTools Protocol) pour photographier et simuler toucher et clics, sans connexion ni appel à l'IA.
+  **REPRISE ICI** : (1) **suite de la réponse précédente** (branche `suite-de-demande`, voulue par l'humain : « relance
+  1, 3 et 5 » échoue, chaque demande repart de zéro) — **au plus simple, décidé le 26/10** : le formulaire renvoie la
+  dernière réponse affichée avec la demande suivante, donnée au modèle entre balises comme une donnée ; pas de
+  migration, pas de bouton ; garde-fous des actions inchangés ; puis (2) retouches fiche musicien / adresse du lieu ;
+  (3) volet. Restent aussi : remplacer le secret de contournement Vercel ;
   supprimer les branches Neon `preview/retouches-agent` et `preview/correctif-reponse` ; A8c (en dernier).
   Après la semaine 4 (notés) : retouches fiche musicien sur téléphone et adresse du lieu ; volet engagements /
   demandes ; assistant sur chaque page ; heures de 5 en 5 minutes.
