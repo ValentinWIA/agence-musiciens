@@ -5,7 +5,11 @@ const ADRESSE_API = "https://data.geopf.fr/geocodage/search";
 const DELAI_MAX_MS = 5000;
 const NOMBRE_PROPOSITIONS = 5;
 
-export type Proposition = { libelle: string; latitude: number; longitude: number };
+// rue et ville remplissent le formulaire au choix d'une proposition (retour du 25/10 : il fallait les recopier).
+export type Proposition = { libelle: string; latitude: number; longitude: number; rue: string | null; ville: string | null };
+
+// Une commune ou un lieu-dit n'a pas de rue : son « name » est le nom de la commune.
+const AVEC_RUE = new Set(["housenumber", "street"]);
 
 export type ResultatGeocodage =
   | { ok: true; propositions: Proposition[] }
@@ -18,7 +22,7 @@ const reponseApi = z.object({
       geometry: z.object({
         coordinates: z.tuple([z.number().min(-180).max(180), z.number().min(-90).max(90)]),
       }),
-      properties: z.object({ label: z.string() }),
+      properties: z.object({ label: z.string(), name: z.string().optional(), city: z.string().optional(), type: z.string().optional() }),
     }),
   ),
 });
@@ -57,6 +61,8 @@ export async function chercherAdresse(
     libelle: f.properties.label,
     longitude: f.geometry.coordinates[0],
     latitude: f.geometry.coordinates[1],
+    rue: f.properties.name && AVEC_RUE.has(f.properties.type ?? "") ? f.properties.name : null,
+    ville: f.properties.city ?? null,
   }));
   console.log(`Géocodage : ${propositions.length} proposition(s) pour « ${q} »`);
   return { ok: true, propositions };

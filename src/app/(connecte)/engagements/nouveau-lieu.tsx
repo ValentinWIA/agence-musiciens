@@ -147,7 +147,17 @@ function FormulaireLieu({ onCree, onAnnule }: { onCree: (lieu: LieuCree) => void
               <p className="text-muted-foreground">Choisissez la bonne adresse :</p>
               {propositions.map((p) => (
                 <label key={`${p.libelle}-${p.latitude}-${p.longitude}`} className="flex items-center gap-2">
-                  <input type="radio" name="proposition" checked={choix === p} onChange={() => setChoix(p)} />
+                  <input
+                    type="radio"
+                    name="proposition"
+                    checked={choix === p}
+                    onChange={() => {
+                      // Rue et ville de la proposition remplacent la saisie, sans effacer les propositions.
+                      setChoix(p);
+                      if (p.rue) setAdresse(p.rue);
+                      if (p.ville) setVille(p.ville);
+                    }}
+                  />
                   {p.libelle}
                 </label>
               ))}
