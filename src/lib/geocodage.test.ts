@@ -12,7 +12,7 @@ const salleCortot = {
     {
       type: "Feature",
       geometry: { type: "Point", coordinates: [2.3046, 48.8836] },
-      properties: { label: "78 Rue Cardinet 75017 Paris", score: 0.95 },
+      properties: { label: "78 Rue Cardinet 75017 Paris", score: 0.95, name: "78 Rue Cardinet", city: "Paris", type: "housenumber" },
     },
   ],
 };
@@ -23,9 +23,17 @@ describe("géocodage d'une adresse", () => {
     const resultat = await chercherAdresse("78 rue Cardinet Paris", service);
     expect(resultat).toEqual({
       ok: true,
-      propositions: [{ libelle: "78 Rue Cardinet 75017 Paris", latitude: 48.8836, longitude: 2.3046 }],
+      propositions: [{ libelle: "78 Rue Cardinet 75017 Paris", latitude: 48.8836, longitude: 2.3046, rue: "78 Rue Cardinet", ville: "Paris" }],
     });
     expect(String(service.mock.calls[0][0])).toContain("q=78+rue+Cardinet+Paris");
+  });
+
+  it("une commune trouvée donne sa ville, pas de rue", async () => {
+    const lyon = {
+      features: [{ geometry: { coordinates: [4.835, 45.758] }, properties: { label: "Lyon", name: "Lyon", city: "Lyon", type: "municipality" } }],
+    };
+    const resultat = await chercherAdresse("Lyon", fauxService(lyon));
+    expect(resultat.ok && resultat.propositions[0]).toMatchObject({ rue: null, ville: "Lyon" });
   });
 
   it("renvoie une liste vide quand l'adresse est inconnue (cas vide)", async () => {
