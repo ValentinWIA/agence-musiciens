@@ -33,6 +33,8 @@ export function FormulaireAssistant({ origine, compact = false }: { origine: str
 
   async function envoyer(e: React.FormEvent) {
     e.preventDefault();
+    // La réponse affichée part avec la demande suivante : « relance 1 et 3 » renvoie à ses listes (section 12).
+    const reponsePrecedente = resultat?.reponse ?? null;
     setEnCours(true);
     setEtapes([]);
     setResultat(null);
@@ -41,7 +43,7 @@ export function FormulaireAssistant({ origine, compact = false }: { origine: str
       const res = await fetch("/api/agent", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ demande, page: page?.chemin }),
+        body: JSON.stringify({ demande, page: page?.chemin, reponsePrecedente }),
       });
       if (!res.ok || !res.body) {
         const corps = await res.json().catch(() => null);
@@ -80,6 +82,12 @@ export function FormulaireAssistant({ origine, compact = false }: { origine: str
           <p className="flex items-center gap-2 text-xs text-muted-foreground">
             <span aria-hidden className="size-1.5 rounded-full bg-or" />
             Page ouverte : {LIBELLES_PAGE[page.type]}
+          </p>
+        )}
+        {resultat?.reponse && !enCours && (
+          <p className="flex items-center gap-2 text-xs text-muted-foreground">
+            <span aria-hidden className="size-1.5 rounded-full bg-or" />
+            Suite de la réponse précédente
           </p>
         )}
         <Label htmlFor={compact ? "demande-bulle" : "demande"} className={compact ? "sr-only" : undefined}>

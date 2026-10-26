@@ -139,3 +139,19 @@ ailleurs : même trompé, l'agent n'a ni suppression, ni envoi sans validation, 
 
 Tranches : **T1** bulle et panneau (captures 375 / 430 / 1100 px, geste) ; **T2** page ouverte comme contexte (test de
 la phrase envoyée ; geste : sur la fiche A, relance demandée pour B → « À valider » concerne B).
+
+## 12. Suite de la réponse précédente (cadrage validé le 26/10, branche `suite-de-demande`)
+
+*Constaté : « relance 1, 3 et 5 » échoue, chaque demande repart de zéro. Décidé : au plus simple.*
+
+1. Le formulaire (bulle et `/assistant`) renvoie **la dernière réponse affichée** avec la demande suivante ; le serveur
+   la donne au modèle entre `<donnees>` (« < » neutralisés), coupée à 4 000 caractères, avec la consigne : elle ne sert
+   que si la demande y renvoie (« 1, 3 et 5 », « le deuxième ») ; sinon la demande est traitée seule.
+2. **Garde-fous inchangés** : ils relisent les seuls mots de l'agente, jamais la réponse précédente.
+3. Journal : « (suite de la réponse précédente) » après la demande. Écran : « Suite de la réponse précédente » sous le
+   champ quand une réponse sera jointe.
+4. **Hors périmètre** : fil de discussion, mémoire au-delà d'une réponse, bouton « nouvelle conversation », migration.
+
+Tranches : **T1** code et tests (assemblage de la phrase envoyée) ; **T2** geste : « quelles options faut-il
+relancer ? » puis « relance 1 et 3 » → exactement ces deux-là dans « À valider » ; contre-épreuve : une question sans
+rapport reçoit une réponse normale.

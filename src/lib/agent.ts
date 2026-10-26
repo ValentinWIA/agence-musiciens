@@ -34,6 +34,7 @@ export async function executerAgent(
   demande: string,
   surEtape?: (etape: Etape) => void,
   page: PageOuverte | null = null, // bulle de chaque page seulement
+  precedente: string | null = null, // la dernière réponse affichée par le formulaire (section 12)
 ): Promise<ResultatAgent> {
   if (utilisateur.role !== "admin") {
     console.warn(`Accès refusé : ${utilisateur.nom} (musicien) sur l'agent`);
@@ -55,8 +56,14 @@ export async function executerAgent(
   try {
     [{ id: executionId }] = await db
       .insert(executionsAgent)
-      // Au journal, la demande et la page qui l'accompagnait : ce que le modèle a reçu se relit.
-      .values({ utilisateurId: utilisateur.id, porte, demande: page ? `${demande}\n(page ouverte : ${page.chemin})` : demande })
+      // Au journal, la demande et ce qui l'accompagnait : ce que le modèle a reçu se relit.
+      .values({
+        utilisateurId: utilisateur.id,
+        porte,
+        demande: [demande, precedente && "(suite de la réponse précédente)", page && `(page ouverte : ${page.chemin})`]
+          .filter(Boolean)
+          .join("\n"),
+      })
       .returning({ id: executionsAgent.id });
   } catch (e) {
     // 23505 : l'index « un seul agent en cours » refuse la ligne.
@@ -92,7 +99,7 @@ export async function executerAgent(
   let jetonsSortie = 0;
   try {
     for await (const message of query({
-      prompt: avecPageOuverte(demande, page, nomMusicien),
+      prompt: avecPageOuverte(demande, page, nomMusicien, precedente),
       options: {
         model: modele,
         systemPrompt: CONSIGNE,

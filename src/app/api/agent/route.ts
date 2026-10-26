@@ -1,6 +1,6 @@
 import { auth } from "@/auth";
 import { executerAgent } from "@/lib/agent";
-import { lirePageOuverte, verifierDemande } from "@/lib/agent-regles";
+import { lirePageOuverte, lireReponsePrecedente, verifierDemande } from "@/lib/agent-regles";
 
 // Une demande à l'assistant (docs/semaine-4.md, tranche A3). Réponse en streaming, une ligne JSON par message :
 // { etape } à chaque outil appelé, puis { resultat } ou { erreur }.
@@ -20,6 +20,8 @@ export async function POST(requete: Request) {
   if ("erreur" in lu) return Response.json(lu, { status: 400 });
   // La page ouverte (bulle) : seulement une fiche du site, reconnue par son adresse ; tout autre texte est ignoré.
   const page = lirePageOuverte((corps as { page?: unknown }).page);
+  // La réponse précédente vient du navigateur : elle sera donnée au modèle comme une donnée, jamais comme une consigne.
+  const precedente = lireReponsePrecedente((corps as { reponsePrecedente?: unknown }).reponsePrecedente);
 
   const encodeur = new TextEncoder();
   const flux = new ReadableStream({
@@ -29,6 +31,7 @@ export async function POST(requete: Request) {
         const resultat = await executerAgent({ id, nom, role }, "page", lu.demande, (etape) =>
           envoyer({ etape: { outil: etape.outil, refus: etape.sortie.startsWith("refus : "), alerte: etape.alerte === true } }),
           page,
+          precedente,
         );
         envoyer(resultat.ok ? { resultat } : { erreur: resultat.erreur });
       } finally {

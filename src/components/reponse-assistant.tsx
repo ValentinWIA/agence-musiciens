@@ -12,7 +12,7 @@ export function ReponseAssistant({ texte, origine, compacte = false }: { texte: 
       <div className="grid gap-3 text-[15px] leading-relaxed">
         {blocs(corps).map((b, i) =>
           b.liste ? (
-            <Liste key={i} numerotee={b.numerotee}>
+            <Liste key={i} numerotee={b.numerotee} debut={b.debut}>
               {b.elements.map((e, j) => (
                 <li key={j}>
                   <Ligne morceaux={e} origine={origine} />
@@ -91,9 +91,9 @@ export function ReponseAssistant({ texte, origine, compacte = false }: { texte: 
   );
 }
 
-function Liste({ numerotee, children }: { numerotee: boolean; children: React.ReactNode }) {
+function Liste({ numerotee, debut, children }: { numerotee: boolean; debut: number; children: React.ReactNode }) {
   const classes = "grid gap-2 pl-5 marker:text-or";
-  return numerotee ? <ol className={`${classes} list-decimal`}>{children}</ol> : <ul className={`${classes} list-disc`}>{children}</ul>;
+  return numerotee ? <ol start={debut} className={`${classes} list-decimal`}>{children}</ol> : <ul className={`${classes} list-disc`}>{children}</ul>;
 }
 
 function Ligne({ morceaux, origine }: { morceaux: Segment[]; origine: string }) {

@@ -2,7 +2,7 @@
 // Le modèle écrit un Markdown simple : paragraphes, listes (tirets ou numéros), gras. On ne lit que cela ; le reste reste du texte.
 
 export type Segment = { texte: string; gras?: true };
-export type Bloc = { liste: false; texte: Segment[] } | { liste: true; numerotee: boolean; elements: Segment[][] };
+export type Bloc = { liste: false; texte: Segment[] } | { liste: true; numerotee: boolean; debut: number; elements: Segment[][] };
 export type Bilan = { lu: string[]; fait: string[]; propose: string[] };
 
 // « 2 200,00 € », « 20 h 00 », « 450 000 JPY » ne se coupent pas en fin de ligne (espace insécable).
@@ -22,7 +22,7 @@ const NUMERO = /^\s*\d+[.)]\s+/;
 
 // Lu ligne par ligne (retour du 26/10) : le modèle colle souvent une liste à la phrase qui l'annonce, sans ligne vide.
 export function blocs(texte: string): Bloc[] {
-  const sortie: ({ liste: false; lignes: string[] } | { liste: true; numerotee: boolean; elements: string[] })[] = [];
+  const sortie: ({ liste: false; lignes: string[] } | { liste: true; numerotee: boolean; debut: number; elements: string[] })[] = [];
   let nouveau = true; // une ligne vide ferme le bloc en cours
   for (const ligne of texte.split("\n")) {
     const dernier = nouveau ? undefined : sortie.at(-1);
@@ -31,7 +31,9 @@ export function blocs(texte: string): Bloc[] {
       const numerotee = NUMERO.test(ligne);
       const element = ligne.replace(TIRET, "").replace(NUMERO, "");
       if (dernier?.liste && dernier.numerotee === numerotee) dernier.elements.push(element);
-      else sortie.push({ liste: true, numerotee, elements: [element] });
+      // Le numéro écrit par le modèle : options séparées par une ligne vide, chaque liste ne repart pas de 1
+      // (retour du 26/10 : l'agente dit « relance 1 et 3 » d'après ces numéros).
+      else sortie.push({ liste: true, numerotee, debut: numerotee ? Number(ligne.match(/\d+/)![0]) : 1, elements: [element] });
       nouveau = false;
     } else if (dernier?.liste && /^\s/.test(ligne)) {
       // Ligne en retrait : suite de l'élément précédent (le modèle passe parfois « Fiche : … » à la ligne).
@@ -43,7 +45,7 @@ export function blocs(texte: string): Bloc[] {
     }
   }
   return sortie.map((b) =>
-    b.liste ? { liste: true, numerotee: b.numerotee, elements: b.elements.map(segments) } : { liste: false, texte: segments(b.lignes.join("\n")) },
+    b.liste ? { liste: true, numerotee: b.numerotee, debut: b.debut, elements: b.elements.map(segments) } : { liste: false, texte: segments(b.lignes.join("\n")) },
   );
 }
 
