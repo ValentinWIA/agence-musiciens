@@ -74,3 +74,9 @@ export async function identifiantCourriel(c: CourrielImporte): Promise<string> {
   const empreinte = Array.from(new Uint8Array(await crypto.subtle.digest("SHA-256", octets)), (o) => o.toString(16).padStart(2, "0")).join("");
   return `empreinte:${empreinte}`;
 }
+
+// Ce que l'IA lit pour un courriel importé : son en-tête (elle y trouve l'expéditeur et la date), puis le texte.
+export function texteDuCourriel(c: { expediteur: string; objet: string; dateEnvoi: Date | null; texte: string }): string {
+  const date = c.dateEnvoi?.toLocaleString("fr-FR", { timeZone: "Europe/Paris", dateStyle: "long", timeStyle: "short" });
+  return [`De : ${c.expediteur}`, date && `Date : ${date}`, `Objet : ${c.objet}`, "", c.texte].filter((l) => l != null).join("\n");
+}

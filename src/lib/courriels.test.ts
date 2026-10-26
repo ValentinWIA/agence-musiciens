@@ -1,6 +1,6 @@
 import PostalMime from "postal-mime";
 import { describe, expect, it } from "vitest";
-import { extraireCourriel, htmlEnTexte, identifiantCourriel, schemaEnvoi } from "./courriels";
+import { extraireCourriel, htmlEnTexte, identifiantCourriel, schemaEnvoi, texteDuCourriel } from "./courriels";
 
 // Courriels fictifs, écrits comme les enregistre une messagerie.
 const TEXTE = [
@@ -81,5 +81,15 @@ describe("doublons", () => {
     expect(schemaEnvoi.safeParse(Array(21).fill(c)).success).toBe(false);
     expect(schemaEnvoi.safeParse([{ ...c, date: "hier" }]).success).toBe(false);
     expect(schemaEnvoi.safeParse([]).success).toBe(false);
+  });
+});
+
+describe("texte donné à l'IA pour un courriel importé", () => {
+  it("en-tête puis texte ; sans date, pas de ligne Date", () => {
+    const c = { expediteur: "Salle Gaveau <p@gaveau.test>", objet: "Récital", texte: "Bonjour" };
+    expect(texteDuCourriel({ ...c, dateEnvoi: new Date("2026-10-19T08:00:00Z") })).toBe(
+      "De : Salle Gaveau <p@gaveau.test>\nDate : 19 octobre 2026 à 10:00\nObjet : Récital\n\nBonjour",
+    );
+    expect(texteDuCourriel({ ...c, dateEnvoi: null })).toBe("De : Salle Gaveau <p@gaveau.test>\nObjet : Récital\n\nBonjour");
   });
 });

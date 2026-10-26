@@ -16,7 +16,7 @@ import {
   verifierLecture,
   type LectureVerifiee,
 } from "@/lib/courrier";
-import { identifiantCourriel, schemaEnvoi } from "@/lib/courriels";
+import { identifiantCourriel, schemaEnvoi, texteDuCourriel } from "@/lib/courriels";
 import { appelerModele, texteDe } from "@/lib/ia";
 import { verifierAdmin } from "@/lib/session";
 
@@ -34,8 +34,10 @@ export type EtatLecture = {
 // Lit le courrier déposé : rien n'est enregistré ici, l'agent relit d'abord.
 export async function lireCourrier(etat: EtatLecture, formData: FormData): Promise<EtatLecture> {
   const agent = await verifierAdmin("/courriers (lecture)");
-  const texte = await texteDepose(formData);
-  if ("erreur" in texte) return { erreur: texte.erreur };
+  // « Traiter » un courriel importé : le texte est relu en base, jamais pris du navigateur.
+  const courriel = z.uuid().safeParse(formData.get("courriel")).data;
+  const texte = courriel ? await texteImporte(courriel) : await texteDepose(formData);
+  if ("erreur" in texte) return { erreur: texte.erreur, courriel };
   // Haiku suffit pour les 10 courriers du flux (décision 1, mesurée le 18/10) ; Sonnet pour un courrier complexe.
   const modele = z.enum(MODELES_COURRIER).catch("claude-haiku-5-5").parse(formData.get("modele"));
 
@@ -52,7 +54,7 @@ export async function lireCourrier(etat: EtatLecture, formData: FormData): Promi
     modele,
   );
   refresh(); // la page des coûts compte l'appel
-  if (!resultat.ok) return { erreur: `Lecture impossible : ${resultat.erreur}.` };
+  if (!resultat.ok) return { erreur: `Lecture impossible : ${resultat.erreur}.`, courriel };
 
   // Le produit refuse ce qui n'entre pas dans le format, même si l'API l'a promis.
   let lecture;
@@ -63,10 +65,16 @@ export async function lireCourrier(etat: EtatLecture, formData: FormData): Promi
   }
   if (resultat.reponse.stop_reason !== "end_turn" || !lecture?.success) {
     console.warn(`Lecture refusée : réponse hors format (${resultat.reponse.stop_reason})`);
-    return { erreur: "Réponse de l'IA illisible : rien n'est enregistré. Réessayez." };
+    return { erreur: "Réponse de l'IA illisible : rien n'est enregistré. Réessayez.", courriel };
   }
-  const courriel = z.uuid().safeParse(formData.get("courriel")).data;
   return { lecture: verifierLecture(texte.texte, lecture.data), texte: texte.texte, modele, lectures: (etat.lectures ?? 0) + 1, courriel };
+}
+
+async function texteImporte(id: string): Promise<{ texte: string } | { erreur: string }> {
+  const [c] = await db.select().from(courriels).where(eq(courriels.id, id));
+  if (!c) return { erreur: "Ce courriel n'existe plus." };
+  if (c.courrierId) return { erreur: "Ce courriel est déjà traité." };
+  return { texte: texteDuCourriel(c).slice(0, TAILLE_MAX_TEXTE) };
 }
 
 async function texteDepose(formData: FormData): Promise<{ texte: string } | { erreur: string }> {
