@@ -248,7 +248,9 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   ouvert à droite, « Faire lire par l'IA » (le serveur relit le texte en base) puis relecture au même endroit ;
   « + Coller un texte ou un PDF » pour le dépôt à la main. 408 tests. Gestes validés en prévisualisation (import,
   réimport sans doublon, traitement, iPhone). Production déployée (`/api/sante` ok). Dossier d'essai :
-  `~/Desktop/courriels-fictifs` (4 `.eml` fictifs + un `.txt` ignoré). **À vérifier en production** : un import.
+  `~/Desktop/courriels-fictifs` (4 `.eml` fictifs + un `.txt` ignoré). Geste validé en production sur ordinateur.
+  **Correctif téléphone** (**PR n° 49 fusionnée**, `19a7892`) : le tableau « Enregistrés » élargissait la page (bandeau
+  noir trop court) → `grid-cols-1` et cartes sous 768 px. Production déployée (`/api/sante` ok).
   **REPRISE ICI** : semaine 4 prête à l'envoi. Mis de côté par l'humain le 26/10 : A8c, relecture du README, message
   piégé. Après l'envoi : **volet** engagements / demandes reçues (cadrage à faire), heures de 5 en 5 minutes.
   Après la semaine 4 (notés) : retouches fiche musicien sur téléphone et adresse du lieu ; volet engagements /
