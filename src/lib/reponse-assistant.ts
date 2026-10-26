@@ -1,34 +1,50 @@
 // Une réponse de l'assistant, lue pour l'écran (retour du 26/10 : les ** et tirets s'affichaient tels quels).
-// Le modèle écrit un Markdown simple : paragraphes, listes à tirets, gras. On ne lit que cela ; le reste reste du texte.
+// Le modèle écrit un Markdown simple : paragraphes, listes (tirets ou numéros), gras. On ne lit que cela ; le reste reste du texte.
 
 export type Segment = { texte: string; gras?: true };
-export type Bloc = { liste: false; texte: Segment[] } | { liste: true; elements: Segment[][] };
+export type Bloc = { liste: false; texte: Segment[] } | { liste: true; numerotee: boolean; elements: Segment[][] };
 export type Bilan = { lu: string[]; fait: string[]; propose: string[] };
 
+// « 2 200,00 € », « 20 h 00 », « 450 000 JPY » ne se coupent pas en fin de ligne (espace insécable).
+export function insecables(texte: string): string {
+  return texte.replace(/(\d) (?=\d{3}\b)/g, "$1\u00a0").replace(/(\d) h (?=\d)/g, "$1\u00a0h\u00a0").replace(/(\d) (?=(€|\$|[A-Z]{3}\b))/g, "$1\u00a0");
+}
+
 export function segments(ligne: string): Segment[] {
-  return ligne
+  return insecables(ligne)
     .split(/\*\*(.+?)\*\*/g)
     .map((texte, i): Segment => (i % 2 === 1 ? { texte, gras: true } : { texte }))
     .filter((s) => s.texte !== "");
 }
 
 const TIRET = /^\s*[-*•]\s+/;
+const NUMERO = /^\s*\d+[.)]\s+/;
 
+// Lu ligne par ligne (retour du 26/10) : le modèle colle souvent une liste à la phrase qui l'annonce, sans ligne vide.
 export function blocs(texte: string): Bloc[] {
-  return texte
-    .split(/\n\s*\n/)
-    .map((paquet) => paquet.split("\n").filter((l) => l.trim() !== ""))
-    .filter((lignes) => lignes.length > 0)
-    .flatMap((lignes): Bloc[] => {
-      if (!TIRET.test(lignes[0])) return [{ liste: false, texte: segments(lignes.map((l) => l.trim()).join(" ")) }];
-      // Une ligne sans tiret prolonge l'élément précédent (le modèle passe parfois « Fiche : … » à la ligne).
-      const elements: string[] = [];
-      for (const l of lignes) {
-        if (TIRET.test(l)) elements.push(l.replace(TIRET, ""));
-        else elements[elements.length - 1] += ` ${l.trim()}`;
-      }
-      return [{ liste: true, elements: elements.map(segments) }];
-    });
+  const sortie: ({ liste: false; lignes: string[] } | { liste: true; numerotee: boolean; elements: string[] })[] = [];
+  let nouveau = true; // une ligne vide ferme le bloc en cours
+  for (const ligne of texte.split("\n")) {
+    const dernier = nouveau ? undefined : sortie.at(-1);
+    if (ligne.trim() === "") nouveau = true;
+    else if (TIRET.test(ligne) || NUMERO.test(ligne)) {
+      const numerotee = NUMERO.test(ligne);
+      const element = ligne.replace(TIRET, "").replace(NUMERO, "");
+      if (dernier?.liste && dernier.numerotee === numerotee) dernier.elements.push(element);
+      else sortie.push({ liste: true, numerotee, elements: [element] });
+      nouveau = false;
+    } else if (dernier?.liste && /^\s/.test(ligne)) {
+      // Ligne en retrait : suite de l'élément précédent (le modèle passe parfois « Fiche : … » à la ligne).
+      dernier.elements[dernier.elements.length - 1] += ` ${ligne.trim()}`;
+    } else if (dernier && !dernier.liste) dernier.lignes.push(ligne.trim());
+    else {
+      sortie.push({ liste: false, lignes: [ligne.trim()] });
+      nouveau = false;
+    }
+  }
+  return sortie.map((b) =>
+    b.liste ? { liste: true, numerotee: b.numerotee, elements: b.elements.map(segments) } : { liste: false, texte: segments(b.lignes.join("\n")) },
+  );
 }
 
 // Les trois listes de fin (consigne : « Lu », « Fait », « Proposé (à valider) »), mises à part pour l'écran.

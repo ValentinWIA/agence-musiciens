@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { blocs, segments, separerBilan } from "./reponse-assistant";
+import { blocs, insecables, segments, separerBilan } from "./reponse-assistant";
 
 // Réponse réelle du scénario 1 (26/10), raccourcie.
 const REPONSE = `Trois options sont à surveiller.
@@ -26,6 +26,14 @@ describe("segments", () => {
   });
 });
 
+describe("insecables", () => {
+  it("empêche de couper un montant ou une heure", () => {
+    expect(insecables("cachet 2 200,00 €, 20 h 00, 450 000 JPY, le 8 mai")).toBe(
+      "cachet 2\u00a0200,00\u00a0€, 20\u00a0h\u00a000, 450\u00a0000\u00a0JPY, le 8 mai",
+    );
+  });
+});
+
 describe("separerBilan", () => {
   it("met à part Lu, Fait et Proposé ; « rien » donne une liste vide", () => {
     const { corps, bilan } = separerBilan(REPONSE);
@@ -47,5 +55,15 @@ describe("blocs", () => {
     expect(liste.elements).toHaveLength(2);
     expect(liste.elements[0][0]).toEqual({ texte: "Récital violon, Wigmore Hall, Londres", gras: true });
     expect(liste.elements[1].at(-1)?.texte).toBe(", sam. 19 déc. 2026. Fiche : https://x/engagements/2");
+  });
+
+  it("sépare une liste collée à la phrase qui l'annonce (scénario 15), et les listes numérotées", () => {
+    const b = blocs("Pour Anna Petit, deux engagements sont impayés :\n- **Duo**, Menton\n- **Récital**, Tokyo\n1. premier\n2. second");
+    expect(b.map((x) => (x.liste ? (x.numerotee ? "1." : "-") : "p"))).toEqual(["p", "-", "1."]);
+    expect(b[0]).toEqual({ liste: false, texte: [{ texte: "Pour Anna Petit, deux engagements sont impayés :" }] });
+  });
+
+  it("garde les retours à la ligne d'un paragraphe", () => {
+    expect(blocs("Ligne un\nLigne deux")).toEqual([{ liste: false, texte: [{ texte: "Ligne un\nLigne deux" }] }]);
   });
 });
