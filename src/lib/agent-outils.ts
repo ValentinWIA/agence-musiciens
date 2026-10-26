@@ -5,7 +5,7 @@ import { z } from "zod";
 import { db } from "@/db";
 import { courriers, demandesRecues, evenementsFlux, lieux, programmateurs, propositions, utilisateurs } from "@/db/schema";
 import { lireFormulaire } from "@/app/(connecte)/engagements/saisie";
-import { ajouterALaNote, correspondDemande, enDonnees, heureDansDemande, musicienNomme, NOTE_MAX, resumeSortie } from "./agent-regles";
+import { ajouterALaNote, correspondDemande, deNom, enDonnees, heureDansDemande, musicienNomme, NOTE_MAX, resumeSortie } from "./agent-regles";
 import { formaterMontant, type Devise } from "./argent";
 import { ajouterJours, jourLocal } from "./calendrier";
 import { formaterDebut } from "./dates";
@@ -296,8 +296,8 @@ export function outilsDeLAgent(
         const suite = ajouterALaNote(fiche?.notes ?? null, note, jourLocal(new Date(), "France"), NOTES_AGENT_MAX);
         if ("erreur" in suite) return refus(suite.erreur);
         await db.update(utilisateurs).set({ notesAgent: suite.notes }).where(eq(utilisateurs.id, m.id));
-        console.log(`Assistant : note ajoutée sur la fiche de ${m.nom} pour ${utilisateur.nom}`);
-        return texte(`Note ajoutée sur la fiche de ${m.nom} : ${lien(`/musiciens/${m.id}`)}`);
+        console.log(`Assistant : note ajoutée sur la fiche ${deNom(m.nom)} pour ${utilisateur.nom}`);
+        return texte(`Note ajoutée sur la fiche ${deNom(m.nom)} : ${lien(`/musiciens/${m.id}`)}`);
       }),
       action,
     ),

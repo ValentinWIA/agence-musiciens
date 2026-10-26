@@ -17,11 +17,10 @@ describe("liens du menu selon le rôle", () => {
     ]);
   });
 
-  it("range « À valider » sous « Assistant », toujours visible, avec le nombre en attente", () => {
-    const assistant = (n?: number) => liensDuMenu(agent, [], n).find((l) => l.href === "/assistant")!;
-    expect(assistant().toujoursOuvert).toBe(true);
-    expect(assistant().sousLiens).toEqual([{ href: "/validations", libelle: "À valider" }]);
-    expect(assistant(2).sousLiens).toEqual([{ href: "/validations", libelle: "À valider (2)" }]);
+  it("range « À valider » sous « Assistant », toujours visible, avec le nombre en attente lu par le navigateur", () => {
+    const assistant = liensDuMenu(agent).find((l) => l.href === "/assistant")!;
+    expect(assistant.toujoursOuvert).toBe(true);
+    expect(assistant.sousLiens).toEqual([{ href: "/validations", libelle: "À valider", compteur: "/api/validations/compte" }]);
   });
 
   it("ne met pas le calendrier dans le menu de l'agent (le mois est sur son tableau de bord)", () => {

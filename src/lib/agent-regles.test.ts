@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   ajouterALaNote,
   correspondDemande,
+  deNom,
   dollarsEnMillioniemes,
   enDonnees,
   etatFinal,
@@ -128,5 +129,13 @@ describe("correspondDemande (l'assistant retrouve une demande précise)", () => 
 
   it("ne trouve pas ce qui n'y est pas", () => {
     expect(correspondDemande(d, "Gaveau")).toBe(false);
+  });
+});
+
+describe("deNom", () => {
+  it("élide « de » devant une voyelle, accentuée ou non, et le garde devant une consonne", () => {
+    expect(deNom("Inès Laurent")).toBe("d'Inès Laurent");
+    expect(deNom("Élise")).toBe("d'Élise");
+    expect(deNom("Louis Martin")).toBe("de Louis Martin");
   });
 });

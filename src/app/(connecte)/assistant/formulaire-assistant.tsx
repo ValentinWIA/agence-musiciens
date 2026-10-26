@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { TexteAvecLiens } from "@/components/texte-avec-liens";
 import { DEMANDE_MAX, LIBELLES_ETAT_AGENT, type EtatAgent } from "@/lib/agent-regles";
 import { formaterDollars } from "@/lib/couts-ia";
+import { relireCompteurs } from "../compteur";
 
 type Resultat = { etat: EtatAgent; reponse: string | null; erreur: string | null; tours: number; cout: number; dureeMs: number };
 type Message = { etape?: { outil: string; refus: boolean }; resultat?: Resultat; erreur?: string };
@@ -59,6 +60,7 @@ export function FormulaireAssistant({ origine }: { origine: string }) {
     } finally {
       setEnCours(false);
       router.refresh(); // le journal, lu côté serveur, montre la nouvelle demande
+      relireCompteurs(); // une relance proposée s'ajoute à « À valider »
     }
   }
 

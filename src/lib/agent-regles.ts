@@ -127,3 +127,8 @@ export function correspondDemande(
   if (date) return d.dateConcert === `${date[3]}-${date[2]}-${date[1]}`;
   return [d.reference, d.programmateur, d.lieu, d.dateConcert].some((champ) => sansAccents(champ).includes(r));
 }
+
+// « de » devant un nom, élidé devant une voyelle : « la fiche d'Inès », « la fiche de Louis » (retour du 26/10).
+export function deNom(nom: string): string {
+  return /^[aeiouyàâäéèêëîïôöùûü]/i.test(nom.trim()) ? `d'${nom.trim()}` : `de ${nom.trim()}`;
+}

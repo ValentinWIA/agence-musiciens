@@ -1,6 +1,7 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useEffect, useRef } from "react";
+import { relireCompteurs } from "../compteur";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { SUJET_MAX, TEXTE_MAX } from "@/lib/propositions";
@@ -12,6 +13,12 @@ export function CartePropositionFormulaire({ proposition }: { proposition: Propo
   const [envoi, envoyer, envoiEnCours] = useActionState<EtatDecision, FormData>(envoyerProposition, {});
   const [refus, refuser, refusEnCours] = useActionState<EtatDecision, FormData>(refuserProposition, {});
   const occupe = envoiEnCours || refusEnCours;
+  // Après chaque décision (réussie ou non), le nombre « À valider » du menu est relu.
+  const premier = useRef(true);
+  useEffect(() => {
+    if (premier.current) premier.current = false;
+    else relireCompteurs();
+  }, [envoi, refus]);
   const erreur = envoi.erreur ?? refus.erreur;
 
   return (

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { estActif, type LienMenu } from "@/lib/menu";
+import { Compteur } from "./compteur";
 
 const CLASSE_ACTIF = "block rounded-r-md border-l-2 border-or bg-accent px-3 py-2 font-medium text-accent-foreground";
 const CLASSE_INACTIF =
@@ -73,6 +74,7 @@ function LienDepliable({ lien, sousLiens, chemin }: { lien: LienMenu; sousLiens:
                   className={`block truncate rounded-md px-2 py-1 ${actif ? "bg-accent font-medium text-accent-foreground" : "text-muted-foreground hover:bg-muted hover:text-foreground"}`}
                 >
                   {s.libelle}
+                  {s.compteur && <Compteur adresse={s.compteur} />}
                 </Link>
               </li>
             );
