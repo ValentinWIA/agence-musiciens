@@ -15,7 +15,8 @@ const classeZoneTexte =
 
 const classeResume = classeZoneTexte.replace("min-h-48", "min-h-16");
 
-export function DepotCourrier() {
+// courriel : un courriel importé choisi par « Traiter » ; son texte remplit le champ, et il est relié au courrier.
+export function DepotCourrier({ courriel }: { courriel?: { id: string; objet: string; texte: string } }) {
   const [etat, lire, enLecture] = useActionState<EtatLecture, FormData>(lireCourrier, {});
 
   return (
@@ -31,7 +32,19 @@ export function DepotCourrier() {
       >
         <div className="grid gap-2">
           <Label htmlFor="texte">Texte du courrier</Label>
-          <textarea id="texte" name="texte" className={classeZoneTexte} placeholder="Collez ici le texte du courrier…" />
+          {courriel && (
+            <p className="text-xs text-muted-foreground">
+              Courriel importé : « {courriel.objet} ». Choisissez le modèle, puis « Lire le courrier ».
+            </p>
+          )}
+          {courriel && <input type="hidden" name="courriel" value={courriel.id} />}
+          <textarea
+            id="texte"
+            name="texte"
+            defaultValue={courriel?.texte}
+            className={classeZoneTexte}
+            placeholder="Collez ici le texte du courrier…"
+          />
         </div>
         <div className="flex flex-wrap items-end gap-4">
           <div className="grid gap-2">
@@ -50,11 +63,6 @@ export function DepotCourrier() {
           <Button type="submit" disabled={enLecture} className="w-fit">
             {enLecture ? "Lecture du courrier par l'IA…" : "Lire le courrier"}
           </Button>
-          {/* Bouton fictif (décidé le 19/10) : la réception des courriels n'est pas branchée. */}
-          <Button type="button" variant="outline" disabled title="En développement">
-            Importer les mails
-          </Button>
-          <span className="text-xs text-muted-foreground">Import des mails : en développement.</span>
         </div>
         {etat.erreur && (
           <p role="alert" className="text-sm text-destructive">
@@ -65,13 +73,13 @@ export function DepotCourrier() {
 
       {etat.lecture && etat.texte && etat.modele && (
         // Une nouvelle lecture remplace entièrement le formulaire de la précédente.
-        <Validation key={etat.lectures} lecture={etat.lecture} texte={etat.texte} modele={etat.modele} />
+        <Validation key={etat.lectures} lecture={etat.lecture} texte={etat.texte} modele={etat.modele} courriel={etat.courriel} />
       )}
     </div>
   );
 }
 
-function Validation({ lecture, texte, modele }: { lecture: LectureVerifiee; texte: string; modele: string }) {
+function Validation({ lecture, texte, modele, courriel }: { lecture: LectureVerifiee; texte: string; modele: string; courriel?: string }) {
   const [etat, valider, enCours] = useActionState<EtatValidation, FormData>(validerCourrier, {});
   const aRelire = CHAMPS.filter((c) => lecture[c].etat === "a_relire").length;
 
@@ -102,6 +110,7 @@ function Validation({ lecture, texte, modele }: { lecture: LectureVerifiee; text
       </div>
       <input type="hidden" name="texte" value={texte} />
       <input type="hidden" name="modele" value={modele} />
+      {courriel && <input type="hidden" name="courriel" value={courriel} />}
       {CHAMPS.map((nom) => (
         <ChampLu key={nom} nom={nom} libelle={LIBELLES_CHAMP[nom]} champ={lecture[nom]} />
       ))}

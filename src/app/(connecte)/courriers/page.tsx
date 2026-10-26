@@ -1,31 +1,49 @@
-import { desc } from "drizzle-orm";
+import { desc, eq, isNull } from "drizzle-orm";
+import { z } from "zod";
 import Link from "next/link";
 import { Suspense } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { db } from "@/db";
-import { courriers } from "@/db/schema";
+import { courriels, courriers } from "@/db/schema";
 import { formaterMontant } from "@/lib/argent";
 import { LIBELLES_MODELE, type Modele } from "@/lib/couts-ia";
 import { LIBELLES_CLASSEMENT, type Classement } from "@/lib/courrier";
 import { verifierAdmin } from "@/lib/session";
 import { DepotCourrier } from "./depot";
+import { ImportDossier } from "./import-dossier";
 import { PAGE_LARGE } from "@/components/mise-en-page";
 
-export default function PageCourriers() {
+export default function PageCourriers({ searchParams }: PageProps<"/courriers">) {
   return (
     <main className={`${PAGE_LARGE} grid gap-6 py-4`}>
       <h1 className="font-logo text-4xl leading-tight">Courriers</h1>
       <Suspense fallback={<div className="h-96 animate-pulse rounded-md bg-muted" aria-label="Chargement" />}>
-        <ContenuCourriers />
+        <ContenuCourriers searchParams={searchParams} />
       </Suspense>
     </main>
   );
 }
 
-async function ContenuCourriers() {
+async function ContenuCourriers({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   await verifierAdmin("/courriers"); // un musicien ne voit jamais cette page
   const liste = await db.select().from(courriers).orderBy(desc(courriers.creeLe)).limit(100);
+  // À traiter d'abord, puis du plus récent au plus ancien.
+  const importes = await db
+    .select()
+    .from(courriels)
+    .orderBy(desc(isNull(courriels.courrierId)), desc(courriels.dateEnvoi), desc(courriels.importeLe))
+    .limit(100);
+  // « Traiter » : ?courriel=<id> ; le texte du courriel remplit le dépôt, précédé de son en-tête (l'IA y lit l'expéditeur et la date).
+  const idChoisi = z.uuid().safeParse((await searchParams).courriel).data;
+  const choisi = idChoisi ? (await db.select().from(courriels).where(eq(courriels.id, idChoisi)))[0] : undefined;
+  const aDeposer = choisi && {
+    id: choisi.id,
+    objet: choisi.objet,
+    texte: [`De : ${choisi.expediteur}`, choisi.dateEnvoi && `Date : ${dateCourriel(choisi.dateEnvoi)}`, `Objet : ${choisi.objet}`, "", choisi.texte]
+      .filter((l) => l !== null)
+      .join("\n"),
+  };
 
   return (
     <>
@@ -43,7 +61,50 @@ async function ContenuCourriers() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <DepotCourrier />
+          <DepotCourrier key={aDeposer?.id} courriel={aDeposer} />
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Courriels importés</CardTitle>
+          <CardDescription>
+            Exportez vos courriels en fichiers .eml dans un dossier (Mail : glissez-les sur le bureau), puis importez le
+            dossier : ils sont rangés ici tels quels, sans IA, et un courriel déjà importé n&apos;est pas ajouté deux fois.
+            « Traiter » le passe au dépôt ci-dessus.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="grid gap-4">
+          <ImportDossier />
+          {importes.length === 0 ? (
+            <p className="text-sm text-muted-foreground">Aucun courriel importé.</p>
+          ) : (
+            <ul className="text-sm">
+              {importes.map((c) => (
+                <li
+                  key={c.id}
+                  className={`grid grid-cols-[7rem_minmax(0,1fr)_auto] items-baseline gap-x-4 border-t py-2 first:border-t-0 ${c.courrierId ? "text-muted-foreground" : ""}`}
+                >
+                  <span className="whitespace-nowrap">{c.dateEnvoi ? c.dateEnvoi.toLocaleDateString("fr-FR", { timeZone: "Europe/Paris" }) : "—"}</span>
+                  <details className="min-w-0">
+                    <summary className="cursor-pointer">
+                      <span className="font-medium">{c.objet}</span> · {c.expediteur}
+                    </summary>
+                    <p className="mt-2 max-h-64 overflow-y-auto whitespace-pre-line rounded-md bg-muted p-3 text-xs">{c.texte}</p>
+                  </details>
+                  {c.courrierId ? (
+                    <Link href={`/courriers/${c.courrierId}`} className="whitespace-nowrap underline">
+                      traité · voir le courrier →
+                    </Link>
+                  ) : (
+                    <Link href={`/courriers?courriel=${c.id}`} className="whitespace-nowrap font-medium underline">
+                      Traiter →
+                    </Link>
+                  )}
+                </li>
+              ))}
+            </ul>
+          )}
         </CardContent>
       </Card>
 
@@ -94,4 +155,8 @@ async function ContenuCourriers() {
       </Card>
     </>
   );
+}
+
+function dateCourriel(d: Date): string {
+  return d.toLocaleString("fr-FR", { timeZone: "Europe/Paris", dateStyle: "long", timeStyle: "short" });
 }

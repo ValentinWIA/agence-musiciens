@@ -242,6 +242,20 @@ export const courriers = pgTable("courriers", {
   creeLe: timestamp("cree_le", { withTimezone: true }).notNull().defaultNow(),
 });
 
+// Un courriel importé d'un dossier (.eml) : enregistré tel quel, sans IA ; « Traiter » le passe au dépôt d'un
+// courrier (docs/import-courriels.md). L'identifiant unique (Message-ID ou empreinte) refuse les doublons.
+export const courriels = pgTable("courriels", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  identifiant: text("identifiant").notNull().unique(),
+  expediteur: text("expediteur").notNull(),
+  objet: text("objet").notNull(),
+  dateEnvoi: timestamp("date_envoi", { withTimezone: true }),
+  texte: text("texte").notNull(),
+  courrierId: uuid("courrier_id").references(() => courriers.id, { onDelete: "set null" }), // rempli une fois traité
+  importePar: uuid("importe_par").references(() => utilisateurs.id, { onDelete: "set null" }),
+  importeLe: timestamp("importe_le", { withTimezone: true }).notNull().defaultNow(),
+});
+
 // Une page des documents du flux et son embedding (docs/semaine-3.md, I4). Jamais vidée par le jeu de données :
 // l'empreinte évite de recalculer une page dont le texte n'a pas changé.
 export const passages = pgTable(

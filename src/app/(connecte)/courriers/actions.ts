@@ -3,9 +3,10 @@
 import { zodOutputFormat } from "@anthropic-ai/sdk/helpers/zod";
 import { refresh } from "next/cache";
 import { extractText } from "unpdf";
+import { and, eq, isNull } from "drizzle-orm";
 import { z } from "zod";
 import { db } from "@/db";
-import { courriers } from "@/db/schema";
+import { courriels, courriers } from "@/db/schema";
 import {
   CONSIGNE,
   schemaLecture,
@@ -15,12 +16,20 @@ import {
   verifierLecture,
   type LectureVerifiee,
 } from "@/lib/courrier";
+import { identifiantCourriel, schemaEnvoi } from "@/lib/courriels";
 import { appelerModele, texteDe } from "@/lib/ia";
 import { verifierAdmin } from "@/lib/session";
 
 const MODELES_COURRIER = ["claude-haiku-5-5", "claude-sonnet-5-5"] as const;
 
-export type EtatLecture = { erreur?: string; lecture?: LectureVerifiee; texte?: string; modele?: string; lectures?: number };
+export type EtatLecture = {
+  erreur?: string;
+  lecture?: LectureVerifiee;
+  texte?: string;
+  modele?: string;
+  lectures?: number;
+  courriel?: string; // le courriel importé dont vient le texte : relié au courrier à la validation
+};
 
 // Lit le courrier déposé : rien n'est enregistré ici, l'agent relit d'abord.
 export async function lireCourrier(etat: EtatLecture, formData: FormData): Promise<EtatLecture> {
@@ -56,7 +65,8 @@ export async function lireCourrier(etat: EtatLecture, formData: FormData): Promi
     console.warn(`Lecture refusée : réponse hors format (${resultat.reponse.stop_reason})`);
     return { erreur: "Réponse de l'IA illisible : rien n'est enregistré. Réessayez." };
   }
-  return { lecture: verifierLecture(texte.texte, lecture.data), texte: texte.texte, modele, lectures: (etat.lectures ?? 0) + 1 };
+  const courriel = z.uuid().safeParse(formData.get("courriel")).data;
+  return { lecture: verifierLecture(texte.texte, lecture.data), texte: texte.texte, modele, lectures: (etat.lectures ?? 0) + 1, courriel };
 }
 
 async function texteDepose(formData: FormData): Promise<{ texte: string } | { erreur: string }> {
@@ -92,8 +102,40 @@ export async function validerCourrier(_etat: EtatValidation, formData: FormData)
   if (!saisie.success) return { erreur: saisie.error.issues.map((i) => i.message).join(" ") };
 
   const { date, ...champs } = saisie.data;
-  await db.insert(courriers).values({ ...champs, dateCourrier: date, creePar: agent.id });
+  const [{ id }] = await db.insert(courriers).values({ ...champs, dateCourrier: date, creePar: agent.id }).returning({ id: courriers.id });
+  const courriel = z.uuid().safeParse(formData.get("courriel")).data;
+  if (courriel) {
+    // Le courriel importé passe à « traité » ; un courriel déjà traité garde son premier courrier.
+    await db.update(courriels).set({ courrierId: id }).where(and(eq(courriels.id, courriel), isNull(courriels.courrierId)));
+  }
   console.log(`Courrier enregistré par ${agent.nom} (${champs.structure ?? "expéditeur inconnu"}, ${champs.classement})`);
   refresh();
   return { reussi: true };
+}
+
+export type BilanImport = { importes: number; deja: number } | { erreur: string };
+
+// Un lot de courriels lus dans le navigateur (20 au plus) : enregistrés tels quels, sans IA. Un identifiant déjà en
+// base (Message-ID ou empreinte) est ignoré : réimporter un dossier ne crée pas de doublon.
+export async function importerCourriels(lot: unknown): Promise<BilanImport> {
+  const agent = await verifierAdmin("/courriers (import de courriels)");
+  const lu = schemaEnvoi.safeParse(lot);
+  if (!lu.success) {
+    console.warn(`Import de courriels refusé (envoi mal formé) pour ${agent.nom}`);
+    return { erreur: "Envoi refusé : courriels mal formés." };
+  }
+  const lignes = await Promise.all(
+    lu.data.map(async (c) => ({
+      identifiant: await identifiantCourriel(c),
+      expediteur: c.expediteur,
+      objet: c.objet,
+      dateEnvoi: c.date ? new Date(c.date) : null,
+      texte: c.texte,
+      importePar: agent.id,
+    })),
+  );
+  const ajoutes = await db.insert(courriels).values(lignes).onConflictDoNothing({ target: courriels.identifiant }).returning({ id: courriels.id });
+  console.log(`Import de courriels par ${agent.nom} : ${ajoutes.length} ajouté(s), ${lignes.length - ajoutes.length} déjà présent(s)`);
+  refresh();
+  return { importes: ajoutes.length, deja: lignes.length - ajoutes.length };
 }
