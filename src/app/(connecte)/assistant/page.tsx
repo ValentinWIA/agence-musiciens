@@ -7,7 +7,7 @@ import { db } from "@/db";
 import { executionsAgent } from "@/db/schema";
 import { MAX_DOLLARS, MAX_SECONDES, MAX_TOURS, OUTILS_D_ACTION } from "@/lib/agent-regles";
 import { verifierAdmin } from "@/lib/session";
-import { FormulaireAssistant } from "./formulaire-assistant";
+import { FormulaireAssistant } from "@/components/formulaire-assistant";
 import { HistoriqueDemandes } from "./historique-demandes";
 import { origineDuSite } from "@/lib/origine";
 

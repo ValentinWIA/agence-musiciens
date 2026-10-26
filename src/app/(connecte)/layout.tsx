@@ -1,6 +1,9 @@
 import Link from "next/link";
 import { Suspense } from "react";
 import { Logo } from "@/components/logo";
+import { origineDuSite } from "@/lib/origine";
+import { verifierSession } from "@/lib/session";
+import { BulleAssistant } from "./bulle-assistant";
 import { MenuLateral, SqueletteMenu } from "./menu-lateral";
 import { MenuTelephone } from "./menu-telephone";
 
@@ -35,6 +38,15 @@ export default function LayoutConnecte({ children }: { children: React.ReactNode
         </header>
         {children}
       </div>
+      <Suspense fallback={null}>
+        <BulleSiAgent />
+      </Suspense>
     </div>
   );
+}
+
+// La bulle de l'assistant, pour l'agent seulement : le rôle est lu côté serveur (la route /api/agent le revérifie).
+async function BulleSiAgent() {
+  const utilisateur = await verifierSession();
+  return utilisateur.role === "admin" ? <BulleAssistant origine={origineDuSite()} /> : null;
 }

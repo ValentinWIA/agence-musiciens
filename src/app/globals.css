@@ -157,3 +157,9 @@
 html:has(.menu-telephone[open]) {
   overflow: hidden;
 }
+/* Volet de l'assistant sur téléphone (src/app/(connecte)/bulle-assistant.tsx) : la page derrière ne défile plus. */
+@media (width < 48rem) {
+  html:has(.volet-assistant:not([hidden])) {
+    overflow: hidden;
+  }
+}
