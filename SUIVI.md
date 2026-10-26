@@ -10,7 +10,7 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 
 ## État de reprise
 
-*Dernière mise à jour : 26 octobre 2026 (adresse d'un nouveau lieu remplie, PR n° 47 ; semaine 4 prête à l'envoi, volet reporté après)*
+*Dernière mise à jour : 26 octobre 2026 (courriers : boîte de réception et import d'un dossier .eml en production, PR n° 48 ; semaine 4 prête à l'envoi)*
 
 - **✅ Revenus de la saison** (19/10, branche `revenus`, **PR n° 32 fusionnée**, `e1dd3ec`). Carte « Revenus de la
   saison » en tête de la colonne droite du tableau de bord : total des cachets (le « chiffre d'affaires » : pas de
@@ -239,6 +239,16 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   Fiche musicien sur téléphone (retour du 25/10) : **plus de problème constaté** par l'humain, rien fait.
   Secret de contournement Vercel : **déjà remplacé** (l'humain, 26/10). Supprimer un lieu : pas dans le produit, SQL
   donné à l'humain si besoin (lieu non utilisé par un engagement) ; décidé de ne rien faire.
+  **✅ Courriers : import d'un dossier et boîte de réception** (26/10, branche `import-courriels`, **PR n° 48
+  fusionnée**, `eea6210` ; cadrage `docs/import-courriels.md`). Remplace les boutons factices « en développement »
+  (« Importer les mails », « Envoyer au destinataire » : retirés). « Importer un dossier » (ordinateur) : les `.eml`
+  lus dans le navigateur (`postal-mime`, `src/lib/courriels.ts`), rangés sans IA dans la table `courriels`
+  (migration 0024) ; doublon refusé par l'identifiant unique (Message-ID, sinon empreinte SHA-256). Page en boîte de
+  réception (**variante A** choisie sur planche) : onglets « À traiter » / « Enregistrés », liste à gauche, courriel
+  ouvert à droite, « Faire lire par l'IA » (le serveur relit le texte en base) puis relecture au même endroit ;
+  « + Coller un texte ou un PDF » pour le dépôt à la main. 408 tests. Gestes validés en prévisualisation (import,
+  réimport sans doublon, traitement, iPhone). Production déployée (`/api/sante` ok). Dossier d'essai :
+  `~/Desktop/courriels-fictifs` (4 `.eml` fictifs + un `.txt` ignoré). **À vérifier en production** : un import.
   **REPRISE ICI** : semaine 4 prête à l'envoi. Mis de côté par l'humain le 26/10 : A8c, relecture du README, message
   piégé. Après l'envoi : **volet** engagements / demandes reçues (cadrage à faire), heures de 5 en 5 minutes.
   Après la semaine 4 (notés) : retouches fiche musicien sur téléphone et adresse du lieu ; volet engagements /

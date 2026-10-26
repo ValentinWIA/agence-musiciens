@@ -16,7 +16,8 @@ import { PAGE_LARGE } from "@/components/mise-en-page";
 // « Enregistrés » (courriers) ; la liste à gauche, le courriel ouvert à droite (?id=…), la saisie à la main (?saisie=1).
 export default function PageCourriers({ searchParams }: PageProps<"/courriers">) {
   return (
-    <main className={`${PAGE_LARGE} grid gap-4 py-4`}>
+    // grid-cols-1 : la colonne ne s'élargit pas au tableau (débordement sur téléphone, 26/10, comme la fiche musicien).
+    <main className={`${PAGE_LARGE} grid grid-cols-1 gap-4 py-4`}>
       <Suspense fallback={<div className="h-96 animate-pulse rounded-md bg-muted" aria-label="Chargement" />}>
         <ContenuCourriers searchParams={searchParams} />
       </Suspense>
@@ -98,7 +99,7 @@ function BoiteATraiter({ aTraiter, choisi, saisie }: { aTraiter: Courriel[]; cho
   const dejaTraite = choisi !== undefined && !saisie && !ouvert;
 
   return (
-    <div className="grid min-h-[28rem] md:grid-cols-[20rem_minmax(0,1fr)]">
+    <div className="grid min-h-[28rem] grid-cols-1 md:grid-cols-[20rem_minmax(0,1fr)]">
       <ul className={`border-b md:border-r md:border-b-0 ${ouvertParClic ? "hidden md:block" : ""}`}>
         {aTraiter.length === 0 && <li className="p-4 text-sm text-muted-foreground">Rien à traiter.</li>}
         {aTraiter.map((c) => (
@@ -156,40 +157,62 @@ async function Enregistres() {
   if (liste.length === 0) return <p className="p-4 text-sm text-muted-foreground">Aucun courrier enregistré pour l&apos;instant.</p>;
   return (
     <div className="p-2">
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Daté du</TableHead>
-            <TableHead className="min-w-44">Expéditeur</TableHead>
-            <TableHead>Référence</TableHead>
-            <TableHead className="text-right">Montant</TableHead>
-            <TableHead>Type</TableHead>
-            <TableHead>Classement</TableHead>
-            <TableHead>Lu par</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {liste.map((c) => (
-            <TableRow key={c.id}>
-              <TableCell>{c.dateCourrier ? new Date(`${c.dateCourrier}T12:00:00Z`).toLocaleDateString("fr-FR") : "—"}</TableCell>
-              <TableCell className="whitespace-normal">
-                <Link href={`/courriers/${c.id}`} className="underline">
-                  {c.structure ?? "expéditeur inconnu"}
-                </Link>
-                {c.signataire && <span className="block text-xs text-muted-foreground">{c.signataire}</span>}
-              </TableCell>
-              <TableCell>{c.reference ?? "—"}</TableCell>
-              <TableCell className="text-right">{c.montant === null ? "—" : formaterMontant(c.montant, "EUR")}</TableCell>
-              <TableCell>{c.typeDossier ?? "—"}</TableCell>
-              <TableCell className="whitespace-normal">
-                {LIBELLES_CLASSEMENT[c.classement as Classement] ?? c.classement}
-                {c.resume && <span className="block text-xs text-muted-foreground">{c.resume}</span>}
-              </TableCell>
-              <TableCell>{LIBELLES_MODELE[c.modele as Modele] ?? c.modele}</TableCell>
+      {/* Sur téléphone, une carte par courrier (comme les engagements) ; le tableau à partir de 768 px. */}
+      <ul className="grid gap-2 md:hidden">
+        {liste.map((c) => (
+          <li key={c.id}>
+            <Link href={`/courriers/${c.id}`} className="grid gap-0.5 rounded-lg border p-3 text-sm">
+              <span className="flex items-baseline justify-between gap-2">
+                <span className="truncate font-semibold">{c.structure ?? "expéditeur inconnu"}</span>
+                <span className="shrink-0 text-xs text-muted-foreground">
+                  {c.dateCourrier ? new Date(`${c.dateCourrier}T12:00:00Z`).toLocaleDateString("fr-FR") : ""}
+                </span>
+              </span>
+              <span className="flex items-baseline justify-between gap-2">
+                <span className="text-muted-foreground">{LIBELLES_CLASSEMENT[c.classement as Classement] ?? c.classement}</span>
+                {c.montant !== null && <span className="shrink-0">{formaterMontant(c.montant, "EUR")}</span>}
+              </span>
+              {c.resume && <span className="line-clamp-2 text-xs text-muted-foreground">{c.resume}</span>}
+            </Link>
+          </li>
+        ))}
+      </ul>
+      <div className="hidden md:block">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Daté du</TableHead>
+              <TableHead className="min-w-44">Expéditeur</TableHead>
+              <TableHead>Référence</TableHead>
+              <TableHead className="text-right">Montant</TableHead>
+              <TableHead>Type</TableHead>
+              <TableHead>Classement</TableHead>
+              <TableHead>Lu par</TableHead>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+          </TableHeader>
+          <TableBody>
+            {liste.map((c) => (
+              <TableRow key={c.id}>
+                <TableCell>{c.dateCourrier ? new Date(`${c.dateCourrier}T12:00:00Z`).toLocaleDateString("fr-FR") : "—"}</TableCell>
+                <TableCell className="whitespace-normal">
+                  <Link href={`/courriers/${c.id}`} className="underline">
+                    {c.structure ?? "expéditeur inconnu"}
+                  </Link>
+                  {c.signataire && <span className="block text-xs text-muted-foreground">{c.signataire}</span>}
+                </TableCell>
+                <TableCell>{c.reference ?? "—"}</TableCell>
+                <TableCell className="text-right">{c.montant === null ? "—" : formaterMontant(c.montant, "EUR")}</TableCell>
+                <TableCell>{c.typeDossier ?? "—"}</TableCell>
+                <TableCell className="whitespace-normal">
+                  {LIBELLES_CLASSEMENT[c.classement as Classement] ?? c.classement}
+                  {c.resume && <span className="block text-xs text-muted-foreground">{c.resume}</span>}
+                </TableCell>
+                <TableCell>{LIBELLES_MODELE[c.modele as Modele] ?? c.modele}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
     </div>
   );
 }
