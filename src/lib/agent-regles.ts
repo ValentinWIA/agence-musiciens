@@ -79,9 +79,34 @@ export function lirePageOuverte(chemin: unknown): PageOuverte | null {
   return m ? { type: FICHES[m[1] as keyof typeof FICHES], id: m[2], chemin } : null;
 }
 
-// Ce que reçoit le modèle : la page en indication, puis la demande. nomMusicien : lu en base pour une fiche musicien
-// (ajouter_note attend un nom) ; sans lui, la page n'est pas donnée.
-export function avecPageOuverte(demande: string, page: PageOuverte | null, nomMusicien?: string | null): string {
+// La dernière réponse affichée, renvoyée par le formulaire (docs/semaine-4.md section 12) : du texte, coupé, sinon rien.
+export const REPONSE_PRECEDENTE_MAX = 4000; // caractères
+export function lireReponsePrecedente(saisie: unknown): string | null {
+  const texte = typeof saisie === "string" ? saisie.trim() : "";
+  if (!texte) return null;
+  return texte.length > REPONSE_PRECEDENTE_MAX ? `${texte.slice(0, REPONSE_PRECEDENTE_MAX)}…` : texte;
+}
+
+// Ce que reçoit le modèle : la réponse précédente (une donnée : le client peut l'avoir changée) et la page en
+// indication, puis la demande. nomMusicien : lu en base pour une fiche musicien (ajouter_note attend un nom) ;
+// sans lui, la page n'est pas donnée.
+export function avecPageOuverte(
+  demande: string,
+  page: PageOuverte | null,
+  nomMusicien?: string | null,
+  precedente: string | null = null,
+): string {
+  const contexte = [
+    precedente &&
+      `Ta réponse précédente, encore affichée sous les yeux de l'agente :\n${enDonnees(precedente)}\nElle ne sert que si ` +
+        `la demande y renvoie (« 1, 3 et 5 », « le deuxième », « ceux-là » : les numéros sont ceux de ses listes) ; ` +
+        `sinon, traite la demande seule.`,
+    pageOuverte(page, nomMusicien),
+  ].filter(Boolean);
+  return contexte.length ? `${contexte.join("\n\n")}\n\nDemande : ${demande}` : demande;
+}
+
+function pageOuverte(page: PageOuverte | null, nomMusicien?: string | null): string | null {
   const quoi = !page
     ? null
     : page.type === "engagement"
@@ -93,11 +118,11 @@ export function avecPageOuverte(demande: string, page: PageOuverte | null, nomMu
           : nomMusicien
             ? `la fiche du musicien ${nomMusicien}`
             : null;
-  if (!quoi) return demande;
+  if (!quoi) return null;
   return (
     `Page ouverte par l'agente pendant qu'elle écrit : ${quoi}. Elle ne sert que si la demande y renvoie (« celui-ci », ` +
     `« cette demande », « ce musicien », « ici ») ; si la demande nomme un autre engagement, une autre demande ou un autre ` +
-    `musicien, c'est celui-là qu'il faut traiter.\n\nDemande : ${demande}`
+    `musicien, c'est celui-là qu'il faut traiter.`
   );
 }
 
