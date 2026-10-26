@@ -27,7 +27,10 @@ export function Compteur({ adresse }: { adresse: string }) {
     const auRetour = () => document.visibilityState === "visible" && lire();
     document.addEventListener("visibilitychange", auRetour);
     window.addEventListener(SIGNAL, lire);
+    // Revenir du terminal au navigateur ne cache pas l'onglet : c'est la fenêtre qui reprend la main.
+    window.addEventListener("focus", lire);
     return () => {
+      window.removeEventListener("focus", lire);
       actif = false;
       document.removeEventListener("visibilitychange", auRetour);
       window.removeEventListener(SIGNAL, lire);

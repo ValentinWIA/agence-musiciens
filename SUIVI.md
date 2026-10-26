@@ -139,7 +139,10 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   $JETON"`, dans un terminal à part (jamais avec `!`, jamais `--scope project`). Pièges rencontrés : mots provisoires
   `TON_JETON` / `TON_SECRET` tapés tels quels ; 302 / « Protected deployment » = Vercel bloque (secret faux), « Non
   autorisé » = notre code (jeton faux). Un secret de contournement est passé par le chat le 25/10 : à remplacer.
-  **Gestes MCP C à F** : en cours.
+  **Gestes MCP validés le 26/10** (lecture, note, relance → « À valider », journal « · MCP »). Retours faits :
+  élision « d'Inès » (`deNom`), nombre « À valider » lu par le navigateur (`/api/validations/compte`) à chaque page,
+  au retour sur la fenêtre (`focus` : revenir du terminal ne cache pas l'onglet) et après Envoyer / Refuser / une
+  demande. 372 tests. **Prochaine tranche : A6** (consigne cachée).
   **Message piégé** du flux : introuvable au 25/10 (vérifié par l'humain), à surveiller à chaque import.
 - **✅ Cron du matin vérifié** (25/10, l'humain) : le récap arrive chaque matin sans clic. Les « reste à vérifier »
   des 18, 19 et 20/10 plus bas sont donc levés.
