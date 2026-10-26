@@ -127,7 +127,19 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   chaque engagement / demande / courrier cité, « À valider (n) » rangé **sous « Assistant »** (choisi parmi 4),
   `?depuis=assistant` → « ← Assistant » sur les fiches engagement, demande et courrier. **Limite IA : 100 appels par
   jour** (30 atteinte pendant les gestes ; décidé par l'humain le 25/10 ; plafond de 5 $ par mois inchangé). 368 tests.
-  **Prochaine tranche : A5** (serveur MCP).
+  **A5** (`115e04e`) : serveur MCP `/api/mcp` (paquet `@modelcontextprotocol/sdk` 1.32.1 fixé, sans session, mêmes
+  outils que l'assistant, au nom du compte agent ; 401 journalisé sans `Authorization: Bearer <MCP_JETON>` ;
+  `MCP_JETON` de 32 caractères au moins, sinon tout est refusé ; 3 tests, 371 au total ; chaque appel d'outil au
+  journal, porte « mcp »). Par MCP, l'heure et les musiciens ne sont pas vérifiés dans une demande écrite : Claude Code
+  montre les paramètres et demande l'autorisation. **Branché dans Claude Code le 26/10.** Méthode qui a marché (à
+  refaire pour la production et la démo) : jeton `openssl rand -hex 32` rangé dans Vercel (`MCP_JETON`, Production et
+  Preview, puis Redeploy) ; prévisualisations protégées → secret « Protection Bypass for Automation » passé **dans
+  l'adresse** (`…/api/mcp?x-vercel-protection-bypass=…`, plus sûr que `--header`) ; clés lues par `JETON=$(pbpaste)`,
+  `SECRET=$(pbpaste)` puis `claude mcp add --transport http cm-management "<adresse>" --header "Authorization: Bearer
+  $JETON"`, dans un terminal à part (jamais avec `!`, jamais `--scope project`). Pièges rencontrés : mots provisoires
+  `TON_JETON` / `TON_SECRET` tapés tels quels ; 302 / « Protected deployment » = Vercel bloque (secret faux), « Non
+  autorisé » = notre code (jeton faux). Un secret de contournement est passé par le chat le 25/10 : à remplacer.
+  **Gestes MCP C à F** : en cours.
   **Message piégé** du flux : introuvable au 25/10 (vérifié par l'humain), à surveiller à chaque import.
 - **✅ Cron du matin vérifié** (25/10, l'humain) : le récap arrive chaque matin sans clic. Les « reste à vérifier »
   des 18, 19 et 20/10 plus bas sont donc levés.
