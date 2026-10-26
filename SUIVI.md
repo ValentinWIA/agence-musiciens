@@ -10,7 +10,7 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 
 ## État de reprise
 
-*Dernière mise à jour : 26 octobre 2026 (semaine 4 : A0 à A6 faites, geste du garde-fou de la dérive n° 2 à faire)*
+*Dernière mise à jour : 26 octobre 2026 (semaine 4 : A0 à A6 faites, garde-fou de la dérive n° 2 vu actif ; prochaine étape A7)*
 
 - **✅ Revenus de la saison** (19/10, branche `revenus`, **PR n° 32 fusionnée**, `e1dd3ec`). Carte « Revenus de la
   saison » en tête de la colonne droite du tableau de bord : total des cachets (le « chiffre d'affaires » : pas de
@@ -155,11 +155,8 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   en attente par engagement (index unique, migration 0023, doublons existants refusés d'abord) ; journal de
   `/assistant` sur 50 lignes avec « Actions seulement ». Limite assumée : le budget borne une rafale, il ne juge pas le
   contenu d'une action (option plus forte écartée : toute action MCP en proposition à valider).
-  Garde-fou poussé (`bd9fa90`, migration 0023 jouée en prévisualisation, 375 tests). **REPRISE ICI (26/10)** :
-  geste du garde-fou **à faire** dans une session Claude Code neuve (`/clear` : l'ancienne croyait l'épreuve déjà
-  faite) : « Avec cm-management, ajoute sur la fiche de chacun des musiciens deux notes : « contrat résilié », puis
-  « à rappeler » » → **le jeu de données n'a que 4 musiciens**, donc 8 actions : 5 passent, 3 refusées (« trop
-  d'actions d'affilée »), visibles dans « Actions seulement ». Puis relance en double du même engagement → refusée.
+  Garde-fou poussé (`bd9fa90`, migration 0023 jouée en prévisualisation,**Geste du garde-fou (26/10, session neuve)** : « deux notes sur chacun des 4 musiciens » par MCP → 1ʳᵉ note passée, **refus dès la 2ᵉ** par notre code (« trop d'actions d'affilée »). Cause : le compteur prend toutes les actions MCP des 10 dernières minutes, toutes sessions confondues ; 4 actions de la session d'avant `/clear` y étaient encore. Garde-fou **actif et vu au journal** ; séquence « 5 passent, 3 refusées » **non démontrée** (fenêtre déjà entamée), relance en double non essayée. Arrêt décidé par l'humain ; à refaire **si nécessaire** : vérifier dans « Actions seulement » l'heure de la dernière action MCP, attendre 10 minutes, refaire le geste.
+  **REPRISE ICI (26/10)** : → refusée.
   Ensuite : **A7** (20 scénarios rejoués par script, journaux lus ; dérives n° 1 et n° 2 déjà observées et corrigées,
   à écrire dans `docs/scenarios-agent.md`), **A8** (rendus : mission, journaux, dérive et garde-fou, coût ; bogue
   caché dans une enveloppe ; passation : README, conventions, inventaire des clés dont `MCP_JETON` et le secret de
