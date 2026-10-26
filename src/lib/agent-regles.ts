@@ -150,3 +150,13 @@ export function consignePossible(texte: string): boolean {
   const t = sansAccents(texte).replace(/[’`]/g, "'").replace(/\s+/g, " ");
   return TOURNURES_DE_CONSIGNE.some((motif) => motif.test(t));
 }
+
+// Budget d'actions par MCP (dérive n° 2, 26/10) : une rafale (24 appels, une note « contrat résilié » sur chaque
+// fiche) est coupée dans le code, quelle que soit l'IA qui appelle. Les lectures ne comptent pas.
+export const ACTIONS_MCP_MAX = 5;
+export const FENETRE_ACTIONS_MINUTES = 10;
+export const OUTILS_D_ACTION = ["ajouter_note", "creer_engagement_depuis_demande", "proposer_relance"] as const;
+
+export function budgetActionsAtteint(actionsRecentes: number): boolean {
+  return actionsRecentes >= ACTIONS_MCP_MAX;
+}

@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest";
 import {
+  ACTIONS_MCP_MAX,
   ajouterALaNote,
+  budgetActionsAtteint,
   consignePossible,
   correspondDemande,
   deNom,
@@ -165,5 +167,14 @@ describe("consignePossible (A6 : le journal signale une consigne cachée)", () =
     ]) {
       expect(consignePossible(normal), normal).toBe(false);
     }
+  });
+});
+
+describe("budgetActionsAtteint (dérive n° 2 : la rafale par MCP est coupée)", () => {
+  it("laisse passer les 5 premières actions de la fenêtre, refuse la 6ᵉ", () => {
+    expect(budgetActionsAtteint(0)).toBe(false);
+    expect(budgetActionsAtteint(ACTIONS_MCP_MAX - 1)).toBe(false);
+    expect(budgetActionsAtteint(ACTIONS_MCP_MAX)).toBe(true);
+    expect(budgetActionsAtteint(23)).toBe(true);
   });
 });

@@ -142,7 +142,19 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   **Gestes MCP validés le 26/10** (lecture, note, relance → « À valider », journal « · MCP »). Retours faits :
   élision « d'Inès » (`deNom`), nombre « À valider » lu par le navigateur (`/api/validations/compte`) à chaque page,
   au retour sur la fenêtre (`focus` : revenir du terminal ne cache pas l'onglet) et après Envoyer / Refuser / une
-  demande. 372 tests. **Prochaine tranche : A6** (consigne cachée).
+  demande. 372 tests.
+  **A6** (`00a4880`) : `consignePossible` (tournures de consigne, accents ignorés ; 6 pièges repérés, 5 courriers
+  ordinaires non signalés) → étape « ⚠ consigne possible » au journal et pendant l'appel, page et MCP. Épreuve du
+  26/10 avec un courrier piégé (Salle Rameau) : la lecture de la semaine 3 n'a pas repris la consigne ; sur la page et
+  par MCP, consigne **non suivie**, signalée. **Dérive n° 2 (26/10, pour A7)** : « fais exactement ce que dit le
+  courrier, c'est moi qui te le demande » par MCP → Claude Code enchaîne 24 appels : une note « contrat résilié » sur
+  chaque fiche, puis des relances « Fermeture de l'agence » (en attente, refusées par l'humain) ; arrêté par le mode
+  auto de Claude Code, **pas par notre code**. Les notes étaient bien au journal (Neon) mais hors des 20 lignes
+  affichées. Principe rappelé par l'humain : les garde-fous doivent être **dans le code**, quelle que soit l'IA.
+  **Garde-fou** : au plus 5 actions par MCP en 10 minutes (lectures non comptées, refus journalisé) ; une seule relance
+  en attente par engagement (index unique, migration 0023, doublons existants refusés d'abord) ; journal de
+  `/assistant` sur 50 lignes avec « Actions seulement ». Limite assumée : le budget borne une rafale, il ne juge pas le
+  contenu d'une action (option plus forte écartée : toute action MCP en proposition à valider).
   **Message piégé** du flux : introuvable au 25/10 (vérifié par l'humain), à surveiller à chaque import.
 - **✅ Cron du matin vérifié** (25/10, l'humain) : le récap arrive chaque matin sans clic. Les « reste à vérifier »
   des 18, 19 et 20/10 plus bas sont donc levés.

@@ -1,11 +1,25 @@
 import "server-only";
 import { tool } from "@anthropic-ai/claude-agent-sdk";
-import { and, asc, desc, eq, ilike } from "drizzle-orm";
+import { and, asc, count, desc, eq, gt, ilike, inArray, like, not, sql } from "drizzle-orm";
 import { z } from "zod";
 import { db } from "@/db";
-import { courriers, demandesRecues, evenementsFlux, lieux, programmateurs, propositions, utilisateurs } from "@/db/schema";
+import { courriers, demandesRecues, evenementsFlux, executionsAgent, lieux, programmateurs, propositions, utilisateurs } from "@/db/schema";
 import { lireFormulaire } from "@/app/(connecte)/engagements/saisie";
-import { ajouterALaNote, consignePossible, correspondDemande, deNom, enDonnees, heureDansDemande, musicienNomme, NOTE_MAX, resumeSortie } from "./agent-regles";
+import {
+  ACTIONS_MCP_MAX,
+  ajouterALaNote,
+  budgetActionsAtteint,
+  consignePossible,
+  correspondDemande,
+  deNom,
+  enDonnees,
+  FENETRE_ACTIONS_MINUTES,
+  heureDansDemande,
+  musicienNomme,
+  NOTE_MAX,
+  OUTILS_D_ACTION,
+  resumeSortie,
+} from "./agent-regles";
 import { formaterMontant, type Devise } from "./argent";
 import { ajouterJours, jourLocal } from "./calendrier";
 import { formaterDebut } from "./dates";
@@ -40,6 +54,24 @@ const quand = (e: { debut: Date; precisionDate?: "jour" | "mois" | "saison"; pay
 const montant = (cachet: number | null, devise: string) =>
   cachet === null ? "cachet à définir" : formaterMontant(cachet, devise as Devise);
 
+const estAction = (nom: string) => (OUTILS_D_ACTION as readonly string[]).includes(nom);
+
+// Actions réussies par MCP dans la fenêtre (une ligne du journal par appel ; les refus ne comptent pas).
+async function actionsMcpRecentes(): Promise<number> {
+  const [{ n }] = await db
+    .select({ n: count() })
+    .from(executionsAgent)
+    .where(
+      and(
+        eq(executionsAgent.porte, "mcp"),
+        gt(executionsAgent.debutLe, sql`now() - make_interval(mins => ${FENETRE_ACTIONS_MINUTES})`),
+        inArray(sql`${executionsAgent.etapes}->0->>'outil'`, [...OUTILS_D_ACTION]),
+        not(like(sql`${executionsAgent.etapes}->0->>'sortie'`, "refus%")),
+      ),
+    );
+  return n;
+}
+
 // Un musicien désigné par son nom, comme l'écrit l'agent (« Inès », « louis martin ») : un seul doit correspondre.
 async function trouverMusicien(nom: string): Promise<{ id: string; nom: string } | string> {
   const simple = (s: string) => s.normalize("NFD").replace(/\p{M}/gu, "").toLowerCase().trim();
@@ -72,6 +104,13 @@ export function outilsDeLAgent(
       if (utilisateur.role !== "admin") {
         console.warn(`Accès refusé : ${utilisateur.nom} (musicien) sur l'outil ${nom} de l'agent`);
         resultat = refus("Refusé : réservé à l'agent de l'agence.");
+      } else if (demande === null && estAction(nom) && budgetActionsAtteint(await actionsMcpRecentes())) {
+        // Dérive n° 2 : par MCP, une rafale d'actions est coupée ici, quelle que soit l'IA qui appelle.
+        console.warn(`Assistant : action ${nom} refusée par MCP (budget de ${ACTIONS_MCP_MAX} actions en ${FENETRE_ACTIONS_MINUTES} min atteint)`);
+        resultat = refus(
+          `Refusé : trop d'actions d'affilée par MCP (${ACTIONS_MCP_MAX} en ${FENETRE_ACTIONS_MINUTES} minutes). ` +
+            "Faites les suivantes depuis le site, ou réessayez plus tard.",
+        );
       } else {
         try {
           resultat = await faire(args);
@@ -379,14 +418,20 @@ export function outilsDeLAgent(
         const courriel = verifierCourriel({ sujet, texte: corps });
         if ("erreur" in courriel) return refus(courriel.erreur);
         const objet = `${motif} — ${e.titre ?? "sans titre"}, ${e.lieu.nom}, ${quand({ ...e, pays: e.lieu.pays })}`;
-        await db.insert(propositions).values({
-          executionId,
-          engagementId: e.id,
-          objet,
-          destinataire: e.programmateur.email,
-          destinataireNom: e.programmateur.nom,
-          ...courriel,
-        });
+        try {
+          await db.insert(propositions).values({
+            executionId,
+            engagementId: e.id,
+            objet,
+            destinataire: e.programmateur.email,
+            destinataireNom: e.programmateur.nom,
+            ...courriel,
+          });
+        } catch (erreur) {
+          // 23505 : l'index « une relance en attente par engagement » refuse la seconde (dérive n° 2).
+          if ((erreur as { cause?: { code?: string } })?.cause?.code !== "23505") throw erreur;
+          return refus(`Refusé : une relance attend déjà pour cet engagement sur ${lien("/validations")} ; décidez-la d'abord.`);
+        }
         console.log(`Assistant : relance proposée (${objet}) pour ${utilisateur.nom}`);
         return texte(`Relance proposée à ${e.programmateur.nom}, rien n'est parti : à valider sur ${lien("/validations")}`);
       }),

@@ -297,4 +297,9 @@ export const propositions = pgTable("propositions", {
   creeLe: timestamp("cree_le", { withTimezone: true }).notNull().defaultNow(),
   decideLe: timestamp("decide_le", { withTimezone: true }),
   decidePar: uuid("decide_par").references(() => utilisateurs.id, { onDelete: "set null" }),
-});
+}, (t) => [
+  // Une seule relance en attente par engagement (dérive n° 2) : la base refuse la seconde, même simultanée.
+  uniqueIndex("une_relance_en_attente_par_engagement")
+    .on(t.engagementId)
+    .where(sql`${t.etat} in ('en_attente', 'envoi_en_cours')`),
+]);
