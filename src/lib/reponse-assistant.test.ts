@@ -67,3 +67,16 @@ describe("blocs", () => {
     expect(blocs("Ligne un\nLigne deux")).toEqual([{ liste: false, texte: [{ texte: "Ligne un\nLigne deux" }] }]);
   });
 });
+
+describe("numéros des listes (retour du 26/10)", () => {
+  it("des options séparées par une ligne vide gardent leur numéro", () => {
+    const b = blocs("Options :\n\n1. **Récital à Lyon**\nFiche : …\n\n2. **Trio à Genève**\n\n3. **Concert à Lille**");
+    const listes = b.filter((x) => x.liste);
+    expect(listes.map((x) => (x.liste ? x.debut : 0))).toEqual([1, 2, 3]);
+  });
+
+  it("une liste à tirets commence à 1", () => {
+    const [b] = blocs("- un\n- deux");
+    expect(b.liste && b.debut).toBe(1);
+  });
+});
