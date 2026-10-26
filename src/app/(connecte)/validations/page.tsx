@@ -6,9 +6,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { PAGE_LARGE } from "@/components/mise-en-page";
 import { db } from "@/db";
 import { propositions } from "@/db/schema";
-import { LIBELLES_PROPOSITION } from "@/lib/propositions";
+import { LIBELLES_PROPOSITION, peutRevenirEnAttente } from "@/lib/propositions";
 import { verifierAdmin } from "@/lib/session";
-import { CartePropositionFormulaire } from "./carte-proposition";
+import { BoutonRemettreEnAttente, CartePropositionFormulaire } from "./carte-proposition";
 
 const LIMITE_DECIDEES = 20;
 const heure = (d: Date) => d.toLocaleString("fr-FR", { timeZone: "Europe/Paris", dateStyle: "short", timeStyle: "short" });
@@ -90,6 +90,7 @@ async function ContenuValidations() {
                     À : {p.destinataireNom} &lt;{p.destinataire}&gt; · {p.sujet}
                   </p>
                   <p className="whitespace-pre-line">{p.texte}</p>
+                  {peutRevenirEnAttente(p.etat) && <BoutonRemettreEnAttente id={p.id} />}
                 </div>
               </details>
             ))}

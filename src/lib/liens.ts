@@ -8,8 +8,11 @@ export function decouperLiens(texte: string, origine: string): Morceau[] {
     if (i % 2 === 0) return m && morceaux.push({ texte: m });
     const adresse = m.replace(/[.,;:!?]+$/, ""); // la ponctuation qui suit le lien n'en fait pas partie
     if (!adresse.startsWith(`${origine}/`)) return morceaux.push({ texte: m });
-    // Un libellé plutôt que l'adresse brute (retour du 25/10).
-    const libelle = adresse.includes("/engagements/nouveau") ? "Accéder au formulaire" : "Accéder à la fiche";
+    // Un libellé court plutôt que l'adresse brute (retours des 25 et 26/10) ; « Fiche : » qui le précède devient inutile.
+    const libelle = adresse.includes("/engagements/nouveau") ? "Formulaire →" : adresse.includes("/validations") ? "À valider →" : "Fiche →";
+    const avant = morceaux.at(-1);
+    if (avant && !avant.lien) avant.texte = avant.texte.replace(/(Fiche|Lien)\s*:\s*$/i, "");
+    if (avant?.texte === "") morceaux.pop();
     morceaux.push({ texte: libelle, lien: adresse });
     if (m.length > adresse.length) morceaux.push({ texte: m.slice(adresse.length) });
   });

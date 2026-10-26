@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { etatApresEnvoi, motifRelance, TEXTE_MAX, verifierCourriel } from "./propositions";
+import { ETATS_PROPOSITION, etatApresEnvoi, motifRelance, peutRevenirEnAttente, TEXTE_MAX, verifierCourriel } from "./propositions";
 
 describe("motifRelance", () => {
   it("permet de relancer une option, ou un concert joué ou facturé", () => {
@@ -34,5 +34,11 @@ describe("etatApresEnvoi", () => {
     expect(etatApresEnvoi(false, true)).toBe("envoyee");
     expect(etatApresEnvoi(true, false)).toBe("non_envoyee");
     expect(etatApresEnvoi(false, false)).toBe("en_attente");
+  });
+});
+
+describe("peutRevenirEnAttente", () => {
+  it("seule une relance refusée revient en attente", () => {
+    expect(ETATS_PROPOSITION.filter(peutRevenirEnAttente)).toEqual(["refusee"]);
   });
 });

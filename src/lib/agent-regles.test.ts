@@ -14,6 +14,7 @@ import {
   heureDansDemande,
   heuresEcrites,
   musicienNomme,
+  resumeActions,
   resumeSortie,
   SORTIE_JOURNAL_MAX,
   verifierDemande,
@@ -187,5 +188,24 @@ describe("appelsAtteints (dérive n° 3 : au plus 20 appels d'outils par demande
     expect(appelsAtteints(APPELS_PAR_DEMANDE_MAX - 1)).toBe(false);
     expect(appelsAtteints(APPELS_PAR_DEMANDE_MAX)).toBe(true);
     expect(appelsAtteints(31)).toBe(true);
+  });
+});
+
+describe("resumeActions", () => {
+  it("compte les actions réussies et les refus, ignore les lectures", () => {
+    expect(
+      resumeActions([
+        { outil: "options_qui_expirent", sortie: "…" },
+        { outil: "proposer_relance", sortie: "Relance proposée à X, rien n'est parti" },
+        { outil: "proposer_relance", sortie: "Relance proposée à Y, rien n'est parti" },
+        { outil: "ajouter_note", sortie: "Note ajoutée sur la fiche d'Anna" },
+        { outil: "creer_engagement_depuis_demande", sortie: "refus : Refusé : l'heure 20 h n'est pas écrite" },
+      ]),
+    ).toBe("2 relances en attente · 1 note ajoutée · 1 action refusée");
+  });
+
+  it("dit « lecture seule » quand rien n'a été fait", () => {
+    expect(resumeActions([{ outil: "chercher_engagements", sortie: "…" }])).toBe("lecture seule");
+    expect(resumeActions([])).toBe("lecture seule");
   });
 });

@@ -1,16 +1,14 @@
 import { desc, sql } from "drizzle-orm";
 import Link from "next/link";
 import { Suspense } from "react";
-import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { PAGE_LARGE } from "@/components/mise-en-page";
 import { db } from "@/db";
 import { executionsAgent } from "@/db/schema";
-import { LIBELLES_ETAT_AGENT, MAX_DOLLARS, MAX_SECONDES, MAX_TOURS, OUTILS_D_ACTION } from "@/lib/agent-regles";
-import { formaterDollars } from "@/lib/couts-ia";
+import { MAX_DOLLARS, MAX_SECONDES, MAX_TOURS, OUTILS_D_ACTION } from "@/lib/agent-regles";
 import { verifierAdmin } from "@/lib/session";
 import { FormulaireAssistant } from "./formulaire-assistant";
-import { TexteAvecLiens } from "@/components/texte-avec-liens";
+import { HistoriqueDemandes } from "./historique-demandes";
 import { origineDuSite } from "@/lib/origine";
 
 const LIMITE_JOURNAL = 50; // 20 jusqu'au 26/10 : une rafale de 24 appels par MCP cachait ses premières actions
@@ -68,10 +66,10 @@ async function ContenuAssistant({ searchParams }: { searchParams: Promise<Record
       </Card>
       <Card>
         <CardHeader>
-          <CardTitle>Journal</CardTitle>
+          <CardTitle>Historique des demandes</CardTitle>
           <CardDescription>
-            Les {LIMITE_JOURNAL} dernières demandes et, pour chacune, les outils appelés et ce qu&apos;ils ont renvoyé.
-            Par MCP, chaque appel d&apos;outil est une ligne.
+            Vos {LIMITE_JOURNAL} dernières demandes à l&apos;assistant, ce qu&apos;il a fait et sa réponse (cliquez pour la
+            lire). Par MCP, chaque appel d&apos;outil est une ligne.
           </CardDescription>
           <p className="text-sm">
             {actionsSeulement ? (
@@ -91,51 +89,11 @@ async function ContenuAssistant({ searchParams }: { searchParams: Promise<Record
             )}
           </p>
         </CardHeader>
-        <CardContent className="grid gap-2">
+        <CardContent className="grid">
           {executions.length === 0 && (
             <p className="text-sm text-muted-foreground">{actionsSeulement ? "Aucune action pour l'instant." : "Aucune demande pour l'instant."}</p>
           )}
-          {executions.map((x) => (
-            <details key={x.id} className="rounded-md border px-3 py-2 text-sm">
-              <summary className="cursor-pointer">
-                <span className="text-muted-foreground">
-                  {x.debutLe.toLocaleString("fr-FR", { timeZone: "Europe/Paris", dateStyle: "short", timeStyle: "short" })}
-                  {x.porte === "mcp" && " · MCP"}
-                </span>{" "}
-                « {x.demande.length > 80 ? `${x.demande.slice(0, 80)}…` : x.demande} »{" "}
-                <Badge variant={x.etat === "terminee" ? "secondary" : x.etat === "en_cours" ? "outline" : "destructive"}>
-                  {LIBELLES_ETAT_AGENT[x.etat]}
-                </Badge>{" "}
-                <span className="text-muted-foreground">
-                  {x.etapes.length} outil{x.etapes.length > 1 ? "s" : ""}
-                  {x.etapes.some((e) => e.alerte) && <span className="text-orange-700 dark:text-orange-400"> · ⚠ consigne signalée</span>}
-                  {x.cout !== null && ` · ${formaterDollars(x.cout)}`}
-                  {x.finLe && ` · ${Math.round((x.finLe.getTime() - x.debutLe.getTime()) / 1000)} s`}
-                </span>
-              </summary>
-              <div className="mt-3 grid gap-3">
-                {x.etapes.map((e, i) => (
-                  <div key={i} className="grid gap-1">
-                    <p className="font-mono text-xs">
-                      {i + 1}. {e.outil} {JSON.stringify(e.entree)}
-                    </p>
-                    {e.alerte && (
-                      <p className="text-xs font-medium text-orange-700 dark:text-orange-400">
-                        ⚠ Consigne possible dans les données : à ne pas suivre (voir la réponse et les outils appelés ensuite).
-                      </p>
-                    )}
-                    <p className="whitespace-pre-line text-xs text-muted-foreground">{e.sortie}</p>
-                  </div>
-                ))}
-                {x.reponse && (
-                  <p className="whitespace-pre-line border-l-2 border-primary pl-3">
-                    <TexteAvecLiens texte={x.reponse} origine={origineDuSite()} />
-                  </p>
-                )}
-                {x.erreur && <p className="text-destructive">{x.erreur}</p>}
-              </div>
-            </details>
-          ))}
+          <HistoriqueDemandes executions={executions} origine={origineDuSite()} />
         </CardContent>
       </Card>
     </>

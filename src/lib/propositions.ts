@@ -37,3 +37,9 @@ export function etatApresEnvoi(adresseFictive: boolean, parti: boolean): EtatPro
   if (adresseFictive) return "non_envoyee";
   return parti ? "envoyee" : "en_attente";
 }
+
+// Une relance refusée peut revenir en attente (retour du 26/10 : un clic de travers perdait le texte retouché).
+// Envoyée ou close sur une adresse fictive : elle est partie ou décidée pour de bon, on n'y revient pas.
+export function peutRevenirEnAttente(etat: EtatProposition): boolean {
+  return etat === "refusee";
+}
