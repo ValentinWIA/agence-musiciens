@@ -65,16 +65,20 @@ export function BulleAssistant({ origine }: { origine: string }) {
         onClick={(e) => (e.target as HTMLElement).closest("a") && !ordinateur() && setOuvert(false)}
         className="volet-assistant fixed inset-x-0 bottom-0 z-50 flex max-h-[85dvh] flex-col overflow-hidden rounded-t-2xl bg-card text-card-foreground shadow-2xl md:inset-x-auto md:right-5 md:bottom-5 md:max-h-[calc(100dvh-2.5rem)] md:w-[400px] md:rounded-xl"
       >
-        <div className="dark flex shrink-0 items-center justify-between border-b border-or/35 bg-background px-4 py-2.5 text-foreground">
+        {/* Tout le bandeau noir ferme le panneau (retour du 26/10) : un seul bouton, que Safari sur iPhone transmet. */}
+        <button
+          type="button"
+          aria-label="Fermer l'assistant"
+          onClick={() => setOuvert(false)}
+          className="dark group flex shrink-0 cursor-pointer items-center justify-between border-b border-or/35 bg-background px-4 py-2.5 text-left text-foreground"
+        >
           <span className="flex items-center gap-2">
             {/* 34 px et 2 px plus bas : C|M de la hauteur du « A » d'« Assistant », sur la même ligne (mesuré le 26/10). */}
             <Embleme className="size-[34px] translate-y-0.5" />
             <span className="font-logo text-lg">Assistant</span>
           </span>
-          <button type="button" aria-label="Fermer l'assistant" onClick={() => setOuvert(false)} className="rounded-md p-1.5 opacity-80 hover:opacity-100">
-            <X className="size-5" />
-          </button>
-        </div>
+          <X aria-hidden className="m-1.5 size-5 opacity-80 group-hover:opacity-100" />
+        </button>
         <div className="grid gap-3 overflow-y-auto overscroll-contain p-4">
           <FormulaireAssistant origine={origine} compact />
           <Link href="/assistant" className="w-fit text-xs text-muted-foreground underline decoration-or underline-offset-4">
