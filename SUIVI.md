@@ -10,7 +10,7 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
 
 ## État de reprise
 
-*Dernière mise à jour : 26 octobre 2026 (assistant sur chaque page en production, PR n° 45 ; prochaine étape : suite de la réponse précédente, branche `suite-de-demande`)*
+*Dernière mise à jour : 26 octobre 2026 (suite de la réponse précédente en production, PR n° 46 ; prochaine étape : retouches fiche musicien / adresse du lieu)*
 
 - **✅ Revenus de la saison** (19/10, branche `revenus`, **PR n° 32 fusionnée**, `e1dd3ec`). Carte « Revenus de la
   saison » en tête de la colonne droite du tableau de bord : total des cachets (le « chiffre d'affaires » : pas de
@@ -202,7 +202,7 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   **Décidé le 26/10 : « le produit doit toujours avoir l'air fini »** → entrent dans la semaine 4, une branche et un
   cadrage chacune, dans cet ordre : (1) **assistant sur chaque page** (vignette en bas à droite, reprend la mise en
   forme A) ; (2) **retouches** fiche musicien sur téléphone et « Chercher l'adresse » d'un lieu ; (3) **volet**
-  engagements / demandes reçues. Avant chaque branche : vider les branches Neon fusionnées.
+  engagements / demandes reçues.
   Réponse : liste collée à sa phrase d'annonce séparée (lecture ligne par ligne), montants et heures insécables ;
   387 tests. **Correctif** (branche `correctif-reponse`, **PR n° 44 fusionnée**, `4a23664`) : `max-w-prose` coupait le
   texte au milieu de la carte → toute la largeur. Gestes validés en prévisualisation ; production déployée
@@ -222,12 +222,18 @@ Légende : ✅ fait · 🔄 en cours · ⬜ à faire
   celui-ci » et relance d'un autre engagement depuis une fiche). Production déployée (`/api/sante` ok, `/api/agent`
   refuse sans session). **À vérifier en production** : la bulle sur une fiche. Méthode utile : page d'essai temporaire
   + script Chrome (DevTools Protocol) pour photographier et simuler toucher et clics, sans connexion ni appel à l'IA.
-  **REPRISE ICI** : (1) **suite de la réponse précédente** (branche `suite-de-demande`, voulue par l'humain : « relance
-  1, 3 et 5 » échoue, chaque demande repart de zéro) — **au plus simple, décidé le 26/10** : le formulaire renvoie la
-  dernière réponse affichée avec la demande suivante, donnée au modèle entre balises comme une donnée ; pas de
-  migration, pas de bouton ; garde-fous des actions inchangés ; puis (2) retouches fiche musicien / adresse du lieu ;
-  (3) volet. Restent aussi : remplacer le secret de contournement Vercel ;
-  supprimer les branches Neon `preview/retouches-agent` et `preview/correctif-reponse` ; A8c (en dernier).
+  **✅ Suite de la réponse précédente** (26/10, branche `suite-de-demande`, **PR n° 46 fusionnée**, `3808f5e` ;
+  cadrage : `docs/semaine-4.md` section 12). Le formulaire (bulle et `/assistant`) renvoie la dernière réponse affichée
+  avec la demande suivante ; le serveur la coupe à 4 000 caractères et la donne au modèle entre `<donnees>`, avec la
+  règle « ne sert que si la demande y renvoie » (`lireReponsePrecedente`, `avecPageOuverte`, `src/lib/agent-regles.ts`).
+  Garde-fous inchangés (seuls les mots de l'agente). Journal : « (suite de la réponse précédente) » ; écran : mention
+  sous le champ. Corrigé au geste : options séparées par une ligne vide toutes affichées « 1. » → chaque liste
+  commence au numéro écrit par le modèle (`<ol start>`, `src/lib/reponse-assistant.ts`). 397 tests. Gestes validés en
+  prévisualisation (« relance 1 et 3 » → ces deux-là dans « À valider » ; question sans rapport normale ; journal).
+  Production déployée (`/api/sante` ok, `/api/agent` refuse sans session). **À vérifier en production** : numéros
+  1, 2, 3 d'une liste d'options.
+  **REPRISE ICI** : (1) **retouches** fiche musicien sur téléphone et « Chercher l'adresse » d'un lieu ; (2) **volet**
+  engagements / demandes reçues. Restent aussi : remplacer le secret de contournement Vercel ; A8c (en dernier).
   Après la semaine 4 (notés) : retouches fiche musicien sur téléphone et adresse du lieu ; volet engagements /
   demandes ; assistant sur chaque page ; heures de 5 en 5 minutes.
   **Message piégé** du flux : introuvable au 25/10 (vérifié par l'humain), à surveiller à chaque import.
